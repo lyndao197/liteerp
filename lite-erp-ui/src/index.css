@@ -1,0 +1,63 @@
+:root {
+  --font-family: 'Inter', sans-serif;
+  --bg-sidebar: #1A202C;
+  /* Navy dark */
+  --bg-sidebar-active: #3D2028;
+  /* Red tinted background */
+  --color-primary: #E62E4D;
+  /* Red logo/button */
+  --bg-main: #F9FAFC;
+  /* Light gray background */
+  --border-color: #E2E8F0;
+
+  --col-new-bg: #E32B4C;
+  --col-contact-bg: #F5A623;
+  --col-quote-bg: #8B5CF6;
+  --col-negotiation-bg: #3B82F6;
+
+  --text-dark: #1E293B;
+  --text-muted: #64748B;
+
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, #root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  zoom: 0.8;
+  width: 125vw;
+  height: 125vh;
+  overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

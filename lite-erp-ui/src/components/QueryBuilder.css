@@ -1,0 +1,142 @@
+.odoo-query-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #4c4c4c;
+  font-size: 13px;
+  background-color: white;
+}
+
+.o-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.o-group:not(.o-group-root) {
+  margin-left: 20px;
+  margin-top: 4px;
+}
+
+.o-group-root {
+  padding: 8px 0;
+}
+
+.o-group-header {
+  margin-bottom: 8px;
+}
+
+.o-group-sentence {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #4c4c4c;
+}
+
+.o-combinator {
+  border: none;
+  background: transparent;
+  color: #4c4c4c;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+.o-combinator:hover {
+  background-color: #f8f9fa;
+}
+
+.o-rules-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.o-rule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.o-group:not(.o-group-root) > .o-rules-list > .o-rule-row::before,
+.o-group:not(.o-group-root) > .o-rules-list > .o-group::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 14px;
+  width: 10px;
+  height: 1px;
+  background-color: #dee2e6;
+}
+
+.o-group:not(.o-group-root) > .o-rules-list {
+  border-left: 1px solid #dee2e6;
+  padding-left: 14px;
+}
+
+.o-rule-controls {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  align-items: center;
+}
+
+.o-rule-select, .o-rule-input {
+  border: none;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: transparent;
+  color: #4c4c4c;
+  font-size: 13px;
+  padding: 4px 0;
+  outline: none;
+}
+
+.o-rule-select:focus, .o-rule-input:focus {
+  border-bottom-color: #ec1c24;
+}
+
+.o-field-select {
+  width: 150px;
+}
+
+.o-op-select {
+  width: 120px;
+}
+
+.o-rule-input {
+  flex: 1;
+}
+
+.o-rule-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: 16px;
+}
+
+.o-rule-actions button, .qb-del-group-btn {
+  background: transparent;
+  border: none;
+  color: #ced4da;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.o-rule-actions button:hover {
+  color: #ec1c24;
+}
+
+.o-group-footer {
+  margin-top: 4px;
+}
+
+.o-new-rule-link {
+  color: #ec1c24;
+  cursor: pointer;
+  display: inline-block;
+  padding: 2px 0;
+}
+
+.o-new-rule-link:hover {
+  text-decoration: underline;
+}

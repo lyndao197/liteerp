@@ -1,0 +1,149 @@
+/* BusinessPlanForm.css */
+
+.business-plan-container {
+  padding: 20px;
+}
+
+.table-header {
+  font-weight: bold;
+  background-color: #f1f5f9;
+}
+
+.table-row {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  min-height: 40px;
+}
+
+.table-row.parent-row {
+  background-color: #f8fafc;
+  font-weight: 600;
+}
+
+
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-name { width: 320px; padding: 8px; display: flex; align-items: center; flex-shrink: 0; border-right: 1px solid #e2e8f0; }
+.w-col { width: 100px; padding: 8px 4px; box-sizing: border-box; flex-shrink: 0; }
+.w-col-total { width: 160px; padding: 8px 4px; box-sizing: border-box; flex-shrink: 0; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; }
+.w-actions { width: 40px; padding: 8px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+
+.expand-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 8px;
+  color: #64748b;
+  background-color: white;
+}
+.expand-icon:hover {
+  background-color: #f1f5f9;
+}
+
+.action-icon {
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 4px;
+}
+.action-icon:hover {
+  color: #ef4444;
+}
+
+.add-row-btn {
+  color: #ec1c24;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px;
+  display: inline-block;
+}
+.add-row-btn:hover {
+  text-decoration: underline;
+}
+
+.document-type-select {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+}
+
+/* Vertical Text Class for Collapsed Service Blocks */
+.vertical-text-container {
+  width: 40px;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
+  transform: rotate(180deg);
+  font-weight: 600;
+  color: #475569;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+/* The horizontal cell grouping */
+.service-block-expanded {
+  width: 400px;
+  flex-shrink: 0;
+  display: flex;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  background: transparent;
+}
+
+.table-header-group {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+}
+.table-header-group-title {
+  text-align: center;
+  padding: 4px;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+  background: #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.table-header-group-cols {
+  display: flex;
+}
+.w-col-header {
+  width: 100px;
+  padding: 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.document-row {
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
+  margin-bottom: 8px;
+}

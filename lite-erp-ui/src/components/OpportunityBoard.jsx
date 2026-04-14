@@ -1,0 +1,826 @@
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './KanbanBoard.css';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { Search, Filter, ArrowUpDown, Plus, MessageSquare, Calendar, LayoutGrid, List, Settings, Download, Upload, ChevronUp, ChevronDown, SlidersHorizontal, Star, Clock, Phone, Mail, CheckCircle2, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
+import * as XLSX from 'xlsx';
+
+// --- MOCK DATA ---
+const ALL_COLUMNS = [
+  { key: 'id', label: 'Lead/Opportunity ID' },
+  { key: 'content', label: 'Tên Lead/Opportunity' },
+  { key: 'company', label: 'Tên khách hàng' },
+  { key: 'mst', label: 'MST' },
+  { key: 'contactName', label: 'Contact Name' },
+  { key: 'email', label: 'Email' },
+  { key: 'district', label: 'Quận/Huyện' },
+  { key: 'ward', label: 'Phường/Xã' },
+  { key: 'city', label: 'Thành phố' },
+  { key: 'projectedService', label: 'Dịch vụ dự kiến' },
+  { key: 'assignedPartner', label: 'Assigned Partner' },
+  { key: 'status', label: 'Trạng thái' },
+  { key: 'revenue', label: 'Doanh thu (Dự kiến)' },
+  { key: 'probability', label: 'Xác suất' },
+  { key: 'salesperson', label: 'Sale person' }
+];
+
+import { mockStore } from '../utils/mockStore';
+import { QueryBuilder } from './QueryBuilder';
+import { evaluateQuery } from '../utils/filterUtils';
+
+// --- MAIN COMPONENT ---
+
+function OpportunityBoard() {
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
+  // --- STATE ---
+  // Helper for Initials
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 0) return 'U';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
+  // Helper for Stars
+  const renderStars = (probability) => {
+    const probInt = parseInt(probability || '0');
+    let stars = 1; // Default 1 star priority
+    if (probInt > 70) stars = 3;
+    else if (probInt > 30) stars = 2;
+    
+    return (
+      <div style={{display: 'flex', gap: '2px'}}>
+        <Star size={15} fill={stars >= 1 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
+        <Star size={15} fill={stars >= 2 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
+        <Star size={15} fill={stars >= 3 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
+      </div>
+    );
+  };
+
+  const renderPopoverTasks = (tasksList) => {
+    if (!tasksList || tasksList.length === 0) return null;
+    return (
+      <div className="task-popover" style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '8px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '6px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '220px', cursor: 'default' }}>
+        {tasksList.map(t => (
+          <div key={t.id} style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid #f1f5f9', padding: '8px 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <div style={{display: 'flex', alignItems: 'center', gap: '6px', fontWeight: t.status === 'done' ? 500 : 600, color: t.status === 'done' ? '#cbd5e1' : (t.status === 'todo' ? '#22c55e' : t.status === 'today' ? '#eab308' : '#ef4444'), textDecoration: t.status === 'done' ? 'line-through' : 'none', fontSize: '13px'}}>
+                {t.type === 'phone' && <Phone size={14} color="currentColor" />}
+                {t.type === 'mail' && <Mail size={14} color="currentColor" />}
+                {t.type === 'meeting' && <Calendar size={14} color="currentColor" />}
+                <span>{t.title}</span>
+              </div>
+              <div style={{display: 'flex', gap: '8px'}}>
+                 <span style={{cursor: 'pointer', color: '#94a3b8', fontSize: '12px'}}>✏️</span>
+                 <span style={{cursor: 'pointer', color: t.status === 'done' ? '#16a34a' : '#64748b', fontSize: '12px'}}>✅</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b' }}>
+               <div style={{ width: '16px', height: '16px', borderRadius: '4px', backgroundColor: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 'bold' }}>M</div>
+               <span>Mitchell Admin</span>
+             </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+
+  // Helper for Revenue Sum
+  const parseRevenue = (revenueStr) => {
+    if (!revenueStr) return 0;
+    return parseInt(revenueStr.replace(/[^0-9]/g, ''), 10) || 0;
+  };
+  const formatRevenue = (value) => {
+    if (value === 0) return '0 ₫';
+    return value.toLocaleString('vi-VN') + ' ₫';
+  };
+
+  const getAllowedTransitions = (currentStatus) => {
+    switch (currentStatus) {
+        case 'Mới': return ['Đang tiếp xúc', 'Không thành công'];
+        case 'Đang tiếp xúc': return ['Đánh giá nhu cầu', 'Không thành công'];
+        case 'Đánh giá nhu cầu': return ['Đang báo giá', 'Không thành công'];
+        case 'Đang báo giá': return ['Đấu thầu', 'POC', 'Không thành công'];
+        case 'Đấu thầu': return ['Kí hợp đồng', 'Không thành công'];
+        case 'POC': return ['Kí hợp đồng', 'Không thành công'];
+        case 'Kí hợp đồng': return ['Triển khai', 'Không thành công'];
+        case 'Triển khai': return ['Thành công', 'Không thành công'];
+        default: return [];
+    }
+  };
+
+  const [data, setData] = useState(() => {
+    const st = mockStore.getStore();
+    return { columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} };
+  });
+  
+  // Need useEffect to refresh if returned from form
+  React.useEffect(() => {
+    const st = mockStore.getStore();
+    setData({ columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} });
+  }, []);
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'kanban'
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // List View specific states
+  const [visibleColumns, setVisibleColumns] = useState(ALL_COLUMNS.map(c => c.key));
+  const [showColPicker, setShowColPicker] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+  const [filters, setFilters] = useState({});
+  const [activeFilterCol, setActiveFilterCol] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
+  const [advancedQuery, setAdvancedQuery] = useState({
+    id: 'root',
+    combinator: 'AND',
+    rules: []
+  });
+
+  // --- KANBAN LOGIC ---
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+
+    const sourceColIndex = data.columns.findIndex(col => col.id === source.droppableId);
+    const destColIndex = data.columns.findIndex(col => col.id === destination.droppableId);
+
+    const sourceCol = data.columns[sourceColIndex];
+    const destCol = data.columns[destColIndex];
+
+    const newSourceTaskIds = Array.from(sourceCol.taskIds);
+    newSourceTaskIds.splice(source.index, 1);
+
+    if (source.droppableId === destination.droppableId) {
+      newSourceTaskIds.splice(destination.index, 0, draggableId);
+      const newCol = { ...sourceCol, taskIds: newSourceTaskIds };
+      const newColumns = [...data.columns];
+      newColumns[sourceColIndex] = newCol;
+      setData({ ...data, columns: newColumns });
+      return;
+    }
+
+    const task = data.tasks[draggableId];
+    const sourceStatus = sourceCol.title;
+    const destStatus = destCol.title;
+
+    const allowed = getAllowedTransitions(sourceStatus);
+    if (!allowed.includes(destStatus) && sourceStatus !== destStatus) {
+      alert(`Không thể chuyển trạng thái từ '${sourceStatus}' sang '${destStatus}'.`);
+      return;
+    }
+
+    if (sourceStatus === 'Đánh giá nhu cầu' && destStatus === 'Đang báo giá' && parseInt(task.attachments || 0) === 0) {
+      alert('Cần upload ít nhất 1 tài liệu ở màn hình chi tiết mới có thể chuyển sang trạng thái Đang báo giá.');
+      return;
+    }
+
+    const newDestTaskIds = Array.from(destCol.taskIds);
+    newDestTaskIds.splice(destination.index, 0, draggableId);
+
+    const newSourceCol = { ...sourceCol, taskIds: newSourceTaskIds };
+    const newDestCol = { ...destCol, taskIds: newDestTaskIds };
+
+    const newColumns = [...data.columns];
+    newColumns[sourceColIndex] = newSourceCol;
+    newColumns[destColIndex] = newDestCol;
+
+    const updatedTask = { ...task, status: destStatus };
+    
+    const newData = { ...data, columns: newColumns, tasks: { ...data.tasks, [draggableId]: updatedTask } };
+    
+    setData(newData);
+    const globalStore = mockStore.getStore();
+    globalStore.oppColumns = newColumns;
+    globalStore.oppTasks = newData.tasks;
+    mockStore.saveStore(globalStore);
+  };
+
+  // --- LIST VIEW LOGIC ---
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+    else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = null;
+      key = null;
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Lấy danh sách nhiệm vụ và đảo ngược để hiển thị cái mới nhất (thêm sau cùng) lên đầu tiên
+  const currentTasks = Object.values(data.tasks).reverse();
+
+  // Derived distinct values for filtering
+  const getDistinctValues = (key) => {
+    return [...new Set(currentTasks.map(t => t[key] || ''))].filter(Boolean);
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => {
+      const colFilters = prev[key] || [];
+      const isSelected = colFilters.includes(value);
+      const newFilters = isSelected ? colFilters.filter(v => v !== value) : [...colFilters, value];
+      if (newFilters.length === 0) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [key]: newFilters };
+    });
+  };
+
+  const processedData = useMemo(() => {
+    let result = [...currentTasks];
+
+    // Global Search
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = result.filter(item => 
+        Object.values(item).some(val => 
+          String(val).toLowerCase().includes(lowerSearch)
+        )
+      );
+    }
+
+    // Column Filters
+    Object.keys(filters).forEach(key => {
+      if (filters[key].length > 0) {
+        result = result.filter(item => filters[key].includes(item[key]));
+      }
+    });
+
+    // Sorting
+    // Advanced Query
+    if (advancedQuery && advancedQuery.rules.length > 0) {
+      result = result.filter(item => evaluateQuery(item, advancedQuery));
+    }
+
+    if (sortConfig.key) {
+      result.sort((a, b) => {
+        const valA = a[sortConfig.key] || '';
+        const valB = b[sortConfig.key] || '';
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    } else {
+      // Default: sort by numeric part of ID descending
+      result.sort((a, b) => {
+        const numA = parseInt((a.id || '').split('-')[1]) || 0;
+        const numB = parseInt((b.id || '').split('-')[1]) || 0;
+        return numB - numA;
+      });
+    }
+
+    return result;
+  }, [currentTasks, searchTerm, filters, sortConfig]);
+
+  // --- PAGINATION LOGIC ---
+  const totalItems = processedData.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages || 1);
+  const paginatedData = processedData.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
+
+  // --- IMPORT / EXPORT LOGIC ---
+  const handleExport = () => {
+    // Generate export array based on visible columns and processed data
+    const exportData = processedData.map(item => {
+      const row = {};
+      ALL_COLUMNS.forEach(col => {
+        if (visibleColumns.includes(col.key)) {
+          row[col.label] = item[col.key] || '';
+        }
+      });
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
+    XLSX.writeFile(workbook, "Leads_Export.xlsx");
+  };
+
+  const triggerImport = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImport = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: 'binary' });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const jsonObj = XLSX.utils.sheet_to_json(ws);
+
+      if (jsonObj.length === 0) return;
+
+      const newTasksObj = {};
+      const newTaskIds = [];
+
+      jsonObj.forEach((row, index) => {
+        // Map excel row matching headers to our column system. Fallback to generic defaults.
+        const id = row['Lead ID'] || `IM-LEAD-${Date.now()}-${index}`;
+        const content = row['Tên Lead'] || `Imported Lead ${index}`;
+        
+        newTasksObj[id] = {
+          id,
+          content,
+          contactName: row['Contact Name'] || '',
+          email: row['Email'] || '',
+          district: row['Quận/Huyện'] || '',
+          ward: row['Phường/Xã'] || '',
+          city: row['Thành phố'] || '',
+          assignedPartner: row['Assigned Partner'] || '',
+          status: 'Chờ tiếp nhận', 
+          revenue: row['Doanh thu (Dự kiến)'] || '0 ₫',
+          probability: row['Xác suất'] || '0%',
+          salesperson: row['Sale person'] || 'System',
+          date: new Date().toLocaleDateString('vi-VN'),
+          company: row['Contact Name'] ? '' : 'Imported Company',
+          tags: [], attachments: 0, comments: 0, avatars: []
+        };
+        newTaskIds.push(id);
+      });
+
+      // Update state
+      setData(prev => {
+        const updatedColumns = [...prev.columns];
+        // Ensure new tasks go to the first column (Khách hàng mới)
+        updatedColumns[0] = {
+          ...updatedColumns[0],
+          taskIds: [...newTaskIds, ...updatedColumns[0].taskIds]
+        };
+        const newData = {
+          ...prev,
+          columns: updatedColumns,
+          tasks: { ...prev.tasks, ...newTasksObj }
+        };
+        const globalStore = mockStore.getStore();
+        globalStore.oppColumns = newData.columns;
+        globalStore.oppTasks = newData.tasks;
+        mockStore.saveStore(globalStore);
+        return newData;
+      });
+      alert(`Đã import thành công ${jsonObj.length} dòng dữ liệu.`);
+    };
+    reader.readAsBinaryString(file);
+    e.target.value = null; // reset
+  };
+
+  return (
+    <div className="kanban-container" onClick={() => setActiveFilterCol(null)}>
+      <style>{`
+        .task-popover-container .task-popover {
+           display: none;
+        }
+        .task-popover-container:hover .task-popover {
+           display: block;
+        }
+
+        /* Figma Table UI additions */
+        .list-view-container {
+          background: white;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+          overflow: auto;
+          flex: 1;
+        }
+        .list-view-table th {
+          position: sticky;
+          top: 0;
+          background: #FFFFFF !important;
+          padding: 16px 12px !important;
+          font-weight: 700 !important;
+          color: #000000 !important;
+          border-bottom: 1px solid #E5E7EB !important;
+          border-top: 1px solid #E5E7EB !important;
+          border-right: none !important;
+        }
+        .list-view-table td {
+          padding: 16px 12px !important;
+          color: #000000 !important;
+          border-bottom: 1px solid #E5E7EB !important;
+        }
+        .list-view-table tbody tr:nth-child(even) {
+          background-color: #FAFAFA !important;
+        }
+        .list-view-table tbody tr.row-selected {
+          background-color: #fdf2f2 !important;
+        }
+        .list-view-table tbody tr:hover {
+          background-color: #f1f5f9 !important;
+        }
+        .list-view-table input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          accent-color: #e32b4c;
+        }
+      `}</style>
+      {/* HEADER SECTION */}
+      {(() => {
+         const tasksList = Object.values(data.tasks);
+         const totalDeals = tasksList.length;
+         const successDeals = tasksList.filter(t => t.status === 'Thành công').length;
+         const failedDeals = tasksList.filter(t => t.status === 'Không thành công').length;
+         
+         return (
+           <div className="opportunity-header-section" style={{ marginBottom: '24px' }}>
+             <div style={{ marginBottom: '20px' }}>
+                <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Danh sách Lead/Opportunity</h1>
+                <p style={{ color: '#64748b', fontSize: '14px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>Quản lý chi tiết cơ hội và khách hàng tiềm năng</p>
+             </div>
+             
+             <div className="metrics-cards-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+               <div className="metric-card">
+                  <span className="metric-label">Tổng số deal</span>
+                  <div className="metric-value-row" style={{ marginTop: '8px' }}>
+                    <span className="metric-value" style={{color: '#1e293b', fontSize: '24px', fontWeight: 700}}>{totalDeals}</span>
+                  </div>
+               </div>
+               <div className="metric-card">
+                  <span className="metric-label">Tổng deal thành công</span>
+                  <div className="metric-value-row" style={{ marginTop: '8px' }}>
+                    <span className="metric-value" style={{color: '#10b981', fontSize: '24px', fontWeight: 700}}>{successDeals}</span>
+                    <div className="metric-trend" style={{color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px'}}><CheckCircle2 size={14} /> Thành công</div>
+                  </div>
+               </div>
+               <div className="metric-card">
+                  <span className="metric-label">Tổng deal không thành công</span>
+                  <div className="metric-value-row" style={{ marginTop: '8px' }}>
+                    <span className="metric-value" style={{color: '#ef4444', fontSize: '24px', fontWeight: 700}}>{failedDeals}</span>
+                    <div className="metric-trend" style={{color: '#ef4444', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px'}}><TrendingDown size={14} /> Thất bại</div>
+                  </div>
+               </div>
+             </div>
+           </div>
+         );
+      })()}
+
+      {/* TOOLBAR SECTION (FRAME 1) */}
+      <div className="list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          <div className="search-group" style={{ position: 'relative', display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <div className="contact-search-box" style={{ width: '434px', position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#44494D' }} />
+              <input type="text" placeholder="Tìm kiếm tự do..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ padding: '10px 16px 10px 44px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#F8F8F8', fontSize: '14px', width: '100%', outline: 'none', color: '#44494D' }} />
+            </div>
+
+            <button className="btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 12px', height: '40px', backgroundColor: showAdvancedFilter ? '#c22541' : '#e32b4c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }} onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}>
+              <Filter size={16}/> Lọc nâng cao
+            </button>
+            
+          {showAdvancedFilter && (
+            <div style={{position: 'absolute', top: '100%', left: 0, marginTop: '8px', zIndex: 100, width: '600px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', border: '1px solid #cbd5e1', borderRadius: '8px', background: 'white', overflow: 'hidden'}}>
+               <div style={{padding: '12px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <span style={{fontWeight: 600, color: '#0f172a'}}>Bộ lọc phức tạp</span>
+                  <button style={{background: 'none', border: 'none', color: '#64748b', cursor: 'pointer'}} onClick={() => setShowAdvancedFilter(false)}>Đóng</button>
+               </div>
+               <div style={{padding: '16px', maxHeight: '400px', overflowY: 'auto'}}>
+                 <QueryBuilder query={advancedQuery} fields={ALL_COLUMNS} onChange={setAdvancedQuery} />
+               </div>
+            </div>
+          )}
+          
+          {selectedRows.length > 0 && selectedRows.every(id => data.tasks[id]?.status === 'Mới') && (
+            <button 
+              className="btn" 
+              onClick={() => {
+                if (window.confirm(`Bạn có chắc muốn xóa ${selectedRows.length} bản ghi đang chọn?`)) {
+                  // Actual delete logic simplified for mock
+                  const newTasks = { ...data.tasks };
+                  selectedRows.forEach(id => delete newTasks[id]);
+                  setData({ ...data, tasks: newTasks });
+                  setSelectedRows([]);
+                }
+              }} 
+              style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '0 16px', height: '40px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', marginLeft: '24px' }}
+            >
+              <Trash2 size={16} /> Xóa ({selectedRows.length})
+            </button>
+          )}
+        </div>
+      </div>
+
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="btn-outline-brand" onClick={() => navigate('/opportunity/new')} style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+              <Plus size={18} /> Thêm lead
+            </button>
+            <button className="btn-outline-brand" onClick={handleExport} title="Xuất dữ liệu" style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+              <Download size={18} /> Xuất Excel
+            </button>
+            <button className="btn-outline-brand" onClick={triggerImport} title="Nhập dữ liệu" style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+              <Upload size={18} /> Nhập Excel
+            </button>
+            <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".xlsx, .xls, .csv" onChange={handleImport} />
+          </div>
+
+          <div className="view-switcher" style={{ background: '#EFEDED', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+             <button className={`view-btn ${viewMode === 'kanban' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'kanban' ? 'white' : 'transparent', color: viewMode === 'kanban' ? '#e32b4c' : '#64748b', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setViewMode('kanban')} title="Kanban View"><LayoutGrid size={16} /></button>
+             <button className={`view-btn ${viewMode === 'list' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'list' ? 'white' : 'transparent', color: viewMode === 'list' ? '#e32b4c' : '#64748b', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setViewMode('list')} title="List View"><List size={16} /></button>
+          </div>
+        </div>
+      </div>
+
+      {viewMode === 'kanban' ? (
+        // --- KANBAN RENDER PORTION ---
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="kanban-columns">
+            {data.columns.map((column) => {
+              const tasks = (column.taskIds || []).map(taskId => data.tasks[taskId]).filter(Boolean);
+              const totalRevenue = tasks.reduce((sum, t) => sum + parseRevenue(t.revenue), 0);
+
+              let overdueCount = 0;
+              let todayCount = 0;
+              let todoCount = 0;
+
+              tasks.forEach(item => {
+                  if (item.tasks) {
+                      overdueCount += item.tasks.filter(t => t.status === 'overdue').length;
+                      todayCount += item.tasks.filter(t => t.status === 'today').length;
+                      todoCount += item.tasks.filter(t => t.status === 'todo').length;
+                  }
+              });
+
+              const totalAct = overdueCount + todayCount + todoCount;
+              const greenPct = totalAct ? (todoCount / totalAct) * 100 : 0;
+              const yellowPct = totalAct ? (todayCount / totalAct) * 100 : 0;
+              const redPct = totalAct ? (overdueCount / totalAct) * 100 : 0;
+              
+              return (
+                <div key={column.id} className="kanban-column" style={{ backgroundColor: '#f6f6f6', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '8px', display: 'flex', flexDirection: 'column', gap: '16px', minWidth: '300px' }}>
+                  <div className="column-header" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: 0, margin: 0, background: 'transparent' }}>
+                    <div style={{display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1, width: '100%', marginBottom: '0'}}>
+                      <div className="column-count" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2e8f0', borderRadius: '8px', width: '24px', height: '24px', color: '#545454', fontSize: '14px', fontWeight: 700, flexShrink: 0, backgroundColor: 'transparent' }}>
+                        {tasks.length}
+                      </div>
+                      <h3 className="column-title" style={{ margin: 0, flexShrink: 0, color: '#545454', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase' }}>
+                        {column.title}
+                      </h3>
+                      {totalRevenue > 0 && <div title={formatRevenue(totalRevenue)} style={{fontSize: '13px', color: '#475569', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 4px', maxWidth: '85px', marginLeft: 'auto'}}>
+                        {formatRevenue(totalRevenue)}
+                      </div>}
+                      <Plus size={20} className="add-task-icon" onClick={() => navigate('/opportunity/new')} style={{cursor: 'pointer', flexShrink: 0, color: '#545454', marginLeft: totalRevenue > 0 ? '8px' : 'auto'}} />
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="column-progress-bar" style={{ display: 'flex', height: '4px', width: '100%', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#e2e8f0', marginTop: '8px' }}>
+                      {greenPct > 0 && <div style={{width: `${greenPct}%`, backgroundColor: '#22c55e'}} title={`Cần làm: ${todoCount}`}></div>}
+                      {yellowPct > 0 && <div style={{width: `${yellowPct}%`, backgroundColor: '#eab308'}} title={`Hôm nay: ${todayCount}`}></div>}
+                      {redPct > 0 && <div style={{width: `${redPct}%`, backgroundColor: '#ef4444'}} title={`Trễ hạn: ${overdueCount}`}></div>}
+                    </div>
+                  </div>
+                  
+                  <Droppable droppableId={column.id}>
+                    {(provided, snapshot) => (
+                      <div className={`task-list ${snapshot.isDraggingOver ? 'dragging-over' : ''}`} ref={provided.innerRef} {...provided.droppableProps}>
+                        {tasks.map((task, index) => (
+                          <Draggable key={task.id} draggableId={task.id} index={index}>
+                            {(provided, snapshot) => (
+                              <div className={`task-card ${snapshot.isDragging ? 'is-dragging' : ''}`} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => navigate(`/opportunity/edit/${task.id}`)} style={{ ...provided.draggableProps.style, cursor: 'pointer', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ fontSize: '15px', fontWeight: 600, color: '#0f172a' }}>{task.content}</div>
+                                {task.revenue && task.revenue !== '0 ₫' && <div style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>{task.revenue}</div>}
+                                {task.company && <div style={{ fontSize: '13px', color: '#64748b' }}>{task.company}</div>}
+                                
+                                <div className="task-tags" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
+                                  {(task.tags || []).length > 0 
+                                     ? (task.tags || []).map((tag, i) => <span key={i} className="tag" style={{ backgroundColor: tag.color || '#e2e8f0', color: tag.textCol || '#334155', fontSize: '11px', padding: '2px 8px', borderRadius: '12px' }}>{tag.text}</span>)
+                                     : <span className="tag" style={{ backgroundColor: '#fed7aa', color: '#ea580c', fontSize: '11px', padding: '2px 8px', borderRadius: '12px' }}>Lead mới</span>}
+                                </div>
+                                
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    {renderStars(task.probability)}
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                      {(() => {
+                                          const uncompletedTasks = task.tasks ? task.tasks.filter(t => t.status !== 'done') : [];
+                                          const grouped = uncompletedTasks.reduce((acc, t) => {
+                                            acc[t.type] = [...(acc[t.type] || []), t];
+                                            return acc;
+                                          }, {});
+                                          return Object.entries(grouped).map(([type, tasksOfType]) => {
+                                             const count = tasksOfType.length;
+                                             const badge = count > 1 ? <div style={{position: 'absolute', bottom: -6, right: -8, background: '#ef4444', color: 'white', fontSize: '9px', borderRadius: '50%', width: '13px', height: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', zIndex: 10}}>{count}</div> : (tasksOfType[0]?.status === 'overdue' ? <div style={{position: 'absolute', bottom: -6, right: -8, background: '#ef4444', color: 'white', fontSize: '9px', borderRadius: '50%', width: '13px', height: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', zIndex: 10}}>1</div> : null);
+                                             
+                                             const popoverContent = renderPopoverTasks(tasksOfType);
+
+                                             if (type === 'mail') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Mail size={16} color={tasksOfType.some(t => t.status === 'overdue' || t.status === 'today') ? "#16a34a" : "#94a3b8"} />{badge}{popoverContent}</div>;
+                                             if (type === 'phone') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Phone size={16} color={tasksOfType.some(t => t.status === 'overdue' || t.status === 'today') ? "#16a34a" : "#94a3b8"} />{badge}{popoverContent}</div>;
+                                             if (type === 'meeting') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Calendar size={16} color={tasksOfType.some(t => t.status === 'overdue') ? '#ef4444' : (tasksOfType.some(t => t.status === 'today') ? '#eab308' : '#94a3b8')} />{badge}{popoverContent}</div>;
+                                             return null;
+                                          });
+                                      })()}
+                                      
+                                      <div className="task-popover-container" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', fontWeight: 500, marginLeft: '4px' }}>
+                                        <CheckCircle2 size={14} color={task.tasks && task.tasks.filter(t => t.status === 'done').length === task.tasks.length && task.tasks.length > 0 ? "#16a34a" : "#94a3b8"} />
+                                        {task.tasks ? task.tasks.filter(t => t.status === 'done').length : 0}/{task.tasks?.length || 0}
+                                        {renderPopoverTasks(task.tasks)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="avatar-circle" style={{backgroundColor: '#6366f1', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%'}} title={task.salesperson}>
+                                    {getInitials(task.salesperson)}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </div>
+              );
+            })}
+          </div>
+        </DragDropContext>
+      ) : (
+        <>
+        {/* --- MULTI-FEATURE LIST VIEW (FRAME 2) --- */}
+        <div className="list-view-container" style={{overflow: 'auto', backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', marginBottom: '16px'}}>
+          <table className="list-view-table" style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px', whiteSpace: 'nowrap'}}>
+            <thead>
+              <tr>
+                <th style={{position: 'sticky', top: 0, zIndex: 6, backgroundColor: '#FFFFFF', padding: '16px 12px', fontWeight: 700, color: '#000000', borderBottom: '1px solid #E5E7EB', borderTop: '1px solid #E5E7EB', width: '40px', textAlign: 'center'}}>
+                   <input 
+                     type="checkbox" 
+                     checked={paginatedData.length > 0 && selectedRows.length === paginatedData.length} 
+                     onChange={(e) => {
+                       if(e.target.checked) setSelectedRows(paginatedData.map(t => t.id));
+                       else setSelectedRows([]);
+                     }}
+                   />
+                </th>
+                {ALL_COLUMNS.filter(col => visibleColumns.includes(col.key)).map(col => (
+                  <th key={col.key} style={{position: 'sticky', top: 0, zIndex: col.key === activeFilterCol ? 6 : 5}}>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                      <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flex: 1}} onClick={() => handleSort(col.key)}>
+                        {col.label}
+                        <div style={{display: 'flex', flexDirection: 'column', marginLeft: '6px', color: sortConfig.key === col.key ? '#0f172a' : '#cbd5e1'}}>
+                          <ChevronUp size={12} style={{marginBottom: '-4px', opacity: sortConfig.key === col.key && sortConfig.direction === 'desc' ? 0.3 : 1}} />
+                          <ChevronDown size={12} style={{opacity: sortConfig.key === col.key && sortConfig.direction === 'asc' ? 0.3 : 1}} />
+                        </div>
+                      </div>
+                      <div className="filter-trigger" onClick={(e) => { e.stopPropagation(); setActiveFilterCol(activeFilterCol === col.key ? null : col.key); }} style={{cursor: 'pointer', color: (filters[col.key] && filters[col.key].length > 0) ? '#16a34a' : '#94a3b8'}}>
+                        <Filter size={14} />
+                      </div>
+                    </div>
+
+                    {/* Filter Popup Window */}
+                    {activeFilterCol === col.key && (
+                      <div className="column-filter-popup" onClick={e => e.stopPropagation()} style={{position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '180px'}}>
+                        <div style={{padding: '8px', borderBottom: '1px solid #e2e8f0', fontWeight: 600, fontSize: '12px', color: '#334155'}}>Lọc: {col.label}</div>
+                        <div style={{maxHeight: '200px', overflowY: 'auto', padding: '8px'}}>
+                           {getDistinctValues(col.key).map(val => (
+                             <label key={val} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '4px 0', cursor: 'pointer'}}>
+                               <input type="checkbox" checked={filters[col.key]?.includes(val) || false} onChange={() => handleFilterChange(col.key, val)}/>
+                               {val}
+                             </label>
+                           ))}
+                           {getDistinctValues(col.key).length === 0 && <div style={{fontSize: '12px', color: '#94a3b8', fontStyle: 'italic'}}>Không có dữ liệu</div>}
+                        </div>
+                      </div>
+                    )}
+                  </th>
+                ))}
+                
+                <th style={{position: 'sticky', top: 0, zIndex: 6, backgroundColor: '#FFFFFF', padding: '16px 12px', borderBottom: '1px solid #E5E7EB', borderTop: '1px solid #E5E7EB', width: '40px', textAlign: 'center'}} onClick={(e) => { e.stopPropagation(); setShowColPicker(!showColPicker); }}>
+                  <SlidersHorizontal size={16} color="#94a3b8" style={{cursor: 'pointer'}} />
+                  {showColPicker && (
+                    <div className="column-picker-popup" onClick={e => e.stopPropagation()} style={{position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '150px', padding: '8px', fontWeight: 'normal', textAlign: 'left'}}>
+                      <div style={{marginBottom: '8px', fontWeight: 600, fontSize: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', color: '#1e293b'}}>Hiển thị cột</div>
+                      <div style={{maxHeight: '300px', overflowY: 'auto'}}>
+                        {ALL_COLUMNS.map(col => (
+                          <label key={col.key} style={{display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0', fontSize: '13px', cursor: 'pointer', color: '#334155'}}>
+                            <input 
+                              type="checkbox" 
+                              checked={visibleColumns.includes(col.key)}
+                              onChange={() => {
+                                if (visibleColumns.includes(col.key)) {
+                                  setVisibleColumns(visibleColumns.filter(c => c !== col.key));
+                                } else {
+                                  const newCols = [...visibleColumns, col.key];
+                                  setVisibleColumns(ALL_COLUMNS.map(c => c.key).filter(k => newCols.includes(k)));
+                                }
+                              }}
+                            />
+                            {col.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.length > 0 ? paginatedData.map(task => (
+                <tr key={task.id} style={{cursor: 'pointer', transition: 'background-color 0.2s'}} onClick={() => navigate(`/opportunity/edit/${task.id}`)} className={selectedRows.includes(task.id) ? "row-selected" : "list-row-hover"}>
+                  <td style={{textAlign: 'center'}} onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" checked={selectedRows.includes(task.id)} onChange={(e) => {
+                       if(e.target.checked) setSelectedRows([...selectedRows, task.id]);
+                       else setSelectedRows(selectedRows.filter(id => id !== task.id));
+                    }}/>
+                  </td>
+                  
+                  {visibleColumns.includes('id') && <td style={{padding: '12px 16px', fontWeight: 500, color: '#2563eb'}}>{task.id}</td>}
+                  {visibleColumns.includes('content') && <td style={{padding: '12px 16px', color: '#0f172a', fontWeight: 500}}>{task.content}</td>}
+                  {visibleColumns.includes('company') && <td style={{padding: '12px 16px'}}>{task.company}</td>}
+                  {visibleColumns.includes('mst') && <td style={{padding: '12px 16px'}}>{task.mst}</td>}
+                  {visibleColumns.includes('contactName') && <td style={{padding: '12px 16px'}}>{task.contactName}</td>}
+                  {visibleColumns.includes('email') && <td style={{padding: '12px 16px', color: '#64748b'}}>{task.email}</td>}
+                  {visibleColumns.includes('district') && <td style={{padding: '12px 16px'}}>{task.district}</td>}
+                  {visibleColumns.includes('ward') && <td style={{padding: '12px 16px'}}>{task.ward}</td>}
+                  {visibleColumns.includes('city') && <td style={{padding: '12px 16px'}}>{task.city}</td>}
+                  {visibleColumns.includes('projectedService') && <td style={{padding: '12px 16px'}}>{task.projectedService}</td>}
+                  {visibleColumns.includes('assignedPartner') && <td style={{padding: '12px 16px'}}>{task.assignedPartner}</td>}
+                  
+                  {visibleColumns.includes('status') && (
+                    <td style={{padding: '12px 16px'}} onClick={(e) => e.stopPropagation()}>
+                      <select 
+                        style={{ backgroundColor: data.columns.find(c => c.title === task.status)?.color || '#94a3b8', color: 'white', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, border: 'none', outline: 'none', cursor: 'pointer' }}
+                        value={task.status}
+                        onChange={(e) => {
+                           const newStatus = e.target.value;
+                           if (task.status === 'Đánh giá nhu cầu' && newStatus === 'Đang báo giá' && parseInt(task.attachments || 0) === 0) {
+                              alert('Cần upload ít nhất 1 tài liệu ở màn hình chi tiết mới có thể chuyển sang trạng thái Đang báo giá.');
+                              e.target.value = task.status;
+                              return;
+                           }
+                           mockStore.updateOppStatus(task.id, newStatus);
+                           const st = mockStore.getStore();
+                           setData({columns: st.oppColumns, tasks: st.oppTasks});
+                        }}
+                      >
+                        {data.columns.filter(c => c.title === task.status || getAllowedTransitions(task.status).includes(c.title)).map(c => <option key={c.id} value={c.title} style={{color: 'black', background: 'white'}}>{c.title}</option>)}
+                      </select>
+                    </td>
+                  )}
+                  {visibleColumns.includes('revenue') && <td style={{padding: '12px 16px', fontWeight: 500}}>{task.revenue}</td>}
+                  {visibleColumns.includes('probability') && <td style={{padding: '12px 16px'}}>{task.probability}</td>}
+                  {visibleColumns.includes('salesperson') && <td style={{padding: '12px 16px'}}>{task.salesperson}</td>}
+                  <td style={{textAlign: 'center'}}>
+                    {task.status === 'Mới' && (
+                      <span onClick={(e) => { e.stopPropagation(); navigate(`/opportunity/edit/${task.id}`); }} style={{cursor: 'pointer', color: '#64748b'}} title="Chỉnh sửa">
+                        ✏️
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={visibleColumns.length + 2} style={{padding: '30px', textAlign: 'center', color: '#64748b'}}>Không tìm thấy dữ liệu khớp lệnh trích xuất.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* FRAME 3: BOTTOM PAGINATION */}
+        {processedData.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', border: '1px solid #E2E8F0', background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <div style={{ color: '#64748b', fontSize: '13px' }}>
+              Hiển thị {totalItems > 0 ? (safeCurrentPage - 1) * pageSize + 1 : 0}-{Math.min(safeCurrentPage * pageSize, totalItems)} trong số {totalItems} cơ hội
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button onClick={() => setCurrentPage(p => p - 1)} disabled={safeCurrentPage === 1} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage === 1 ? 'default' : 'pointer', opacity: safeCurrentPage === 1 ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
+                &lt;
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => {
+                const page = i + 1;
+                if (page === 1 || page === totalPages || (page >= safeCurrentPage - 1 && page <= safeCurrentPage + 1)) {
+                  return (
+                    <button key={page} onClick={() => setCurrentPage(page)} style={{ border: 'none', background: page === safeCurrentPage ? '#e32b4c' : 'transparent', color: page === safeCurrentPage ? 'white' : '#64748b', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {page}
+                    </button>
+                  );
+                }
+                if (page === safeCurrentPage - 2 || page === safeCurrentPage + 2) {
+                  return <span key={page} style={{ color: '#64748b', letterSpacing: '2px', marginLeft: '4px', marginRight: '4px' }}>...</span>;
+                }
+                return null;
+              })}
+
+              <button onClick={() => setCurrentPage(p => p + 1)} disabled={safeCurrentPage >= totalPages} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage >= totalPages ? 'default' : 'pointer', opacity: safeCurrentPage >= totalPages ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
+                &gt;
+              </button>
+            </div>
+          </div>
+        )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export default OpportunityBoard;

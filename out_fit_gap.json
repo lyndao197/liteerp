@@ -1,0 +1,276 @@
+{
+  "Trang tính2": [
+    {
+      "Screen ": "Lead",
+      "Unnamed: 1": "Nhóm thông tin",
+      "Unnamed: 2": "Thông tin ",
+      "Unnamed: 3": "Bắt buộc ",
+      "Unnamed: 4": "Định dạng",
+      "Unnamed: 5": "Mô tả"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": "Thông tin chung lead",
+      "Unnamed: 2": "ID lead",
+      "Unnamed: 3": "onlyview, can't edit",
+      "Unnamed: 4": "label",
+      "Unnamed: 5": "only view, dạng Viết tắt khách hàng - 5 số"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Tên lead",
+      "Unnamed: 3": "Bắt buộc ",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "Cho phép nhập tiếng việt"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Loại dự án",
+      "Unnamed: 3": "Bắt buộc ",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Loại dự án khai báo trong category Chọn các loại dự án như: Dịch vụ outsourcing,..."
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Dịch vụ dự kiến hợp tác",
+      "Unnamed: 3": "Bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Dịch vụ được khai báo trong sản phẩm"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Probability (%)",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "Tự nhập khả năng được lead này"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Priority",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Hình sao, max 3 sao"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Internal note",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "Cho phép nhập tiếng việt"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Chi tiết dịch vụ",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "được khai báo trong variant sản phẩm, có số lượng và tên dịch vụ chi tiết, đơn giá 1 dịch vụ"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Tổng đơn giá",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Label",
+      "Unnamed: 5": "Tổng tổng đơn giá của tất cả dịch vụ"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Doanh thu dự kiến",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "Default = tổng đơn giá, có thể cập nhật"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Đầu mối nghiệp vụ/vận hành/CNTT VCX",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Chọn đầu mối nghiệp vụ vận hành"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Đơn vị xúc tiến",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Giá trị trong combobox: Phòng bán hàng, phòng sản phẩm,..."
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Assign partner",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Chọn trong phần customer được đánh dấu là partner"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Sale person",
+      "Unnamed: 3": "onlyview, can't edit",
+      "Unnamed: 4": "Label",
+      "Unnamed: 5": "Người tạo "
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Lead tag",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Để trống, sau dựng phần tag thì có thể xem và chọn giá trị"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Lost reason",
+      "Unnamed: 3": "Bắt buộc khi click list",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": "Extra info",
+      "Unnamed: 2": "Ngày bắt đầu tiếp xúc",
+      "Unnamed: 3": "onlyview, can't edit",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "default: thời điểm vào màn tạo lead, có thể thay đổi. Cho phép chọn tháng hoặc cả tháng và ngày"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Nguồn tiếp cận ",
+      "Unnamed: 3": "Bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Giá trị trong combobox: giới thiệu, marketing, landing page, tự tiếp cận"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Reference by",
+      "Unnamed: 3": "bắt buộc nếu chọn nguồn tiếp cận = giới thiệu",
+      "Unnamed: 4": "Textbox",
+      "Unnamed: 5": "Cho phép nhập tiếng Việt"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Tháng dự kiến phát hành HSMT",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Tháng dự kiến ký Hợp đồng",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": NaN,
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": "Thông tin khách hàng",
+      "Unnamed: 2": "Tên khách hàng",
+      "Unnamed: 3": "Bắt buộc ",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": "Cho phép nhập tiếng việt, suggestion dựa trên số điện thoại, mst, tên khách hàng đã tạo trước đó. Định dạng Hiển thị định dạng \"Tên viết tắt - Tên đầy đủ\""
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Phân loại khách hàng",
+      "Unnamed: 3": "Bắt buộc",
+      "Unnamed: 4": "radio button",
+      "Unnamed: 5": "Nội bộ, doanh nghiệp"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "MST",
+      "Unnamed: 3": "Bắt buộc",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Lĩnh vực của khách hàng",
+      "Unnamed: 3": "Bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Giá trị trong combobox: bất động sản, tài chính,..."
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Địa chỉ",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox,textbox",
+      "Unnamed: 5": "Textbox với địa chỉ chi tiết, combobox với quận huyện phường xã thành phố "
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Website",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "textbox",
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "customer tag",
+      "Unnamed: 3": "Không bắt buộc",
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": "Để trống, sau dựng phần tag thì có thể xem và chọn giá trị"
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": "Thông tin liên hệ khách hàng, 1 khách hàng có thể có nhiều liên hệ",
+      "Unnamed: 2": "Tên liên hệ",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Số điện thoại liên hệ",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Vị trí trong công ty ",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": "Combobox",
+      "Unnamed: 5": NaN
+    },
+    {
+      "Screen ": NaN,
+      "Unnamed: 1": NaN,
+      "Unnamed: 2": "Trạng thái hoạt động",
+      "Unnamed: 3": NaN,
+      "Unnamed: 4": NaN,
+      "Unnamed: 5": "Active,inactive"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+.sidebar {
+  width: 280px;
+  background-color: #FFFFFF;
+  color: #44494D;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 0px;
+  gap: 15px;
+  border-right: 1px solid #E2E8F0;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.logo-icon {
+  background-color: #EE0033;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.logo-text {
+  color: #191C1D;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 280px;
+}
+
+.group-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px 24px;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'FS PF BeauSans Pro', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #828588;
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+.group-title svg {
+  display: none; /* Hide icon horizontally in Figma design for group titles */
+}
+
+.nav-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 24px;
+  gap: 12px;
+  width: 280px;
+  height: 40px;
+  cursor: pointer;
+  font-family: 'FS PF BeauSans Pro', 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #44494D;
+  transition: all 0.2s ease;
+  border-right: 2px solid transparent;
+}
+
+.nav-item:hover:not(.active) {
+  background-color: rgba(241, 245, 249, 0.5); /* subtle hover */
+}
+
+.nav-item.active {
+  background-color: rgba(254, 242, 242, 0.5);
+  border-right: 2px solid #EE0033;
+  color: #EE0033;
+  font-weight: 600;
+}
+
+.nav-item svg {
+  color: #44494D;
+}
+.nav-item.active svg {
+  color: #EE0033;
+}
+
+.mvp-badge {
+  background-color: #EE0033;
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: auto;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  display: inline-block;
+}

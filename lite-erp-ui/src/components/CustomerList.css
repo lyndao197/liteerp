@@ -1,0 +1,263 @@
+.customer-list-container {
+  padding: 24px;
+}
+
+.customer-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.metric-card {
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-action-primary {
+  transition: all 0.2s ease;
+}
+
+.btn-action-primary:hover {
+  background: #2563eb !important;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.view-switcher {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background: white;
+  color: #e32b4c;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* GRID VIEW */
+.customer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.customer-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.customer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+}
+
+.card-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.customer-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e32b4c;
+  font-weight: 700;
+  font-size: 18px;
+  border: 1px solid #e2e8f0;
+}
+
+.customer-basic-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.customer-type-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.card-footer {
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contract-no {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.status-active {
+  color: #059669;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* TABLE VIEW - Lead-like structure */
+.customer-table-container {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  overflow: auto;
+  flex: 1;
+  max-height: calc(100vh - 220px);
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.customer-table th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #FFFFFF;
+  padding: 16px 12px;
+  font-weight: 700;
+  color: #000000;
+  border-bottom: 1px solid #E5E7EB;
+  border-top: 1px solid #E5E7EB;
+  cursor: pointer;
+}
+
+.customer-table td {
+  padding: 16px 12px;
+  color: #000000;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+/* ID Column Style */
+.customer-table td.id-col {
+  color: #000000;
+  font-weight: 400;
+}
+
+/* Zebra Striping */
+.customer-table tbody tr:nth-child(even) {
+  background-color: #FAFAFA;
+}
+
+.customer-table tr.row-selected {
+  background: #fdf2f2;
+}
+
+.customer-table tr:hover {
+  background: #f1f5f9;
+  cursor: pointer;
+}
+
+/* Filter Popup (matching KanbanBoard) */
+.column-filter-popup {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  min-width: 180px;
+  text-align: left;
+  font-weight: normal;
+}
+
+.customer-table th input[type="checkbox"],
+.customer-table td input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+}
+
+.btn-primary {
+  background: #e32b4c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #c22541;
+}
