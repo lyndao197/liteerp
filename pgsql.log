@@ -3,3 +3,12 @@
 2026-04-02 13:41:23.095 +07 [36804] LOG:  listening on IPv4 address "127.0.0.1", port 5432
 2026-04-02 13:41:23.140 +07 [25612] LOG:  database system was shut down at 2026-04-02 13:41:00 +07
 2026-04-02 13:41:23.225 +07 [36804] LOG:  database system is ready to accept connections
+2026-04-15 05:23:47.165 +07 [5644] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-15 05:23:47.169 +07 [5644] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-15 05:23:47.169 +07 [5644] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-15 05:23:47.205 +07 [9264] LOG:  database system was interrupted; last known up at 2026-04-02 14:56:57 +07
+2026-04-15 05:23:50.728 +07 [9264] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-04-15 05:23:50.731 +07 [9264] LOG:  redo starts at 0/58866A0
+2026-04-15 05:23:50.731 +07 [9264] LOG:  invalid record length at 0/5886788: wanted 24, got 0
+2026-04-15 05:23:50.731 +07 [9264] LOG:  redo done at 0/5886750 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-04-15 05:23:50.762 +07 [5644] LOG:  database system is ready to accept connections

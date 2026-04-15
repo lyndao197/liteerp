@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import './KanbanBoard.css'; // Inheritamos base styles
 import './ActivityBoard.css'; // Specific styles
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Calendar, List, Columns, Clock, AlertCircle, CheckCircle2, Filter, Star, Phone, Mail, ChevronUp, ChevronDown, SlidersHorizontal, Download, Upload, Edit2, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
+import { Search, Calendar, List, Columns, Clock, AlertCircle, CheckCircle2, Filter, ChevronUp, ChevronDown, SlidersHorizontal, Download, Edit2, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { QueryBuilder } from './QueryBuilder';
 import { evaluateQuery } from '../utils/filterUtils';
 import { mockStore } from '../utils/mockStore';
@@ -10,16 +10,17 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import * as XLSX from 'xlsx';
 
 const ALL_COLUMNS = [
+  { key: 'id', label: 'ID công việc' },
   { key: 'title', label: 'Tên nhiệm vụ' },
-  { key: 'entity', label: 'Liên quan tới' },
+  { key: 'assignee', label: 'Người được giao' },
   { key: 'dueDate', label: 'Hạn chót' },
   { key: 'priority', label: 'Độ ưu tiên' },
+  { key: 'source', label: 'Nguồn' },
   { key: 'status', label: 'Trạng thái' }
 ];
 
 function ActivityBoard() {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
   const [viewMode, setViewMode] = useState('kanban'); // 'kanban' or 'list'
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
@@ -47,6 +48,7 @@ function ActivityBoard() {
   const currentColumns = [
     { id: 'todo', title: 'Mới', color: '#64748b' },
     { id: 'processing', title: 'Đang thực hiện', color: '#3b82f6' },
+    { id: 'cancelled', title: 'Hủy', color: '#ef4444' },
     { id: 'done', title: 'Hoàn thành', color: '#22c55e' },
   ];
 
@@ -61,16 +63,16 @@ function ActivityBoard() {
   };
 
   const [activityList, setActivityList] = useState([
-    { id: 1, title: 'Gọi điện xác nhận nhu cầu', activityType: 'phone', entity: 'Lead: Nguyễn Văn A', company: 'Acme Corp', revenue: '24,000,000 ₫', probability: '80', dueDate: '2026-04-09', priority: 'high', status: 'todo', tasks: [] },
-    { id: 2, title: 'Gửi báo giá sản phẩm CRM', activityType: 'mail', entity: 'Opportunity: Cty ABC', company: 'ABC Logistics', revenue: '50,000,000 ₫', probability: '50', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 3, title: 'Chúc mừng sinh nhật khách hàng', activityType: 'phone', entity: 'Khách hàng: Trần Thị B', company: '', revenue: '', probability: '', dueDate: '2026-04-10', priority: 'normal', status: 'done', tasks: [] },
-    { id: 4, title: 'Demo hệ thống ERP', activityType: 'meeting', entity: 'Lead: Trần Văn C', company: 'Data Inc', revenue: '15,000,000 ₫', probability: '40', dueDate: '2026-04-12', priority: 'normal', status: 'todo', tasks: [] },
-    { id: 5, title: 'Tư vấn phần mềm quản lý', activityType: 'meeting', entity: 'Lead: Lê Thị B', company: 'Tech VN', revenue: '50,000,000 ₫', probability: '60', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 6, title: 'Khảo sát quy trình nghiệp vụ', activityType: 'meeting', entity: 'Cơ hội: Cty X', company: 'X Corp', revenue: '100,000,000 ₫', probability: '20', dueDate: '2026-04-15', priority: 'low', status: 'todo', tasks: [] },
-    { id: 7, title: 'Gửi tài liệu giới thiệu giải pháp', activityType: 'mail', entity: 'Lead: Phạm D', company: 'Global Ltd', revenue: '0 ₫', probability: '10', dueDate: '2026-04-08', priority: 'low', status: 'done', tasks: [] },
-    { id: 8, title: 'Đàm phán hợp đồng cung cấp', activityType: 'meeting', entity: 'Cơ hội: Cty Y', company: 'Y Group', revenue: '200,000,000 ₫', probability: '90', dueDate: '2026-04-11', priority: 'high', status: 'todo', tasks: [] },
-    { id: 9, title: 'Follow-up khách hàng sau demo', activityType: 'phone', entity: 'Lead: Hoàng E', company: 'Soft Co', revenue: '30,000,000 ₫', probability: '70', dueDate: '2026-04-13', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 10, title: 'Ký kết hợp đồng triển khai', activityType: 'meeting', entity: 'Cơ hội: Cty Z', company: 'Z Solutions', revenue: '500,000,000 ₫', probability: '100', dueDate: '2026-04-14', priority: 'high', status: 'done', tasks: [] }
+    { id: 1, title: 'Gọi điện xác nhận nhu cầu', activityType: 'phone', assignee: 'Hung NV', source: 'Lead Công ty Viettel Post', company: 'Acme Corp', revenue: '24,000,000 ₫', probability: '80', dueDate: '2026-04-09', priority: 'high', status: 'todo', tasks: [] },
+    { id: 2, title: 'Gửi báo giá sản phẩm CRM', activityType: 'mail', assignee: 'admin', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'ABC Logistics', revenue: '50,000,000 ₫', probability: '50', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
+    { id: 3, title: 'Chúc mừng sinh nhật khách hàng', activityType: 'phone', assignee: 'Phuong NT', source: 'Lead Khách hàng: Trần Thị B', company: '', revenue: '', probability: '', dueDate: '2026-04-10', priority: 'normal', status: 'done', tasks: [] },
+    { id: 4, title: 'Demo hệ thống ERP', activityType: 'meeting', assignee: 'Quan VM', source: 'Dự án phần mềm KnowxHub', company: 'Data Inc', revenue: '15,000,000 ₫', probability: '40', dueDate: '2026-04-12', priority: 'normal', status: 'todo', tasks: [] },
+    { id: 5, title: 'Tư vấn phần mềm quản lý', activityType: 'meeting', assignee: 'Hung NV', source: 'Lead Công ty Viettel Post', company: 'Tech VN', revenue: '50,000,000 ₫', probability: '60', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
+    { id: 6, title: 'Khảo sát quy trình nghiệp vụ', activityType: 'meeting', assignee: 'admin', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'X Corp', revenue: '100,000,000 ₫', probability: '20', dueDate: '2026-04-15', priority: 'low', status: 'todo', tasks: [] },
+    { id: 7, title: 'Gửi tài liệu giới thiệu giải pháp', activityType: 'mail', assignee: 'Phuong NT', source: 'Dự án phần mềm KnowxHub', company: 'Global Ltd', revenue: '0 ₫', probability: '10', dueDate: '2026-04-08', priority: 'low', status: 'cancelled', tasks: [] },
+    { id: 8, title: 'Đàm phán hợp đồng cung cấp', activityType: 'meeting', assignee: 'Quan VM', source: 'Lead Công ty Viettel Post', company: 'Y Group', revenue: '200,000,000 ₫', probability: '90', dueDate: '2026-04-11', priority: 'high', status: 'todo', tasks: [] },
+    { id: 9, title: 'Follow-up khách hàng sau demo', activityType: 'phone', assignee: 'Hung NV', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'Soft Co', revenue: '30,000,000 ₫', probability: '70', dueDate: '2026-04-13', priority: 'normal', status: 'processing', tasks: [] },
+    { id: 10, title: 'Ký kết hợp đồng triển khai', activityType: 'meeting', assignee: 'admin', source: 'Dự án phần mềm KnowxHub', company: 'Z Solutions', revenue: '500,000,000 ₫', probability: '100', dueDate: '2026-04-14', priority: 'high', status: 'done', tasks: [] }
   ]);
 
   const onDragEnd = (result) => {
@@ -180,20 +182,19 @@ function ActivityBoard() {
     XLSX.writeFile(workbook, "Activities_Export.xlsx");
   };
 
-  const triggerImport = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
-  };
-
-  const handleImport = (e) => {
-    alert("Tính năng nhập dữ liệu đang được phát triển.");
-    e.target.value = null; // reset
-  };
-
   const getDueDateStyle = (dueDate) => {
     if (!dueDate) return { color: '#64748b', borderColor: '#cbd5e1', backgroundColor: '#f8fafc' };
     if (dueDate < '2026-04-10') return { color: '#ef4444', borderColor: '#ef4444', backgroundColor: '#fef2f2' };
     if (dueDate === '2026-04-10') return { color: '#ca8a04', borderColor: '#fef08a', backgroundColor: '#fef9c3' };
     return { color: '#16a34a', borderColor: '#bbf7d0', backgroundColor: '#f0fdf4' };
+  };
+
+  const getPriorityLabel = (priority) => {
+    if (priority === 'critical') return 'Rất gấp';
+    if (priority === 'high') return 'Gấp';
+    if (priority === 'normal') return 'Bình thường';
+    if (priority === 'low') return 'Thấp';
+    return '';
   };
 
   const getStatusBadge = (activity) => {
@@ -203,47 +204,14 @@ function ActivityBoard() {
     return null;
   };
 
-  const renderStars = (probability) => {
-    const probInt = parseInt(probability || '0');
-    let stars = 1;
-    if (probInt > 70) stars = 3;
-    else if (probInt > 30) stars = 2;
-    return (
-      <div style={{display: 'flex', gap: '4px'}}>
-        <Star size={16} fill={stars >= 1 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-        <Star size={16} fill={stars >= 2 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-        <Star size={16} fill={stars >= 3 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-      </div>
-    );
+  const getInitials = (name) => {
+    if (!name) return '?';
+    const parts = String(name).trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const renderPopoverTasks = (tasksList) => {
-    if (!tasksList || tasksList.length === 0) return null;
-    return (
-      <div className="task-popover" style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '8px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '6px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '220px', cursor: 'default' }}>
-        {tasksList.map(t => (
-          <div key={t.id} style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid #f1f5f9', padding: '8px 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <div style={{display: 'flex', alignItems: 'center', gap: '6px', fontWeight: t.status === 'done' ? 500 : 600, color: t.status === 'done' ? '#cbd5e1' : (t.status === 'todo' ? '#22c55e' : t.status === 'today' ? '#eab308' : '#ef4444'), textDecoration: t.status === 'done' ? 'line-through' : 'none', fontSize: '13px'}}>
-                {t.type === 'phone' && <Phone size={14} color="currentColor" />}
-                {t.type === 'mail' && <Mail size={14} color="currentColor" />}
-                {t.type === 'meeting' && <Calendar size={14} color="currentColor" />}
-                <span>{t.title}</span>
-              </div>
-              <div style={{display: 'flex', gap: '8px'}}>
-                 <span style={{cursor: 'pointer', color: '#94a3b8', fontSize: '12px'}}>✏️</span>
-                 <span style={{cursor: 'pointer', color: t.status === 'done' ? '#16a34a' : '#64748b', fontSize: '12px'}}>✅</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b' }}>
-               <div style={{ width: '16px', height: '16px', borderRadius: '4px', backgroundColor: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 'bold' }}>M</div>
-               <span>Mitchell Admin</span>
-             </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  // Kanban: intentionally avoid decorative icons (stars/activity-type).
 
   return (
     <div className="activity-board kanban-container" onClick={() => setActiveFilterCol(null)}>
@@ -309,8 +277,8 @@ function ActivityBoard() {
          return (
            <div className="kanban-header" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}>
              <div style={{ textAlign: 'left', width: '100%' }}>
-               <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Danh sách công việc</h1>
-               <p style={{ color: '#64748b', fontSize: '14px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>Quản lý chi tiết các công việc và hoạt động</p>
+               <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý công việc cá nhân</h1>
+               <p style={{ color: '#64748b', fontSize: '14px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>Danh sách và theo dõi công việc cá nhân</p>
              </div>
              
             <div className="metrics-cards-container" style={{ width: '100%' }}>
@@ -397,16 +365,9 @@ function ActivityBoard() {
 
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="btn-outline-brand" onClick={() => navigate('/activity/new')} style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-              <Plus size={18} /> Thêm công việc
-            </button>
             <button className="btn-outline-brand" onClick={handleExport} title="Xuất dữ liệu" style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
               <Download size={18} /> Xuất Excel
             </button>
-            <button className="btn-outline-brand" onClick={triggerImport} title="Nhập dữ liệu" style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-              <Upload size={18} /> Nhập Excel
-            </button>
-            <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".xlsx, .xls, .csv" onChange={handleImport} />
           </div>
 
           <div className="view-switcher" style={{ background: '#EFEDED', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
@@ -452,7 +413,6 @@ function ActivityBoard() {
                     <div style={{display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1, width: '100%', marginBottom: '0'}}>
                       <div className="column-count" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2e8f0', borderRadius: '8px', width: '24px', height: '24px', color: '#545454', fontSize: '14px', fontWeight: 700, flexShrink: 0, backgroundColor: 'transparent' }}>{columnTasks.length}</div>
                       <h3 className="column-title" style={{ margin: 0, flexShrink: 0, color: '#545454', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase' }}>{col.title}</h3>
-                      <Plus size={20} className="add-task-icon" onClick={() => navigate('/activity/new')} style={{cursor: 'pointer', flexShrink: 0, color: '#545454', marginLeft: 'auto'}} />
                     </div>
                   <div className="column-progress-bar" style={{ display: 'flex', height: '4px', width: '100%', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#e2e8f0', marginTop: '8px' }}>
                     {greenPct > 0 && <div style={{width: `${greenPct}%`, backgroundColor: '#22c55e'}} title={`Chưa đến hạn: ${futureCount}`}></div>}
@@ -477,26 +437,41 @@ function ActivityBoard() {
                                 onClick={() => navigate(`/activity/edit/${activity.id}`)}
                               >
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div className="card-title" title={activity.title}>{activity.title}</div>
-                                    <div style={{ color: '#64748b', display: 'flex', alignItems: 'center' }}>
-                                       {activity.activityType === 'phone' && <Phone size={16} />}
-                                       {activity.activityType === 'mail' && <Mail size={16} />}
-                                       {activity.activityType === 'meeting' && <Calendar size={16} />}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                      <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '999px', flexShrink: 0 }}>
+                                        #{activity.id}
+                                      </span>
+                                      <div className="card-title" title={activity.title} style={{ minWidth: 0 }}>{activity.title}</div>
                                     </div>
+                                    <div />
                                   </div>
-                                  <div className="card-subtitle" style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                                    <span style={{ fontWeight: 500 }}>Liên kết:</span> {activity.entity}
-                                    {activity.company && ` - ${activity.company}`}
+                                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                      <span style={{ fontWeight: 600, color: '#475569' }}>Người được giao:</span>
+                                      <span>{activity.assignee || '-'}</span>
+                                      {activity.source && (
+                                        <>
+                                          <span style={{ color: '#cbd5e1' }}>•</span>
+                                          <span style={{ fontWeight: 600, color: '#475569' }}>Nguồn:</span>
+                                          <span title={activity.source} style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {activity.source}
+                                          </span>
+                                        </>
+                                      )}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                                      <span style={{ fontWeight: 600, color: '#475569' }}>Độ ưu tiên:</span>
+                                      <span>{getPriorityLabel(activity.priority) || '-'}</span>
+                                    </div>
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', borderTop: '1px dashed #f1f5f9', paddingTop: '8px' }}>
                                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                      {renderStars(activity.probability)}
                                       <div style={{ ...getDueDateStyle(activity.dueDate), borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid' }}>
                                          <Calendar size={12} /> {activity.dueDate}
                                       </div>
                                     </div>
                                     <div className="avatar-circle" style={{ backgroundColor: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>
-                                      U
+                                      {getInitials(activity.assignee)}
                                     </div>
                                   </div>
                               </div>
@@ -600,6 +575,7 @@ function ActivityBoard() {
                     }}/>
                   </td>
                   
+                  {visibleColumns.includes('id') && <td style={{ fontWeight: 700, color: '#0f172a' }}>#{activity.id}</td>}
                   {visibleColumns.includes('title') && (
                     <td style={{ fontWeight: 500 }}>
                       {activity.title} 
@@ -607,20 +583,23 @@ function ActivityBoard() {
                       {activity.isOverdue && <span className="badge overdue" style={{ marginLeft: 8 }}>Trễ hạn</span>}
                     </td>
                   )}
-                  {visibleColumns.includes('entity') && <td>{activity.entity}</td>}
+                  {visibleColumns.includes('assignee') && <td>{activity.assignee || '-'}</td>}
                   {visibleColumns.includes('dueDate') && <td>{activity.dueDate}</td>}
                   {visibleColumns.includes('priority') && (
                     <td>
                       {activity.priority === 'critical' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#ef4444'}}></div> <span>Rất gấp</span></div>}
                       {activity.priority === 'high' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#eab308'}}></div> <span>Gấp</span></div>}
-                      {(activity.priority === 'normal' || activity.priority === 'low' || !activity.priority) && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#22c55e'}}></div> <span>Bình thường</span></div>}
+                      {activity.priority === 'low' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#94a3b8'}}></div> <span>Thấp</span></div>}
+                      {(activity.priority === 'normal' || !activity.priority) && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#22c55e'}}></div> <span>Bình thường</span></div>}
                     </td>
                   )}
+                  {visibleColumns.includes('source') && <td title={activity.source || ''}>{activity.source || '-'}</td>}
                   {visibleColumns.includes('status') && (
                     <td>
                       {activity.status === 'todo' && <span className="status-badge" style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Mới</span>}
                       {activity.status === 'processing' && <span className="status-badge" style={{ backgroundColor: '#dbeafe', color: '#1d4ed8', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Đang thực hiện</span>}
                       {activity.status === 'done' && <span className="status-badge" style={{ backgroundColor: '#dcfce3', color: '#166534', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Hoàn thành</span>}
+                      {activity.status === 'cancelled' && <span className="status-badge" style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Hủy</span>}
                     </td>
                   )}
                   <td style={{ textAlign: 'center' }}>

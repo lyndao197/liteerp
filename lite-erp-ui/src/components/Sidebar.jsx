@@ -66,7 +66,7 @@ function Sidebar() {
           </div>
           <div className={`nav-item ${location.pathname === '/activities' ? 'active' : ''}`} onClick={() => navigate('/activities')}>
             <Kanban size={20} />
-            <span>Quản lý công việc</span>
+            <span>Quản lý công việc cá nhân</span>
             <span className="mvp-badge">MVP</span>
           </div>
           <div className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`} onClick={() => navigate('/goals')}>
