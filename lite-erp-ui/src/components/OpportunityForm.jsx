@@ -52,6 +52,7 @@ const INITIAL_FORM_STATE = {
   issueMonth: '',
   addressDetail: '', province: '', district: '', ward: '',
   logicLeadLost: false,
+  leadTag: '',
 };
 
 // --- MAIN COMPONENT ---
@@ -65,6 +66,7 @@ const OpportunityForm = () => {
 
   // FORM DATA (Flatten basic fields for easy tracking)
   const [formData, setFormData] = useState({ ...INITIAL_FORM_STATE });
+  const [selectedExpectedServices, setSelectedExpectedServices] = useState([]);
   const [snapshotData, setSnapshotData] = useState({ ...INITIAL_FORM_STATE });
 
   // COMPLEX DATA LISTS
@@ -179,7 +181,7 @@ const OpportunityForm = () => {
       return [opp.id, `"${opp.content}"`, `"${opp.company}"`, opp.mst, opp.contactName || '', opp.email || ''];
     });
 
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(",") + "\\n" + rows.map(e => e.join(",")).join("\\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -191,15 +193,15 @@ const OpportunityForm = () => {
 
   const getAllowedTransitions = (currentStatus) => {
     switch (currentStatus) {
-      case 'Mới': return ['Đang tiếp xúc', 'Không thành công'];
-      case 'Đang tiếp xúc': return ['Đánh giá nhu cầu', 'Không thành công'];
-      case 'Đánh giá nhu cầu': return ['Đang báo giá', 'Không thành công'];
-      case 'Đang báo giá': return ['Đấu thầu', 'POC', 'Không thành công'];
-      case 'Đấu thầu': return ['Kí hợp đồng', 'Không thành công'];
-      case 'POC': return ['Kí hợp đồng', 'Không thành công'];
-      case 'Kí hợp đồng': return ['Triển khai', 'Không thành công'];
-      case 'Triển khai': return ['Thành công', 'Không thành công'];
-      default: return [];
+      case 'Mới': return ['Đang tiếp xúc', 'Thất bại'];
+      case 'Đang tiếp xúc': return ['Đánh giá nhu cầu', 'Thất bại'];
+      case 'Đánh giá nhu cầu': return ['Đang báo giá', 'Thất bại'];
+      case 'Đang báo giá': return ['Đấu thầu', 'POC', 'Thành công', 'Thất bại'];
+      case 'Đấu thầu': return ['Thành công', 'Thất bại'];
+      case 'POC': return ['Thành công', 'Thất bại'];
+      case 'Thành công': return ['Thất bại'];
+      case 'Thất bại': return [];
+      default: return ['Thất bại'];
     }
   };
 
@@ -268,7 +270,7 @@ const OpportunityForm = () => {
     const trClientAbbr = (clientAbbr || '').trim();
     const trClientSearch = (clientSearch || '').trim();
     const trDomain = (domainValue || '').trim();
-    const trProjectedService = (formData.projectedService || '').trim();
+    const trProjectedService = selectedExpectedServices.length > 0 ? 'yes' : '';
 
     if (!trLeadName) newErrors.leadName = 'Vui lòng nhập tên Opportunity';
     if (!trClientAbbr) newErrors.clientAbbr = 'Vui lòng nhập tên viết tắt';
@@ -314,7 +316,8 @@ const OpportunityForm = () => {
     if (!id) {
       addChatterMessage('log', 'Hệ', 'Tạo mới thành công lead/opportunity', 'vừa xong', '#dcfce7');
     } else if (changes.length > 0) {
-      const logText = `Cập nhật thông tin thành công:\n` + changes.map(c => `- ${c}`).join('\n');
+      const logText = `Cập nhật thông tin thành công:
+` + changes.map(c => `- ${c}`).join('\\n');
       addChatterMessage('log', 'Hệ', logText, 'vừa xong', '#fef3c7');
     }
 
@@ -370,9 +373,11 @@ const OpportunityForm = () => {
   // LOST / RESTORE LOGIC
   // -------------------------
   const handleLostConfirm = () => {
-    setLeadStatus('Không thành công');
-    if (id) mockStore.updateOppStatus(id, 'Không thành công');
-    addChatterMessage('log', 'Hệ', `Đánh dấu nhãn: KHÔNG THÀNH CÔNG\nLý do: ${lostReason}\nMô tả: ${lostDesc}`, 'just now', '#fee2e2');
+    setLeadStatus('Thất bại');
+    if (id) mockStore.updateOppStatus(id, 'Thất bại');
+    addChatterMessage('log', 'Hệ', `Đánh dấu nhãn: THẤT BẠI
+Lý do: ${lostReason}
+Mô tả: ${lostDesc}`, 'just now', '#fee2e2');
     closeSearchModal();
   };
 
@@ -384,7 +389,7 @@ const OpportunityForm = () => {
 
   const handleStatusChange = (newStatus) => {
     if (leadStatus === 'Đang tiếp xúc' && newStatus === 'Đánh giá nhu cầu') {
-      if (!mstValue.trim() || !formData.projectType || !formData.projectedService) {
+      if (!mstValue.trim() || !formData.projectType || selectedExpectedServices.length === 0) {
         showToast('Vui lòng điền Loại dự án, Dịch vụ dự kiến và MST khi chuyển sang Đánh giá nhu cầu!', 'error');
         return;
       }
@@ -715,7 +720,7 @@ const OpportunityForm = () => {
           <span className="breadcrumb-current">{id && id !== 'new' ? id : 'Mới'}</span>
         </div>
         <div className="header-actions" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-           {leadStatus !== 'Không thành công' && id && id !== 'new' && <button className="btn btn-danger" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={() => openSearchModal('lost_reason')}>Không thành công</button>}
+           {leadStatus !== 'Thất bại' && id && id !== 'new' && <button className="btn btn-danger" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={() => openSearchModal('lost_reason')}>Thất bại</button>}
            
            <div style={{width: '1px', height: '20px', background: '#cbd5e1', margin: '0 4px'}}></div>
 
@@ -753,7 +758,7 @@ const OpportunityForm = () => {
             </div>
 
             <div className="statusbar" style={{ background: 'transparent', margin: 0, gap: '4px' }}>
-              {['Mới', 'Đang tiếp xúc', 'Đánh giá nhu cầu', 'Đang báo giá', 'Đấu thầu', 'POC', 'Kí hợp đồng', 'Triển khai', 'Thành công'].map((st) => {
+              {['Mới', 'Đang tiếp xúc', 'Đánh giá nhu cầu', 'Đang báo giá', 'Đấu thầu', 'POC', 'Thành công', 'Thất bại'].map((st) => {
                 const isCurrent = leadStatus === st;
                 const isAllowed = getAllowedTransitions(leadStatus).includes(st);
                 return (
@@ -783,9 +788,9 @@ const OpportunityForm = () => {
             </div>
           </div>
 
-          {leadStatus === 'Không thành công' && (
+          {leadStatus === 'Thất bại' && (
             <div className="ribbon-wrapper">
-              <div className="ribbon">KHÔNG THÀNH CÔNG</div>
+              <div className="ribbon">THẤT BẠI</div>
             </div>
           )}
           {leadStatus === 'Thành công' && (
@@ -807,87 +812,76 @@ const OpportunityForm = () => {
               </div>
             </div>
 
-            <div className="sheet-main-content" style={{ alignItems: 'flex-start' }}>
+            <div className="form-blocks-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* L COLUMN */}
-              <div className="form-column">
-                <div className="column-title" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin chung</div>
+              <div className="form-card" style={{ width: "100%" }}>
+                <div className="column-title-modern" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin chung</div>
                 {id && (
                   <div className="form-group">
                     <label className="form-label">ID</label>
                     <input type="text" className="form-control" readOnly value={id} />
                   </div>
                 )}
+
                 <div className="form-group" style={{ alignItems: 'flex-start' }}>
                   <label className="form-label" style={{ marginTop: '6px' }}>Loại dự án {isAdvancedStage && <span style={{ color: 'red' }}>*</span>}</label>
                   <div style={{ flex: 1 }}>
-                    <select ref={projectTypeRef} className="form-control" style={{ borderColor: errors.projectType ? 'red' : undefined, width: '100%' }} value={formData.projectType} onChange={e => { hf('projectType', e.target.value); setErrors(p => ({ ...p, projectType: false })) }}>
+                    <select ref={projectTypeRef} className="form-control" style={{ borderColor: errors.projectType ? 'red' : undefined, width: '100%' }} value={formData.projectType} onChange={e => { hf('projectType', e.target.value); setSelectedExpectedServices([]); setErrors(p => ({ ...p, projectType: false })) }}>
                       <option value="">-- Chọn loại --</option>
-                      <option value="outsourcing">Dịch vụ outsourcing</option>
-                      <option value="product">Cung cấp sản phẩm</option>
+                      <option value="service">Dịch vụ</option>
+                      <option value="solution">Giải pháp</option>
                     </select>
                     {errors.projectType && <small style={{ color: 'red', display: 'block', marginTop: '4px', fontWeight: 500 }}>Trường này là bắt buộc</small>}
                   </div>
                 </div>
-                <div className="form-group" style={{ alignItems: 'flex-start' }}>
-                  <label className="form-label" style={{ marginTop: '6px' }}>Dịch vụ dự kiến {isAdvancedStage && <span style={{ color: 'red' }}>*</span>}</label>
-                  <div style={{ flex: 1 }}>
-                    <select ref={serviceRef} className="form-control" style={{ borderColor: errors.projectedService ? 'red' : undefined, width: '100%' }} value={formData.projectedService} onChange={e => { hf('projectedService', e.target.value); setErrors(p => ({ ...p, projectedService: false })) }}>
-                      <option value="">-- Chọn dịch vụ --</option>
-                      <option value="outsourcing">Kiểm soát / Nhập liệu</option>
-                      <option value="telesales">Telesales</option>
-                      <option value="cskh">Chăm sóc khách hàng</option>
-                    </select>
-                    {errors.projectedService && <small style={{ color: 'red', display: 'block', marginTop: '4px', fontWeight: 500 }}>Trường này là bắt buộc</small>}
-                  </div>
-                </div>
 
-                {/* DỊCH VỤ CHI TIẾT (Variants Combobox) */}
                 <div className="form-group" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <label className="form-label" style={{ width: '100%', marginBottom: '8px' }}>Dịch vụ chi tiết</label>
-                  <div style={{ width: '100%', maxHeight: '400px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-                    <table className="service-details-table" style={{ marginTop: 0, border: 'none' }}>
-                      <thead>
-                        <tr>
-                          <th>Dịch vụ chi tiết</th>
-                          <th style={{ width: '80px' }}>Số lượng</th>
-                          <th>Đơn giá</th>
-                          <th style={{ width: '40px' }}></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {serviceDetails.map(srv => (
-                          <tr key={srv.id}>
-                            <td>
-                              <select className="form-control" style={{ width: '100%' }} value={srv.variant} onChange={e => updateService(srv.id, 'variant', e.target.value)}>
-                                <option value="">-- Chọn cụ thể --</option>
-                                {availableVariants.map(v => <option key={v} value={v}>{v}</option>)}
-                              </select>
-                            </td>
-                            <td><input type="number" value={srv.qty} onChange={e => updateService(srv.id, 'qty', e.target.value)} /></td>
-                            <td>
-                              <input
-                                type="text"
-                                className="focus-ring"
-                                value={srv.isEditing ? srv.price : new Intl.NumberFormat('vi-VN').format(srv.price || 0)}
-                                onChange={e => updateService(srv.id, 'price', e.target.value.replace(/\./g, ''))}
-                                onFocus={() => updateService(srv.id, 'isEditing', true)}
-                                onBlur={() => updateService(srv.id, 'isEditing', false)}
-                                placeholder="0"
-                              />
-                            </td>
-                            <td style={{ textAlign: 'center' }}><button className="icon-btn" onClick={() => removeService(srv.id)}><Trash2 size={16} /></button></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <label className="form-label" style={{ width: '100%', marginBottom: '8px' }}>Dịch vụ dự kiến {isAdvancedStage && <span style={{ color: 'red' }}>*</span>}</label>
+                  
+                  <div style={{ width: '100%', display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <select className="form-control" style={{ flex: 1, borderColor: errors.projectedService ? 'red' : undefined }} value="" onChange={e => {
+                      const val = e.target.value;
+                      if (val && !selectedExpectedServices.some(s => s.name === val)) {
+                        setSelectedExpectedServices([...selectedExpectedServices, { id: Date.now(), name: val, description: '' }]);
+                        setErrors(p => ({ ...p, projectedService: false }));
+                      }
+                    }}>
+                      <option value="">-- Chọn dịch vụ để thêm --</option>
+                      {formData.projectType === 'service' && ['Customer Experience (CX)', 'BPO', 'Loyalty', 'Contact Center Outsourcing', 'Upsale', 'Warranty & Repair Services'].map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      {formData.projectType === 'solution' && ['OmniX', 'KnowX Hub', 'WorkforceX', 'CXBot', 'vCOC', 'InsightCI'].map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    </select>
                   </div>
-                  <div className="add-line-btn" onClick={addServiceLine}>Thêm dòng</div>
+                  {errors.projectedService && <small style={{ color: 'red', display: 'block', marginBottom: '8px', fontWeight: 500 }}>Trường này là bắt buộc</small>}
+                  
+                  {selectedExpectedServices.length > 0 && (
+                    <div style={{ width: '100%', border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                        <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                          <tr>
+                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Tên dịch vụ</th>
+                            <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600 }}>Mô tả thêm</th>
+                            <th style={{ padding: '8px', textAlign: 'center', width: '40px' }}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedExpectedServices.map(srv => (
+                            <tr style={{ borderBottom: '1px solid #f1f5f9' }} key={srv.id}>
+                              <td style={{ padding: '8px', fontWeight: 500, color: '#334155' }}>{srv.name}</td>
+                              <td style={{ padding: '4px 8px' }}>
+                                <input type="text" className="form-control" style={{ width: '100%', border: '1px solid #cbd5e1', padding: '4px 8px', borderRadius: '4px' }} placeholder="Nhập mô tả..." value={srv.description} onChange={e => setSelectedExpectedServices(prev => prev.map(s => s.id === srv.id ? { ...s, description: e.target.value } : s))} />
+                              </td>
+                              <td style={{ padding: '8px', textAlign: 'center' }}>
+                                <button className="icon-btn" onClick={() => setSelectedExpectedServices(prev => prev.filter(s => s.id !== srv.id))}><Trash2 size={16} /></button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Tổng đơn giá</label>
-                  <input type="text" className="form-control" readOnly value={calcTotalAmount()} />
-                </div>
+
                 <div className="form-group">
                   <label className="form-label">Doanh thu dự kiến</label>
                   <input type="text" className="form-control" placeholder="0 ₫" />
@@ -898,6 +892,16 @@ const OpportunityForm = () => {
                     <option value="1">⭐ Thấp</option>
                     <option value="2">⭐⭐ Trung bình</option>
                     <option value="3">⭐⭐⭐ Cao</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Tag Lead</label>
+                  <select className="form-control" value={formData.leadTag || ''} onChange={e => hf('leadTag', e.target.value)}>
+                    <option value="">-- Chọn tag --</option>
+                    <option value="Lead mới">Lead mới</option>
+                    <option value="Lead đang quan tâm">Lead đang quan tâm</option>
+                    <option value="Lead tiềm năng">Lead tiềm năng</option>
+                    <option value="Lead lạnh">Lead lạnh</option>
                   </select>
                 </div>
                 <div className="form-group" style={{ border: 'none' }}>
@@ -966,8 +970,8 @@ const OpportunityForm = () => {
               </div>
 
               {/* R COLUMN */}
-              <div className="form-column">
-                <div className="column-title" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin khách hàng</div>
+              <div className="form-card" style={{ width: "100%" }}>
+                <div className="column-title-modern" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin khách hàng</div>
 
                 <div className="form-group" style={{ alignItems: 'flex-start' }}>
                   <label className="form-label" style={{ marginTop: '6px' }}>Tên khách hàng <span style={{ color: 'red' }}>*</span></label>
@@ -1179,95 +1183,89 @@ const OpportunityForm = () => {
               </div>
             </div>
 
-            <div className="notebook">
-              <div className="notebook-tabs">
-                <div className={`notebook-tab ${activeNotebookTab === 'internal_notes' ? 'active' : ''}`} onClick={() => setActiveNotebookTab('internal_notes')}>Ghi chú nội bộ</div>
-                <div className={`notebook-tab ${activeNotebookTab === 'extra_info' ? 'active' : ''}`} onClick={() => setActiveNotebookTab('extra_info')}>Thông tin thêm</div>
+            {/* THÔNG TIN THÊM */}
+            <div className="form-card" style={{ width: '100%', marginBottom: '16px' }}>
+              <div className="column-title-modern">Thông tin thêm</div>
+              <div className="extra-info-grid">
+                <div style={{ width: "100%" }}>
+                  <div className="form-group">
+                    <label className="form-label">Ngày bắt đầu tiếp xúc</label>
+                    <input type="date" className="form-control" value={formData.contactDate} onChange={e => hf('contactDate', e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Tháng phát hành</label>
+                    <input type="month" className="form-control" value={formData.issueMonth} onChange={e => hf('issueMonth', e.target.value)} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Tháng ký hợp đồng</label>
+                    <input type="month" className="form-control" />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Đầu mối nghiệp vụ VCX</label>
+                    <select className="form-control">
+                      <option value="">-- Chọn đầu mối --</option>
+                      <option value="op1">Vận hành nhóm A</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ width: "100%" }}>
+                  <div className="form-group">
+                    <label className="form-label">Nguồn tiếp cận</label>
+                    <select className="form-control" value={sourceValue} onChange={e => setSourceValue(e.target.value)}>
+                      <option value="">-- Chọn nguồn --</option>
+                      <option value="marketing">Marketing</option>
+                      <option value="referral">Giới thiệu</option>
+                      <option value="landing">Landing page</option>
+                      <option value="self">Tự tiếp cận</option>
+                    </select>
+                  </div>
+                  {sourceValue === 'referral' && (
+                    <div className="form-group">
+                      <label className="form-label">Giới thiệu bởi</label>
+                      <input type="text" className="form-control" placeholder="Tên người / đơn vị giới thiệu..." value={referredBy} onChange={e => setReferredBy(e.target.value)} />
+                    </div>
+                  )}
+                  {sourceValue === 'marketing' && (
+                    <div className="form-group">
+                      <label className="form-label">Chiến dịch (Campaign)</label>
+                      <input type="text" className="form-control" placeholder="Tên chiến dịch marketing..." value={campaignValue} onChange={e => setCampaignValue(e.target.value)} />
+                    </div>
+                  )}
+
+                  <div className="form-group">
+                    <label className="form-label">Sale person</label>
+                    <input type="text" className="form-control" readOnly value="Trần B (Bạn)" />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Đơn vị xúc tiến</label>
+                    <select className="form-control">
+                      <option value="">-- Chọn đơn vị --</option>
+                      <option value="b2b">Phòng bán hàng B2B</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Assign partner</label>
+                    <select className="form-control" value={formData.partnerId} onChange={(e) => {
+                      if (e.target.value === 'SEARCH_MORE') openSearchModal('partner');
+                      else hf('partnerId', e.target.value);
+                    }}>
+                      <option value="">-- Trống --</option>
+                      {partnersData.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      <option value="SEARCH_MORE" className="dropdown-action-item">Tìm kiếm...</option>
+                    </select>
+                  </div>
+                </div>
               </div>
+            </div>
 
-              <div className="notebook-content">
-                {activeNotebookTab === 'internal_notes' && (
-                  <div style={{ paddingTop: '16px' }}>
-                    <textarea className="textarea-control" placeholder="Viết một ghi chú nội bộ..."></textarea>
-                  </div>
-                )}
-                {activeNotebookTab === 'extra_info' && (
-                  <div className="extra-info-grid">
-                    <div className="form-column">
-                      <div className="column-title" style={{ fontSize: '14px', border: 'none', margin: '0 0 8px 0', padding: 0, color: '#64748b' }}>Mốc thời gian & Khác</div>
-                      <div className="form-group">
-                        <label className="form-label">Ngày bắt đầu tiếp xúc</label>
-                        <input type="date" className="form-control" value={formData.contactDate} onChange={e => hf('contactDate', e.target.value)} />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Tháng phát hành</label>
-                        <input type="month" className="form-control" value={formData.issueMonth} onChange={e => hf('issueMonth', e.target.value)} />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Tháng ký hợp đồng</label>
-                        <input type="month" className="form-control" />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Đầu mối nghiệp vụ VCX</label>
-                        <select className="form-control">
-                          <option value="">-- Chọn đầu mối --</option>
-                          <option value="op1">Vận hành nhóm A</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="form-column">
-                      <div className="column-title" style={{ fontSize: '14px', border: 'none', margin: '0 0 8px 0', padding: 0, color: '#64748b' }}>Sales & Marketing</div>
-                      <div className="form-group">
-                        <label className="form-label">Nguồn tiếp cận</label>
-                        <select className="form-control" value={sourceValue} onChange={e => setSourceValue(e.target.value)}>
-                          <option value="">-- Chọn nguồn --</option>
-                          <option value="marketing">Marketing</option>
-                          <option value="referral">Giới thiệu</option>
-                          <option value="landing">Landing page</option>
-                          <option value="self">Tự tiếp cận</option>
-                        </select>
-                      </div>
-                      {sourceValue === 'referral' && (
-                        <div className="form-group">
-                          <label className="form-label">Giới thiệu bởi</label>
-                          <input type="text" className="form-control" placeholder="Tên người / đơn vị giới thiệu..." value={referredBy} onChange={e => setReferredBy(e.target.value)} />
-                        </div>
-                      )}
-                      {sourceValue === 'marketing' && (
-                        <div className="form-group">
-                          <label className="form-label">Chiến dịch (Campaign)</label>
-                          <input type="text" className="form-control" placeholder="Tên chiến dịch marketing..." value={campaignValue} onChange={e => setCampaignValue(e.target.value)} />
-                        </div>
-                      )}
-
-                      <div className="form-group">
-                        <label className="form-label">Sale person</label>
-                        <input type="text" className="form-control" readOnly value="Trần B (Bạn)" />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">Đơn vị xúc tiến</label>
-                        <select className="form-control">
-                          <option value="">-- Chọn đơn vị --</option>
-                          <option value="b2b">Phòng bán hàng B2B</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">Assign partner</label>
-                        <select className="form-control" value={formData.partnerId} onChange={(e) => {
-                          if (e.target.value === 'SEARCH_MORE') openSearchModal('partner');
-                          else hf('partnerId', e.target.value);
-                        }}>
-                          <option value="">-- Trống --</option>
-                          {partnersData.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                          <option value="SEARCH_MORE" className="dropdown-action-item">Tìm kiếm...</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                )}
+            {/* GHI CHÚ NỘI BỘ */}
+            <div className="form-card" style={{ width: '100%', marginBottom: '16px' }}>
+              <div className="column-title-modern">Ghi chú nội bộ</div>
+              <div className="form-group" style={{ borderBottom: 'none' }}>
+                <textarea className="textarea-control" placeholder="Viết một ghi chú nội bộ..." style={{ minHeight: '80px' }}></textarea>
               </div>
             </div>
           </fieldset>
@@ -1490,12 +1488,41 @@ const OpportunityForm = () => {
       <div id="chatter" className="notebook" style={{marginTop: '40px', borderTop: '1px solid #e2e8f0', background: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', margin: '24px auto', maxWidth: '1100px'}}>
         <div className="notebook-tabs" style={{display: 'flex', gap: '2px', borderBottom: '1px solid #e2e8f0'}}>
           <div className={`notebook-tab ${activeChatterTab === 'log_note' ? 'active' : ''}`} onClick={() => setActiveChatterTab('log_note')} style={{padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'log_note' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'log_note' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'log_note' ? 600 : 400}}>Ghi chú</div>
+          <div className={`notebook-tab ${activeChatterTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveChatterTab('activity')} style={{padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'activity' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'activity' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'activity' ? 600 : 400}}>Hoạt động</div>
           <div className={`notebook-tab ${activeChatterTab === 'history' ? 'active' : ''}`} onClick={() => setActiveChatterTab('history')} style={{padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'history' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'history' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'history' ? 600 : 400}}>Lịch sử hoạt động</div>
         </div>
 
         <div className="notebook-content" style={{padding: '20px 0'}}>
             <div className="chatter-in-tab">
-              {activeChatterTab === 'log_note' ? (
+              {activeChatterTab === 'activity' ? (
+                <div className="activity-tab">
+                    <div className="activity-list" style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                        <div style={{marginBottom: '16px'}}>
+                            <button className="btn btn-primary" onClick={createActivity}>+ Lên lịch hoạt động</button>
+                        </div>
+                        {activities.length > 0 ? activities.map(act => (
+                            <div key={act.id} className="activity-item" style={{display: 'flex', gap: '12px', padding: '12px', background: '#fff', borderRadius: '6px', border: '1px solid #e2e8f0', borderLeft: `4px solid ${act.done ? '#10b981' : '#3b82f6'}`}}>
+                                <div style={{flex: 1}}>
+                                    <div style={{fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                        {act.title} ({act.type})
+                                        <span style={{fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: act.done ? '#dcfce7' : '#dbeafe', color: act.done ? '#166534' : '#1e40af'}}>{act.done ? 'Done' : 'Theo kế hoạch'}</span>
+                                    </div>
+                                    <div style={{fontSize: '12px', color: '#64748b', marginTop: '4px'}}>Hạn: {act.date}</div>
+                                </div>
+                                {!act.done && (
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                        <button className="btn btn-secondary" style={{padding: '4px 8px', fontSize: '12px'}} onClick={() => markActivityDone(act.id)}>Xong</button>
+                                    </div>
+                                )}
+                            </div>
+                        )) : (
+                            <div style={{textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '12px'}}>
+                                Chưa có hoạt động nào được ghi nhận. Nhấn "Lên lịch hoạt động" để tạo mới.
+                            </div>
+                        )}
+                    </div>
+                </div>
+              ) : activeChatterTab === 'log_note' ? (
                 <>
                   <div style={{display: 'flex', gap: '12px', marginBottom: '24px'}}>
                     <div className="message-avatar" style={{width: '36px', height: '36px', backgroundColor: '#64748b'}}>U</div>

@@ -24,7 +24,9 @@ import {
   ChevronDown,
   ChevronRight,
   ArrowDownToLine,
-  ArrowUpFromLine
+  ArrowUpFromLine,
+  Layers,
+  Briefcase
 } from 'lucide-react';
 
 function Sidebar() {
