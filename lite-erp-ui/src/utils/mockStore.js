@@ -1014,6 +1014,37 @@ export const mockStore = {
     return store.contacts[id];
   },
 
+  getAllContracts: () => {
+    const store = mockStore.getStore();
+    return (store.contractIds || []).map(id => store.contracts[id]).filter(Boolean);
+  },
+
+  getContract: (id) => {
+    const store = mockStore.getStore();
+    return store.contracts[id];
+  },
+
+  saveContract: (id, contractData) => {
+    const store = mockStore.getStore();
+    if (!store.contracts[id]) {
+      store.contractIds.unshift(id);
+    }
+    store.contracts[id] = contractData;
+    mockStore.saveStore(store);
+  },
+
+  getNextContractId: () => {
+    const store = mockStore.getStore();
+    const ids = store.contractIds || [];
+    let maxNum = 0;
+    ids.forEach(id => {
+      const parts = id.split('-');
+      const num = parseInt(parts[parts.length - 1], 10);
+      if (!isNaN(num) && num > maxNum) maxNum = num;
+    });
+    return `CTR-2026-${(maxNum + 1).toString().padStart(3, '0')}`;
+  },
+
   saveContact: (id, contactData) => {
     const store = mockStore.getStore();
     const isNew = !store.contacts[id];

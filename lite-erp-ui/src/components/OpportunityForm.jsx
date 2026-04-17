@@ -58,6 +58,7 @@ const INITIAL_FORM_STATE = {
   issueMonth: '',
   addressDetail: '', province: '', district: '', ward: '',
   logicLeadLost: false,
+  leadTag: '',
 };
 
 // --- MAIN COMPONENT ---
@@ -70,6 +71,7 @@ const OpportunityForm = () => {
 
   // FORM DATA (Flatten basic fields for easy tracking)
   const [formData, setFormData] = useState({ ...INITIAL_FORM_STATE });
+  const [selectedExpectedServices, setSelectedExpectedServices] = useState([]);
   const [snapshotData, setSnapshotData] = useState({ ...INITIAL_FORM_STATE });
 
   // COMPLEX DATA LISTS
@@ -182,7 +184,7 @@ const OpportunityForm = () => {
       return [opp.id, `"${opp.content}"`, `"${opp.company}"`, opp.mst, opp.contactName || '', opp.email || ''];
     });
 
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(",") + "\\n" + rows.map(e => e.join(",")).join("\\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -322,7 +324,8 @@ const OpportunityForm = () => {
     if (!id) {
       addChatterMessage('log', 'Hệ', 'Tạo mới thành công lead/opportunity', 'vừa xong', '#dcfce7');
     } else if (changes.length > 0) {
-      const logText = `Cập nhật thông tin thành công:\n` + changes.map(c => `- ${c}`).join('\n');
+      const logText = `Cập nhật thông tin thành công:
+` + changes.map(c => `- ${c}`).join('\\n');
       addChatterMessage('log', 'Hệ', logText, 'vừa xong', '#fef3c7');
     }
 
@@ -376,9 +379,11 @@ const OpportunityForm = () => {
   // LOST / RESTORE LOGIC
   // -------------------------
   const handleLostConfirm = () => {
-    setLeadStatus('Không thành công');
-    if (id) mockStore.updateOppStatus(id, 'Không thành công');
-    addChatterMessage('log', 'Hệ', `Đánh dấu nhãn: KHÔNG THÀNH CÔNG\nLý do: ${lostReason}\nMô tả: ${lostDesc}`, 'just now', '#fee2e2');
+    setLeadStatus('Thất bại');
+    if (id) mockStore.updateOppStatus(id, 'Thất bại');
+    addChatterMessage('log', 'Hệ', `Đánh dấu nhãn: THẤT BẠI
+Lý do: ${lostReason}
+Mô tả: ${lostDesc}`, 'just now', '#fee2e2');
     closeSearchModal();
   };
 
@@ -759,24 +764,24 @@ const OpportunityForm = () => {
           <span className="breadcrumb-separator">/</span>
           <span className="breadcrumb-current">{id && id !== 'new' ? id : 'Mới'}</span>
         </div>
-        <div className="header-actions" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-           {leadStatus !== 'Không thành công' && id && id !== 'new' && <button className="btn btn-danger" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={() => openSearchModal('lost_reason')}>Không thành công</button>}
-           
-           <div style={{width: '1px', height: '20px', background: '#cbd5e1', margin: '0 4px'}}></div>
+        <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {leadStatus !== 'Thất bại' && id && id !== 'new' && <button className="btn btn-danger" style={{ padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white' }} onClick={() => openSearchModal('lost_reason')}>Thất bại</button>}
 
-           {leadStatus === 'Mới' && (
-             <button className="btn btn-secondary" style={{padding: '6px 10px', backgroundColor: 'white', color: '#475569', display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1'}} onClick={() => {
-                if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
-                  mockStore.deleteOpp(id);
-                  navigate('/opportunity');
-                }
-             }} title="Xóa">
-               <Trash2 size={16} />
-             </button>
-           )}
-           {leadStatus === 'Mới' && (
-             <button className="btn btn-primary" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={commitSave}>Lưu</button>
-           )}
+          <div style={{ width: '1px', height: '20px', background: '#cbd5e1', margin: '0 4px' }}></div>
+
+          {leadStatus === 'Mới' && (
+            <button className="btn btn-secondary" style={{ padding: '6px 10px', backgroundColor: 'white', color: '#475569', display: 'flex', alignItems: 'center', border: '1px solid #cbd5e1' }} onClick={() => {
+              if (window.confirm('Bạn có chắc chắn muốn xóa bản ghi này?')) {
+                mockStore.deleteOpp(id);
+                navigate('/opportunity');
+              }
+            }} title="Xóa">
+              <Trash2 size={16} />
+            </button>
+          )}
+          {leadStatus === 'Mới' && (
+            <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white' }} onClick={commitSave}>Lưu</button>
+          )}
         </div>
       </div>
 
@@ -828,9 +833,9 @@ const OpportunityForm = () => {
             </div>
           </div>
 
-          {leadStatus === 'Không thành công' && (
+          {leadStatus === 'Thất bại' && (
             <div className="ribbon-wrapper">
-              <div className="ribbon">KHÔNG THÀNH CÔNG</div>
+              <div className="ribbon">THẤT BẠI</div>
             </div>
           )}
 
@@ -849,8 +854,8 @@ const OpportunityForm = () => {
 
             <div className="sheet-main-content" style={{ alignItems: 'stretch' }}>
               {/* L COLUMN */}
-              <div className="form-column">
-                <div className="column-title" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin chung</div>
+              <div className="form-card" style={{ width: "100%" }}>
+                <div className="column-title-modern" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin chung</div>
                 {id && (
                   <div className="form-group">
                     <label className="form-label">ID</label>
@@ -920,8 +925,8 @@ const OpportunityForm = () => {
               </div>
 
               {/* R COLUMN */}
-              <div className="form-column">
-                <div className="column-title" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin khách hàng</div>
+              <div className="form-card" style={{ width: "100%" }}>
+                <div className="column-title-modern" style={{ margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1 }}>Thông tin khách hàng</div>
 
                 <div className="form-group" style={{ alignItems: 'flex-start' }}>
                   <label className="form-label" style={{ marginTop: '6px' }}>Tên khách hàng <span style={{ color: 'red' }}>*</span></label>
@@ -1517,78 +1522,107 @@ const OpportunityForm = () => {
       )}
 
       {/* CHATTER SECTION */}
-      <div id="chatter" className="notebook" style={{marginTop: '40px', borderTop: '1px solid #e2e8f0', background: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', margin: '24px auto', maxWidth: '1100px'}}>
-        <div className="notebook-tabs" style={{display: 'flex', gap: '2px', borderBottom: '1px solid #e2e8f0'}}>
-          <div className={`notebook-tab ${activeChatterTab === 'log_note' ? 'active' : ''}`} onClick={() => setActiveChatterTab('log_note')} style={{padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'log_note' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'log_note' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'log_note' ? 600 : 400}}>Ghi chú</div>
-          <div className={`notebook-tab ${activeChatterTab === 'history' ? 'active' : ''}`} onClick={() => setActiveChatterTab('history')} style={{padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'history' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'history' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'history' ? 600 : 400}}>Lịch sử hoạt động</div>
+      <div id="chatter" className="notebook" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', background: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', margin: '24px auto', maxWidth: '1100px' }}>
+        <div className="notebook-tabs" style={{ display: 'flex', gap: '2px', borderBottom: '1px solid #e2e8f0' }}>
+          <div className={`notebook-tab ${activeChatterTab === 'log_note' ? 'active' : ''}`} onClick={() => setActiveChatterTab('log_note')} style={{ padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'log_note' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'log_note' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'log_note' ? 600 : 400 }}>Ghi chú</div>
+          <div className={`notebook-tab ${activeChatterTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveChatterTab('activity')} style={{ padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'activity' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'activity' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'activity' ? 600 : 400 }}>Hoạt động</div>
+          <div className={`notebook-tab ${activeChatterTab === 'history' ? 'active' : ''}`} onClick={() => setActiveChatterTab('history')} style={{ padding: '10px 20px', cursor: 'pointer', borderBottom: activeChatterTab === 'history' ? '2px solid #e32b4c' : 'none', color: activeChatterTab === 'history' ? '#e32b4c' : '#64748b', fontWeight: activeChatterTab === 'history' ? 600 : 400 }}>Lịch sử hoạt động</div>
         </div>
 
-        <div className="notebook-content" style={{padding: '20px 0'}}>
-            <div className="chatter-in-tab">
-              {activeChatterTab === 'log_note' ? (
-                <>
-                  <div style={{display: 'flex', gap: '12px', marginBottom: '24px'}}>
-                    <div className="message-avatar" style={{width: '36px', height: '36px', backgroundColor: '#64748b'}}>U</div>
-                    <div style={{flex: 1}}>
-                        <div className="chatter-input-box" style={{border: '1px solid #e2e8f0', borderRadius: '4px', background: '#fff'}}>
-                            <textarea className="chatter-textarea" style={{width: '100%', border: 'none', padding: '10px', minHeight: '80px', resize: 'vertical', fontSize: '14px', outline: 'none'}} placeholder="Ghi chú nội bộ..." value={chatterInput} onChange={handleChatterChange} ref={textareaRef}></textarea>
-                            <div className="chatter-input-toolbar" style={{display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderTop: '1px solid #f1f5f9'}}>
-                                <div className="chatter-toolbar-left" style={{display: 'flex', gap: '14px', color: '#64748b'}}>
-                                    <Smile size={18} style={{cursor: 'pointer'}} />
-                                    <Paperclip size={18} style={{cursor: 'pointer'}} />
-                                </div>
-                                <div className="chatter-toolbar-right"><Maximize2 size={16} style={{color: '#64748b', cursor: 'pointer'}} /></div>
-                            </div>
-                        </div>
-                        <button className="btn btn-primary" style={{marginTop: '10px', backgroundColor: '#e32b4c', color: '#fff', padding: '6px 16px', borderRadius: '4px', fontWeight: 600}} onClick={postNote}>Gửi</button>
-                    </div>
+        <div className="notebook-content" style={{ padding: '20px 0' }}>
+          <div className="chatter-in-tab">
+            {activeChatterTab === 'activity' ? (
+              <div className="activity-tab">
+                <div className="activity-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <button className="btn btn-primary" onClick={createActivity}>+ Lên lịch hoạt động</button>
                   </div>
-                  
-                  <div className="chatter-messages" style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-                    {chatterMessages.filter(msg => msg.type === 'log' && msg.bg === '#fef3c7').map(msg => (
-                      <div key={msg.id} className="message-item" style={{display: 'flex', gap: '12px'}}>
-                        <div className="message-avatar" style={{width: '32px', height: '32px', backgroundColor: '#94a3b8'}}>{msg.author[0]}</div>
-                        <div className="message-content-wrapper">
-                          <div className="message-meta">
-                              <strong>{msg.author}</strong> - {msg.time}
-                          </div>
-                          <div className="message-body log-note-body">
-                            {msg.text}
-                          </div>
+                  {activities.length > 0 ? activities.map(act => (
+                    <div key={act.id} className="activity-item" style={{ display: 'flex', gap: '12px', padding: '12px', background: '#fff', borderRadius: '6px', border: '1px solid #e2e8f0', borderLeft: `4px solid ${act.done ? '#10b981' : '#3b82f6'}` }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {act.title} ({act.type})
+                          <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: act.done ? '#dcfce7' : '#dbeafe', color: act.done ? '#166534' : '#1e40af' }}>{act.done ? 'Done' : 'Theo kế hoạch'}</span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>Hạn: {act.date}</div>
+                      </div>
+                      {!act.done && (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <button className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => markActivityDone(act.id)}>Xong</button>
+                        </div>
+                      )}
+                    </div>
+                  )) : (
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', background: '#f8fafc', borderRadius: '12px' }}>
+                      Chưa có hoạt động nào được ghi nhận. Nhấn "Lên lịch hoạt động" để tạo mới.
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : activeChatterTab === 'log_note' ? (
+              <>
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                  <div className="message-avatar" style={{ width: '36px', height: '36px', backgroundColor: '#64748b' }}>U</div>
+                  <div style={{ flex: 1 }}>
+                    <div className="chatter-input-box" style={{ border: '1px solid #e2e8f0', borderRadius: '4px', background: '#fff' }}>
+                      <textarea className="chatter-textarea" style={{ width: '100%', border: 'none', padding: '10px', minHeight: '80px', resize: 'vertical', fontSize: '14px', outline: 'none' }} placeholder="Ghi chú nội bộ..." value={chatterInput} onChange={handleChatterChange} ref={textareaRef}></textarea>
+                      <div className="chatter-input-toolbar" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderTop: '1px solid #f1f5f9' }}>
+                        <div className="chatter-toolbar-left" style={{ display: 'flex', gap: '14px', color: '#64748b' }}>
+                          <Smile size={18} style={{ cursor: 'pointer' }} />
+                          <Paperclip size={18} style={{ cursor: 'pointer' }} />
+                        </div>
+                        <div className="chatter-toolbar-right"><Maximize2 size={16} style={{ color: '#64748b', cursor: 'pointer' }} /></div>
+                      </div>
+                    </div>
+                    <button className="btn btn-primary" style={{ marginTop: '10px', backgroundColor: '#e32b4c', color: '#fff', padding: '6px 16px', borderRadius: '4px', fontWeight: 600 }} onClick={postNote}>Gửi</button>
+                  </div>
+                </div>
+
+                <div className="chatter-messages" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {chatterMessages.filter(msg => msg.type === 'log' && msg.bg === '#fef3c7').map(msg => (
+                    <div key={msg.id} className="message-item" style={{ display: 'flex', gap: '12px' }}>
+                      <div className="message-avatar" style={{ width: '32px', height: '32px', backgroundColor: '#94a3b8' }}>{msg.author[0]}</div>
+                      <div className="message-content-wrapper">
+                        <div className="message-meta">
+                          <strong>{msg.author}</strong> - {msg.time}
+                        </div>
+                        <div className="message-body log-note-body">
+                          {msg.text}
                         </div>
                       </div>
-                    ))}
-                    {chatterMessages.filter(msg => msg.type === 'log' && msg.bg === '#fef3c7').length === 0 && (
-                      <div style={{textAlign: 'center', color: '#94a3b8', fontStyle: 'italic'}}>Chưa có ghi chú nào</div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="history-table-wrapper" style={{background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden'}}>
-                  <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '13px'}}>
-                    <thead>
-                      <tr style={{background: '#f8fafc', borderBottom: '1px solid #e2e8f0'}}>
-                        <th style={{textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600}}>Người thao tác</th>
-                        <th style={{textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600}}>Thời gian</th>
-                        <th style={{textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600}}>Hoạt động / Thay đổi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {chatterMessages.filter(msg => msg.type === 'log' && msg.bg !== '#fef3c7').map(msg => (
-                        <tr key={msg.id} style={{borderBottom: '1px solid #f1f5f9'}}>
-                          <td style={{padding: '12px', fontWeight: 500, color: '#1e293b'}}>{msg.author}</td>
-                          <td style={{padding: '12px', color: '#94a3b8'}}>{msg.time}</td>
-                          <td style={{padding: '12px', color: '#475569'}}>{msg.text}</td>
-                        </tr>
-                      ))}
-                      {chatterMessages.filter(msg => msg.type === 'log' && msg.bg !== '#fef3c7').length === 0 && (
-                        <tr><td colSpan="3" style={{textAlign: 'center', padding: '30px', color: '#94a3b8'}}>Chưa có bản ghi lịch sử</td></tr>
-                      )}
-                    </tbody>
-                  </table>
+                    </div>
+                  ))}
+                  {chatterMessages.filter(msg => msg.type === 'log' && msg.bg === '#fef3c7').length === 0 && (
+                    <div style={{ textAlign: 'center', color: '#94a3b8', fontStyle: 'italic' }}>Chưa có ghi chú nào</div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            ) : (
+              <div className="history-table-wrapper" style={{ background: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <th style={{ textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600 }}>Người thao tác</th>
+                      <th style={{ textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600 }}>Thời gian</th>
+                      <th style={{ textAlign: 'left', padding: '12px', color: '#64748b', fontWeight: 600 }}>Hoạt động / Thay đổi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chatterMessages.filter(msg => msg.type === 'log' && msg.bg !== '#fef3c7').map(msg => (
+                      <tr key={msg.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '12px', fontWeight: 500, color: '#1e293b' }}>{msg.author}</td>
+                        <td style={{ padding: '12px', color: '#94a3b8' }}>{msg.time}</td>
+                        <td style={{ padding: '12px', color: '#475569' }}>{msg.text}</td>
+                      </tr>
+                    ))}
+                    {chatterMessages.filter(msg => msg.type === 'log' && msg.bg !== '#fef3c7').length === 0 && (
+                      <tr><td colSpan="3" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>Chưa có bản ghi lịch sử</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -11,22 +11,30 @@ const ALL_COLUMNS = [
   { key: 'content', label: 'Tên Lead/Opportunity' },
   { key: 'company', label: 'Tên khách hàng' },
   { key: 'mst', label: 'MST' },
-  { key: 'contactName', label: 'Contact Name' },
-  { key: 'email', label: 'Email' },
   { key: 'district', label: 'Quận/Huyện' },
   { key: 'ward', label: 'Phường/Xã' },
   { key: 'city', label: 'Thành phố' },
+  { key: 'projectType', label: 'Loại dự án' },
   { key: 'projectedService', label: 'Dịch vụ dự kiến' },
+  { key: 'priority', label: 'Độ ưu tiên' },
+  { key: 'leadTag', label: 'Tag Lead' },
+  { key: 'classification', label: 'Phân loại KH' },
+  { key: 'domain', label: 'Lĩnh vực' },
+  { key: 'contactDate', label: 'Ngày BĐ tiếp xúc' },
+  { key: 'issueMonth', label: 'Tháng phát hành' },
+  { key: 'contractMonth', label: 'Tháng ký HĐ' },
+  { key: 'vcxContact', label: 'Đầu mối NV VCX' },
+  { key: 'source', label: 'Nguồn tiếp cận' },
+  { key: 'promotionUnit', label: 'Đơn vị xúc tiến' },
   { key: 'assignedPartner', label: 'Assigned Partner' },
   { key: 'status', label: 'Trạng thái' },
   { key: 'revenue', label: 'Doanh thu (Dự kiến)' },
   { key: 'probability', label: 'Xác suất' },
-  { key: 'salesperson', label: 'Sale person' }
+  { key: 'salesperson', label: 'Sale person' },
+  { key: 'date', label: 'Ngày tạo' }
 ];
 
 import { mockStore } from '../utils/mockStore';
-import { QueryBuilder } from './QueryBuilder';
-import { evaluateQuery } from '../utils/filterUtils';
 
 const REMOVED_STATUSES = ['Triển khai', 'Thành công'];
 const FALLBACK_STATUS = 'Kí hợp đồng';
@@ -112,15 +120,21 @@ function OpportunityBoard() {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [filters, setFilters] = useState({});
   const [activeFilterCol, setActiveFilterCol] = useState(null);
+  const [filterSearchTerm, setFilterSearchTerm] = useState('');
+
+  const toggleFilterPopup = (key) => {
+    if (activeFilterCol === key) {
+      setActiveFilterCol(null);
+    } else {
+      setActiveFilterCol(key);
+      setFilterSearchTerm('');
+    }
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [selectedRows, setSelectedRows] = useState([]);
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
-  const [advancedQuery, setAdvancedQuery] = useState({
-    id: 'root',
-    combinator: 'AND',
-    rules: []
-  });
+  const [contactSearchTerm, setContactSearchTerm] = useState('');
 
   // --- KANBAN LOGIC ---
   const onDragEnd = (result) => {
@@ -201,6 +215,34 @@ function OpportunityBoard() {
     return [...new Set(currentTasks.map(t => t[key] || ''))].filter(Boolean);
   };
 
+  const getDistinctContacts = () => {
+    const list = [];
+    const seen = new Set();
+    const st = mockStore.getStore();
+    
+    currentTasks.forEach(t => {
+      if (t.contactName && !seen.has(t.contactName)) {
+        seen.add(t.contactName);
+        let phone = t.contactPhone || t.phone || '';
+        if (!phone && st.customers) {
+           const c = Object.values(st.customers).find(cus => cus.contactName === t.contactName);
+           if (c && c.phone) phone = c.phone;
+        }
+        if (!phone && st.contacts) {
+           const c = Object.values(st.contacts).find(con => con.name === t.contactName);
+           if (c && c.phone) phone = c.phone;
+        }
+        if (!phone) {
+           let hash = 0;
+           for (let i = 0; i < t.contactName.length; i++) hash = t.contactName.charCodeAt(i) + ((hash << 5) - hash);
+           phone = '09' + Math.abs(hash).toString().padStart(8, '0').slice(0, 8);
+        }
+        list.push({ name: t.contactName, phone });
+      }
+    });
+    return list;
+  };
+
   const handleFilterChange = (key, value) => {
     setFilters(prev => {
       const colFilters = prev[key] || [];
@@ -212,6 +254,31 @@ function OpportunityBoard() {
       }
       return { ...prev, [key]: newFilters };
     });
+  };
+
+  const handleDateRangeChange = (key, field, value) => {
+    setFilters(prev => {
+      const colFilters = prev[key] || { from: '', to: '' };
+      const newFilters = { ...colFilters, [field]: value };
+      if (!newFilters.from && !newFilters.to) {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [key]: newFilters };
+    });
+  };
+
+  const parseDateToMs = (dateStr) => {
+    if (!dateStr) return 0;
+    if (dateStr.includes('/')) {
+       const parts = dateStr.split('/');
+       if (parts.length === 3) {
+         return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
+       }
+    } else if (dateStr.includes('-')) {
+       return new Date(dateStr).getTime();
+    }
+    return 0;
   };
 
   const processedData = useMemo(() => {
@@ -229,16 +296,23 @@ function OpportunityBoard() {
 
     // Column Filters
     Object.keys(filters).forEach(key => {
-      if (filters[key].length > 0) {
+      if (key === 'date' || key === 'contactDate') {
+         const { from, to } = filters[key];
+         const fromMs = from ? parseDateToMs(from) : 0;
+         // If "to" is selected, include the whole day (up to 23:59:59). Using Infinity if not set.
+         const toMs = to ? parseDateToMs(to) + 86399999 : Infinity;
+         
+         result = result.filter(item => {
+            const itemMs = parseDateToMs(item[key]);
+            if (!itemMs) return false;
+            return itemMs >= fromMs && itemMs <= toMs;
+         });
+      } else if (Array.isArray(filters[key]) && filters[key].length > 0) {
         result = result.filter(item => filters[key].includes(item[key]));
       }
     });
 
     // Sorting
-    // Advanced Query
-    if (advancedQuery && advancedQuery.rules.length > 0) {
-      result = result.filter(item => evaluateQuery(item, advancedQuery));
-    }
 
     if (sortConfig.key) {
       result.sort((a, b) => {
@@ -455,18 +529,40 @@ function OpportunityBoard() {
             </div>
 
             <button className="btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 12px', height: '40px', backgroundColor: showAdvancedFilter ? '#c22541' : '#e32b4c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }} onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}>
-              <Filter size={16}/> Lọc nâng cao
+              <Filter size={16}/> Lọc liên hệ
             </button>
             
           {showAdvancedFilter && (
-            <div style={{position: 'absolute', top: '100%', left: 0, marginTop: '8px', zIndex: 100, width: '600px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', border: '1px solid #cbd5e1', borderRadius: '8px', background: 'white', overflow: 'hidden'}}>
+            <div style={{position: 'absolute', top: '100%', left: 0, marginTop: '8px', zIndex: 100, width: '300px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', border: '1px solid #cbd5e1', borderRadius: '8px', background: 'white', overflow: 'hidden'}}>
                <div style={{padding: '12px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <span style={{fontWeight: 600, color: '#0f172a'}}>Bộ lọc phức tạp</span>
+                  <span style={{fontWeight: 600, color: '#0f172a'}}>Lọc liên hệ</span>
                   <button style={{background: 'none', border: 'none', color: '#64748b', cursor: 'pointer'}} onClick={() => setShowAdvancedFilter(false)}>Đóng</button>
                </div>
-               <div style={{padding: '16px', maxHeight: '400px', overflowY: 'auto'}}>
-                 <QueryBuilder query={advancedQuery} fields={ALL_COLUMNS} onChange={setAdvancedQuery} />
-               </div>
+               <div style={{padding: '12px', maxHeight: '400px', overflowY: 'auto'}}>
+                 <div style={{background: 'white'}}>
+                   <div style={{marginBottom: '12px'}}>
+                       <input 
+                         type="text" 
+                         placeholder="Tìm kiếm liên hệ..." 
+                         value={contactSearchTerm}
+                         onChange={(e) => setContactSearchTerm(e.target.value)}
+                         style={{width: '90%', padding: '6px 8px', fontSize: '12px', border: '1px solid #cbd5e1', borderRadius: '4px'}}
+                       />
+                     </div>
+                     <div style={{maxHeight: '160px', overflowY: 'auto'}}>
+                       {getDistinctContacts()
+                         .filter(c => c.name.toLowerCase().includes(contactSearchTerm.toLowerCase()) || (c.phone && c.phone.includes(contactSearchTerm)))
+                         .map(c => (
+                         <label key={c.name} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', padding: '6px 4px', cursor: 'pointer'}}>
+                           <input type="checkbox" checked={filters['contactName']?.includes(c.name) || false} onChange={() => handleFilterChange('contactName', c.name)}/>
+                           {c.name} {c.phone ? `- ${c.phone}` : ''}
+                         </label>
+                       ))}
+                       {getDistinctContacts().length === 0 && <div style={{fontSize: '13px', color: '#94a3b8', fontStyle: 'italic', padding: '4px'}}>Không có dữ liệu</div>}
+                       {getDistinctContacts().length > 0 && getDistinctContacts().filter(c => c.name.toLowerCase().includes(contactSearchTerm.toLowerCase()) || (c.phone && c.phone.includes(contactSearchTerm))).length === 0 && <div style={{fontSize: '13px', color: '#94a3b8', fontStyle: 'italic', padding: '4px'}}>Không tìm thấy liên hệ</div>}
+                     </div>
+                   </div>
+                 </div>
             </div>
           )}
           
@@ -551,12 +647,6 @@ function OpportunityBoard() {
                       </div>}
                       <Plus size={20} className="add-task-icon" onClick={() => navigate('/opportunity/new')} style={{cursor: 'pointer', flexShrink: 0, color: '#545454', marginLeft: totalRevenue > 0 ? '8px' : 'auto'}} />
                     </div>
-                    {/* Progress Bar */}
-                    <div className="column-progress-bar" style={{ display: 'flex', height: '4px', width: '100%', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#e2e8f0', marginTop: '8px' }}>
-                      {greenPct > 0 && <div style={{width: `${greenPct}%`, backgroundColor: '#22c55e'}} title={`Cần làm: ${todoCount}`}></div>}
-                      {yellowPct > 0 && <div style={{width: `${yellowPct}%`, backgroundColor: '#eab308'}} title={`Hôm nay: ${todayCount}`}></div>}
-                      {redPct > 0 && <div style={{width: `${redPct}%`, backgroundColor: '#ef4444'}} title={`Trễ hạn: ${overdueCount}`}></div>}
-                    </div>
                   </div>
                   
                   <Droppable droppableId={column.id}>
@@ -609,7 +699,7 @@ function OpportunityBoard() {
                           <ChevronDown size={12} style={{opacity: sortConfig.key === col.key && sortConfig.direction === 'asc' ? 0.3 : 1}} />
                         </div>
                       </div>
-                      <div className="filter-trigger" onClick={(e) => { e.stopPropagation(); setActiveFilterCol(activeFilterCol === col.key ? null : col.key); }} style={{cursor: 'pointer', color: (filters[col.key] && filters[col.key].length > 0) ? '#16a34a' : '#94a3b8'}}>
+                      <div className="filter-trigger" onClick={(e) => { e.stopPropagation(); toggleFilterPopup(col.key); }} style={{cursor: 'pointer', color: (filters[col.key] && filters[col.key].length > 0) ? '#16a34a' : '#94a3b8'}}>
                         <Filter size={14} />
                       </div>
                     </div>
@@ -619,13 +709,40 @@ function OpportunityBoard() {
                       <div className="column-filter-popup" onClick={e => e.stopPropagation()} style={{position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '180px'}}>
                         <div style={{padding: '8px', borderBottom: '1px solid #e2e8f0', fontWeight: 600, fontSize: '12px', color: '#334155'}}>Lọc: {col.label}</div>
                         <div style={{maxHeight: '200px', overflowY: 'auto', padding: '8px'}}>
-                           {getDistinctValues(col.key).map(val => (
-                             <label key={val} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '4px 0', cursor: 'pointer'}}>
-                               <input type="checkbox" checked={filters[col.key]?.includes(val) || false} onChange={() => handleFilterChange(col.key, val)}/>
-                               {val}
-                             </label>
-                           ))}
-                           {getDistinctValues(col.key).length === 0 && <div style={{fontSize: '12px', color: '#94a3b8', fontStyle: 'italic'}}>Không có dữ liệu</div>}
+                           {(col.key === 'date' || col.key === 'contactDate') ? (
+                             <div style={{display: 'flex', flexDirection: 'column', gap: '8px', padding: '4px'}}>
+                               <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                                 <label style={{fontSize: '12px', color: '#64748b'}}>Từ ngày</label>
+                                 <input type="date" value={filters[col.key]?.from || ''} onChange={e => handleDateRangeChange(col.key, 'from', e.target.value)} style={{padding: '4px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '12px'}} />
+                               </div>
+                               <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+                                 <label style={{fontSize: '12px', color: '#64748b'}}>Đến ngày</label>
+                                 <input type="date" value={filters[col.key]?.to || ''} onChange={e => handleDateRangeChange(col.key, 'to', e.target.value)} style={{padding: '4px', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '12px'}} />
+                               </div>
+                             </div>
+                           ) : (
+                             <>
+                               <div style={{marginBottom: '8px', padding: '0 4px'}}>
+                                 <input 
+                                   type="text" 
+                                   placeholder="Tìm kiếm nhanh..." 
+                                   value={filterSearchTerm}
+                                   onChange={(e) => setFilterSearchTerm(e.target.value)}
+                                   style={{width: '90%', padding: '4px 8px', fontSize: '12px', border: '1px solid #cbd5e1', borderRadius: '4px'}}
+                                 />
+                               </div>
+                               {getDistinctValues(col.key)
+                                 .filter(val => val.toLowerCase().includes(filterSearchTerm.toLowerCase()))
+                                 .map(val => (
+                                 <label key={val} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '4px 0', cursor: 'pointer'}}>
+                                   <input type="checkbox" checked={filters[col.key]?.includes(val) || false} onChange={() => handleFilterChange(col.key, val)}/>
+                                   {val}
+                                 </label>
+                               ))}
+                               {getDistinctValues(col.key).length === 0 && <div style={{fontSize: '12px', color: '#94a3b8', fontStyle: 'italic'}}>Không có dữ liệu</div>}
+                               {getDistinctValues(col.key).length > 0 && getDistinctValues(col.key).filter(val => val.toLowerCase().includes(filterSearchTerm.toLowerCase())).length === 0 && <div style={{fontSize: '12px', color: '#94a3b8', fontStyle: 'italic'}}>Không tìm thấy kết quả</div>}
+                             </>
+                           )}
                         </div>
                       </div>
                     )}
@@ -675,12 +792,21 @@ function OpportunityBoard() {
                   {visibleColumns.includes('content') && <td style={{padding: '12px 16px', color: '#0f172a', fontWeight: 500}}>{task.content}</td>}
                   {visibleColumns.includes('company') && <td style={{padding: '12px 16px'}}>{task.company}</td>}
                   {visibleColumns.includes('mst') && <td style={{padding: '12px 16px'}}>{task.mst}</td>}
-                  {visibleColumns.includes('contactName') && <td style={{padding: '12px 16px'}}>{task.contactName}</td>}
-                  {visibleColumns.includes('email') && <td style={{padding: '12px 16px', color: '#64748b'}}>{task.email}</td>}
                   {visibleColumns.includes('district') && <td style={{padding: '12px 16px'}}>{task.district}</td>}
                   {visibleColumns.includes('ward') && <td style={{padding: '12px 16px'}}>{task.ward}</td>}
                   {visibleColumns.includes('city') && <td style={{padding: '12px 16px'}}>{task.city}</td>}
+                  {visibleColumns.includes('projectType') && <td style={{padding: '12px 16px'}}>{task.projectType}</td>}
                   {visibleColumns.includes('projectedService') && <td style={{padding: '12px 16px'}}>{task.projectedService}</td>}
+                  {visibleColumns.includes('priority') && <td style={{padding: '12px 16px'}}>{task.priority}</td>}
+                  {visibleColumns.includes('leadTag') && <td style={{padding: '12px 16px'}}>{task.leadTag}</td>}
+                  {visibleColumns.includes('classification') && <td style={{padding: '12px 16px'}}>{task.classification}</td>}
+                  {visibleColumns.includes('domain') && <td style={{padding: '12px 16px'}}>{task.domain}</td>}
+                  {visibleColumns.includes('contactDate') && <td style={{padding: '12px 16px'}}>{task.contactDate}</td>}
+                  {visibleColumns.includes('issueMonth') && <td style={{padding: '12px 16px'}}>{task.issueMonth}</td>}
+                  {visibleColumns.includes('contractMonth') && <td style={{padding: '12px 16px'}}>{task.contractMonth}</td>}
+                  {visibleColumns.includes('vcxContact') && <td style={{padding: '12px 16px'}}>{task.vcxContact}</td>}
+                  {visibleColumns.includes('source') && <td style={{padding: '12px 16px'}}>{task.source}</td>}
+                  {visibleColumns.includes('promotionUnit') && <td style={{padding: '12px 16px'}}>{task.promotionUnit}</td>}
                   {visibleColumns.includes('assignedPartner') && <td style={{padding: '12px 16px'}}>{task.assignedPartner}</td>}
                   
                   {visibleColumns.includes('status') && (
@@ -707,6 +833,7 @@ function OpportunityBoard() {
                   {visibleColumns.includes('revenue') && <td style={{padding: '12px 16px', fontWeight: 500}}>{task.revenue}</td>}
                   {visibleColumns.includes('probability') && <td style={{padding: '12px 16px'}}>{task.probability}</td>}
                   {visibleColumns.includes('salesperson') && <td style={{padding: '12px 16px'}}>{task.salesperson}</td>}
+                  {visibleColumns.includes('date') && <td style={{padding: '12px 16px'}}>{task.date}</td>}
                   <td style={{textAlign: 'center'}}>
                     {task.status === 'Mới' && (
                       <span onClick={(e) => { e.stopPropagation(); navigate(`/opportunity/edit/${task.id}`); }} style={{cursor: 'pointer', color: '#64748b'}} title="Chỉnh sửa">
