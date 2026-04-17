@@ -1004,6 +1004,26 @@ export const mockStore = {
     mockStore.saveStore(store);
   },
 
+  deleteCustomer: (id) => {
+    const store = mockStore.getStore();
+    if (store.customers[id]) {
+      delete store.customers[id];
+      store.customerIds = store.customerIds.filter(cId => cId !== id);
+      mockStore.saveStore(store);
+    }
+  },
+
+  deleteMultipleCustomers: (ids) => {
+    const store = mockStore.getStore();
+    ids.forEach(id => {
+      if (store.customers[id]) {
+        delete store.customers[id];
+      }
+    });
+    store.customerIds = store.customerIds.filter(cId => !ids.includes(cId));
+    mockStore.saveStore(store);
+  },
+
   getAllContacts: () => {
     const store = mockStore.getStore();
     return (store.contactIds || []).map(id => store.contacts[id]).filter(Boolean);
@@ -1122,13 +1142,17 @@ export const mockStore = {
   getNextCustomerId: () => {
     const store = mockStore.getStore();
     const allIds = store.customerIds;
+    const year = new Date().getFullYear();
+    const prefix = `VCX${year}`;
     let maxNum = 0;
     allIds.forEach(id => {
-      const parts = id.split('-');
-      const num = parseInt(parts[1], 10);
-      if (!isNaN(num) && num > maxNum) maxNum = num;
+      if (id.startsWith(prefix)) {
+        const numStr = id.slice(prefix.length);
+        const num = parseInt(numStr, 10);
+        if (!isNaN(num) && num > maxNum) maxNum = num;
+      }
     });
-    return `CUS-${maxNum + 1}`;
+    return `${prefix}${(maxNum + 1).toString().padStart(5, '0')}`;
   },
 
   addCustomer: (customerData) => {

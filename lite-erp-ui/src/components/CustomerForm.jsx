@@ -7,15 +7,9 @@ import { mockStore } from '../utils/mockStore';
 // --- MOCK DATA FOR SELECTS ---
 const EMPLOYEES = ['Trần B (Bạn)', 'Nguyễn Văn A', 'Lê Thị C'];
 const PROVINCES = [{ id: 'HN', name: 'Hà Nội' }, { id: 'HCM', name: 'TP. Hồ Chí Minh' }];
-const DISTRICTS = {
-  'HN': [{ id: 'CG', name: 'Quận Cầu Giấy' }, { id: 'NTL', name: 'Quận Nam Từ Liêm' }],
-  'HCM': [{ id: 'Q1', name: 'Quận 1' }, { id: 'TB', name: 'Quận Tân Bình' }]
-};
 const WARDS = {
-  'CG': [{ id: 'DH', name: 'Phường Dịch Vọng Hậu' }, { id: 'MD', name: 'Phường Mai Dịch' }],
-  'NTL': [{ id: 'MD1', name: 'Phường Mỹ Đình 1' }],
-  'Q1': [{ id: 'BN', name: 'Phường Bến Nghé' }],
-  'TB': [{ id: 'P2', name: 'Phường 2' }]
+  'HN': [{ id: 'CG_DH', name: 'Phường Dịch Vọng Hậu' }, { id: 'CG_MD', name: 'Phường Mai Dịch' }, { id: 'NTL_MD1', name: 'Phường Mỹ Đình 1' }],
+  'HCM': [{ id: 'Q1_BN', name: 'Phường Bến Nghé' }, { id: 'TB_P2', name: 'Phường 2' }]
 };
 
 const INITIAL_POSITIONS = [{id: 'TĐ', name: 'Trưởng Đài'}, {id: 'GD', name: 'Giám Đốc'}];
@@ -34,9 +28,9 @@ const INITIAL_FORM_STATE = {
   industry: '',
   addressDetail: '',
   province: '',
-  district: '',
   ward: '',
   website: '',
+  companyPhone: '',
   priority: '1',
   tag: '',
   source: 'Manual',
@@ -54,9 +48,9 @@ const FIELD_LABELS = {
   industry: 'Lĩnh vực',
   addressDetail: 'Địa chỉ chi tiết',
   province: 'Tỉnh/Thành phố',
-  district: 'Quận/Huyện',
   ward: 'Phường/Xã',
   website: 'Website',
+  companyPhone: 'SĐT Công ty',
   tag: 'Tag'
 };
 
@@ -128,8 +122,57 @@ const CustomerForm = () => {
 
   const hf = (field, val) => {
     setFormData(prev => ({...prev, [field]: val}));
-    if (field === 'province') setFormData(prev => ({...prev, district: '', ward: ''}));
-    if (field === 'district') setFormData(prev => ({...prev, ward: ''}));
+    if (field === 'province') setFormData(prev => ({...prev, ward: ''}));
+  };
+
+  const getCustomerStatus = () => {
+    if (!contractsList || contractsList.length === 0) return 'Mới tạo';
+    const hasOfficial = contractsList.some(c => 
+      ['Hiệu lực', 'Tạm dừng', 'Sửa đổi gia hạn', 'Chấm dứt hợp đồng', 'Hoàn thành'].includes(c.approvalStatus)
+    );
+    if (hasOfficial) return 'Chính thức';
+    return 'Dự thảo';
+  };
+  const currentStatus = getCustomerStatus();
+  const isIdMstDisabled = currentStatus === 'Dự thảo' || currentStatus === 'Chính thức';
+
+  const getStatusBadgeStyle = (status) => {
+    switch (status) {
+      case 'Chính thức': return { bg: '#dcfce7', text: '#16a34a' }; // Xanh
+      case 'Dự thảo': return { bg: '#ffedd5', text: '#ea580c' }; // Vàng cam
+      case 'Mới tạo': 
+      default: return { bg: '#f1f5f9', text: '#64748b' }; // Xám
+    }
+  };
+  const statusStyle = getStatusBadgeStyle(currentStatus);
+
+  const getContractStatusStyle = (status) => {
+    switch(status) {
+      case 'Nháp': return { bg: '#f1f5f9', text: '#64748b' };
+      case 'Chờ duyệt bản thảo': return { bg: '#e0f2fe', text: '#0284c7' };
+      case 'Chờ upload': return { bg: '#e0e7ff', text: '#4f46e5' };
+      case 'Chờ duyệt bản ký': return { bg: '#ffedd5', text: '#ea580c' };
+      case 'Hiệu lực': return { bg: '#dbeafe', text: '#2563eb' };
+      case 'Tạm dừng': return { bg: '#fef9c3', text: '#ca8a04' };
+      case 'Sửa đổi gia hạn': return { bg: '#f3e8ff', text: '#9333ea' };
+      case 'Chấm dứt hợp đồng': return { bg: '#fee2e2', text: '#dc2626' };
+      case 'Hoàn thành': return { bg: '#dcfce7', text: '#16a34a' };
+      default: return { bg: '#f1f5f9', text: '#64748b' };
+    }
+  };
+
+  const getOrderStatusStyle = (status) => {
+    switch(status) {
+      case 'Mới':
+      case 'Chờ xác nhận': return { bg: '#ffedd5', text: '#ea580c' };
+      case 'Đang xử lý':
+      case 'Đang giao': return { bg: '#e0f2fe', text: '#0284c7' };
+      case 'Hoàn thành':
+      case 'Đã thanh toán': return { bg: '#dcfce7', text: '#16a34a' };
+      case 'Đã hủy':
+      case 'Trả hàng': return { bg: '#fee2e2', text: '#dc2626' };
+      default: return { bg: '#f1f5f9', text: '#64748b' };
+    }
   };
 
   const validate = () => {
@@ -332,8 +375,7 @@ const CustomerForm = () => {
 
   // DOCUMENTS LOGIC
 
-  const distOptions = formData.province ? (DISTRICTS[formData.province] || []) : [];
-  const wardOptions = formData.district ? (WARDS[formData.district] || []) : [];
+  const wardOptions = formData.province ? (WARDS[formData.province] || []) : [];
 
   return (
     <div className="customer-form-modern">
@@ -352,7 +394,9 @@ const CustomerForm = () => {
       <div className="form-body-wrapper">
         <div className="section-header">
           <h2 className="section-title">Thông tin khách hàng</h2>
-          <div className="badge-opportunity">{formData.source === 'Lead Conversion' ? 'Cơ hội' : 'Cơ hội'}</div>
+          <div style={{ padding: '4px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600, backgroundColor: statusStyle.bg, color: statusStyle.text }}>
+            {currentStatus}
+          </div>
         </div>
 
         <div className="form-card">
@@ -394,7 +438,7 @@ const CustomerForm = () => {
               <span>MST</span> <span className="asterisk">*</span>
             </div>
             <div className="form-value-modern">
-              <input type="text" ref={mstRef} className={`input-modern ${errors.mst ? 'is-invalid' : ''}`} placeholder="Nhập mã số thuế..." value={formData.mst} onChange={e=>hf('mst', e.target.value)} />
+              <input type="text" ref={mstRef} className={`input-modern ${errors.mst ? 'is-invalid' : ''}`} placeholder="Nhập mã số thuế..." value={formData.mst} onChange={e=>hf('mst', e.target.value)} disabled={isIdMstDisabled} style={{backgroundColor: isIdMstDisabled ? '#f1f5f9' : 'white'}} />
             </div>
           </div>
 
@@ -437,8 +481,7 @@ const CustomerForm = () => {
               <input type="text" className="input-modern" placeholder="Địa chỉ chi tiết (nhà, ngõ ...)" value={formData.addressDetail} onChange={e=>hf('addressDetail', e.target.value)} />
               <div className="address-selectors">
                   <select className="select-modern" value={formData.province} onChange={e=>hf('province', e.target.value)}><option value="">Tỉnh/TP</option>{PROVINCES.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select>
-                  <select className="select-modern" value={formData.district} onChange={e=>hf('district', e.target.value)} disabled={!formData.province}><option value="">Quận/Huyện</option>{distOptions.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select>
-                  <select className="select-modern" value={formData.ward} onChange={e=>hf('ward', e.target.value)} disabled={!formData.district}><option value="">Phường/Xã</option>{wardOptions.map(w=><option key={w.id} value={w.id}>{w.name}</option>)}</select>
+                  <select className="select-modern" value={formData.ward} onChange={e=>hf('ward', e.target.value)} disabled={!formData.province}><option value="">Phường/Xã</option>{wardOptions.map(w=><option key={w.id} value={w.id}>{w.name}</option>)}</select>
               </div>
             </div>
           </div>
@@ -449,6 +492,15 @@ const CustomerForm = () => {
             </div>
             <div className="form-value-modern">
               <input type="text" className="input-modern" placeholder="https://" value={formData.website} onChange={e=>hf('website', e.target.value)} />
+            </div>
+          </div>
+
+          <div className="form-row-modern">
+            <div className="form-label-modern">
+              <span>SĐT Công ty</span>
+            </div>
+            <div className="form-value-modern">
+              <input type="text" className="input-modern" placeholder="Số điện thoại..." value={formData.companyPhone} onChange={e=>hf('companyPhone', e.target.value)} />
             </div>
           </div>
 
@@ -470,7 +522,7 @@ const CustomerForm = () => {
               <span>Nguồn</span>
             </div>
             <div className="form-value-modern">
-              <select className={`select-modern select-badge ${formData.source === 'Lead Conversion' ? 'badge-lead' : 'badge-manual'}`} value={formData.source} onChange={e=>hf('source', e.target.value)}>
+              <select className={`select-modern select-badge ${formData.source === 'Lead Conversion' ? 'badge-lead' : 'badge-manual'}`} value={formData.source} onChange={e=>hf('source', e.target.value)} disabled={formData.source === 'Lead Conversion'} style={{ backgroundColor: formData.source === 'Lead Conversion' ? '#f1f5f9' : 'white', cursor: formData.source === 'Lead Conversion' ? 'not-allowed' : 'pointer' }}>
                   <option value="Manual">Manual</option>
                   <option value="Lead Conversion">Lead Conversion</option>
               </select>
@@ -482,18 +534,29 @@ const CustomerForm = () => {
         <div className="section-header" style={{margin: '32px 0 16px'}}>
            <h2 className="section-title" style={{fontSize: '18px'}}>Hợp đồng đang triển khai</h2>
         </div>
-        <div className="table-card">
-           <div className="table-header contracts-grid">
-               <span>STT</span><span>ID Hợp đồng</span><span>Tên hợp đồng</span>
+        <div className="table-card" style={{ overflowX: 'auto' }}>
+           <div className="table-header" style={{ display: 'grid', gridTemplateColumns: '40px 120px minmax(180px, 2.5fr) minmax(120px, 1.5fr) minmax(120px, 1.5fr) 90px 90px 110px 100px', gap: '16px', padding: '12px 20px', background: '#f8fafc', borderBottom: '2px solid #e2e8f0', fontWeight: 600, color: '#475569', fontSize: '13px', minWidth: '1050px' }}>
+               <span>STT</span><span>ID Hợp đồng</span><span>Tên hợp đồng</span><span>Ng.theo dõi</span><span>Đơn vị</span><span>Ngày ký</span><span>Ngày K.T</span><span>Giá trị</span><span>Trạng thái</span>
            </div>
            {id ? (
-               contractsList.length > 0 ? contractsList.map((ctr, idx) => (
-                   <div className="table-row contracts-grid" key={ctr.id}>
+               contractsList.length > 0 ? contractsList.map((ctr, idx) => {
+                 const truncateStyle = { whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+                 return (
+                   <div className="table-row" key={ctr.id} style={{ display: 'grid', gridTemplateColumns: '40px 120px minmax(180px, 2.5fr) minmax(120px, 1.5fr) minmax(120px, 1.5fr) 90px 90px 110px 100px', gap: '16px', padding: '12px 20px', borderBottom: '1px solid #f1f5f9', fontSize: '13px', alignItems: 'center', minWidth: '1050px' }}>
                        <span>{(idx + 1).toString().padStart(2, '0')}</span>
-                       <span className="text-link" onClick={() => navigate('/contracts')}>{ctr.id}</span>
-                       <span>{ctr.name}</span>
+                       <span className="text-link" onClick={() => navigate('/contracts')} style={{ color: '#2563eb', fontWeight: 600, ...truncateStyle }} title={ctr.id}>{ctr.id}</span>
+                       <span style={{ fontWeight: 500, color: '#0f172a', ...truncateStyle }} title={ctr.name}>{ctr.name}</span>
+                       <span style={truncateStyle} title={ctr.amName || 'N/A'}>{ctr.amName || 'N/A'}</span>
+                       <span style={truncateStyle} title={ctr.promotionUnit || 'N/A'}>{ctr.promotionUnit || 'N/A'}</span>
+                       <span style={truncateStyle} title={ctr.signedDate || 'N/A'}>{ctr.signedDate || 'N/A'}</span>
+                       <span style={truncateStyle} title={ctr.expiryDate || 'N/A'}>{ctr.expiryDate || 'N/A'}</span>
+                       <span style={{ fontWeight: 600, ...truncateStyle }} title={ctr.contractValue || '0'}>{ctr.contractValue || '0'}</span>
+                       <span style={truncateStyle} title={ctr.approvalStatus || 'N/A'}>
+                          <span style={{ backgroundColor: getContractStatusStyle(ctr.approvalStatus).bg, color: getContractStatusStyle(ctr.approvalStatus).text, padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, display: 'inline-block', ...truncateStyle, maxWidth: '100%' }}>{ctr.approvalStatus || 'N/A'}</span>
+                       </span>
                    </div>
-               )) : (
+                 );
+               }) : (
                    <div style={{padding: '32px', textAlign: 'center', color: '#94a3b8', fontSize: '14px'}}>Chưa có hợp đồng nào đang triển khai.</div>
                )
            ) : (
@@ -513,14 +576,15 @@ const CustomerForm = () => {
            {id ? (
              <>
                {[
-                 { id: 'DH-2026-001', status: 'Đang triển khai', revenue: '450,000,000 VNĐ' },
-                 { id: 'DH-2026-004', status: 'Đang triển khai', revenue: '125,000,000 VNĐ' }
+                 { id: 'DH-2026-001', status: 'Đang giao', revenue: '450,000,000 VNĐ' },
+                 { id: 'DH-2026-004', status: 'Hoàn thành', revenue: '125,000,000 VNĐ' },
+                 { id: 'DH-2026-005', status: 'Trả hàng', revenue: '50,000,000 VNĐ' }
                ].map((ord, idx) => (
                    <div className="table-row" key={ord.id} style={{ display: 'grid', gridTemplateColumns: '60px 1fr 1fr 150px', gap: '16px', padding: '12px 20px', borderBottom: '1px solid #f1f5f9', fontSize: '13px', alignItems: 'center' }}>
                        <span style={{ color: '#94a3b8' }}>{(idx + 1).toString().padStart(2, '0')}</span>
                        <span style={{ color: '#2563eb', fontWeight: 600 }}>{ord.id}</span>
                        <span>
-                          <span style={{ backgroundColor: '#eff6ff', color: '#2563eb', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600 }}>{ord.status}</span>
+                          <span style={{ backgroundColor: getOrderStatusStyle(ord.status).bg, color: getOrderStatusStyle(ord.status).text, padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }} title={ord.status}>{ord.status}</span>
                        </span>
                        <span style={{ textAlign: 'right', fontWeight: 600, color: '#0f172a' }}>{ord.revenue}</span>
                    </div>

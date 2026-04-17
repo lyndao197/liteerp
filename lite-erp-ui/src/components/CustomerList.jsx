@@ -34,11 +34,13 @@ const CustomerList = () => {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('Chính thức'); // 'Chính thức' | 'Dự thảo/Mới tạo'
 
   // SORT & FILTER STATE
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [filters, setFilters] = useState({});
   const [activeFilterCol, setActiveFilterCol] = useState(null);
+  const [filterSearchTerm, setFilterSearchTerm] = useState({});
 
   // ADVANCED FILTER
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
@@ -56,17 +58,19 @@ const CustomerList = () => {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [showColPicker, setShowColPicker] = useState(false);
   const [pickerPos, setPickerPos] = useState({ top: 0, right: 0 });
-  const [visibleColumns, setVisibleColumns] = useState(['id_kh', 'name', 'mst', 'domain', 'contractValue', 'signedDate', 'source']);
+  const [visibleColumns, setVisibleColumns] = useState(['id_kh', 'name', 'mst', 'industry', 'tag', 'companyPhone', 'contactName', 'email', 'contactPhone']);
 
   // COLUMN DEFINITIONS FOR QUERY BUILDER
   const COLUMN_OPTIONS = [
     { key: 'id_kh', label: 'ID khách hàng' },
     { key: 'name', label: 'Khách hàng' },
     { key: 'mst', label: 'Mã số thuế' },
-    { key: 'domain', label: 'Dịch vụ' },
-    { key: 'contractValue', label: 'Số hợp đồng' },
-    { key: 'signedDate', label: 'Ngày ký' },
-    { key: 'source', label: 'Nguồn' }
+    { key: 'industry', label: 'Lĩnh vực' },
+    { key: 'tag', label: 'Tag' },
+    { key: 'companyPhone', label: 'SĐT Công ty' },
+    { key: 'contactName', label: 'Tên liên hệ' },
+    { key: 'email', label: 'Email liên hệ' },
+    { key: 'contactPhone', label: 'SĐT liên hệ' }
   ];
 
   useEffect(() => {
@@ -105,8 +109,22 @@ const CustomerList = () => {
     return [...new Set(customers.map(c => c[key] || ''))].filter(Boolean);
   };
 
+  const getCustomerStatus = (customerId) => {
+    const contracts = mockStore.getAllContracts().filter(c => c.customerId === customerId);
+    if (!contracts || contracts.length === 0) return 'Mới tạo';
+    const hasOfficial = contracts.some(c => 
+      ['Hiệu lực', 'Tạm dừng', 'Sửa đổi gia hạn', 'Chấm dứt hợp đồng', 'Hoàn thành'].includes(c.approvalStatus)
+    );
+    if (hasOfficial) return 'Chính thức';
+    return 'Dự thảo';
+  };
+
   const processedCustomers = useMemo(() => {
-    let result = [...customers];
+    let result = customers.filter(c => {
+      const status = getCustomerStatus(c.id);
+      if (activeTab === 'Chính thức') return status === 'Chính thức';
+      return status === 'Dự thảo' || status === 'Mới tạo';
+    });
 
     // 1. Search
     if (searchTerm) {
@@ -143,7 +161,7 @@ const CustomerList = () => {
     }
 
     return result;
-  }, [customers, searchTerm, filters, sortConfig, advancedQuery]);
+  }, [customers, searchTerm, filters, sortConfig, advancedQuery, activeTab]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -254,6 +272,15 @@ const CustomerList = () => {
     reader.readAsBinaryString(file);
   };
 
+  const handleDeleteMany = () => {
+    if (selectedIds.size === 0) return;
+    if (confirm(`Bạn có chắc chắn muốn xóa ${selectedIds.size} khách hàng đã chọn?`)) {
+      mockStore.deleteMultipleCustomers(Array.from(selectedIds));
+      setCustomers(mockStore.getAllCustomers());
+      setSelectedIds(new Set());
+    }
+  };
+
   const TableHeader = ({ label, columnKey, hasFilter = false }) => {
     if (!visibleColumns.includes(columnKey)) return null;
     return (
@@ -276,8 +303,13 @@ const CustomerList = () => {
         {activeFilterCol === columnKey && (
           <div className="column-filter-popup" onClick={e => e.stopPropagation()} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '180px', padding: '8px', fontWeight: 'normal', color: '#334155' }}>
             <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px' }}>Lọc: {label}</div>
+            <div style={{ padding: '0 4px 8px 4px' }}>
+              <input type="text" placeholder="Tìm kiếm..." value={filterSearchTerm[columnKey] || ''} onChange={e => setFilterSearchTerm({...filterSearchTerm, [columnKey]: e.target.value})} style={{ width: '100%', padding: '4px 8px', fontSize: '11px', border: '1px solid #e2e8f0', borderRadius: '4px', outline: 'none' }} />
+            </div>
             <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {getDistinctValues(columnKey).map(val => (
+              {getDistinctValues(columnKey)
+                .filter(v => (v || '').toLowerCase().includes((filterSearchTerm[columnKey] || '').toLowerCase()))
+                .map(val => (
                 <label key={val} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '4px 0', cursor: 'pointer' }}>
                   <input type="checkbox" checked={filters[columnKey]?.includes(val) || false} onChange={() => handleFilterChange(columnKey, val)} />
                   {val}
@@ -336,6 +368,19 @@ const CustomerList = () => {
         </div>
       </div>
 
+      <div style={{ display: 'flex', gap: '24px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
+        <div 
+          onClick={() => { setActiveTab('Chính thức'); setSelectedIds(new Set()); }}
+          style={{ cursor: 'pointer', fontWeight: 600, paddingBottom: '8px', borderBottom: activeTab === 'Chính thức' ? '2px solid #e03' : 'none', color: activeTab === 'Chính thức' ? '#e03' : '#64748b' }}>
+          Khách hàng
+        </div>
+        <div 
+          onClick={() => { setActiveTab('Dự thảo/Mới tạo'); setSelectedIds(new Set()); }}
+          style={{ cursor: 'pointer', fontWeight: 600, paddingBottom: '8px', borderBottom: activeTab === 'Dự thảo/Mới tạo' ? '2px solid #e03' : 'none', color: activeTab === 'Dự thảo/Mới tạo' ? '#e03' : '#64748b' }}>
+          Draff/dự thảo & Mới tạo
+        </div>
+      </div>
+
       <div className="list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div className="search-group" style={{ position: 'relative', display: 'flex', gap: '24px', alignItems: 'center' }}>
@@ -363,6 +408,11 @@ const CustomerList = () => {
 
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
+            {activeTab === 'Dự thảo/Mới tạo' && selectedIds.size > 0 && (
+              <button className="btn-outline-brand" onClick={handleDeleteMany} title="Xóa khách hàng" style={{ border: '1px solid #ef4444', color: '#ef4444', background: '#fef2f2', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+                <Trash2 size={18} /> Xóa ({selectedIds.size})
+              </button>
+            )}
             <button className="btn-outline-brand" onClick={() => navigate('/customer/new')} style={{ border: '1px solid #f45476', color: '#e03', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
               <Plus size={18} /> Thêm khách hàng
             </button>
@@ -384,10 +434,12 @@ const CustomerList = () => {
                 <TableHeader label="ID khách hàng" columnKey="id_kh" hasFilter={true} />
                 <TableHeader label="Khách hàng" columnKey="name" hasFilter={true} />
                 <TableHeader label="Mã số thuế" columnKey="mst" hasFilter={true} />
-                <TableHeader label="Dịch vụ" columnKey="domain" hasFilter={true} />
-                <TableHeader label="Số hợp đồng" columnKey="contractValue" hasFilter={true} />
-                <TableHeader label="Ngày ký" columnKey="signedDate" hasFilter={true} />
-                <TableHeader label="Nguồn" columnKey="source" hasFilter={true} />
+                <TableHeader label="Lĩnh vực" columnKey="industry" hasFilter={true} />
+                <TableHeader label="Tag" columnKey="tag" hasFilter={true} />
+                <TableHeader label="SĐT Công ty" columnKey="companyPhone" hasFilter={true} />
+                <TableHeader label="Tên liên hệ" columnKey="contactName" hasFilter={true} />
+                <TableHeader label="Email liên hệ" columnKey="email" hasFilter={true} />
+                <TableHeader label="SĐT liên hệ" columnKey="contactPhone" hasFilter={true} />
                 <th style={{ textAlign: 'center', cursor: 'pointer', width: '40px' }} onClick={(e) => {
                   e.stopPropagation();
                   if (!showColPicker) {
@@ -400,8 +452,8 @@ const CustomerList = () => {
                   {showColPicker && createPortal(
                     <div className="column-picker-popup" onClick={e => e.stopPropagation()} style={{ position: 'fixed', top: `${pickerPos.top}px`, right: `${pickerPos.right}px`, zIndex: 9999, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '150px', padding: '8px', fontWeight: 'normal', textAlign: 'left' }}>
                       <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', color: '#1e293b' }}>Hiển thị cột</div>
-                      {['id_kh', 'name', 'mst', 'domain', 'contractValue', 'signedDate', 'source'].map(key => {
-                        const labelMap = { id_kh: 'ID khách hàng', name: 'Khách hàng', mst: 'Mã số thuế', domain: 'Dịch vụ', contractValue: 'Số hợp đồng', signedDate: 'Ngày ký', source: 'Nguồn' };
+                      {['id_kh', 'name', 'mst', 'industry', 'tag', 'companyPhone', 'contactName', 'email', 'contactPhone'].map(key => {
+                        const labelMap = { id_kh: 'ID khách hàng', name: 'Khách hàng', mst: 'Mã số thuế', industry: 'Lĩnh vực', tag: 'Tag', companyPhone: 'SĐT Công ty', contactName: 'Tên liên hệ', email: 'Email liên hệ', contactPhone: 'SĐT liên hệ' };
                         return (
                           <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0', fontSize: '13px', cursor: 'pointer', color: '#334155' }}>
                             <input type="checkbox" checked={visibleColumns.includes(key)} onChange={() => {
@@ -444,22 +496,24 @@ const CustomerList = () => {
                       </td>
                     )}
                     {visibleColumns.includes('mst') && <td>{customer.mst || '0300588569'}</td>}
-                    {visibleColumns.includes('domain') && (
+                    {visibleColumns.includes('industry') && (
                       <td>
-                        <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: domainState.bg, color: domainState.text, fontSize: '12px', border: `1px solid ${domainState.bg === '#FFE2E2' ? '#F0F0F0' : '#E0E7FF'}`, display: 'inline-flex' }}>
-                          {customer.domain || domainState.val}
+                        <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3', fontSize: '12px', border: '1px solid #E0E7FF', display: 'inline-flex' }}>
+                          {customer.industry || 'Chưa rõ'}
                         </span>
                       </td>
                     )}
-                    {visibleColumns.includes('contractValue') && <td style={{ color: '#000000' }}>{customer.contractNo || '1,3 tỉ VNĐ'}</td>}
-                    {visibleColumns.includes('signedDate') && <td style={{ whiteSpace: 'nowrap', color: '#000000' }}>{customer.signedDate || '22/12/2025'}</td>}
-                    {visibleColumns.includes('source') && (
+                    {visibleColumns.includes('tag') && (
                       <td>
-                        <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: sColor.bg, color: sColor.text, fontSize: '12px', border: '1px solid #F0F0F0', display: 'inline-flex' }}>
-                          {srcState === 'Yellow' ? 'Manual' : 'Lead Conversion'}
+                        <span style={{ padding: '3px 9px', borderRadius: '4px', backgroundColor: '#FEF8E9', color: '#F2BB24', fontSize: '12px', border: '1px solid #F0F0F0', display: 'inline-flex', fontWeight: 600 }}>
+                          {customer.tag || 'Tiềm năng'}
                         </span>
                       </td>
                     )}
+                    {visibleColumns.includes('companyPhone') && <td>{customer.companyPhone || customer.phone || ''}</td>}
+                    {visibleColumns.includes('contactName') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.name || ''}</td>}
+                    {visibleColumns.includes('email') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.email || ''}</td>}
+                    {visibleColumns.includes('contactPhone') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.phone || ''}</td>}
                     <td style={{ textAlign: 'center' }}></td>
                   </tr>
                 )
