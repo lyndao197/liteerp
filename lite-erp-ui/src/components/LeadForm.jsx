@@ -26,11 +26,17 @@ const WARDS = {
   'TB': [{ id: 'P2', name: 'Phường 2' }]
 };
 
-const SERVICE_VARIANTS = {
-  'outsourcing': ['Dịch vụ kiểm soát hồ sơ KHCN', 'Dịch vụ kiểm soát hồ sơ KHDN', 'Dịch vụ nhập liệu'],
-  'telesales': ['Telesales Inbound', 'Telesales Outbound'],
-  'cskh': ['CSKH Đa kênh', 'CSKH Tiêu chuẩn']
+const SERVICE_OPTIONS_BY_PROJECT = {
+  solution: ['KnowxHUB', 'OmniX', 'WorkForceX', 'AgentMate', 'CXBot'],
+  service: ['Chăm sóc khách hàng', 'Tổng đài viên', 'Cho thuê nhân sự']
 };
+
+const createEmptyServiceLine = () => ({
+  id: Date.now() + Math.random(),
+  projectCategory: '',
+  service: '',
+  description: ''
+});
 
 const INITIAL_POSITIONS = [{id: 'TĐ', name: 'Trưởng Đài'}, {id: 'GD', name: 'Giám Đốc'}];
 const INITIAL_PARTNERS = [
@@ -50,8 +56,6 @@ const INITIAL_CONTACTS_DB = [
 
 const INITIAL_FORM_STATE = {
   leadName: '', probability: 10,
-  projectType: '',
-  projectedService: '',
   contactDate: new Date().toISOString().split('T')[0],
   issueMonth: '',
   addressDetail: '', province: '', district: '', ward: '',
@@ -72,8 +76,8 @@ const LeadForm = () => {
   const [snapshotData, setSnapshotData] = useState({...INITIAL_FORM_STATE});
 
   // COMPLEX DATA LISTS
-  const [serviceDetails, setServiceDetails] = useState([]);
-  const [snapshotServices, setSnapshotServices] = useState([]);
+  const [serviceDetails, setServiceDetails] = useState([createEmptyServiceLine()]);
+  const [snapshotServices, setSnapshotServices] = useState([createEmptyServiceLine()]);
   
   const [contacts, setContacts] = useState([]);
   const [snapshotContacts, setSnapshotContacts] = useState([]);
@@ -111,9 +115,7 @@ const LeadForm = () => {
 
   // VALIDATION & PIPELINE STATE
   const nameRef = useRef(null);
-  const serviceRef = useRef(null);
   const mstRef = useRef(null);
-  const projectTypeRef = useRef(null);
   const clientRef = useRef(null);
   const domainRef = useRef(null);
   const [errors, setErrors] = useState({});
@@ -128,14 +130,27 @@ const LeadForm = () => {
     if (id && id !== 'new') {
       const task = mockStore.getLead(id);
       if (task) {
+        const mappedService = task.projectedService === 'Kiểm soát / Nhập liệu' ? 'service'
+          : task.projectedService === 'Chăm sóc khách hàng' ? 'service'
+          : task.projectedService === 'Telesales' ? 'service'
+          : 'solution';
         setFormData(prev => ({
           ...prev,
           leadName: task.content || '',
-          projectedService: task.projectedService === 'Kiểm soát / Nhập liệu' ? 'outsourcing' : 
-                            task.projectedService === 'Chăm sóc khách hàng' ? 'cskh' :
-                            task.projectedService === 'Telesales' ? 'telesales' : '',
           probability: parseInt(task.probability) || 0,
         }));
+        setServiceDetails([{
+          id: Date.now() + Math.random(),
+          projectCategory: mappedService,
+          service: task.projectedService || '',
+          description: ''
+        }]);
+        setSnapshotServices([{
+          id: Date.now() + Math.random(),
+          projectCategory: mappedService,
+          service: task.projectedService || '',
+          description: ''
+        }]);
         setSelectedClient({ id: 'dummy', name: task.company, type: task.tags?.find(t => t.text === 'Doanh nghiệp') ? 'Doanh nghiệp' : 'Nội bộ', mst: task.mst, phone: '', addr: '', domain: '' });
         setClientSearch(task.company || '');
         setClientAbbr(task.id ? task.id.split('-')[0] : '');
@@ -155,12 +170,6 @@ const LeadForm = () => {
     }
     if (field === 'district') {
       setFormData(prev => ({...prev, ward: ''}));
-    }
-    // Variant reset if service changes
-    if (field === 'projectedService') {
-      if (serviceDetails.length > 0) {
-        setServiceDetails(serviceDetails.map(s => ({...s, variant: ''})));
-      }
     }
   };
 
@@ -207,16 +216,14 @@ const LeadForm = () => {
     const finalStatus = isNew ? 'Mới' : leadStatus;
     const newId = (id && id !== 'new') ? id : mockStore.getNextLeadId(clientAbbr || 'LEAD');
     
-    const mappedService = formData.projectedService === 'outsourcing' ? 'Kiểm soát / Nhập liệu' :
-                          formData.projectedService === 'telesales' ? 'Telesales' :
-                          formData.projectedService === 'cskh' ? 'Chăm sóc khách hàng' : '';
+    const primaryService = serviceDetails.find((line) => line.service)?.service || '';
 
     const leadData = {
       id: newId,
       content: formData.leadName,
       company: clientSearch,
       mst: mstValue,
-      projectedService: mappedService,
+      projectedService: primaryService,
       probability: `${formData.probability}%`,
       status: finalStatus,
       tags: selectedClient?.type === 'Doanh nghiệp' ? [{text: 'Doanh nghiệp', color: '#dcfce7', textCol: '#166534'}] : [{text: 'Nội bộ', color: '#e0e7ff', textCol: '#3730a3'}],
@@ -264,27 +271,27 @@ const LeadForm = () => {
   const handleConvert = () => {
     const oppErrors = {};
     if (!formData.leadName.trim()) oppErrors.leadName = true;
-    if (!formData.projectType) oppErrors.projectType = true;
-    if (!formData.projectedService) oppErrors.projectedService = true;
     if (!clientSearch.trim()) oppErrors.clientSearch = true;
     if (!mstValue.trim()) oppErrors.mstValue = true;
     if (!domainValue) oppErrors.domainValue = true;
+    const hasValidServiceLine = serviceDetails.some(
+      (line) => line.projectCategory && line.service
+    );
+    if (!hasValidServiceLine) oppErrors.serviceDetails = true;
 
     if (Object.keys(oppErrors).length > 0) {
       setErrors(oppErrors);
-      alert("Vui lòng nhập đủ các trường: Tên lead, Loại dự án, Dịch vụ dự kiến, Tên khách hàng, MST, Lĩnh vực để chuyển thành Opportunity.");
+      alert("Vui lòng nhập đủ các trường: Tên lead, Dịch vụ, Tên khách hàng, MST, Lĩnh vực để chuyển thành Opportunity.");
       if (oppErrors.leadName) nameRef.current?.focus();
-      else if (oppErrors.projectType) projectTypeRef.current?.focus();
-      else if (oppErrors.projectedService) serviceRef.current?.focus();
       else if (oppErrors.clientSearch) clientRef.current?.focus();
       else if (oppErrors.mstValue) mstRef.current?.focus();
       else if (oppErrors.domainValue) domainRef.current?.focus();
       return;
     }
 
-    setLeadStatus('Thành công');
-    if (id) mockStore.updateLeadStatus(id, 'Thành công');
-    addChatterMessage('log', 'Hệ', 'Chuyển trạng thái sang Thành công (Opportunity)', 'just now', '#e0e7ff');
+    setLeadStatus('Đang tiếp xúc');
+    if (id) mockStore.updateLeadStatus(id, 'Đang tiếp xúc');
+    addChatterMessage('log', 'Hệ', 'Chuyển trạng thái sang Đang tiếp xúc (Opportunity)', 'just now', '#e0e7ff');
   };
 
   // -------------------------
@@ -297,9 +304,25 @@ const LeadForm = () => {
   const removeContact = (id) => setContacts(contacts.filter(c => c.id !== id));
   const updateContact = (id, field, val) => setContacts(contacts.map(c => c.id === id ? { ...c, [field]: val } : c));
 
-  const addServiceLine = () => setServiceDetails([...serviceDetails, { id: Date.now(), variant: '', qty: 1, price: '' }]);
+  const addServiceLine = () => {
+    setServiceDetails([...serviceDetails, createEmptyServiceLine()]);
+    setErrors((prev) => ({ ...prev, serviceDetails: false }));
+  };
   const removeService = (id) => setServiceDetails(serviceDetails.filter(s => s.id !== id));
-  const updateService = (id, field, val) => setServiceDetails(serviceDetails.map(s => s.id === id ? { ...s, [field]: val } : s));
+  const updateService = (id, field, val) => {
+    if (field === 'projectCategory' || field === 'service') {
+      setErrors((prev) => ({ ...prev, serviceDetails: false }));
+    }
+    setServiceDetails(
+      serviceDetails.map(s => {
+        if (s.id !== id) return s;
+        if (field === 'projectCategory') {
+          return { ...s, projectCategory: val, service: '' };
+        }
+        return { ...s, [field]: val };
+      })
+    );
+  };
 
   // -------------------------
   // CUSTOM AUTOCOMPLETE / ODOO SELECT POPUP
@@ -308,19 +331,6 @@ const LeadForm = () => {
     setModalState({ open: true, type, contactId, searchInput: '' });
   };
   const closeSearchModal = () => setModalState({ open: false, type: '', contactId: null, searchInput: '' });
-
-  const parseCurrencyStr = (str) => {
-    if (!str) return 0;
-    return parseInt(String(str).replace(/[^0-9]/g, ''), 10) || 0;
-  };
-  
-  const calcTotalAmount = () => {
-    let sum = 0;
-    for(let s of serviceDetails) {
-       sum += (parseInt(s.qty) || 0) * parseCurrencyStr(s.price);
-    }
-    return sum === 0 ? '0 ₫' : sum.toLocaleString('vi-VN') + ' ₫';
-  };
 
   const confirmModalCreate = () => {
     const { type, contactId, searchInput } = modalState;
@@ -434,9 +444,9 @@ const LeadForm = () => {
   };
 
   // Helpers mappings
-  const availableVariants = formData.projectedService ? (SERVICE_VARIANTS[formData.projectedService] || []) : [];
   const distOptions = formData.province ? (DISTRICTS[formData.province] || []) : [];
   const wardOptions = formData.district ? (WARDS[formData.district] || []) : [];
+  const isDisabled = !isEditable;
 
   return (
     <div className="lead-form-container">
@@ -504,17 +514,11 @@ const LeadForm = () => {
               <div className="ribbon">KHÔNG THÀNH CÔNG</div>
             </div>
           )}
-          {leadStatus === 'Thành công' && (
-            <div className="ribbon-wrapper">
-              <div className="ribbon" style={{background: '#8b5cf6'}}>THÀNH CÔNG</div>
-            </div>
-          )}
-
           <fieldset disabled={!isEditable} style={{border: 'none', margin: 0, padding: 0}}>
           <div className="sheet-title-section">
             <div className="oe_title">
               <label>Tên lead <span style={{color:'red'}}>*</span></label>
-              <input type="text" ref={nameRef} className={`title-input ${errors.leadName ? 'has-error' : ''}`} placeholder="e.g. Nâng cấp hệ thống ERP" value={formData.leadName} onChange={e=>{hf('leadName', e.target.value); setErrors(p=>({...p, leadName: false}))}} style={{borderColor: errors.leadName ? 'red' : undefined}}/>
+              <input type="text" ref={nameRef} className={`title-input ${errors.leadName ? 'has-error' : ''}`} placeholder="Nhập tên lead" value={formData.leadName} onChange={e=>{hf('leadName', e.target.value); setErrors(p=>({...p, leadName: false}))}} style={{borderColor: errors.leadName ? 'red' : undefined}}/>
               {errors.leadName && <small style={{color:'red', fontWeight: 500}}>Trường này là bắt buộc</small>}
             </div>
             <div className="probability-box">
@@ -523,9 +527,9 @@ const LeadForm = () => {
             </div>
           </div>
 
-          <div className="sheet-main-content" style={{alignItems: 'flex-start'}}>
+          <div className="sheet-main-content">
             {/* L COLUMN */}
-            <div className="form-column">
+            <div className="form-column lead-section-card">
               <div className="column-title" style={{margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1}}>Thông tin chung</div>
               {id && (
                 <div className="form-group">
@@ -533,63 +537,55 @@ const LeadForm = () => {
                   <input type="text" className="form-control" readOnly value={id} />
                 </div>
               )}
-              <div className="form-group" style={{alignItems: 'flex-start'}}>
-                <label className="form-label" style={{marginTop: '6px'}}>Loại dự án</label>
-                <div style={{flex: 1}}>
-                  <select ref={projectTypeRef} className="form-control" style={{borderColor: errors.projectType ? 'red' : undefined, width: '100%'}} value={formData.projectType} onChange={e=>{hf('projectType', e.target.value); setErrors(p=>({...p, projectType: false}))}}>
-                    <option value="">-- Chọn loại --</option>
-                    <option value="outsourcing">Dịch vụ outsourcing</option>
-                    <option value="product">Cung cấp sản phẩm</option>
-                  </select>
-                </div>
-              </div>
-              <div className="form-group" style={{alignItems: 'flex-start'}}>
-                <label className="form-label" style={{marginTop: '6px'}}>Dịch vụ dự kiến</label>
-                <div style={{flex: 1}}>
-                  <select ref={serviceRef} className="form-control" style={{borderColor: errors.projectedService ? 'red' : undefined, width: '100%'}} value={formData.projectedService} onChange={e=>{hf('projectedService', e.target.value); setErrors(p=>({...p, projectedService: false}))}}>
-                    <option value="">-- Chọn dịch vụ --</option>
-                    <option value="outsourcing">Kiểm soát / Nhập liệu</option>
-                    <option value="telesales">Telesales</option>
-                    <option value="cskh">Chăm sóc khách hàng</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* DỊCH VỤ CHI TIẾT (Variants Combobox) */}
+              {/* DỊCH VỤ CHI TIẾT */}
               <div className="form-group" style={{flexDirection: 'column', alignItems: 'flex-start'}}>
                 <label className="form-label" style={{width: '100%', marginBottom: '8px'}}>Dịch vụ chi tiết</label>
-                <table className="service-details-table">
-                  <thead>
-                    <tr>
-                      <th>Dịch vụ chi tiết</th>
-                      <th style={{width: '80px'}}>Số lượng</th>
-                      <th>Đơn giá</th>
-                      <th style={{width: '40px'}}></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {serviceDetails.map(srv => (
-                      <tr key={srv.id}>
-                        <td>
-                          <select className="form-control" style={{width: '100%'}} value={srv.variant} onChange={e=>updateService(srv.id, 'variant', e.target.value)}>
-                            <option value="">-- Chọn cụ thể --</option>
-                            {availableVariants.map(v => <option key={v} value={v}>{v}</option>)}
-                          </select>
-                        </td>
-                        <td><input type="number" value={srv.qty} onChange={e=>updateService(srv.id, 'qty', e.target.value)} /></td>
-                        <td><input type="text" value={srv.price} onChange={e=>updateService(srv.id, 'price', e.target.value)} placeholder="0 ₫"/></td>
-                        <td style={{textAlign: 'center'}}><button className="icon-btn" onClick={() => removeService(srv.id)}><Trash2 size={16}/></button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="add-line-btn" onClick={addServiceLine}>Thêm dòng</div>
+                <div className="service-row-header">
+                  <span>Loại dự án</span>
+                  <span>Dịch vụ</span>
+                  <span>Mô tả sản phẩm</span>
+                  <span></span>
+                </div>
+                <div className="service-rows">
+                  {serviceDetails.map(srv => (
+                    <div className="service-row" key={srv.id}>
+                      <select
+                        className="form-control"
+                        value={srv.projectCategory}
+                        onChange={e=>updateService(srv.id, 'projectCategory', e.target.value)}
+                      >
+                        <option value="">-- Chọn loại dự án --</option>
+                        <option value="solution">Giải pháp</option>
+                        <option value="service">Dịch vụ</option>
+                      </select>
+                      <select
+                        className="form-control"
+                        value={srv.service}
+                        onChange={e=>updateService(srv.id, 'service', e.target.value)}
+                        disabled={!srv.projectCategory}
+                      >
+                        <option value="">-- Chọn dịch vụ --</option>
+                        {(SERVICE_OPTIONS_BY_PROJECT[srv.projectCategory] || []).map(item => (
+                          <option key={item} value={item}>{item}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={srv.description}
+                        onChange={e=>updateService(srv.id, 'description', e.target.value)}
+                        placeholder="Nhập mô tả sản phẩm"
+                      />
+                      <button type="button" className="icon-btn" onClick={() => removeService(srv.id)}>
+                        <Trash2 size={16}/>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                {errors.serviceDetails && <small style={{color: 'red', fontWeight: 500, marginTop: '6px'}}>Vui lòng thêm ít nhất 1 dòng dịch vụ hợp lệ</small>}
+                <div className="add-line-btn" onClick={addServiceLine}>Thêm dịch vụ</div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Tổng đơn giá</label>
-                <input type="text" className="form-control" readOnly value={calcTotalAmount()} />
-              </div>
               <div className="form-group">
                 <label className="form-label">Doanh thu dự kiến</label>
                 <input type="text" className="form-control" placeholder="0 ₫" />
@@ -611,7 +607,7 @@ const LeadForm = () => {
             </div>
 
             {/* R COLUMN */}
-            <div className="form-column">
+            <div className="form-column lead-section-card">
               <div className="column-title" style={{margin: '0 0 12px 0', padding: '0 0 8px 0', lineHeight: 1}}>Thông tin khách hàng</div>
               <div className="form-group" style={{alignItems: 'flex-start'}}>
                 <label className="form-label" style={{marginTop: '6px'}}>Tên khách hàng <span style={{color:'red'}}>*</span></label>

@@ -182,6 +182,7 @@ function ContractForm() {
     setFormData(updatedData);
 
     if (newStatus === 'Hiệu lực') {
+      mockStore.createProjectFromContract(contractId, updatedData);
       alert(`Đã cập nhật trạng thái: ${newStatus}`);
       navigate('/contracts');
     } else if (!isEdit) {

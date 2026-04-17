@@ -688,6 +688,7 @@ const INITIAL_DATA = {
     'PRJ-004': { id: 'PRJ-004', name: 'Setup hạ tầng Cloud Vinamilk', customer: 'Vinamilk', manager: 'admin', status: 'Off Track', tasks: 30, completed: 5, deadline: '2026-08-10', color: '#ef4444' }
   },
   projectIds: ['PRJ-001', 'PRJ-002', 'PRJ-003', 'PRJ-004'],
+  projectTasks: {},
   campaigns: {
     'CMP-001': { id: 'CMP-001', name: 'Chiến dịch Email Q2/2026', type: 'Email Marketing', target: 'Khách hàng tiềm năng', status: 'Running', startDate: '2026-04-01', endDate: '2026-06-30', sentCount: 1200, openRate: '15%' },
     'CMP-002': { id: 'CMP-002', name: 'Sự kiện Offline Viettel Day', type: 'Event', target: 'Khách hàng VIP', status: 'Draft', startDate: '2026-05-15', endDate: '2026-05-15', sentCount: 0, openRate: '0%' }
@@ -702,7 +703,12 @@ const INITIAL_DATA = {
     'LYP-001': { id: 'LYP-001', name: 'Khách hàng Thân thiết 2026', type: 'Tiered', status: 'Active', members: 1500, pointsFormula: '100,000 VND = 1 Point' },
     'LYP-002': { id: 'LYP-002', name: 'Ưu đãi Đối tác Công nghệ', type: 'Discount', status: 'Active', members: 50, pointsFormula: 'N/A' }
   },
-  loyaltyProgramIds: ['LYP-001', 'LYP-002']
+  loyaltyProgramIds: ['LYP-001', 'LYP-002'],
+  customerSurveys: {
+    'SRV-001': { id: 'SRV-001', title: 'Khảo sát sau triển khai dự án OmniX', customerName: 'Vinamilk', channel: 'Email', score: 4, status: 'Đã gửi', createdDate: '2026-04-14', owner: 'Trần B' },
+    'SRV-002': { id: 'SRV-002', title: 'Khảo sát mức độ hài lòng dịch vụ CSKH', customerName: 'MB Bank', channel: 'Điện thoại', score: 5, status: 'Đã phản hồi', createdDate: '2026-04-15', owner: 'Nguyễn Văn A' }
+  },
+  customerSurveyIds: ['SRV-001', 'SRV-002']
 };
 
 const STORE_KEY = 'liteErpDataStore_v4';
@@ -885,11 +891,14 @@ export const mockStore = {
     if (!store.ticketIds) store.ticketIds = INITIAL_DATA.ticketIds || [];
     if (!store.loyaltyPrograms) store.loyaltyPrograms = INITIAL_DATA.loyaltyPrograms || {};
     if (!store.loyaltyProgramIds) store.loyaltyProgramIds = INITIAL_DATA.loyaltyProgramIds || [];
+    if (!store.customerSurveys) store.customerSurveys = INITIAL_DATA.customerSurveys || {};
+    if (!store.customerSurveyIds) store.customerSurveyIds = INITIAL_DATA.customerSurveyIds || [];
     
     if (!store.productIds) store.productIds = INITIAL_DATA.productIds || [];
     
     if (!store.projects) store.projects = INITIAL_DATA.projects || {};
     if (!store.projectIds) store.projectIds = INITIAL_DATA.projectIds || [];
+    if (!store.projectTasks) store.projectTasks = INITIAL_DATA.projectTasks || {};
 
     return store;
   },
@@ -1538,6 +1547,23 @@ export const mockStore = {
     store.tickets[id] = data;
     mockStore.saveStore(store);
   },
+  deleteTicket: (id) => {
+    const store = mockStore.getStore();
+    if (store.tickets[id]) {
+      delete store.tickets[id];
+      store.ticketIds = (store.ticketIds || []).filter((ticketId) => ticketId !== id);
+      mockStore.saveStore(store);
+    }
+  },
+  getNextTicketId: () => {
+    const store = mockStore.getStore();
+    let max = 0;
+    (store.ticketIds || []).forEach((id) => {
+      const n = parseInt(String(id).split('-')[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    });
+    return `TIC-${String(max + 1).padStart(3, '0')}`;
+  },
 
   // --- LOYALTY METHODS ---
   getAllLoyaltyPrograms: () => {
@@ -1551,6 +1577,35 @@ export const mockStore = {
     mockStore.saveStore(store);
   },
 
+  // --- CUSTOMER SURVEY METHODS ---
+  getAllCustomerSurveys: () => {
+    const store = mockStore.getStore();
+    return (store.customerSurveyIds || []).map((id) => store.customerSurveys[id]).filter(Boolean);
+  },
+  saveCustomerSurvey: (id, data) => {
+    const store = mockStore.getStore();
+    if (!store.customerSurveys[id]) store.customerSurveyIds.push(id);
+    store.customerSurveys[id] = data;
+    mockStore.saveStore(store);
+  },
+  deleteCustomerSurvey: (id) => {
+    const store = mockStore.getStore();
+    if (store.customerSurveys[id]) {
+      delete store.customerSurveys[id];
+      store.customerSurveyIds = (store.customerSurveyIds || []).filter((surveyId) => surveyId !== id);
+      mockStore.saveStore(store);
+    }
+  },
+  getNextCustomerSurveyId: () => {
+    const store = mockStore.getStore();
+    let max = 0;
+    (store.customerSurveyIds || []).forEach((id) => {
+      const n = parseInt(String(id).split('-')[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    });
+    return `SRV-${String(max + 1).padStart(3, '0')}`;
+  },
+
   // --- PROJECT METHODS ---
   getAllProjects: () => {
     const store = mockStore.getStore();
@@ -1559,6 +1614,125 @@ export const mockStore = {
   getProject: (id) => {
     const store = mockStore.getStore();
     return store.projects[id];
+  },
+  getProjectBoard: (projectId) => {
+    const store = mockStore.getStore();
+    return store.projectTasks[projectId] || null;
+  },
+  saveProjectBoard: (projectId, boardData) => {
+    const store = mockStore.getStore();
+    store.projectTasks[projectId] = boardData;
+
+    const project = store.projects[projectId];
+    if (project) {
+      const allTasks = Object.values(boardData.tasks || {});
+      const totalTasks = allTasks.length;
+      const doneIds = (boardData.columns?.done?.taskIds || []);
+      const completedTasks = doneIds.length;
+      const progressPct = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
+      project.tasks = totalTasks;
+      project.completed = completedTasks;
+      project.progress = progressPct;
+      project.status = progressPct >= 100 ? 'On Track' : progressPct >= 50 ? 'At Risk' : 'Off Track';
+
+      if (project.contractId && store.contracts[project.contractId]) {
+        if (progressPct >= 100) {
+          store.contracts[project.contractId].implementationStatus = 'Đã triển khai';
+        } else if (progressPct > 0) {
+          store.contracts[project.contractId].implementationStatus = 'Đang triển khai';
+        } else {
+          store.contracts[project.contractId].implementationStatus = 'Chưa triển khai';
+        }
+      }
+    }
+    mockStore.saveStore(store);
+  },
+  getNextProjectId: () => {
+    const store = mockStore.getStore();
+    let max = 0;
+    (store.projectIds || []).forEach((id) => {
+      const n = parseInt(String(id).split('-')[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    });
+    return `PRJ-${String(max + 1).padStart(3, '0')}`;
+  },
+  createProjectFromContract: (contractId, contractData) => {
+    const store = mockStore.getStore();
+    const existed = Object.values(store.projects || {}).find((project) => project.contractId === contractId);
+    if (existed) return existed;
+
+    const projectId = mockStore.getNextProjectId();
+    const signedDate = contractData?.signedDate ? new Date(contractData.signedDate) : new Date();
+    const deadline = new Date(signedDate.getTime());
+    deadline.setDate(deadline.getDate() + 60);
+
+    const project = {
+      id: projectId,
+      contractId,
+      name: contractData?.name ? `Triển khai ${contractData.name}` : `Triển khai hợp đồng ${contractId}`,
+      customer: contractData?.customerName || contractData?.shortName || 'Khách hàng',
+      manager: contractData?.amName || 'admin',
+      status: 'Triển khai nghiệp vụ theo Hợp đồng',
+      tasks: 5,
+      completed: 0,
+      deadline: deadline.toISOString().slice(0, 10),
+      color: '#3b82f6',
+      progress: 0
+    };
+
+    const board = {
+      columns: {
+        todo: { id: 'todo', title: 'Mới', taskIds: [`${projectId}-T1`, `${projectId}-T2`] },
+        inprogress: { id: 'inprogress', title: 'Đang triển khai', taskIds: [`${projectId}-T3`, `${projectId}-T4`] },
+        waiting: { id: 'waiting', title: 'Chế độ chờ/Phản hồi', taskIds: [] },
+        done: { id: 'done', title: 'Hoàn thành', taskIds: [`${projectId}-T5`] }
+      },
+      tasks: {
+        [`${projectId}-T1`]: { id: `${projectId}-T1`, title: 'Kick-off dự án với khách hàng', user: project.manager, date: signedDate.toISOString().slice(0, 10), tag: 'Kick-off', priority: 'High' },
+        [`${projectId}-T2`]: { id: `${projectId}-T2`, title: 'Thành lập ban triển khai & Phân công', user: project.manager, date: signedDate.toISOString().slice(0, 10), tag: 'Planning', priority: 'High' },
+        [`${projectId}-T3`]: { id: `${projectId}-T3`, title: `Triển khai hợp đồng cho KH ${project.customer}`, user: project.manager, date: signedDate.toISOString().slice(0, 10), tag: 'Implementation', priority: 'Medium' },
+        [`${projectId}-T4`]: { id: `${projectId}-T4`, title: 'Thống nhất số liệu nghiệm thu đợt 1', user: project.manager, date: signedDate.toISOString().slice(0, 10), tag: 'Review', priority: 'Medium' },
+        [`${projectId}-T5`]: { id: `${projectId}-T5`, title: 'Ký biên bản bàn giao tổng thể', user: project.manager, date: signedDate.toISOString().slice(0, 10), tag: 'Handover', priority: 'Medium' }
+      },
+      columnOrder: ['todo', 'inprogress', 'waiting', 'done']
+    };
+
+    if (!store.projects[projectId]) {
+      store.projectIds.unshift(projectId);
+    }
+    store.projects[projectId] = project;
+    store.projectTasks[projectId] = board;
+    if (store.contracts[contractId]) {
+      store.contracts[contractId].implementationStatus = 'Đang triển khai';
+    }
+    mockStore.saveStore(store);
+    return project;
+  },
+  syncProjectsFromActiveContracts: () => {
+    const store = mockStore.getStore();
+    const activeContracts = (store.contractIds || [])
+      .map((id) => store.contracts[id])
+      .filter((contract) => contract && contract.approvalStatus === 'Hiệu lực');
+
+    let created = 0;
+    activeContracts.forEach((contract) => {
+      const existing = Object.values(store.projects || {}).find((project) => project.contractId === contract.id);
+      if (!existing) {
+        mockStore.createProjectFromContract(contract.id, contract);
+        created += 1;
+      }
+    });
+    return created;
+  },
+  updateProjectStatus: (projectId, newStatus) => {
+    const store = mockStore.getStore();
+    if (store.projects[projectId]) {
+      store.projects[projectId].status = newStatus;
+      mockStore.saveStore(store);
+      return store.projects[projectId];
+    }
+    return null;
   }
 };
 

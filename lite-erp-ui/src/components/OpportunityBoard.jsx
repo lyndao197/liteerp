@@ -28,6 +28,41 @@ import { mockStore } from '../utils/mockStore';
 import { QueryBuilder } from './QueryBuilder';
 import { evaluateQuery } from '../utils/filterUtils';
 
+const REMOVED_STATUSES = ['Triển khai', 'Thành công'];
+const FALLBACK_STATUS = 'Kí hợp đồng';
+const NEW_STATUS_COLUMN = { id: 'opp-new', title: 'Mới', color: '#e32b4c', taskIds: [] };
+
+const normalizeStatus = (status, columns) => {
+  if (!REMOVED_STATUSES.includes(status)) return status;
+  const fallbackExists = columns.some((c) => c.title === FALLBACK_STATUS);
+  return fallbackExists ? FALLBACK_STATUS : (columns[0]?.title || status);
+};
+
+const sanitizeBoardData = (rawData) => {
+  let safeColumns = (rawData.columns || [])
+    .filter((column) => !REMOVED_STATUSES.includes(column.title))
+    .map((column) => ({ ...column, taskIds: [] }));
+  const safeTasks = {};
+
+  Object.entries(rawData.tasks || {}).forEach(([taskId, task]) => {
+    safeTasks[taskId] = {
+      ...task,
+      status: normalizeStatus(task.status, safeColumns),
+    };
+  });
+
+  // Always keep the "Mới" stage in Kanban.
+  if (!safeColumns.some((column) => column.title === 'Mới')) {
+    safeColumns = [{ ...NEW_STATUS_COLUMN }, ...safeColumns];
+  }
+
+  safeColumns.forEach((column) => {
+    column.taskIds = Object.keys(safeTasks).filter((taskId) => safeTasks[taskId].status === column.title);
+  });
+
+  return { columns: safeColumns, tasks: safeTasks };
+};
+
 // --- MAIN COMPONENT ---
 
 function OpportunityBoard() {
@@ -35,60 +70,6 @@ function OpportunityBoard() {
   const fileInputRef = useRef(null);
 
   // --- STATE ---
-  // Helper for Initials
-  const getInitials = (name) => {
-    if (!name) return 'U';
-    const parts = name.trim().split(' ').filter(Boolean);
-    if (parts.length === 0) return 'U';
-    if (parts.length === 1) return parts[0][0].toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  // Helper for Stars
-  const renderStars = (probability) => {
-    const probInt = parseInt(probability || '0');
-    let stars = 1; // Default 1 star priority
-    if (probInt > 70) stars = 3;
-    else if (probInt > 30) stars = 2;
-    
-    return (
-      <div style={{display: 'flex', gap: '2px'}}>
-        <Star size={15} fill={stars >= 1 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-        <Star size={15} fill={stars >= 2 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-        <Star size={15} fill={stars >= 3 ? '#fbbf24' : '#cbd5e1'} color="transparent" />
-      </div>
-    );
-  };
-
-  const renderPopoverTasks = (tasksList) => {
-    if (!tasksList || tasksList.length === 0) return null;
-    return (
-      <div className="task-popover" style={{ position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '8px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '6px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '220px', cursor: 'default' }}>
-        {tasksList.map(t => (
-          <div key={t.id} style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid #f1f5f9', padding: '8px 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <div style={{display: 'flex', alignItems: 'center', gap: '6px', fontWeight: t.status === 'done' ? 500 : 600, color: t.status === 'done' ? '#cbd5e1' : (t.status === 'todo' ? '#22c55e' : t.status === 'today' ? '#eab308' : '#ef4444'), textDecoration: t.status === 'done' ? 'line-through' : 'none', fontSize: '13px'}}>
-                {t.type === 'phone' && <Phone size={14} color="currentColor" />}
-                {t.type === 'mail' && <Mail size={14} color="currentColor" />}
-                {t.type === 'meeting' && <Calendar size={14} color="currentColor" />}
-                <span>{t.title}</span>
-              </div>
-              <div style={{display: 'flex', gap: '8px'}}>
-                 <span style={{cursor: 'pointer', color: '#94a3b8', fontSize: '12px'}}>✏️</span>
-                 <span style={{cursor: 'pointer', color: t.status === 'done' ? '#16a34a' : '#64748b', fontSize: '12px'}}>✅</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#64748b' }}>
-               <div style={{ width: '16px', height: '16px', borderRadius: '4px', backgroundColor: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 'bold' }}>M</div>
-               <span>Mitchell Admin</span>
-             </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-
   // Helper for Revenue Sum
   const parseRevenue = (revenueStr) => {
     if (!revenueStr) return 0;
@@ -107,21 +88,20 @@ function OpportunityBoard() {
         case 'Đang báo giá': return ['Đấu thầu', 'POC', 'Không thành công'];
         case 'Đấu thầu': return ['Kí hợp đồng', 'Không thành công'];
         case 'POC': return ['Kí hợp đồng', 'Không thành công'];
-        case 'Kí hợp đồng': return ['Triển khai', 'Không thành công'];
-        case 'Triển khai': return ['Thành công', 'Không thành công'];
+        case 'Kí hợp đồng': return ['Không thành công'];
         default: return [];
     }
   };
 
   const [data, setData] = useState(() => {
     const st = mockStore.getStore();
-    return { columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} };
+    return sanitizeBoardData({ columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} });
   });
   
   // Need useEffect to refresh if returned from form
   React.useEffect(() => {
     const st = mockStore.getStore();
-    setData({ columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} });
+    setData(sanitizeBoardData({ columns: st.oppColumns || st.columns || [], tasks: st.oppTasks || st.tasks || {} }));
   }, []);
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'kanban'
   const [searchTerm, setSearchTerm] = useState('');
@@ -429,7 +409,7 @@ function OpportunityBoard() {
       {(() => {
          const tasksList = Object.values(data.tasks);
          const totalDeals = tasksList.length;
-         const successDeals = tasksList.filter(t => t.status === 'Thành công').length;
+         const successDeals = tasksList.filter(t => t.status === 'Kí hợp đồng').length;
          const failedDeals = tasksList.filter(t => t.status === 'Không thành công').length;
          
          return (
@@ -447,10 +427,10 @@ function OpportunityBoard() {
                   </div>
                </div>
                <div className="metric-card">
-                  <span className="metric-label">Tổng deal thành công</span>
+                  <span className="metric-label">Tổng deal ký hợp đồng</span>
                   <div className="metric-value-row" style={{ marginTop: '8px' }}>
                     <span className="metric-value" style={{color: '#10b981', fontSize: '24px', fontWeight: 700}}>{successDeals}</span>
-                    <div className="metric-trend" style={{color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px'}}><CheckCircle2 size={14} /> Thành công</div>
+                    <div className="metric-trend" style={{color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px'}}><CheckCircle2 size={14} /> Ký hợp đồng</div>
                   </div>
                </div>
                <div className="metric-card">
@@ -589,47 +569,6 @@ function OpportunityBoard() {
                                 <div style={{ fontSize: '15px', fontWeight: 600, color: '#0f172a' }}>{task.content}</div>
                                 {task.revenue && task.revenue !== '0 ₫' && <div style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>{task.revenue}</div>}
                                 {task.company && <div style={{ fontSize: '13px', color: '#64748b' }}>{task.company}</div>}
-                                
-                                <div className="task-tags" style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
-                                  {(task.tags || []).length > 0 
-                                     ? (task.tags || []).map((tag, i) => <span key={i} className="tag" style={{ backgroundColor: tag.color || '#e2e8f0', color: tag.textCol || '#334155', fontSize: '11px', padding: '2px 8px', borderRadius: '12px' }}>{tag.text}</span>)
-                                     : <span className="tag" style={{ backgroundColor: '#fed7aa', color: '#ea580c', fontSize: '11px', padding: '2px 8px', borderRadius: '12px' }}>Lead mới</span>}
-                                </div>
-                                
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                    {renderStars(task.probability)}
-                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                      {(() => {
-                                          const uncompletedTasks = task.tasks ? task.tasks.filter(t => t.status !== 'done') : [];
-                                          const grouped = uncompletedTasks.reduce((acc, t) => {
-                                            acc[t.type] = [...(acc[t.type] || []), t];
-                                            return acc;
-                                          }, {});
-                                          return Object.entries(grouped).map(([type, tasksOfType]) => {
-                                             const count = tasksOfType.length;
-                                             const badge = count > 1 ? <div style={{position: 'absolute', bottom: -6, right: -8, background: '#ef4444', color: 'white', fontSize: '9px', borderRadius: '50%', width: '13px', height: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', zIndex: 10}}>{count}</div> : (tasksOfType[0]?.status === 'overdue' ? <div style={{position: 'absolute', bottom: -6, right: -8, background: '#ef4444', color: 'white', fontSize: '9px', borderRadius: '50%', width: '13px', height: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', zIndex: 10}}>1</div> : null);
-                                             
-                                             const popoverContent = renderPopoverTasks(tasksOfType);
-
-                                             if (type === 'mail') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Mail size={16} color={tasksOfType.some(t => t.status === 'overdue' || t.status === 'today') ? "#16a34a" : "#94a3b8"} />{badge}{popoverContent}</div>;
-                                             if (type === 'phone') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Phone size={16} color={tasksOfType.some(t => t.status === 'overdue' || t.status === 'today') ? "#16a34a" : "#94a3b8"} />{badge}{popoverContent}</div>;
-                                             if (type === 'meeting') return <div key={type} className="task-popover-container" style={{position: 'relative'}}><Calendar size={16} color={tasksOfType.some(t => t.status === 'overdue') ? '#ef4444' : (tasksOfType.some(t => t.status === 'today') ? '#eab308' : '#94a3b8')} />{badge}{popoverContent}</div>;
-                                             return null;
-                                          });
-                                      })()}
-                                      
-                                      <div className="task-popover-container" style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#64748b', fontWeight: 500, marginLeft: '4px' }}>
-                                        <CheckCircle2 size={14} color={task.tasks && task.tasks.filter(t => t.status === 'done').length === task.tasks.length && task.tasks.length > 0 ? "#16a34a" : "#94a3b8"} />
-                                        {task.tasks ? task.tasks.filter(t => t.status === 'done').length : 0}/{task.tasks?.length || 0}
-                                        {renderPopoverTasks(task.tasks)}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="avatar-circle" style={{backgroundColor: '#6366f1', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%'}} title={task.salesperson}>
-                                    {getInitials(task.salesperson)}
-                                  </div>
-                                </div>
                               </div>
                             )}
                           </Draggable>
@@ -758,7 +697,7 @@ function OpportunityBoard() {
                            }
                            mockStore.updateOppStatus(task.id, newStatus);
                            const st = mockStore.getStore();
-                           setData({columns: st.oppColumns, tasks: st.oppTasks});
+                           setData(sanitizeBoardData({ columns: st.oppColumns, tasks: st.oppTasks }));
                         }}
                       >
                         {data.columns.filter(c => c.title === task.status || getAllowedTransitions(task.status).includes(c.title)).map(c => <option key={c.id} value={c.title} style={{color: 'black', background: 'white'}}>{c.title}</option>)}

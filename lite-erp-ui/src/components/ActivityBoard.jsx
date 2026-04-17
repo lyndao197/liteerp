@@ -1,13 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import './KanbanBoard.css'; // Inheritamos base styles
 import './ActivityBoard.css'; // Specific styles
 import { useNavigate } from 'react-router-dom';
 import { Search, Calendar, List, Columns, Clock, AlertCircle, CheckCircle2, Filter, ChevronUp, ChevronDown, SlidersHorizontal, Download, Edit2, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { QueryBuilder } from './QueryBuilder';
 import { evaluateQuery } from '../utils/filterUtils';
-import { mockStore } from '../utils/mockStore';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import * as XLSX from 'xlsx';
+import { TASKS_UPDATED_EVENT, loadPersonalTasks, savePersonalTasks } from '../utils/taskSyncStore';
 
 const ALL_COLUMNS = [
   { key: 'id', label: 'ID công việc' },
@@ -42,9 +42,6 @@ function ActivityBoard() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [priorityFilter, setPriorityFilter] = useState('All');
 
-  const [storeData] = useState(() => mockStore.getStore());
-
-  // Dummy data
   const currentColumns = [
     { id: 'todo', title: 'Mới', color: '#64748b' },
     { id: 'processing', title: 'Đang thực hiện', color: '#3b82f6' },
@@ -62,18 +59,17 @@ function ActivityBoard() {
     return value.toLocaleString('vi-VN') + ' ₫';
   };
 
-  const [activityList, setActivityList] = useState([
-    { id: 1, title: 'Gọi điện xác nhận nhu cầu', activityType: 'phone', assignee: 'Hung NV', source: 'Lead Công ty Viettel Post', company: 'Acme Corp', revenue: '24,000,000 ₫', probability: '80', dueDate: '2026-04-09', priority: 'high', status: 'todo', tasks: [] },
-    { id: 2, title: 'Gửi báo giá sản phẩm CRM', activityType: 'mail', assignee: 'admin', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'ABC Logistics', revenue: '50,000,000 ₫', probability: '50', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 3, title: 'Chúc mừng sinh nhật khách hàng', activityType: 'phone', assignee: 'Phuong NT', source: 'Lead Khách hàng: Trần Thị B', company: '', revenue: '', probability: '', dueDate: '2026-04-10', priority: 'normal', status: 'done', tasks: [] },
-    { id: 4, title: 'Demo hệ thống ERP', activityType: 'meeting', assignee: 'Quan VM', source: 'Dự án phần mềm KnowxHub', company: 'Data Inc', revenue: '15,000,000 ₫', probability: '40', dueDate: '2026-04-12', priority: 'normal', status: 'todo', tasks: [] },
-    { id: 5, title: 'Tư vấn phần mềm quản lý', activityType: 'meeting', assignee: 'Hung NV', source: 'Lead Công ty Viettel Post', company: 'Tech VN', revenue: '50,000,000 ₫', probability: '60', dueDate: '2026-04-10', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 6, title: 'Khảo sát quy trình nghiệp vụ', activityType: 'meeting', assignee: 'admin', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'X Corp', revenue: '100,000,000 ₫', probability: '20', dueDate: '2026-04-15', priority: 'low', status: 'todo', tasks: [] },
-    { id: 7, title: 'Gửi tài liệu giới thiệu giải pháp', activityType: 'mail', assignee: 'Phuong NT', source: 'Dự án phần mềm KnowxHub', company: 'Global Ltd', revenue: '0 ₫', probability: '10', dueDate: '2026-04-08', priority: 'low', status: 'cancelled', tasks: [] },
-    { id: 8, title: 'Đàm phán hợp đồng cung cấp', activityType: 'meeting', assignee: 'Quan VM', source: 'Lead Công ty Viettel Post', company: 'Y Group', revenue: '200,000,000 ₫', probability: '90', dueDate: '2026-04-11', priority: 'high', status: 'todo', tasks: [] },
-    { id: 9, title: 'Follow-up khách hàng sau demo', activityType: 'phone', assignee: 'Hung NV', source: 'Dự án dịch vụ chăm sóc khách hàng', company: 'Soft Co', revenue: '30,000,000 ₫', probability: '70', dueDate: '2026-04-13', priority: 'normal', status: 'processing', tasks: [] },
-    { id: 10, title: 'Ký kết hợp đồng triển khai', activityType: 'meeting', assignee: 'admin', source: 'Dự án phần mềm KnowxHub', company: 'Z Solutions', revenue: '500,000,000 ₫', probability: '100', dueDate: '2026-04-14', priority: 'high', status: 'done', tasks: [] }
-  ]);
+  const [activityList, setActivityList] = useState(() => loadPersonalTasks());
+
+  useEffect(() => {
+    savePersonalTasks(activityList);
+  }, [activityList]);
+
+  useEffect(() => {
+    const refreshFromSharedStore = () => setActivityList(loadPersonalTasks());
+    window.addEventListener(TASKS_UPDATED_EVENT, refreshFromSharedStore);
+    return () => window.removeEventListener(TASKS_UPDATED_EVENT, refreshFromSharedStore);
+  }, []);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -277,8 +273,7 @@ function ActivityBoard() {
          return (
            <div className="kanban-header" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}>
              <div style={{ textAlign: 'left', width: '100%' }}>
-               <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý công việc cá nhân</h1>
-               <p style={{ color: '#64748b', fontSize: '14px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>Danh sách và theo dõi công việc cá nhân</p>
+               <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý tiếp xúc Khách hàng</h1>
              </div>
              
             <div className="metrics-cards-container" style={{ width: '100%' }}>
@@ -449,15 +444,6 @@ function ActivityBoard() {
                                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                                       <span style={{ fontWeight: 600, color: '#475569' }}>Người được giao:</span>
                                       <span>{activity.assignee || '-'}</span>
-                                      {activity.source && (
-                                        <>
-                                          <span style={{ color: '#cbd5e1' }}>•</span>
-                                          <span style={{ fontWeight: 600, color: '#475569' }}>Nguồn:</span>
-                                          <span title={activity.source} style={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                            {activity.source}
-                                          </span>
-                                        </>
-                                      )}
                                     </div>
                                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                                       <span style={{ fontWeight: 600, color: '#475569' }}>Độ ưu tiên:</span>

@@ -13,6 +13,8 @@ import CustomerForm from './components/CustomerForm';
 import ContactList from './components/ContactList';
 import ContactForm from './components/ContactForm';
 import ActivityBoard from './components/ActivityBoard';
+import TeamActivityBoard from './components/TeamActivityBoard';
+import TeamTaskDetail from './components/TeamTaskDetail';
 import ActivityForm from './components/ActivityForm';
 import ContractManagement from './components/ContractManagement';
 import ContractForm from './components/ContractForm';
@@ -32,11 +34,13 @@ import RoleList from './components/RoleList';
 import RoleForm from './components/RoleForm';
 import MarketingCampaignList from './components/MarketingCampaignList';
 import ServiceTicketList from './components/ServiceTicketList';
+import CustomerSurveyList from './components/CustomerSurveyList';
 import LoyaltyProgramList from './components/LoyaltyProgramList';
 import ProductList from './components/ProductList';
 import DebtManagement from './components/DebtManagement';
 import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
+import InvoiceManagement from './components/InvoiceManagement';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -64,13 +68,15 @@ function App() {
               <Route path="/contact/new" element={<ContactForm />} />
               <Route path="/contact/edit/:id" element={<ContactForm />} />
               <Route path="/activities" element={<ActivityBoard />} />
+              <Route path="/activities/team" element={<TeamActivityBoard />} />
+              <Route path="/activities/team/:id" element={<TeamTaskDetail />} />
               <Route path="/activity/new" element={<ActivityForm />} />
               <Route path="/activity/edit/:id" element={<ActivityForm />} />
               <Route path="/contracts" element={<ContractManagement />} />
               <Route path="/contracts/solution" element={<ContractManagement />} />
-              <Route path="/contracts/service" element={<ContractManagement />} />
               <Route path="/projects" element={<ProjectList />} />
               <Route path="/projects/:id" element={<ProjectTaskBoard />} />
+              <Route path="/supplier-contracts" element={<ContractManagement />} />
               <Route path="/contract/new" element={<ContractForm />} />
               <Route path="/contract/edit/:id" element={<ContractForm />} />
               <Route path="/orders" element={<OrderManagement />} />
@@ -94,9 +100,13 @@ function App() {
               <Route path="/role/edit/:id" element={<RoleForm />} />
               <Route path="/marketing" element={<MarketingCampaignList />} />
               <Route path="/ticketing" element={<ServiceTicketList />} />
+              <Route path="/customer-service" element={<ServiceTicketList />} />
+              <Route path="/customer-service/tickets" element={<ServiceTicketList />} />
+              <Route path="/customer-service/surveys" element={<CustomerSurveyList />} />
               <Route path="/loyalty" element={<LoyaltyProgramList />} />
               <Route path="/products" element={<ProductList />} />
               <Route path="/debt" element={<DebtManagement />} />
+              <Route path="/invoices" element={<InvoiceManagement />} />
             </Routes>
           </main>
         </div>

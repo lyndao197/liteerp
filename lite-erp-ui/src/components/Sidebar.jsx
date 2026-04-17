@@ -10,9 +10,7 @@ import {
   TrendingUp,
   BarChart2,
   LineChart,
-  CalendarDays,
-  Activity,
-  List,
+  Gift,
   Tag,
   ClipboardList,
   FileText,
@@ -24,7 +22,9 @@ import {
   ChevronDown,
   ChevronRight,
   ArrowDownToLine,
-  ArrowUpFromLine
+  ArrowUpFromLine,
+  Layers,
+  Briefcase
 } from 'lucide-react';
 
 function Sidebar() {
@@ -66,7 +66,7 @@ function Sidebar() {
           </div>
           <div className={`nav-item ${location.pathname === '/activities' ? 'active' : ''}`} onClick={() => navigate('/activities')}>
             <Kanban size={20} />
-            <span>Quản lý công việc cá nhân</span>
+            <span>Quản lý tiếp xúc Khách hàng</span>
             <span className="mvp-badge">MVP</span>
           </div>
           <div className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`} onClick={() => navigate('/goals')}>
@@ -91,21 +91,22 @@ function Sidebar() {
             <span>Quản lý hồ sơ khách hàng</span>
             <span className="mvp-badge">MVP</span>
           </div>
-          <div className={`nav-item ${location.pathname.includes('/contact') ? 'active' : ''}`} onClick={() => navigate('/contacts')}>
-            <CalendarDays size={20} />
-            <span>Quản lý liên hệ khách hàng</span>
-            <span className="mvp-badge">MVP</span>
+          <div className={`nav-item ${location.pathname.includes('/customer-service') ? 'active' : ''}`} onClick={() => navigate('/customer-service')}>
+            <Settings size={20} />
+            <span>Customer Service</span>
           </div>
-          <div className={`nav-item ${location.pathname.includes('/marketing') ? 'active' : ''}`} onClick={() => navigate('/marketing')}>
-            <Activity size={20} />
-            <span>Marketing Automation</span>
-          </div>
-          <div className={`nav-item ${location.pathname.includes('/ticketing') ? 'active' : ''}`} onClick={() => navigate('/ticketing')}>
-            <List size={20} />
-            <span>Customer service ticketing</span>
-          </div>
-          <div className={`nav-item ${location.pathname.includes('/loyalty') ? 'active' : ''}`} onClick={() => navigate('/loyalty')}>
+          <div
+            className={`nav-item ${location.pathname.includes('/customer-service/surveys') ? 'active' : ''}`}
+            onClick={() => navigate('/customer-service/surveys')}
+          >
             <Tag size={20} />
+            <span>Quản lý Khảo sát khách hàng</span>
+          </div>
+          <div
+            className={`nav-item ${location.pathname.includes('/loyalty') ? 'active' : ''}`}
+            onClick={() => navigate('/loyalty')}
+          >
+            <Gift size={20} />
             <span>Loyalty</span>
           </div>
         </div>
@@ -117,44 +118,35 @@ function Sidebar() {
           </div>
           <div
             className={`nav-item ${location.pathname.includes('/contracts') ? 'active' : ''}`}
-            onClick={() => setContractsOpen(o => !o)}
-            style={{ justifyContent: 'space-between' }}
+            onClick={() => navigate('/contracts')}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <ClipboardList size={20} />
-              <span>Danh sách Hợp đồng</span>
-              <span className="mvp-badge">MVP</span>
-            </div>
-            {contractsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            <ClipboardList size={20} />
+            <span>Quản lý hợp đồng</span>
+            <span className="mvp-badge">MVP</span>
           </div>
-          {contractsOpen && (
-            <div style={{ paddingLeft: '16px' }}>
-              <div
-                className={`nav-item ${location.pathname === '/contracts/solution' ? 'active' : ''}`}
-                onClick={() => navigate('/contracts/solution')}
-                style={{ fontSize: '13px' }}
-              >
-                <Layers size={16} />
-                <span>Hợp đồng giải pháp</span>
-              </div>
-              <div
-                className={`nav-item ${location.pathname === '/contracts/service' ? 'active' : ''}`}
-                onClick={() => navigate('/contracts/service')}
-                style={{ fontSize: '13px' }}
-              >
-                <Briefcase size={16} />
-                <span>Hợp đồng dịch vụ</span>
-              </div>
-              <div
-                className={`nav-item ${location.pathname.includes('/projects') ? 'active' : ''}`}
-                onClick={() => navigate('/projects')}
-                style={{ fontSize: '13px' }}
-              >
-                <Kanban size={16} />
-                <span>Triển khai dự án</span>
-              </div>
-            </div>
-          )}
+          <div
+            className={`nav-item ${location.pathname.includes('/projects') ? 'active' : ''}`}
+            onClick={() => navigate('/projects')}
+          >
+            <Kanban size={20} />
+            <span>Quản trị triển khai dự án</span>
+            <span className="mvp-badge">MVP</span>
+          </div>
+        </div>
+
+        {/* Quản lý Nhà cung cấp */}
+        <div className="nav-group">
+          <div className="group-title">
+            <span>QUẢN LÝ HỒ SƠ NHÀ CUNG CẤP</span>
+          </div>
+          <div
+            className={`nav-item ${location.pathname.includes('/supplier-contracts') ? 'active' : ''}`}
+            onClick={() => navigate('/supplier-contracts')}
+          >
+            <Briefcase size={20} />
+            <span>Danh sách Hợp đồng</span>
+            <span className="mvp-badge">MVP</span>
+          </div>
         </div>
 
         {/* Quản lý Bán hàng */}
@@ -166,10 +158,6 @@ function Sidebar() {
             <FileText size={20} />
             <span>Quản lý đơn hàng</span>
             <span className="mvp-badge">MVP</span>
-          </div>
-          <div className={`nav-item ${location.pathname.includes('/product') ? 'active' : ''}`} onClick={() => navigate('/products')}>
-            <ListTodo size={20} />
-            <span>Quản lý sản phẩm & Dịch vụ</span>
           </div>
           {/* Billing - Collapsible */}
           <div
@@ -211,9 +199,20 @@ function Sidebar() {
           <div className="group-title">
             <span>TÀI CHÍNH VÀ KẾ TOÁN</span>
           </div>
+
+          <div className={`nav-item ${location.pathname.includes('/invoices') ? 'active' : ''}`} onClick={() => navigate('/invoices')}>
+            <Receipt size={20} />
+            <span>Quản lý hóa đơn</span>
+          </div>
+
           <div className={`nav-item ${location.pathname.includes('/debt') ? 'active' : ''}`} onClick={() => navigate('/debt')}>
             <Receipt size={20} />
             <span>Quản lý công nợ</span>
+          </div>
+
+          <div className={`nav-item ${location.pathname.includes('/revenue') ? 'active' : ''}`} onClick={() => navigate('/revenue')}>
+            <TrendingUp size={20} />
+            <span>Quản lý Doanh thu</span>
           </div>
         </div>
 
@@ -230,6 +229,10 @@ function Sidebar() {
           <div className={`nav-item ${location.pathname.includes('/roles') ? 'active' : ''}`} onClick={() => navigate('/roles')}>
             <Users size={20} />
             <span>Quản lý vai trò</span>
+          </div>
+          <div className={`nav-item ${location.pathname.includes('/product') ? 'active' : ''}`} onClick={() => navigate('/products')}>
+            <ListTodo size={20} />
+            <span>Cấu hình Sản phẩm & Dịch vụ</span>
           </div>
         </div>
 

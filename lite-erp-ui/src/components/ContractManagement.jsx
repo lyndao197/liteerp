@@ -89,6 +89,16 @@ const ContractManagement = () => {
     const processedContracts = useMemo(() => {
         let result = contracts ? [...contracts] : [];
 
+        // Filter by type based on URL
+        if (location.pathname.includes('/solution')) {
+            result = result.filter(c => c.serviceType?.toLowerCase().includes('giải pháp') || c.serviceType?.toLowerCase().includes('platform'));
+        } else if (location.pathname.includes('/service')) {
+            result = result.filter(c => c.serviceType?.toLowerCase().includes('dịch vụ') || c.serviceType?.toLowerCase().includes('outsourcing'));
+        } else if (location.pathname.includes('/supplier-contracts')) {
+            // Mock filter for supplier contracts: Internal or specifically designated
+            result = result.filter(c => c.classification === 'Nội bộ' || c.serviceType?.includes('Dịch vụ CC outsourcing'));
+        }
+
         if (isPendingView) {
             result = result.filter(contract => ['Chờ duyệt bản thảo', 'Chờ duyệt bản ký'].includes(contract.approvalStatus));
         }
@@ -116,7 +126,7 @@ const ContractManagement = () => {
             });
         }
         return result;
-    }, [contracts, searchTerm, filters, sortConfig, isPendingView]);
+    }, [contracts, searchTerm, filters, sortConfig, isPendingView, location.pathname]);
 
     const getStatusClass = (status) => {
         switch (status) {
@@ -162,12 +172,27 @@ const ContractManagement = () => {
         );
     };
 
+    const isSupplierView = location.pathname.includes('/supplier-contracts');
+
+    const pageTitle = isSupplierView 
+        ? 'Danh sách Hợp đồng Nhà cung cấp'
+        : location.pathname.includes('/solution') 
+            ? 'Quản lý bản thảo và Hợp đồng' 
+            : 'Quản lý hợp đồng';
+
+    const pageSubtitle = isSupplierView
+        ? `Quản lý danh sách các hợp đồng đầu vào từ nhà cung cấp đối tác.`
+        : location.pathname.includes('/solution')
+            ? `Hiện có ${processedContracts.length} bản thảo và hợp đồng đang được quản lý.`
+            : `Hiện có ${contracts.length || 0} hợp đồng kinh doanh đang được quản lý trên hệ thống.`;
+
+
     return (
         <div className="contract-page-container" onClick={() => setActiveFilterCol(null)}>
             <div className="contract-page-header">
                 <div className="contract-header-left">
-                    <h1>Quản lý hợp đồng</h1>
-                    <p className="contract-subtitle">Hiện có {contracts.length || 0} hợp đồng kinh doanh đang được quản lý trên hệ thống.</p>
+                    <h1>{pageTitle}</h1>
+                    <p className="contract-subtitle">{pageSubtitle}</p>
                 </div>
             </div>
 
@@ -254,7 +279,7 @@ const ContractManagement = () => {
                             </th>
                             {visibleColumns.includes('contractNo') && <TableHeader label="Số hợp đồng" columnKey="contractNo" hasFilter={true} />}
                             {visibleColumns.includes('name') && <TableHeader label="Tên hợp đồng" columnKey="name" hasFilter={true} />}
-                            {visibleColumns.includes('customerName') && <TableHeader label="Khách hàng" columnKey="customerName" hasFilter={true} />}
+                            {visibleColumns.includes('customerName') && <TableHeader label={isSupplierView ? "Nhà cung cấp" : "Khách hàng"} columnKey="customerName" hasFilter={true} />}
                             {visibleColumns.includes('signedDate') && <TableHeader label="Ngày ký" columnKey="signedDate" hasFilter={true} />}
                             {visibleColumns.includes('contractValue') && <TableHeader label="Giá trị (VND)" columnKey="contractValue" hasFilter={true} />}
                             {visibleColumns.includes('contractStatus') && <TableHeader label="Tình trạng hợp đồng" columnKey="contractStatus" hasFilter={true} />}
