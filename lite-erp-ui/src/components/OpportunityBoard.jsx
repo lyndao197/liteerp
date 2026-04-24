@@ -647,6 +647,13 @@ function OpportunityBoard() {
                       </div>}
                       <Plus size={20} className="add-task-icon" onClick={() => navigate('/opportunity/new')} style={{cursor: 'pointer', flexShrink: 0, color: '#545454', marginLeft: totalRevenue > 0 ? '8px' : 'auto'}} />
                     </div>
+                    {totalAct > 0 && (
+                      <div className="column-progress-bar" style={{ display: 'flex', height: '4px', width: '100%', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#e2e8f0', marginTop: '8px' }}>
+                        {greenPct > 0 && <div style={{width: `${greenPct}%`, backgroundColor: '#22c55e'}} title={`Cần làm: ${todoCount}`}></div>}
+                        {yellowPct > 0 && <div style={{width: `${yellowPct}%`, backgroundColor: '#eab308'}} title={`Hôm nay: ${todayCount}`}></div>}
+                        {redPct > 0 && <div style={{width: `${redPct}%`, backgroundColor: '#ef4444'}} title={`Trễ hạn: ${overdueCount}`}></div>}
+                      </div>
+                    )}
                   </div>
                   
                   <Droppable droppableId={column.id}>

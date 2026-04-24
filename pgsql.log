@@ -12,5 +12,78 @@
 2026-04-15 05:23:50.731 +07 [9264] LOG:  invalid record length at 0/5886788: wanted 24, got 0
 2026-04-15 05:23:50.731 +07 [9264] LOG:  redo done at 0/5886750 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
 2026-04-15 05:23:50.762 +07 [5644] LOG:  database system is ready to accept connections
+<<<<<<< Updated upstream
 2026-04-16 16:19:23.551 +07 [1528] FATAL:  could not open directory "pg_notify": No such file or directory
 2026-04-16 16:19:23.553 +07 [1528] LOG:  database system is shut down
+=======
+2026-04-15 17:55:01.405 +07 [22948] FATAL:  could not open directory "pg_notify": No such file or directory
+2026-04-15 17:55:01.406 +07 [22948] LOG:  database system is shut down
+2026-04-15 17:55:44.784 +07 [17140] FATAL:  could not open directory "pg_notify": No such file or directory
+2026-04-15 17:55:44.786 +07 [17140] LOG:  database system is shut down
+2026-04-15 17:57:20.381 +07 [26760] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-15 17:57:20.385 +07 [26760] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-15 17:57:20.385 +07 [26760] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-15 17:57:20.387 +07 [26760] LOG:  could not open directory "pg_tblspc": No such file or directory
+2026-04-15 17:57:20.427 +07 [3116] LOG:  database system was interrupted; last known up at 2026-04-15 05:23:50 +07
+2026-04-15 17:57:20.427 +07 [3116] LOG:  creating missing WAL directory "pg_wal/archive_status"
+2026-04-15 17:57:20.840 +07 [3116] LOG:  could not open directory "pg_tblspc": No such file or directory
+2026-04-15 17:57:20.841 +07 [3116] LOG:  could not open directory "pg_tblspc": No such file or directory
+2026-04-15 17:57:20.841 +07 [3116] FATAL:  could not open directory "pg_replslot": No such file or directory
+2026-04-15 17:57:20.844 +07 [26760] LOG:  startup process (PID 3116) exited with exit code 1
+2026-04-15 17:57:20.844 +07 [26760] LOG:  aborting startup due to startup process failure
+2026-04-15 17:57:20.846 +07 [26760] LOG:  database system is shut down
+2026-04-15 17:58:07.971 +07 [20584] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-15 17:58:07.975 +07 [20584] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-15 17:58:07.975 +07 [20584] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-15 17:58:08.007 +07 [7224] LOG:  database system was interrupted; last known up at 2026-04-15 05:23:50 +07
+2026-04-15 17:58:08.367 +07 [7224] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-04-15 17:58:08.369 +07 [7224] LOG:  redo starts at 0/5886800
+2026-04-15 17:58:08.369 +07 [7224] LOG:  invalid record length at 0/5886838: wanted 24, got 0
+2026-04-15 17:58:08.369 +07 [7224] LOG:  redo done at 0/5886800 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-04-15 17:58:08.460 +07 [20584] LOG:  database system is ready to accept connections
+2026-04-17 04:35:53.938 +07 [35980] ERROR:  could not serialize access due to concurrent update
+2026-04-17 04:35:53.938 +07 [35980] STATEMENT:  
+	            SELECT *
+	            FROM ir_cron
+	            WHERE active = true
+	              AND numbercall != 0
+	              AND (nextcall <= (now() at time zone 'UTC')
+	                OR EXISTS (
+	                    SELECT cron_id
+	                    FROM ir_cron_trigger
+	                    WHERE call_at <= (now() at time zone 'UTC')
+	                      AND cron_id = ir_cron.id
+	                )
+	              )
+	              AND id in (14)
+	            ORDER BY priority
+	            LIMIT 1 FOR NO KEY UPDATE SKIP LOCKED
+	        
+2026-04-17 11:32:04.177 +07 [36556] ERROR:  could not serialize access due to concurrent update
+2026-04-17 11:32:04.177 +07 [36556] STATEMENT:  
+	            SELECT *
+	            FROM ir_cron
+	            WHERE active = true
+	              AND numbercall != 0
+	              AND (nextcall <= (now() at time zone 'UTC')
+	                OR EXISTS (
+	                    SELECT cron_id
+	                    FROM ir_cron_trigger
+	                    WHERE call_at <= (now() at time zone 'UTC')
+	                      AND cron_id = ir_cron.id
+	                )
+	              )
+	              AND id in (13)
+	            ORDER BY priority
+	            LIMIT 1 FOR NO KEY UPDATE SKIP LOCKED
+	        
+2026-04-17 14:04:24.388 +07 [20584] LOG:  server process (PID 15108) was terminated by exception 0x40010004
+2026-04-17 14:04:24.388 +07 [20584] DETAIL:  Failed process was running: ROLLBACK
+2026-04-17 14:04:24.388 +07 [20584] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2026-04-17 14:04:24.388 +07 [20584] LOG:  terminating any other active server processes
+2026-04-17 14:04:24.634 +07 [20584] LOG:  all server processes terminated; reinitializing
+2026-04-17 14:04:24.694 +07 [20584] LOG:  startup process (PID 33692) was terminated by exception 0xC000026B
+2026-04-17 14:04:24.694 +07 [20584] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2026-04-17 14:04:24.694 +07 [20584] LOG:  aborting startup due to startup process failure
+2026-04-17 14:04:24.696 +07 [20584] LOG:  database system is shut down
+>>>>>>> Stashed changes
