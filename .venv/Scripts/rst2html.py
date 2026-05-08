@@ -1,4 +1,4 @@
-#!C:\Users\haptn\Downloads\Ha.Odoo\.venv\Scripts\python.exe
+#!C:\Users\gem\Downloads\Manh.LiteERP\odoo\.venv\Scripts\python.exe
 
 # $Id: rst2html.py 9115 2022-07-28 17:06:24Z milde $
 # Author: David Goodger <goodger@python.org>

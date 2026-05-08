@@ -1,0 +1,1711 @@
+Date: Fri, 29 Sep 2023 06:46:29 +0000 (GMT)
+Message-ID: <437500620.174992.1695969989871@555cceb38649>
+Subject: Exported From Confluence
+MIME-Version: 1.0
+Content-Type: multipart/related; 
+	boundary="----=_Part_174991_822698940.1695969989871"
+
+------=_Part_174991_822698940.1695969989871
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Location: file:///C:/exported.html
+
+<html xmlns:o=3D'urn:schemas-microsoft-com:office:office'
+      xmlns:w=3D'urn:schemas-microsoft-com:office:word'
+      xmlns:v=3D'urn:schemas-microsoft-com:vml'
+      xmlns=3D'urn:w3-org-ns:HTML'>
+<head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf-8=
+">
+    <title>1.21 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng][Function] Imp=
+ort s=E1=BA=A3n ph=E1=BA=A9m cho YCBH PP</title>
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:TargetScreenSize>1024x640</o:TargetScreenSize>
+            <o:PixelsPerInch>72</o:PixelsPerInch>
+            <o:AllowPNG/>
+        </o:OfficeDocumentSettings>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>90</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+    <![endif]-->
+    <style>
+                <!--
+        @page Section1 {
+            size: 8.5in 11.0in;
+            margin: 1.0in;
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-paper-source: 0;
+        }
+
+        table {
+            border: solid 1px;
+            border-collapse: collapse;
+        }
+
+        table td, table th {
+            border: solid 1px;
+            padding: 5px;
+        }
+
+        td {
+            page-break-inside: avoid;
+        }
+
+        tr {
+            page-break-after: avoid;
+        }
+
+        div.Section1 {
+            page: Section1;
+        }
+
+        /* Confluence print stylesheet. Common to all themes for print medi=
+a */
+/* Full of !important until we improve batching for print CSS */
+
+@media print {
+    #main {
+        padding-bottom: 1em !important; /* The default padding of 6em is to=
+o much for printouts */
+    }
+
+    body {
+        font-family: Arial, Helvetica, FreeSans, sans-serif;
+        font-size: 10pt;
+        line-height: 1.2;
+    }
+
+    body, #full-height-container, #main, #page, #content, .has-personal-sid=
+ebar #content {
+        background: #fff !important;
+        color: #000 !important;
+        border: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+    }
+
+    a, a:link, a:visited, a:focus, a:hover, a:active {
+        color: #000;
+    }
+
+    #content h1,
+    #content h2,
+    #content h3,
+    #content h4,
+    #content h5,
+    #content h6 {
+        font-family: Arial, Helvetica, FreeSans, sans-serif;
+        page-break-after: avoid;
+    }
+
+    pre {
+        font-family: Monaco, "Courier New", monospace;
+    }
+
+    #header,
+    .aui-header-inner,
+    #navigation,
+    #sidebar,
+    .sidebar,
+    #personal-info-sidebar,
+    .ia-fixed-sidebar,
+    .page-actions,
+    .navmenu,
+    .ajs-menu-bar,
+    .noprint,
+    .inline-control-link,
+    .inline-control-link a,
+    a.show-labels-editor,
+    .global-comment-actions,
+    .comment-actions,
+    .quick-comment-container,
+    #addcomment {
+        display: none !important;
+    }
+
+    /* CONF-28544 cannot print multiple pages in IE */
+    #splitter-content {
+        position: relative !important;
+    }
+
+    .comment .date::before {
+        content: none !important; /* remove middot for print view */
+    }
+
+    h1.pagetitle img {
+        height: auto;
+        width: auto;
+    }
+
+    .print-only {
+        display: block;
+    }
+
+    #footer {
+        position: relative !important; /* CONF-17506 Place the footer at en=
+d of the content */
+        margin: 0;
+        padding: 0;
+        background: none;
+        clear: both;
+    }
+
+    #poweredby {
+        border-top: none;
+        background: none;
+    }
+
+    #poweredby li.print-only {
+        display: list-item;
+        font-style: italic;
+    }
+
+    #poweredby li.noprint {
+        display: none;
+    }
+
+    /* no width controls in print */
+    .wiki-content .table-wrap,
+    .wiki-content p,
+    .panel .codeContent,
+    .panel .codeContent pre,
+    .image-wrap {
+        overflow: visible !important;
+    }
+
+    /* TODO - should this work? */
+    #children-section,
+    #comments-section .comment,
+    #comments-section .comment .comment-body,
+    #comments-section .comment .comment-content,
+    #comments-section .comment p {
+        page-break-inside: avoid;
+    }
+
+    #page-children a {
+        text-decoration: none;
+    }
+
+    /**
+     hide twixies
+
+     the specificity here is a hack because print styles
+     are getting loaded before the base styles. */
+    #comments-section.pageSection .section-header,
+    #comments-section.pageSection .section-title,
+    #children-section.pageSection .section-header,
+    #children-section.pageSection .section-title,
+    .children-show-hide {
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .children-show-hide.icon {
+        display: none;
+    }
+
+    /* personal sidebar */
+    .has-personal-sidebar #content {
+        margin-right: 0px;
+    }
+
+    .has-personal-sidebar #content .pageSection {
+        margin-right: 0px;
+    }
+
+    .no-print, .no-print * {
+        display: none !important;
+    }
+}
+-->
+    </style>
+</head>
+<body>
+    <h1>1.21 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng][Function] Import=
+ s=E1=BA=A3n ph=E1=BA=A9m cho YCBH PP</h1>
+    <div class=3D"Section1">
+        <div class=3D"table-wrap">
+<table class=3D"relative-table wrapped confluenceTable">
+<colgroup>
+<col style=3D"width: 266.0px;">
+<col style=3D"width: 904.0px;">
+</colgroup>
+<tbody>
+<tr>
+<th class=3D"confluenceTh">Target Sprint</th>
+<td class=3D"confluenceTd">Sprint&nbsp;</td>
+</tr>
+<tr>
+<th class=3D"confluenceTh">Module</th>
+<td class=3D"confluenceTd">SNS</td>
+</tr>
+<tr>
+<th class=3D"confluenceTh">Jira Ticket</th>
+<td class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"XR-15237"> <a href=3D"http:=
+//jira.synnexfpt.com/browse/XR-15237" class=3D"jira-issue-key"><img class=
+=3D"icon" src=3D"http://jira.synnexfpt.com/images/icons/issuetypes/story.sv=
+g">XR-15237</a> - <span class=3D"summary">[=C4=90=C6=A1n h=C3=A0ng th=C6=B0=
+=E1=BB=9Dng][Function] Import danh s=C3=A1ch s=E1=BA=A3n ph=E1=BA=A9m cho Y=
+CBH</span> <span class=3D"aui-lozenge aui-lozenge-subtle             aui-lo=
+zenge-success
+     jira-macro-single-issue-export-pdf">DEMO</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<th colspan=3D"1" class=3D"confluenceTh">Document Status</th>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><span style=3D"color: rgb(255,255,255);"><span class=3D"status-macro aui=
+-lozenge aui-lozenge-moved">READY FOR REVIEW</span>DESIGN</span></p>
+</div></td>
+</tr>
+<tr>
+<th colspan=3D"1" class=3D"confluenceTh">Document Owner</th>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"thuandb2"=
+ href=3D"/display/~thuandb2" data-linked-resource-id=3D"19748826" data-link=
+ed-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-=
+url=3D"http://confluence.synnexfpt.com">=C4=90=E1=BB=97 B=C3=ACnh Thu=E1=BA=
+=ADn</a>&nbsp;</p>
+</div></td>
+</tr>
+<tr>
+<th colspan=3D"1" class=3D"confluenceTh">Reviewer</th>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"levh" hre=
+f=3D"/display/~levh" data-linked-resource-id=3D"1081688" data-linked-resour=
+ce-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-url=3D"ht=
+tp://confluence.synnexfpt.com">V=C5=A9 H=E1=BB=93ng L=E1=BB=87</a>&nbsp;</p=
+>
+</div></td>
+</tr>
+<tr>
+<th colspan=3D"1" class=3D"confluenceTh">Approver</th>
+<td colspan=3D"1" class=3D"confluenceTd">KhanhBN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class=3D"table-wrap">
+<table class=3D"wrapped confluenceTable">
+<colgroup>
+<col style=3D"width: 43.0px;">
+<col style=3D"width: 140.0px;">
+<col style=3D"width: 185.0px;">
+<col style=3D"width: 602.0px;">
+<col style=3D"width: 161.0px;">
+</colgroup>
+<tbody>
+<tr>
+<th class=3D"confluenceTh">Ver</th>
+<th class=3D"confluenceTh">Ng=C3=A0y update</th>
+<th class=3D"confluenceTh">Ng=C6=B0=E1=BB=9Di update</th>
+<th class=3D"confluenceTh">N=E1=BB=99i dung</th>
+<th colspan=3D"1" class=3D"confluenceTh">Jira ticket</th>
+</tr>
+<tr>
+<td class=3D"confluenceTd">1.0</td>
+<td class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-03-28" class=3D"date-past">28 Mar 2022</time>&nbs=
+p;</p>
+</div></td>
+<td class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"thuandb2"=
+ href=3D"/display/~thuandb2" data-linked-resource-id=3D"19748826" data-link=
+ed-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-=
+url=3D"http://confluence.synnexfpt.com">=C4=90=E1=BB=97 B=C3=ACnh Thu=E1=BA=
+=ADn</a></p>
+</div></td>
+<td class=3D"confluenceTd">Init</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"XR-15237"> <a href=3D"http:=
+//jira.synnexfpt.com/browse/XR-15237" class=3D"jira-issue-key"><img class=
+=3D"icon" src=3D"http://jira.synnexfpt.com/images/icons/issuetypes/story.sv=
+g">XR-15237</a> - <span class=3D"summary">[=C4=90=C6=A1n h=C3=A0ng th=C6=B0=
+=E1=BB=9Dng][Function] Import danh s=C3=A1ch s=E1=BA=A3n ph=E1=BA=A9m cho Y=
+CBH</span> <span class=3D"aui-lozenge aui-lozenge-subtle             aui-lo=
+zenge-success
+     jira-macro-single-issue-export-pdf">DEMO</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.1</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-04-12" class=3D"date-past">12 Apr 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"thuandb2"=
+ href=3D"/display/~thuandb2" data-linked-resource-id=3D"19748826" data-link=
+ed-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-=
+url=3D"http://confluence.synnexfpt.com">=C4=90=E1=BB=97 B=C3=ACnh Thu=E1=BA=
+=ADn</a>&nbsp;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">Update BR2, add quy t=E1=BA=AFc ki=
+=E1=BB=83m tra s=E1=BB=91 1 v=C3=A0 2</td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.2</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-07-11" class=3D"date-past">11 Jul 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><a class=3D"confluence-userlink us=
+er-mention" data-username=3D"tuyennt20" href=3D"/display/~tuyennt20" data-l=
+inked-resource-id=3D"29660678" data-linked-resource-version=3D"1" data-link=
+ed-resource-type=3D"userinfo" data-base-url=3D"http://confluence.synnexfpt.=
+com">Nguy=E1=BB=85n Th=E1=BB=8B Tuy=E1=BB=81n</a>&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd"><p>Update tr=C6=B0=E1=BB=9Dng s=E1=
+=BB=91 l=C6=B0=E1=BB=A3ng</p><p>M=C3=A3 kho (highlight<span style=3D"color:=
+ rgb(255,0,0);"> m=C3=A0u =C4=91=E1=BB=8F</span>)</p></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"XR-18118"> <a href=3D"http:=
+//jira.synnexfpt.com/browse/XR-18118" class=3D"jira-issue-key"><img class=
+=3D"icon" src=3D"http://jira.synnexfpt.com/images/icons/issuetypes/story.sv=
+g">XR-18118</a> - <span class=3D"summary">[YCBH SnS] Cho ph=C3=A9p nh=E1=BA=
+=ADp line khuy=E1=BA=BFn m=E1=BA=A1i/line chi=E1=BA=BFt kh=E1=BA=A5u trong =
+YCBH SnS</span> <span class=3D"aui-lozenge aui-lozenge-subtle             a=
+ui-lozenge-success
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.3</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-08-09" class=3D"date-past">09 Aug 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p>&nbsp;<a class=3D"confluence-userlink user-mention" data-username=3D"thu=
+dm1" href=3D"/display/~thudm1" data-linked-resource-id=3D"14816546" data-li=
+nked-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-bas=
+e-url=3D"http://confluence.synnexfpt.com">Do=C3=A3n Minh Thu</a></p>
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"anhntt12"=
+ href=3D"/display/~anhntt12" data-linked-resource-id=3D"14814028" data-link=
+ed-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-=
+url=3D"http://confluence.synnexfpt.com">Nguy=E1=BB=85n Th=E1=BB=8B T=C3=BA =
+Anh</a>&nbsp;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">Update th=C3=AAm rule validate<spa=
+n>&nbsp;</span><span style=3D"color: rgb(255,0,255);">(highlight t=C3=ADm)<=
+/span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.4</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-08-25" class=3D"date-past">25 Aug 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><a class=3D"confluence-userlink us=
+er-mention" data-username=3D"thudm1" href=3D"/display/~thudm1" data-linked-=
+resource-id=3D"14816546" data-linked-resource-version=3D"1" data-linked-res=
+ource-type=3D"userinfo" data-base-url=3D"http://confluence.synnexfpt.com">D=
+o=C3=A3n Minh Thu</a>&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd"><p>Th=C3=AAm c=E1=BB=99t Item code=
+ <span style=3D"color: rgb(255,0,255);">(highlight t=C3=ADm)</span></p><p><=
+span style=3D"color: rgb(255,0,255);">Th=C3=AAm rule validate</span></p></t=
+d>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue resolved" data-jira-key=3D"XR-22419"> <a href=
+=3D"http://jira.synnexfpt.com/browse/XR-22419" class=3D"jira-issue-key"><im=
+g class=3D"icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3D=
+xsmall&amp;avatarId=3D10310&amp;avatarType=3Dissuetype">XR-22419</a> - <spa=
+n class=3D"summary">[Improvement][Sales order SnS] Update th=C3=B4ng tin c=
+=C3=A1c =C4=90=C6=A1n h=C3=A0ng</span> <span class=3D"aui-lozenge aui-lozen=
+ge-subtle             aui-lozenge-success
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.5</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-08-30" class=3D"date-past">30 Aug 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><a class=3D"confluence-userlink us=
+er-mention" data-username=3D"thudm1" href=3D"/display/~thudm1" data-linked-=
+resource-id=3D"14816546" data-linked-resource-version=3D"1" data-linked-res=
+ource-type=3D"userinfo" data-base-url=3D"http://confluence.synnexfpt.com">D=
+o=C3=A3n Minh Thu</a>&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd">B=C3=A1o l=E1=BB=97i tr=C3=B9ng m=
+=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue resolved" data-jira-key=3D"XR-22703"> <a href=
+=3D"http://jira.synnexfpt.com/browse/XR-22703" class=3D"jira-issue-key"><im=
+g class=3D"icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3D=
+xsmall&amp;avatarId=3D10310&amp;avatarType=3Dissuetype">XR-22703</a> - <spa=
+n class=3D"summary">[=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng, l=E1=BA=
+=BB, n=E1=BB=99i b=E1=BB=99, d=E1=BB=8Bch v=E1=BB=A5, RMA] Check tr=C3=B9ng=
+ m=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m khi import s=E1=BA=A3n ph=E1=BA=A9m</span=
+> <span class=3D"aui-lozenge aui-lozenge-subtle             aui-lozenge-suc=
+cess
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.6</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-10-11" class=3D"date-past">11 Oct 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"nhunt19" =
+href=3D"/display/~nhunt19" data-linked-resource-id=3D"14815111" data-linked=
+-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-ur=
+l=3D"http://confluence.synnexfpt.com">Nguy=E1=BB=85n Th=E1=BB=A5c Nh=C6=B0<=
+/a>&nbsp;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(0,128,12=
+8);">Cho ph=C3=A9p nh=E1=BA=ADp s=E1=BB=91 th=E1=BA=ADp ph=C3=A2n khi impor=
+t file v=C3=A0 t=E1=BB=B1 =C4=91=E1=BB=99ng l=C3=A0m tr=C3=B2n =C4=91=E1=BB=
+=83 hi=E1=BB=83n th=E1=BB=8B UI (highlight xanh)</span></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue resolved" data-jira-key=3D"DS-1060"> <a href=
+=3D"http://jira.synnexfpt.com/browse/DS-1060" class=3D"jira-issue-key"><img=
+ class=3D"icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3Dx=
+small&amp;avatarId=3D10310&amp;avatarType=3Dissuetype">DS-1060</a> - <span =
+class=3D"summary">T=E1=BB=B1 =C4=91=E1=BB=99ng l=C3=A0m tr=C3=B2n th=C3=A0n=
+h s=E1=BB=91 nguy=C3=AAn =C4=91=E1=BB=91i v=E1=BB=9Bi tr=C6=B0=E1=BB=9Dng "=
+=C4=90=C6=A1n gi=C3=A1 b=C3=A1n ch=C6=B0a VAT (VND) (*)"</span> <span class=
+=3D"aui-lozenge aui-lozenge-subtle             aui-lozenge-success
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.7</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-11-29" class=3D"date-past">29 Nov 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"anhctq" h=
+ref=3D"/display/~anhctq" data-linked-resource-id=3D"19746493" data-linked-r=
+esource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-url=
+=3D"http://confluence.synnexfpt.com">Chu Th=C3=BAy Qu=E1=BB=B3nh Anh</a>&nb=
+sp;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(0,128,0)=
+;">Kh=C3=B4ng cho ph=C3=A9p import c=C3=A1c s=E1=BA=A3n ph=E1=BA=A9m chi=E1=
+=BA=BFt kh=E1=BA=A5u t=C6=B0=C6=A1ng =E1=BB=A9ng v=E1=BB=9Bi 1 kho=E1=BA=A3=
+n th=C6=B0=E1=BB=9Fng MKT</span></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue resolved" data-jira-key=3D"XR-24522"> <a href=
+=3D"http://jira.synnexfpt.com/browse/XR-24522" class=3D"jira-issue-key"><im=
+g class=3D"icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3D=
+xsmall&amp;avatarId=3D10303&amp;avatarType=3Dissuetype">XR-24522</a> - <spa=
+n class=3D"summary">[MKT] C=C3=A1c =C4=91=C6=A1n h=C3=A0ng ch=E1=BB=A9a lin=
+e h=C3=A0ng MKT v=E1=BA=ABn import =C4=91=C6=B0=E1=BB=A3c t=E1=BB=AB file x=
+ls</span> <span class=3D"aui-lozenge aui-lozenge-subtle             aui-loz=
+enge-success
+     jira-macro-single-issue-export-pdf">Closed</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.8</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2022-12-19" class=3D"date-past">19 Dec 2022</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><a class=3D"confluence-userlink user-mention" data-username=3D"nhunt19" =
+href=3D"/display/~nhunt19" data-linked-resource-id=3D"14815111" data-linked=
+-resource-version=3D"1" data-linked-resource-type=3D"userinfo" data-base-ur=
+l=3D"http://confluence.synnexfpt.com">Nguy=E1=BB=85n Th=E1=BB=A5c Nh=C6=B0<=
+/a>&nbsp;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,102,=
+0);">T=C4=83ng gi=E1=BB=9Bi h=E1=BA=A1n k=C3=BD t=E1=BB=B1 m=C3=A3 kho impo=
+rt cho YCBHPP =C4=91=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng, chu=E1=BB=97i, l=
+=E1=BA=BB v=C3=A0 RMA (m=C3=A0u cam)</span></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"DS-1322"> <a href=3D"http:/=
+/jira.synnexfpt.com/browse/DS-1322" class=3D"jira-issue-key"><img class=3D"=
+icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3Dxsmall&amp;=
+avatarId=3D10310&amp;avatarType=3Dissuetype">DS-1322</a> - <span class=3D"s=
+ummary">T=C4=83ng gi=E1=BB=9Bi h=E1=BA=A1n k=C3=BD t=E1=BB=B1 m=C3=A3 kho i=
+mport cho YCBHPP =C4=91=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng, chu=E1=BB=97i=
+, l=E1=BA=BB v=C3=A0 RMA</span> <span class=3D"aui-lozenge aui-lozenge-subt=
+le             aui-lozenge-success
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">1.9</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><time datetime=3D"2023-02-07" class=3D"date-past">07 Feb 2023</time>&nbs=
+p;</p>
+</div></td>
+<td colspan=3D"1" class=3D"confluenceTd"><a class=3D"confluence-userlink us=
+er-mention" data-username=3D"nhunt19" href=3D"/display/~nhunt19" data-linke=
+d-resource-id=3D"14815111" data-linked-resource-version=3D"1" data-linked-r=
+esource-type=3D"userinfo" data-base-url=3D"http://confluence.synnexfpt.com"=
+>Nguy=E1=BB=85n Th=E1=BB=A5c Nh=C6=B0</a>&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(0,0,255)=
+;">B=E1=BB=8F check t=C3=AAn c=E1=BB=99t trong file import =C4=90=C6=A1n h=
+=C3=A0ng th=C6=B0=E1=BB=9Dng, chu=E1=BB=97i, kh=C3=A1ch l=E1=BA=BB</span></=
+td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"DS-1431"> <a href=3D"http:/=
+/jira.synnexfpt.com/browse/DS-1431" class=3D"jira-issue-key"><img class=3D"=
+icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3Dxsmall&amp;=
+avatarId=3D10310&amp;avatarType=3Dissuetype">DS-1431</a> - <span class=3D"s=
+ummary">B=E1=BB=8F check t=C3=AAn c=E1=BB=99t trong file import =C4=90=C6=
+=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng, chu=E1=BB=97i, kh=C3=A1ch l=E1=BA=BB</s=
+pan> <span class=3D"aui-lozenge aui-lozenge-subtle             aui-lozenge-=
+success
+     jira-macro-single-issue-export-pdf">Done</span> </span> </p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd">18/05/2023</td>
+<td colspan=3D"1" class=3D"confluenceTd"><a class=3D"confluence-userlink us=
+er-mention" data-username=3D"mayvt2" href=3D"/display/~mayvt2" data-linked-=
+resource-id=3D"1081727" data-linked-resource-version=3D"1" data-linked-reso=
+urce-type=3D"userinfo" data-base-url=3D"http://confluence.synnexfpt.com">Vi=
+ Th=E1=BB=8B M=C3=A2y</a>&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<ul>
+<li><span style=3D"color: rgb(51,51,153);"><strong>L=E1=BA=A5y ORG theo Sub=
+ Inventory =C4=91=C3=A3 ch=E1=BB=8Dn</strong></span></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p> <span class=3D"jira-issue" data-jira-key=3D"XR-37653"> <a href=3D"http:=
+//jira.synnexfpt.com/browse/XR-37653" class=3D"jira-issue-key"><img class=
+=3D"icon" src=3D"http://jira.synnexfpt.com/secure/viewavatar?size=3Dxsmall&=
+amp;avatarId=3D10310&amp;avatarType=3Dissuetype">XR-37653</a> - <span class=
+=3D"summary">[=C4=90=C6=A1n h=C3=A0ng] Tr=C6=B0=E1=BB=9Dng h=E1=BB=A3p kho =
+h=C3=A0ng tr=C3=AAn =C4=91=C6=A1n h=C3=A0ng org_code =E1=BB=9F TTKD v=C3=A0=
+ org_code =E1=BB=9F kho h=C3=A0ng kh=C3=A1c nhau v=E1=BA=ABn cho g=E1=BB=AD=
+i =C4=91=C6=A1n h=C3=A0ng </span> <span class=3D"aui-lozenge aui-lozenge-su=
+btle             aui-lozenge-default
+     jira-macro-single-issue-export-pdf">Cancelled</span> </span> </p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 class=3D"auto-cursor-target" id=3D"id-1.21[=C4=90=C6=A1nh=C3=A0ngth=C6=
+=B0=E1=BB=9Dng][Function]Imports=E1=BA=A3nph=E1=BA=A9mchoYCBHPP-Requirement=
+Details">Requirement Details</h1>
+<p class=3D"auto-cursor-target"><strong style=3D"font-size: 20.0px;letter-s=
+pacing: -0.008em;">Use Case Specifications</strong></p>
+<div id=3D"expander-1846565141" class=3D"expand-container">
+<div id=3D"expander-control-1846565141" class=3D"expand-control" aria-expan=
+ded=3D"true">
+<span class=3D"expand-icon aui-icon aui-icon-small aui-iconfont-chevron-dow=
+n"></span>
+<span class=3D"expand-control-text">UC- Import s=E1=BA=A3n ph=E1=BA=A9m cho=
+ YCBH PP =C4=91=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng</span>
+</div>
+<div id=3D"expander-content-1846565141" class=3D"expand-content">
+<div class=3D"table-wrap">
+<table class=3D"wrapped confluenceTable">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class=3D"confluenceTd"><p><strong>M=E1=BB=A5c =C4=90=C3=ADch</strong></=
+p></td>
+<td class=3D"confluenceTd">
+<ul>
+<li><span class=3D"inline-comment-marker" data-ref=3D"1e5bd6d3-c157-44b1-ba=
+ee-5d87c98f90b1">Ch=E1=BB=A9c n=C4=83ng n=C3=A0y cho ph=C3=A9p EU import s=
+=E1=BA=A3n ph=E1=BA=A9m cho&nbsp; YCBH PP =C4=91=C6=A1n h=C3=A0ng th=C6=B0=
+=E1=BB=9Dng t=E1=BB=AB </span><span class=3D"inline-comment-marker" data-re=
+f=3D"33c53d9f-3f7a-475a-a327-003d371603be"><span class=3D"inline-comment-ma=
+rker" data-ref=3D"1e5bd6d3-c157-44b1-baee-5d87c98f90b1">file excel theo =C4=
+=91=E1=BB=8Bnh d=E1=BA=A1ng =C4=91=C6=B0=E1=BB=A3c define.</span></span></l=
+i>
+<li><span class=3D"inline-comment-marker" data-ref=3D"33c53d9f-3f7a-475a-a3=
+27-003d371603be"><span class=3D"inline-comment-marker" data-ref=3D"1e5bd6d3=
+-c157-44b1-baee-5d87c98f90b1">Vi=E1=BB=87c convert t=E1=BB=AB PO sang file =
+=C4=91=E1=BB=8Bnh d=E1=BA=A1ng n=C3=A0y n=E1=BA=B1m ngo=C3=A0i scope c=E1=
+=BB=A7a UC n=C3=A0y, v=C3=A0 s=E1=BA=BD =C4=91=C6=B0=E1=BB=A3c l=C3=A0m =E1=
+=BB=9F UC kh=C3=A1c.</span></span></li>
+</ul></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><strong>T=C3=A1c Nh=C3=A2n</strong></p></td>
+<td class=3D"confluenceTd">Role =C4=91=C6=B0=E1=BB=A3c ph=C3=A2n quy=E1=BB=
+=81n nh=C6=B0 m=C3=B4 t=E1=BA=A3 trong <a href=3D"/pages/viewpage.action?pa=
+geId=3D2621538">1. =C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng</a></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><strong>=C4=90i=E1=BB=81u Ki=E1=BB=87n Kh=E1=
+=BB=9Fi Ph=C3=A1t</strong></p></td>
+<td class=3D"confluenceTd"><p>Ng=C6=B0=E1=BB=9Di d=C3=B9ng upload/drop file=
+ khi =C4=91ang t=E1=BA=A1o m=E1=BB=9Bi/ Xem chi ti=E1=BA=BFt YCBH PP =C4=91=
+=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng</p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><strong>Ti=E1=BB=81n =C4=90i=E1=BB=81u Ki=E1=
+=BB=87n</strong></p></td>
+<td class=3D"confluenceTd"><p><span class=3D"inline-comment-marker" data-re=
+f=3D"8b37475b-2246-4431-8a86-e6f98b9a87c8">YCBH c=C3=B3 </span><span style=
+=3D"color: rgb(23,43,77);text-decoration: none;"><span class=3D"inline-comm=
+ent-marker" data-ref=3D"8b37475b-2246-4431-8a86-e6f98b9a87c8">[Tr=E1=BA=A1n=
+g th=C3=A1i] =3D "D=E1=BB=B1 th=E1=BA=A3o" ho=E1=BA=B7c ch=C6=B0a c=C3=B3 t=
+r=E1=BA=A1ng th=C3=A1i</span></span></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p><strong>H=E1=BA=ADu =C4=90i=E1=BB=81u Ki=E1=
+=BB=87n</strong></p></td>
+<td class=3D"confluenceTd"><p>H=E1=BB=87 th=E1=BB=91ng import s=E1=BA=A3n p=
+h=E1=BA=A9m th=C3=A0nh c=C3=B4ng ho=E1=BA=B7c b=C3=A1o l=E1=BB=97i</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><br></p>
+<p><strong>S=C6=A1 =C4=91=E1=BB=93 t=C6=B0=C6=A1ng t=C3=A1c</strong>&nbsp;<=
+/p>
+<p><span class=3D"confluence-embedded-file-wrapper"><img class=3D"confluenc=
+e-embedded-image" src=3D"9f4c9c8652b4604c8b4ae1d74cdd6361" data-image-src=
+=3D"/download/attachments/19751452/image2022-1-24_10-4-40.png?version=3D1&a=
+mp;modificationDate=3D1648782162016&amp;api=3Dv2" data-unresolved-comment-c=
+ount=3D"0" data-linked-resource-id=3D"19751454" data-linked-resource-versio=
+n=3D"1" data-linked-resource-type=3D"attachment" data-linked-resource-defau=
+lt-alias=3D"image2022-1-24_10-4-40.png" data-base-url=3D"http://confluence.=
+synnexfpt.com" data-linked-resource-content-type=3D"image/png" data-linked-=
+resource-container-id=3D"19751452" data-linked-resource-container-version=
+=3D"27" width=3D"468" height=3D"311"></span></p>
+<p><br></p>
+<p><strong>M=C3=B4 t=E1=BA=A3 quy t=E1=BA=AFc nghi=E1=BB=87p v=E1=BB=A5</st=
+rong></p>
+<div class=3D"table-wrap">
+<table class=3D"relative-table wrapped confluenceTable" style=3D"width: 100=
+.0%;">
+<colgroup>
+<col style=3D"width: 4.83298%;">
+<col style=3D"width: 7.39161%;">
+<col style=3D"width: 87.7754%;">
+</colgroup>
+<tbody>
+<tr>
+<td class=3D"confluenceTd"><p><strong>B=C6=B0=E1=BB=9Bc</strong></p></td>
+<td class=3D"confluenceTd"><p><strong>M=C3=A3 Quy T=E1=BA=AFc</strong></p><=
+/td>
+<td class=3D"confluenceTd"><p><strong>M=C3=B4 T=E1=BA=A3</strong></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p>(2)</p></td>
+<td class=3D"confluenceTd"><p>BR 1</p></td>
+<td class=3D"confluenceTd"><p><strong><u>Quy T=E1=BA=AFc Hi=E1=BB=83n Th=E1=
+=BB=8B:</u></strong></p><p><span style=3D"color: rgb(23,43,77);">H=E1=BB=87=
+ th=E1=BB=91ng s=E1=BA=BD hi=E1=BB=83n th=E1=BB=8B m=C3=A0n h=C3=ACnh t=E1=
+=BA=A1o m=E1=BB=9Bi (<a href=3D"/pages/viewpage.action?pageId=3D19731084">1=
+.1 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng][SD] T=E1=BA=A1o YCBH (=C4=
+=91=C6=A1n th=C6=B0=E1=BB=9Dng)</a></span><span style=3D"color: rgb(23,43,7=
+7);">) ho=E1=BA=B7c m=C3=A0n h=C3=ACnh chi ti=E1=BA=BFt (<a href=3D"/pages/=
+viewpage.action?pageId=3D19734972">1.8 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=
+=BB=9Dng][SD] M=C3=A0n h=C3=ACnh chi ti=E1=BA=BFt YCBH SnS (=C4=91=C6=A1n t=
+h=C6=B0=E1=BB=9Dng)</a></span><span style=3D"color: rgb(23,43,77);">)</span=
+></p></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">(4)</td>
+<td colspan=3D"1" class=3D"confluenceTd">BR 2</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<div class=3D"content-wrapper">
+<p><strong><u>Quy T=E1=BA=AFc Ki=E1=BB=83m Tra:</u></strong></p>
+<ol>
+<li><span style=3D"color: rgb(255,102,0);">Ki=E1=BB=83m tra =C4=91=E1=BB=8B=
+nh d=E1=BA=A1ng file&nbsp;(file excel, =C4=91u=C3=B4i .xls ho=E1=BA=B7c xls=
+x), n=E1=BA=BFu sai, th=C3=B4ng b=C3=A1o l=E1=BB=97i "File &lt;t=C3=AAn fil=
+e&gt; kh=C3=B4ng =C4=91=C3=BAng =C4=91=E1=BB=8Bnh d=E1=BA=A1ng file excel. =
+Xin vui l=C3=B2ng ki=E1=BB=83m tra l=E1=BA=A1i.".</span></li>
+<li><span style=3D"color: rgb(0,0,255);">Kh=C3=B4ng check t=C3=AAn c=C3=A1c=
+ c=E1=BB=99t (t=E1=BB=A9c b=E1=BB=8F check h=C3=A0ng s=E1=BB=91 1 trong fil=
+e excel import). </span></li>
+<li><span style=3D"color: rgb(0,0,255);">Kh=C3=B4ng check c=C3=A1c c=E1=BB=
+=99t m=C3=A0 kh=C3=B4ng bao g=E1=BB=93m th=C3=B4ng tin required (t=E1=BB=A9=
+c kh=C3=B4ng check kho=E1=BA=A3ng tr=E1=BB=91ng sau c=C3=A1c c=E1=BB=99t im=
+port =E2=86=92 cho ph=C3=A9p ng=C6=B0=E1=BB=9Di d=C3=B9ng c=C3=B3 th=E1=BB=
+=83 =C4=91i=E1=BB=81n b=E1=BA=A5t c=E1=BB=A9 th=C3=B4ng tin g=C3=AC)</span>=
+</li>
+<li><span style=3D"color: rgb(255,102,0);">N=E1=BA=BFu s=E1=BB=91 l=C6=B0=
+=E1=BB=A3ng b=E1=BA=A3n ghi v=C6=B0=E1=BB=A3t&nbsp;qu=C3=A1 10.000, th=C3=
+=B4ng b=C3=A1o l=E1=BB=97i&nbsp;"File kh=C3=B4ng =C4=91=C6=B0=E1=BB=A3c ph=
+=C3=A9p import qu=C3=A1 10.000 b=E1=BA=A3n ghi. Xin vui l=C3=B2ng ki=E1=BB=
+=83m tra l=E1=BA=A1i."</span></li>
+<li>Ho=E1=BA=A1t =C4=91=E1=BB=99ng t=C6=B0=C6=A1ng t=E1=BB=B1 =C4=91=C6=A1n=
+ h=C3=A0ng chu=E1=BB=97i (xem <a href=3D"http://confluence.synnexfpt.com/pa=
+ges/viewpage.action?pageId=3D19737564" rel=3D"nofollow">1.16 [=C4=90=C6=A1n=
+ h=C3=A0ng chu=E1=BB=97i][Function] Import s=E1=BA=A3n ph=E1=BA=A9m cho YCB=
+H PP</a>), tuy nhi=C3=AAn, v=E1=BB=9Bi =C4=91=C6=A1n h=C3=A0ng th=C6=B0=E1=
+=BB=9Dng, s=E1=BA=BD ch=E1=BB=89 import c=C3=A1c tr=C6=B0=E1=BB=9Dng sau, n=
+h=C6=B0 m=C3=B4 t=E1=BA=A3 d=C6=B0=E1=BB=9Bi:</li>
+</ol>
+<div class=3D"table-wrap">
+<table class=3D"wrapped confluenceTable">
+<tbody>
+<tr>
+<th colspan=3D"1" class=3D"confluenceTh">#</th>
+<th colspan=3D"1" class=3D"confluenceTh">T=C3=AAn</th>
+<th colspan=3D"1" class=3D"confluenceTh">B=E1=BA=AFt bu=E1=BB=99c</th>
+<th colspan=3D"1" class=3D"confluenceTh">Gi=C3=A1 tr=E1=BB=8B m=E1=BA=B7c =
+=C4=91=E1=BB=8Bnh</th>
+<th colspan=3D"1" class=3D"confluenceTh">Ki=E1=BB=83u d=E1=BB=AF li=E1=BB=
+=87u</th>
+<th colspan=3D"1" class=3D"confluenceTh">=C4=90=E1=BB=99 d=C3=A0i t=E1=BB=
+=91i =C4=91a</th>
+<th colspan=3D"1" class=3D"confluenceTh">Rule</th>
+<th colspan=3D"1" class=3D"confluenceTh">Note</th>
+</tr>
+<tr>
+<td class=3D"confluenceTd">1</td>
+<td class=3D"confluenceTd">No</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">S=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">Kh=C3=B4ng import tr=C6=B0=E1=BB=9Dng n=C3=A0y, =
+nh=C6=B0ng khi export ra v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=9Dng n=C3=A0y.<=
+/td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">2</span><=
+/td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">M=C3=A3 s=
+=E1=BA=A3n ph=E1=BA=A9m</span></td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">N/A</span=
+></td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">N/A</span=
+></td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">N/A</span=
+></td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">N/A</span=
+></td>
+<td class=3D"confluenceTd"><p><span style=3D"color: rgb(255,0,255);">L=E1=
+=BA=A5y theo item code</span></p></td>
+<td class=3D"confluenceTd"><span style=3D"color: rgb(255,0,255);">Kh=C3=B4n=
+g import tr=C6=B0=E1=BB=9Dng n=C3=A0y, nh=C6=B0ng khi export ra v=E1=BA=ABn=
+ c=C3=B3 tr=C6=B0=E1=BB=9Dng n=C3=A0y.</span></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">3</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">Item code</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">Yes</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">Text</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">50</span></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<ul>
+<li><span style=3D"color: rgb(255,0,255);">Item code ph=E1=BA=A3i t=C6=B0=
+=C6=A1ng =E1=BB=A9ng v=E1=BB=9Bi m=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m th=E1=BB=
+=8Fa m=C3=A3n:</span>
+<ul>
+<li><span style=3D"color: rgb(255,0,255);">M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m=
+ ph=E1=BA=A3i t=E1=BB=93n t=E1=BA=A1i, n=E1=BA=BFu kh=C3=B4ng b=C3=A1o l=E1=
+=BB=97i: "M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m kh=C3=B4ng t=E1=BB=93n t=E1=BA=
+=A1i.".</span></li>
+<li><span style=3D"color: rgb(255,0,255);">S=E1=BA=A3n ph=E1=BA=A9m ph=E1=
+=BA=A3i active, n=E1=BA=BFu kh=C3=B4ng b=C3=A1o l=E1=BB=97i: "S=E1=BA=A3n p=
+h=E1=BA=A9m kh=C3=B4ng active.".</span></li>
+<li><span style=3D"color: rgb(255,0,255);">S=E1=BA=A3n ph=E1=BA=A9m ph=E1=
+=BA=A3i thu=E1=BB=99c c=C3=B9ng 1 h=C3=A3ng m=C3=A0 user =C4=91=C3=A3 ch=E1=
+=BB=8Dn, n=E1=BA=BFu kh=C3=A1c th=C3=AC b=C3=A1o l=E1=BB=97i: "S=E1=BA=A3n =
+ph=E1=BA=A9m kh=C3=B4ng thu=E1=BB=99c h=C3=A3ng =C4=91=C3=A3 ch=E1=BB=8Dn: =
+&lt;T=C3=AAn h=C3=A3ng&gt;" (trong =C4=91=C3=B3 T=C3=AAn h=C3=A3ng l=C3=A0 =
+h=C3=A3ng m=C3=A0 user =C4=91=C3=A3 ch=E1=BB=8Dn t=E1=BA=A1i tr=C6=B0=E1=BB=
+=9Dng #2 H=C3=A3ng t=E1=BA=A1i m=C3=A0n h=C3=ACnh <a href=3D"/pages/viewpag=
+e.action?pageId=3D19731084">1.1 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dn=
+g][SD] T=E1=BA=A1o YCBH (=C4=91=C6=A1n th=C6=B0=E1=BB=9Dng)</a></span></li>
+<li><span style=3D"color: rgb(255,0,255);">N=E1=BA=BFu m=C3=A3 s=E1=BA=A3n =
+ph=E1=BA=A9m kh=C3=B4ng c=C3=B3 theo ph=C3=A2n b=E1=BB=95 PSCL c=E1=BB=A7a =
+EU th=C3=AC b=C3=A1o l=E1=BB=97i: "M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m kh=C3=
+=B4ng =C4=91=C6=B0=E1=BB=A3c ph=C3=A2n b=E1=BB=95 theo PSCL c=E1=BB=A7a ng=
+=C6=B0=E1=BB=9Di d=C3=B9ng.".</span></li>
+<li><span style=3D"color: rgb(255,0,255);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=
+=A9m kh=C3=B4ng thu=E1=BB=99c CS c=C3=B3 type =3D X1, X2, X3, X4 (type =3D =
+PROMOTION trong DB) ho=E1=BA=B7c type =3D D1, D2, D3, D4 (type =3D DISCOUNT=
+ trong DB) m=C3=A0 ch=C6=B0a c=C3=B3 thi=E1=BA=BFt l=E1=BA=ADp gi=C3=A1 t=
+=E1=BA=A1i module Pricing, b=C3=A1o l=E1=BB=97i: "S=E1=BA=A3n ph=E1=BA=A9m =
+kh=C3=B4ng c=C3=B3 gi=C3=A1 MDP. Li=C3=AAn h=E1=BB=87 v=E1=BB=9Bi PM =C4=91=
+=E1=BB=83 b=E1=BB=95 sung b=E1=BA=A3ng gi=C3=A1"</span></li>
+<li><span style=3D"color: rgb(255,0,255);">N=E1=BA=BFu c=C3=B3 2 line c=C3=
+=B3 c=C3=B9ng Item code, b=C3=A1o l=E1=BB=97i =E1=BB=9F c=C3=A1c line tr=C3=
+=B9ng: "S=E1=BA=A3n ph=E1=BA=A9m kh=C3=B4ng =C4=91=C6=B0=E1=BB=A3c tr=C3=B9=
+ng nhau"</span></li>
+<li><span style=3D"color: rgb(0,128,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=
+=A9m l=C3=A0 s=E1=BA=A3n ph=E1=BA=A9m chi=E1=BA=BFt kh=E1=BA=A5u t=C6=B0=C6=
+=A1ng =E1=BB=A9ng v=E1=BB=9Bi 1 kho=E1=BA=A3n th=C6=B0=E1=BB=9Fng MKT, b=C3=
+=A1o l=E1=BB=97i: "Kh=C3=B4ng =C4=91=C6=B0=E1=BB=A3c ph=C3=A9p import s=E1=
+=BA=A3n ph=E1=BA=A9m chi=E1=BA=BFt kh=E1=BA=A5u MKT. Vui l=C3=B2ng ch=E1=BB=
+=8Dn Tr=E1=BB=AB chi=E1=BA=BFt kh=E1=BA=A5u tr=C3=AAn m=C3=A0n h=C3=ACnh =
+=C4=91=C6=A1n h=C3=A0ng"</span></li>
+</ul></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,0)=
+;">Note: hi=E1=BB=87n =C4=91=C3=A3 h=E1=BB=A3p nh=E1=BA=A5t c=E1=BB=99t Ite=
+m code th=C3=A0nh M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m</span></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd">4</td>
+<td class=3D"confluenceTd">T=C3=AAn s=E1=BA=A3n ph=E1=BA=A9m</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">L=E1=BA=A5y theo m=C3=A3 s=E1=BA=A3n ph=E1=BA=A9=
+m</td>
+<td class=3D"confluenceTd">Text</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">N/A</td>
+<td class=3D"confluenceTd">Kh=C3=B4ng import tr=C6=B0=E1=BB=9Dng n=C3=A0y, =
+nh=C6=B0ng khi export ra v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=9Dng n=C3=A0y.<=
+/td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">5</td>
+<td colspan=3D"1" class=3D"confluenceTd">=C4=90=C6=A1n v=E1=BB=8B t=C3=ADnh=
+</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">L=E1=BA=A5y theo m=C3=A3 s=E1=BA=
+=A3n ph=E1=BA=A9m</td>
+<td colspan=3D"1" class=3D"confluenceTd">Text</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(23,43,77=
+);">Kh=C3=B4ng import tr=C6=B0=E1=BB=9Dng n=C3=A0y, nh=C6=B0ng khi export r=
+a v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=9Dng n=C3=A0y.</span></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">6</td>
+<td colspan=3D"1" class=3D"confluenceTd">S=E1=BB=91 l=C6=B0=E1=BB=A3ng</td>
+<td colspan=3D"1" class=3D"confluenceTd">C=C3=B3</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">S=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=
+=A1ng,&nbsp;</td>
+<td colspan=3D"1" class=3D"confluenceTd">6</td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<ul>
+<li><span class=3D"inline-comment-marker" data-ref=3D"db80cd1b-1856-4d73-bf=
+0e-e3de189b834c">N=E1=BA=BFu S=E1=BB=91 l=C6=B0=E1=BB=A3ng kh=C3=B4ng ph=E1=
+=BA=A3i s=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng, th=C3=B4ng b=C3=A1o l=E1=BB=
+=97i: "S=E1=BB=91 l=C6=B0=E1=BB=A3ng c=E1=BB=A7a s=E1=BA=A3n ph=E1=BA=A9m p=
+h=E1=BA=A3i l=C3=A0 s=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng."</span></li>
+<li><span class=3D"inline-comment-marker" data-ref=3D"db80cd1b-1856-4d73-bf=
+0e-e3de189b834c">N=E1=BA=BFu S=E1=BB=91 l=C6=B0=E1=BB=A3ng d=C3=B2ng s=E1=
+=BA=A3n ph=E1=BA=A9m chi=E1=BA=BFt kh=E1=BA=A5u (CS=3D D1,D2,D3,D4) l=C3=A0=
+ kh=C3=A1c 1, th=C3=B4ng b=C3=A1o l=E1=BB=97i: "S=E1=BB=91 l=C6=B0=E1=BB=A3=
+ng c=E1=BB=A7a s=E1=BA=A3n ph=E1=BA=A9m chi=E1=BA=BFt kh=E1=BA=A5u ph=E1=BA=
+=A3i b=E1=BA=B1ng 1"</span></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">7</td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,25=
+5);">=C4=90=C6=A1n gi=C3=A1 b=C3=A1n ch=C6=B0a VAT (VND</span>)</td>
+<td colspan=3D"1" class=3D"confluenceTd">C=C3=B3</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(255,0,0)=
+;"><s>S=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng,</s> Number</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span class=3D"inline-comment-mark=
+er" data-ref=3D"4f557311-0de0-4d72-a7f3-3d928ba8d99a">9</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><s><span style=3D"color: rgb(25=
+5,0,0);">N=E1=BA=BFu =C4=90=C6=A1n gi=C3=A1 (VND) kh=C3=B4ng ph=E1=BA=A3i s=
+=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng, th=C3=B4ng b=C3=A1o l=E1=BB=97i: "=
+=C4=90=C6=A1n gi=C3=A1 (VND) c=E1=BB=A7a s=E1=BA=A3n ph=E1=BA=A9m ph=E1=BA=
+=A3i l=C3=A0 s=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng."</span></s></p>
+<ul>
+<li><span style=3D"color: rgb(255,0,0);"><span class=3D"inline-comment-mark=
+er" data-ref=3D"bdfd435e-5336-4f18-be08-ca1fddb75402">Cho ph=C3=A9p ng=C6=
+=B0=E1=BB=9Di d=C3=B9ng nh=E1=BA=ADp s=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng=
+, S=E1=BB=91 0, S=E1=BB=91 =C3=A2m,&nbsp;<span style=3D"color: rgb(0,128,12=
+8);">S=E1=BB=91 th=E1=BA=ADp ph=C3=A2n</span></span></span></li>
+<li><span style=3D"color: rgb(255,0,0);"><span class=3D"inline-comment-mark=
+er" data-ref=3D"bdfd435e-5336-4f18-be08-ca1fddb75402">N=E1=BA=BFu =C4=90=C6=
+=A1n gi=C3=A1 (VND) kh=C3=B4ng ph=E1=BA=A3i l=C3=A0 s=E1=BB=91 nguy=C3=AAn =
+d=C6=B0=C6=A1ng, S=E1=BB=91 0, S=E1=BB=91 =C3=A2m, <span style=3D"color: rg=
+b(0,128,128);">S=E1=BB=91 th=E1=BA=ADp ph=C3=A2n</span> th=C3=AC th=C3=B4ng=
+ b=C3=A1o l=E1=BB=97i: "=C4=90=C6=A1n gi=C3=A1 (VND) ph=E1=BA=A3i l=C3=A0 s=
+=E1=BB=91"</span></span></li>
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ c=E1=BB=A7a line t=C6=B0=C6=A1ng =E1=BB=A9ng thu=E1=BB=99c CS c=C3=B3 type=
+ =3D X1, X2, X3, X4 (type =3D PROMOTION trong DB) m=C3=A0 =C4=91=C6=A1n gi=
+=C3=A1 =C4=91i=E1=BB=81n kh=C3=A1c 0, b=C3=A1o l=E1=BB=97i: " S=E1=BA=A3n p=
+h=E1=BA=A9m khuy=E1=BA=BFn m=E1=BA=A1i c=C3=B3 gi=C3=A1 =3D 0"</span></li>
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ c=E1=BB=A7a line t=C6=B0=C6=A1ng =E1=BB=A9ng thu=E1=BB=99c CS c=C3=B3 type=
+ =3D D1, D2, D3, D4 (type =3D DISCOUNT trong DB) m=C3=A0 user nh=E1=BA=ADp =
+=C4=91=C6=A1n gi=C3=A1 &gt;=3D 0, b=C3=A1o l=E1=BB=97i: "H=C3=A0ng chi=E1=
+=BA=BFt kh=E1=BA=A5u c=C3=B3 =C4=91=C6=A1n gi=C3=A1 =C3=A2m"</span></li>
+<li><span style=3D"color: rgb(255,0,255);">N=E1=BA=BFu =C4=91=C6=A1n gi=C3=
+=A1 c=E1=BB=A7a line &lt; gi=C3=A1 MDP c=E1=BB=A7a m=C3=A3 s=E1=BA=A3n ph=
+=E1=BA=A9m t=C6=B0=C6=A1ng =E1=BB=A9ng v=C3=A0 m=C3=A3 s=E1=BA=A3n ph=E1=BA=
+=A9m thu=E1=BB=99c PS ch=C6=B0a ph=C3=A2n b=E1=BB=95 cho PM n=C3=A0o, b=C3=
+=A1o l=E1=BB=97i =E1=BB=9F line =C4=91=C3=B3: " D=C3=B2ng s=E1=BA=A3n ph=E1=
+=BA=A9m &lt;T=C3=AAn PS&gt; ch=C6=B0a =C4=91=C6=B0=E1=BB=A3c ph=C3=A2n b=E1=
+=BB=95 cho PM n=C3=A0o qu=E1=BA=A3n l=C3=BD. Vui l=C3=B2ng ch=E1=BB=89nh s=
+=E1=BB=ADa l=E1=BA=A1i =C4=91=C6=A1n gi=C3=A1 ho=E1=BA=B7c li=C3=AAn h=E1=
+=BB=87 BD =C4=91=E1=BB=83 ph=C3=A2n quy=E1=BB=81n PM qu=E1=BA=A3n l=C3=BD."=
+</span></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">8</td>
+<td colspan=3D"1" class=3D"confluenceTd">Th=C3=A0nh ti=E1=BB=81n (VND)</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">=C4=90=C6=A1n gi=C3=A1 (VND) *&nbs=
+p; S=E1=BB=91 l=C6=B0=E1=BB=A3ng</td>
+<td colspan=3D"1" class=3D"confluenceTd">S=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=
+=A1ng</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">Kh=C3=B4ng import tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y, nh=C6=B0ng khi export ra v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y.</td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">9</td>
+<td colspan=3D"1" class=3D"confluenceTd">VAT</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">L=E1=BA=A5y theo s=E1=BA=A3n ph=E1=
+=BA=A9m</td>
+<td colspan=3D"1" class=3D"confluenceTd">S=E1=BB=91 th=E1=BB=B1c, format th=
+eo %</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(0,0,0);"=
+>C=C3=A1c s=E1=BA=A3n ph=E1=BA=A9m (tr=E1=BB=AB s=E1=BA=A3n ph=E1=BA=A9m th=
+u=E1=BB=99c CS c=C3=B3 type =3D X1, X2, X3, X4 (type =3D PROMOTION trong DB=
+)) ph=E1=BA=A3i c=C3=B3 c=C3=B9ng m=E1=BB=99t lo=E1=BA=A1i thu=E1=BA=BF.&nb=
+sp;</span>
+<ul style=3D"text-align: left;">
+<li class=3D"auto-cursor-target"><p style=3D"text-align: left;"><span style=
+=3D"color: rgb(0,0,0);">N=E1=BA=BFu c=C3=A1c s=E1=BA=A3n ph=E1=BA=A9m trong=
+ file Import kh=C3=B4ng c=C3=B3 c=C3=B9ng Lo=E1=BA=A1i thu=E1=BA=BF xu=E1=
+=BA=A5t, b=C3=A1o l=E1=BB=97i: "C=C3=A1c s=E1=BA=A3n ph=E1=BA=A9m trong YCB=
+H ph=E1=BA=A3i c=C3=B9ng lo=E1=BA=A1i thu=E1=BA=BF xu=E1=BA=A5t. B=E1=BA=A1=
+n vui l=C3=B2ng ki=E1=BB=83m tra l=E1=BA=A1i."t=E1=BA=A1i c=C3=A1c d=C3=B2n=
+g c=C3=B3 [Lo=E1=BA=A1i thu=E1=BA=BF xu=E1=BA=A5t] kh=C3=A1c v=E1=BB=9Bi c=
+=C3=A1c s=E1=BA=A3n ph=E1=BA=A9m c=C3=B2n l=E1=BA=A1i (C=C3=B3 nhi=E1=BB=81=
+u s=E1=BA=A3n ph=E1=BA=A9m c=C3=B3 c=C3=B9ng [Lo=E1=BA=A1i thu=E1=BA=BF xu=
+=E1=BA=A5t] h=C6=A1n, N=E1=BA=BFu s=E1=BB=91 l=C6=B0=E1=BB=A3ng s=E1=BA=A3n=
+ ph=E1=BA=A9m c=E1=BB=A7a 2 lo=E1=BA=A1i b=E1=BA=B1ng nhau, l=E1=BA=A5y s=
+=E1=BA=A3n ph=E1=BA=A9m =C4=91=E1=BA=A7u ti=C3=AAn l=C3=A0m ti=C3=AAu chu=
+=E1=BA=A9n)<br></span></p></li>
+<li class=3D"auto-cursor-target"><span style=3D"color: rgb(0,0,0);">Lo=E1=
+=BA=A1i thu=E1=BA=BF xu=E1=BA=A5t:</span>
+<ul>
+<li><span style=3D"color: rgb(0,0,0);">Trong m=E1=BB=99t YCBH ch=E1=BB=89 c=
+=C3=B3 m=E1=BB=99t trong 2 lo=E1=BA=A1i thu=E1=BA=BF xu=E1=BA=A5t sau:&nbsp=
+;</span>
+<ul>
+<li><span style=3D"color: rgb(0,0,0);">C=C3=B3 thu=E1=BA=BF xu=E1=BA=A5t (V=
+AT =3D Thu=E1=BA=BF xu=E1=BA=A5t 0%; 5%; 8%; 10% &amp; c=C3=A1c lo=E1=BA=A1=
+i thu=E1=BA=BF xu=E1=BA=A5t sau n=C3=A0y c=C3=B3 th=E1=BB=83 ph=C3=A1t sinh=
+ th=C3=AAm)</span></li>
+<li><span style=3D"color: rgb(0,0,0);">Kh=C3=B4ng ch=E1=BB=8Bu thu=E1=BA=BF=
+ (VAT=3DKh=C3=B4ng ch=E1=BB=8Bu thu=E1=BA=BF)</span></li>
+</ul></li>
+</ul></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd">Kh=C3=B4ng import tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y, nh=C6=B0ng khi export ra v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y.</td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">10</td>
+<td colspan=3D"1" class=3D"confluenceTd">M=C3=A3 kho</td>
+<td colspan=3D"1" class=3D"confluenceTd">C=C3=B3</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">Text</td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><s>20</s></p><p><span style=3D"=
+color: rgb(255,102,0);">50</span></p></td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><span style=3D"color: rgb(0,0,0=
+);">M=C3=A3 kho Oracle (inventory code) ph=E1=BA=A3i t=E1=BB=93n t=E1=BA=A1=
+i, v=C3=A0 ng=C6=B0=E1=BB=9Di d=C3=B9ng c=C3=B3 quy=E1=BB=81n, n=E1=BA=BFu =
+kh=C3=B4ng b=C3=A1o l=E1=BB=97i: "M=C3=A3 kho kh=C3=B4ng t=E1=BB=93n t=E1=
+=BA=A1i ho=E1=BA=B7c ng=C6=B0=E1=BB=9Di d=C3=B9ng kh=C3=B4ng c=C3=B3 quy=E1=
+=BB=81n.".</span></p><p><span style=3D"color: rgb(0,0,0);">&nbsp;<span styl=
+e=3D"color: rgb(23,43,77);"><strong><span style=3D"color: rgb(0,0,255);">N=
+=E1=BA=BFu c=C3=B3 =C3=ADt nh=E1=BA=A5t 2 ORG kh=C3=A1c nhau tr=C3=AAn t=E1=
+=BA=A5t c=E1=BA=A3 c=C3=A1c line s=E1=BA=A3n ph=E1=BA=A9m th=C3=AC s=E1=BA=
+=BD b=C3=A1o l=E1=BB=97i:</span></strong> <strong style=3D"text-align: left=
+;"><span style=3D"color: rgb(0,0,255);">Kho h=C3=A0ng tr=C3=AAn line h=C3=
+=A0ng kh=C3=B4ng thu=E1=BB=99c c=C3=B9ng m=E1=BB=99t Org. Vui l=C3=B2ng ch=
+=E1=BB=8Dn l=E1=BA=A1i kho h=C3=A0ng.&nbsp;</span></strong></span></span></=
+p>
+<ul style=3D"text-align: left;">
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ kh=C3=B4ng thu=E1=BB=99c kho c=E1=BB=A7a line t=C6=B0=C6=A1ng =E1=BB=A9ng,=
+ b=C3=A1o l=E1=BB=97i: "S=E1=BA=A3n ph=E1=BA=A9m kh=C3=B4ng thu=E1=BB=99c k=
+ho t=C6=B0=C6=A1ng =E1=BB=A9ng"</span></li>
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ c=E1=BB=A7a line t=C6=B0=C6=A1ng =E1=BB=A9ng thu=E1=BB=99c c=E1=BA=A3 kho =
+chia v=C3=A0 kho h=C3=A0ng b=C3=A1n m=C3=A0 user =C4=91i=E1=BB=81n m=C3=A3 =
+kho h=C3=A0ng b=C3=A1n, b=C3=A1o l=E1=BB=97i: "C=E1=BA=A7n ch=E1=BB=8Dn kho=
+ chia khi s=E1=BA=A3n ph=E1=BA=A9m thu=E1=BB=99c kho chia c=E1=BB=A7a nh=C3=
+=A2n vi=C3=AAn kinh doanh"</span></li>
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ c=E1=BB=A7a line t=C6=B0=C6=A1ng =E1=BB=A9ng thu=E1=BB=99c CS c=C3=B3 type=
+ =3D D1, D2, D3, D4 (type =3D DISCOUNT trong DB) m=C3=A0 user nh=E1=BA=ADp =
+m=C3=A3 kho, b=C3=A1o l=E1=BB=97i: "Kh=C3=B4ng =C4=91=C6=B0=E1=BB=A3c nh=E1=
+=BA=ADp th=C3=B4ng tin kho cho h=C3=A0ng chi=E1=BA=BFt kh=E1=BA=A5u"</span>=
+</li>
+<li><span style=3D"color: rgb(0,0,0);">N=E1=BA=BFu s=E1=BA=A3n ph=E1=BA=A9m=
+ c=E1=BB=A7a line tuong =E1=BB=A9ng thu=E1=BB=99c CS c=C3=B3 type =3D X1, X=
+2, X3, X4 (type =3D PROMOTION trong DB)&nbsp;m=C3=A0 user ch=E1=BB=8Dn kho =
+kh=C3=A1c Kho khuy=E1=BA=BFn m=E1=BA=A1i, b=C3=A1o l=E1=BB=97i: "S=E1=BA=A3=
+n ph=E1=BA=A9m khuy=E1=BA=BFn m=E1=BA=A1i ch=E1=BB=89 =C4=91=C6=B0=E1=BB=A3=
+c b=C3=A1n t=E1=BB=AB Kho khuy=E1=BA=BFn m=E1=BA=A1i"</span></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">11</td>
+<td colspan=3D"1" class=3D"confluenceTd">T=C3=AAn kho</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">L=E1=BA=A5y theo m=C3=A3 kho</td>
+<td colspan=3D"1" class=3D"confluenceTd">Text</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">N/A</td>
+<td colspan=3D"1" class=3D"confluenceTd">Kh=C3=B4ng import tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y, nh=C6=B0ng khi export ra v=E1=BA=ABn c=C3=B3 tr=C6=B0=E1=BB=
+=9Dng n=C3=A0y.</td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">12</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">M=C3=A3 ch=C6=B0=C6=A1ng tr=C3=ACnh MKT</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">L=E1=BA=A5y theo M=C3=A3 ch=C6=B0=C6=A1ng tr=C3=ACnh MKT</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">Text</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">[Item code] =C4=91=C3=A3 nh=E1=BA=ADp =E1=BB=9F tr=C3=AAn ph=E1=BA=
+=A3i thu=E1=BB=99c [M=C3=A3 ch=C6=B0=C6=A1ng tr=C3=ACnh MKT]. N=E1=BA=BFu k=
+h=C3=B4ng =C4=91=C3=BAng rule th=C3=AC b=C3=A1o l=E1=BB=97i: "M=C3=A3 s=E1=
+=BA=A3n ph=E1=BA=A9m khuy=E1=BA=BFn m=E1=BA=A1i kh=C3=B4ng thu=E1=BB=99c ch=
+=C6=B0=C6=A1ng tr=C3=ACnh marketing"</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">13</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">Tr=E1=BA=A3 ngay</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">No</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">Text</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><span style=3D"color: rgb(204,1=
+53,255);">Ch=E1=BB=89 cho ph=C3=A9p b=E1=BB=8F tr=E1=BB=91ng ho=E1=BA=B7c =
+=C4=91i=E1=BB=81n "X"</span></p>
+<ul style=3D"text-align: left;">
+<li><span style=3D"color: rgb(204,153,255);">Ch=E1=BB=89 =C4=91=C6=B0=E1=BB=
+=A3c =C4=91i=E1=BB=81n "X" =E1=BB=9F c=C3=A1c line m=C3=A0 s=E1=BA=A3n ph=
+=E1=BA=A9m c=C3=B3 CS l=C3=A0 X1, X2, X3, X4, X5, X6, X7, X8, X9. N=E1=BA=
+=BFu kh=C3=B4ng =C4=91=C3=BAng rule, b=C3=A1o l=E1=BB=97i "<span class=3D"i=
+nline-comment-marker" data-ref=3D"8da9e165-0731-4f26-ae94-6a04b2fd7ab9">Kh=
+=C3=B4ng th=E1=BB=83 ch=E1=BB=8Dn N=E1=BB=A3 khuy=E1=BA=BFn m=C3=A3i cho s=
+=E1=BA=A3n ph=E1=BA=A9m kh=C3=B4ng ph=E1=BA=A3i h=C3=A0ng khuy=E1=BA=BFn m=
+=C3=A3i"</span></span></li>
+<li><span style=3D"color: rgb(204,153,255);">L=C6=B0u =C3=BD: File m=E1=BA=
+=ABu update sau</span></li>
+<li><span style=3D"color: rgb(204,153,255);">Quy t=E1=BA=AFc validate kho=
+=E1=BA=A3n th=C6=B0=E1=BB=9Fng:&nbsp;D=E1=BB=B1a v=C3=A0o b=E1=BB=99 th=C3=
+=B4ng tin bao g=E1=BB=93m: [M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m], [M=C3=A3 ch=
+=C6=B0=C6=A1ng tr=C3=ACnh MKT] tr=C3=AAn file import v=C3=A0 [M=C3=A3 kh=C3=
+=A1ch h=C3=A0ng] tr=C3=AAn YCBH =C4=91ang th=E1=BB=B1c hi=E1=BB=87n import =
+=C4=91=E1=BB=83 th=E1=BB=B1c hi=E1=BB=87n t=C3=ACm khuy=E1=BA=BFn m=E1=BA=
+=A1i/chi=E1=BA=BFt kh=E1=BA=A5u th=E1=BB=8Fa m=C3=A3n =C4=91=E1=BB=83 th=E1=
+=BB=B1c hi=E1=BB=87n import. N=E1=BA=BFu c=C3=B3 nhi=E1=BB=81u khuy=E1=BA=
+=BFn m=E1=BA=A1i/chi=E1=BA=BFt kh=E1=BA=A5u th=E1=BB=8Fa m=C3=A3n th=C3=AC =
+hi=E1=BB=83n th=E1=BB=8B nhi=E1=BB=81u d=C3=B2ng.</span>
+<ul>
+<li><span style=3D"color: rgb(204,153,255);">N=E1=BA=BFu [Tr=E1=BA=A3 ngay]=
+ =3D "X" th=C3=AC ch=E1=BB=89 th=E1=BB=B1c hi=E1=BB=87n ki=E1=BB=83m tra =
+=E1=BB=9F nh=C3=B3m "Tr=E1=BA=A3 ngay". Tham kh=E1=BA=A3o m=C3=B4 t=E1=BA=
+=A3 d=E1=BB=AF li=E1=BB=87u t=E1=BB=ABng nh=C3=B3m =E1=BB=9F&nbsp;<a href=
+=3D"http://confluence.synnexfpt.com/pages/viewpage.action?pageId=3D19731084=
+" style=3D"color: rgb(204,153,255);" rel=3D"nofollow">1.1 [=C4=90=C6=A1n h=
+=C3=A0ng th=C6=B0=E1=BB=9Dng][SD] T=E1=BA=A1o YCBH (=C4=91=C6=A1n th=C6=B0=
+=E1=BB=9Dng)</a>&nbsp;section "Chi=E1=BA=BFt kh=E1=BA=A5u" v=C3=A0 "Khuy=E1=
+=BA=BFn m=E1=BA=A1i"</span></li>
+<li><span style=3D"color: rgb(204,153,255);">N=E1=BA=BFu [Tr=E1=BA=A3 ngay]=
+ =3D Null th=C3=AC ch=E1=BB=89 th=E1=BB=B1c hi=E1=BB=87n ki=E1=BB=83m tra =
+=E1=BB=9F nh=C3=B3m "Tr=E1=BA=A3 th=C6=B0=E1=BB=9Fng" v=C3=A0 "Tr=E1=BA=A3 =
+n=E1=BB=A3". Tham kh=E1=BA=A3o m=C3=B4 t=E1=BA=A3 d=E1=BB=AF li=E1=BB=87u t=
+=E1=BB=ABng nh=C3=B3m =E1=BB=9F&nbsp;<a href=3D"http://confluence.synnexfpt=
+.com/pages/viewpage.action?pageId=3D19731084" style=3D"color: rgb(204,153,2=
+55);" rel=3D"nofollow">1.1 [=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng][SD=
+] T=E1=BA=A1o YCBH (=C4=91=C6=A1n th=C6=B0=E1=BB=9Dng)</a>&nbsp;section "Ch=
+i=E1=BA=BFt kh=E1=BA=A5u" v=C3=A0 "Khuy=E1=BA=BFn m=E1=BA=A1i"</span></li>
+</ul></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">14</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">SL n=E1=BB=A3 khuy=E1=BA=BFn m=C3=A3i</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">Yes/No</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">S=E1=BB=91 nguy=C3=AAn d=C6=B0=C6=A1ng</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">10</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><span style=3D"color: rgb(204,1=
+53,255);">Tr=C6=B0=E1=BB=9Dng n=C3=A0y b=E1=BA=AFt bu=E1=BB=99c n=E1=BA=BFu=
+ tr=C6=B0=E1=BB=9Dng [N=E1=BB=A3 khuy=E1=BA=BFn m=C3=A3i] =E1=BB=9F c=C3=B9=
+ng line c=C3=B3 gi=C3=A1 tr=E1=BB=8B "X". N=E1=BA=BFu kh=C3=B4ng =C4=91=C3=
+=BAng rule th=C3=AC b=C3=A1o l=E1=BB=97i "S=E1=BA=A3n ph=E1=BA=A9m kh=C3=B4=
+ng =C4=91=C6=B0=E1=BB=A3c =C4=91=C3=A1nh d=E1=BA=A5u c=C3=B3 n=E1=BB=A3 khu=
+y=E1=BA=BFn m=E1=BA=A1i"</span></p></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">15</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N=E1=BB=A3 khuy=E1=BA=BFn m=C3=A3i</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">No</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">Text</span></td>
+<td colspan=3D"1" class=3D"confluenceTd"><span style=3D"color: rgb(204,153,=
+255);">N/A</span></td>
+<td colspan=3D"1" class=3D"confluenceTd">
+<ul style=3D"text-align: left;">
+<li><span style=3D"color: rgb(204,153,255);">Ch=E1=BB=89 =C4=91=C6=B0=E1=BB=
+=A3c b=E1=BB=8F tr=E1=BB=91ng ho=E1=BA=B7c =C4=91i=E1=BB=81n "X"</span></li=
+>
+<li><span style=3D"color: rgb(204,153,255);">Ch=E1=BB=89 =C4=91=C6=B0=E1=BB=
+=A3c =C4=91i=E1=BB=81n "X" khi:</span>
+<ul>
+<li><span style=3D"color: rgb(204,153,255);">C=C3=A1c line m=C3=A0 s=E1=BA=
+=A3n ph=E1=BA=A9m c=C3=B3 CS l=C3=A0 X1, X2, X3, X4, X5, X6, X7, X8, X9. N=
+=E1=BA=BFu kh=C3=B4ng =C4=91=C3=BAng rule, b=C3=A1o l=E1=BB=97i "Kh=C3=B4ng=
+ th=E1=BB=83 ch=E1=BB=8Dn N=E1=BB=A3 khuy=E1=BA=BFn m=C3=A3i cho s=E1=BA=A3=
+n ph=E1=BA=A9m kh=C3=B4ng ph=E1=BA=A3i h=C3=A0ng khuy=E1=BA=BFn m=C3=A3i"</=
+span></li>
+<li><span style=3D"color: rgb(204,153,255);">V=C3=A0 [Tr=E1=BA=A3 ngay] =3D=
+ "X". N=E1=BA=BFu kh=C3=B4ng =C4=91=C3=BAng rule th=C3=AC b=C3=A1o l=E1=BB=
+=97i "Kh=C3=B4ng cho ph=C3=A9p n=E1=BB=A3 khuy=E1=BA=BFn m=E1=BA=A1i khi m=
+=C3=A3 khuy=E1=BA=BFn m=E1=BA=A1i kh=C3=B4ng thu=E1=BB=99c ch=C6=B0=C6=A1ng=
+ tr=C3=ACnh tr=E1=BA=A3 ngay"</span></li>
+</ul></li>
+</ul></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span style=3D"color: rgb(23,43,77);">Xem c=E1=BB=A5 th=E1=BB=83 trong&n=
+bsp;<a href=3D"/download/attachments/19751452/Import_S%E1%BA%A3n%20ph%E1%BA=
+%A9m_%C4%90%C6%A1n%20h%C3%A0ng%20th%C6%B0%E1%BB%9Dng.xlsx?version=3D4&amp;m=
+odificationDate=3D1688626362379&amp;api=3Dv2" data-linked-resource-id=3D"29=
+655182" data-linked-resource-version=3D"4" data-linked-resource-type=3D"att=
+achment" data-linked-resource-default-alias=3D"Import_S=E1=BA=A3n ph=E1=BA=
+=A9m_=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng.xlsx" data-nice-type=3D"Ex=
+cel Spreadsheet" data-linked-resource-content-type=3D"application/vnd.openx=
+mlformats-officedocument.spreadsheetml.sheet" data-linked-resource-containe=
+r-id=3D"19751452" data-linked-resource-container-version=3D"27">Import_S=E1=
+=BA=A3n ph=E1=BA=A9m_=C4=90=C6=A1n h=C3=A0ng th=C6=B0=E1=BB=9Dng.xlsx</a></=
+span></p>
+</div></td>
+</tr>
+<tr>
+<td colspan=3D"1" class=3D"confluenceTd">(5.1)</td>
+<td colspan=3D"1" class=3D"confluenceTd">BR 3</td>
+<td colspan=3D"1" class=3D"confluenceTd"><p><strong><u>Quy T=E1=BA=AFc Hi=
+=E1=BB=83n Th=E1=BB=8B:</u></strong></p><p><span style=3D"color: rgb(23,43,=
+77);">Theo common rule.</span></p></td>
+</tr>
+<tr>
+<td class=3D"confluenceTd"><p>(5.2)</p></td>
+<td class=3D"confluenceTd"><p>BR 4</p></td>
+<td class=3D"confluenceTd"><p><strong><u>Quy T=E1=BA=AFc Import:</u></stron=
+g></p>
+<ol>
+<li>Import nh=E1=BB=AFng s=E1=BA=A3n ph=E1=BA=A9m trong file upload l=C3=AA=
+n (theo th=E1=BB=A9 t=E1=BB=B1 trong file) v=C3=A0o =C4=91=E1=BA=A7u danh s=
+=C3=A1ch.</li>
+<li>C=C3=A1c tr=C6=B0=E1=BB=9Dng =C4=91=C6=B0=E1=BB=A3c map theo t=C3=AAn t=
+=C6=B0=C6=A1ng =E1=BB=A9ng m=C3=B4 t=E1=BA=A3 =E1=BB=9F b=E1=BA=A3ng b=C3=
+=AAn tr=C3=AAn.</li>
+<li><p><span style=3D"color: rgb(0,128,128);">=C4=90=E1=BB=91i v=E1=BB=9Bi =
+tr=C6=B0=E1=BB=9Dng =C4=90=C6=A1n gi=C3=A1 b=C3=A1n ch=C6=B0a VAT (VND) l=
+=C3=A0 s=E1=BB=91 th=E1=BA=ADp ph=C3=A2n, import th=C3=A0nh c=C3=B4ng h=E1=
+=BB=87 th=E1=BB=91ng t=E1=BB=B1 =C4=91=E1=BB=99ng l=C3=A0m tr=C3=B2n s=E1=
+=BB=91 =C4=91=E1=BA=BFn h=C3=A0ng =C4=91=C6=A1n v=E1=BB=8B:</span></p>
+<ul class=3D"alternate">
+<li><span style=3D"color: rgb(0,128,128);">N=E1=BA=BFu s=E1=BB=91 l=E1=BA=
+=BB sau h=C3=A0ng =C4=91=C6=A1n v=E1=BB=8B c=C3=B3 gi=C3=A1 tr=E1=BB=8B &gt=
+;=3D5 --&gt; C=E1=BB=99ng th=C3=AAm 1 =C4=91=C6=A1n v=E1=BB=8B (l=C3=A0m tr=
+=C3=B2n l=C3=AAn). VD: 1.394.495,64 l=C3=A0m tr=C3=B2n l=C3=AAn th=C3=A0nh =
+1.394.496</span></li>
+<li><span style=3D"color: rgb(0,128,128);">N=E1=BA=BFu s=E1=BB=91 l=E1=BA=
+=BB sau h=C3=A0ng =C4=91=C6=A1n v=E1=BB=8B c=C3=B3 gi=C3=A1 tr=E1=BB=8B &lt=
+;5 --&gt; Kh=C3=B4ng t=C3=ADnh. VD: 1.394.495,35 l=C3=A0m tr=C3=B2n th=C3=
+=A0nh1.394.495</span></li>
+</ul></li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class=3D"auto-cursor-target"><span class=3D"inline-comment-marker" data-=
+ref=3D"69fa3321-f040-42bd-84b4-69d2c8b495b4">File template:</span></p>
+<div class=3D"table-wrap">
+<table class=3D"relative-table wrapped confluenceTable" style=3D"width: 100=
+.0%;">
+<colgroup>
+<col style=3D"width: 3.83085%;">
+<col>
+<col style=3D"width: 6.664%;">
+<col style=3D"width: 6.65867%;">
+<col style=3D"width: 7.23881%;">
+<col style=3D"width: 10.0542%;">
+<col style=3D"width: 11.1843%;">
+<col style=3D"width: 7.50533%;">
+<col style=3D"width: 10.1173%;">
+<col style=3D"width: 9.90583%;">
+</colgroup>
+<thead>
+<tr>
+<th style=3D"text-align: left;" class=3D"confluenceTh"><p>No</p></th>
+<th colspan=3D"1" class=3D"confluenceTh">M=C3=A3 s=E1=BA=A3n ph=E1=BA=A9m (=
+*)</th>
+<th colspan=3D"1" class=3D"confluenceTh">T=C3=AAn s=E1=BA=A3n ph=E1=BA=A9m<=
+/th>
+<th colspan=3D"1" class=3D"confluenceTh"><p>=C4=90=C6=A1n v=E1=BB=8B t=C3=
+=ADnh</p><p><br></p></th>
+<th colspan=3D"1" class=3D"confluenceTh"><p>S=E1=BB=91 l=C6=B0=E1=BB=A3ng&n=
+bsp;(*)</p></th>
+<th colspan=3D"1" class=3D"confluenceTh"><p>=C4=90=C6=A1n gi=C3=A1 (VND) (*=
+)</p><p><br></p></th>
+<th colspan=3D"1" class=3D"confluenceTh">Th=C3=A0nh ti=E1=BB=81n (VND)</th>
+<th colspan=3D"1" class=3D"confluenceTh">VAT</th>
+<th colspan=3D"1" class=3D"confluenceTh"><p>M=C3=A3 kho (*)</p></th>
+<th colspan=3D"1" class=3D"confluenceTh">T=C3=AAn kho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=3D"text-align: left;" class=3D"confluenceTd">1</td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td style=3D"text-align: left;" class=3D"confluenceTd">2</td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+<tr>
+<td style=3D"text-align: left;" class=3D"confluenceTd">3</td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+<td colspan=3D"1" class=3D"confluenceTd"><br></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+    </div>
+</body>
+</html>
+------=_Part_174991_822698940.1695969989871
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Location: file:///C:/9f4c9c8652b4604c8b4ae1d74cdd6361
+
+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
+------=_Part_174991_822698940.1695969989871--

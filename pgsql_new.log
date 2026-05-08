@@ -1,0 +1,11 @@
+2026-04-17 10:35:19.688 +07 [8232] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-17 10:35:19.696 +07 [8232] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-17 10:35:19.696 +07 [8232] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-17 10:35:19.747 +07 [23468] LOG:  database system was shut down at 2026-04-17 10:35:11 +07
+2026-04-17 10:35:19.783 +07 [8232] LOG:  database system is ready to accept connections
+2026-04-17 10:35:32.187 +07 [18904] ERROR:  syntax error at or near "BEGIN" at character 5
+2026-04-17 10:35:32.187 +07 [18904] STATEMENT:  DO  BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'odoo') THEN CREATE ROLE odoo WITH LOGIN CREATEDB; END IF; END ;
+2026-04-17 10:35:38.911 +07 [5704] ERROR:  syntax error at or near "BEGIN" at character 5
+2026-04-17 10:35:38.911 +07 [5704] STATEMENT:  DO  BEGIN IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'odoo') THEN CREATE ROLE odoo WITH LOGIN CREATEDB; END IF; END ;
+2026-04-17 10:56:39.373 +07 [10988] FATAL:  terminating connection due to unexpected postmaster exit
+2026-04-17 10:56:39.411 +07 [19500] FATAL:  terminating connection due to unexpected postmaster exit

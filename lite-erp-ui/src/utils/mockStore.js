@@ -348,14 +348,32 @@ const INITIAL_DATA = {
     'TCB-1': { id: 'TCB-1', content: 'Triển khai bảo mật AWS', company: 'Techcombank', mst: '0100230800', contactName: 'Dũng Đ', email: 'dung@tcb.vn', district: 'Hải Châu', ward: 'Thạch Thang', city: 'Đà Nẵng', projectedService: 'Security', assignedPartner: 'FPT IS', date: '09/01/2026', revenue: '3,000,000,000 ₫', probability: '100%', salesperson: 'Lê V', status: 'Thành công', attachments: 5, avatars: [], tasks: [{ id: 't14', type: 'mail', status: 'done', title: 'Nghiệm thu' }] },
     'TGDD-1': { id: 'TGDD-1', content: 'CRM Sales', company: 'Thế Giới Di Động', mst: '0303288350', contactName: 'Đạt T', email: 'dat@tgdd.vn', district: 'Quận 1', ward: 'Bến Nghé', city: 'TP. Hồ Chí Minh', projectedService: 'Salesforce', assignedPartner: 'MatBao', date: '10/01/2026', revenue: '120,000,000 ₫', probability: '0%', salesperson: 'Nguyễn Văn A', status: 'Không thành công', attachments: 0, avatars: [], tasks: [] }
   },
-  products: {
-    'PRD-001': { id: 'PRD-001', name: 'License OmniX User/Tháng', sku: 'SV-L-01', type: 'Dịch vụ', category: 'Phần mềm', price: 500000, unit: 'Tháng', status: 'Active' },
-    'PRD-002': { id: 'PRD-002', name: 'Phí Setup hệ thống', sku: 'SV-S-01', type: 'Dịch vụ', category: 'Triển khai', price: 10000000, unit: 'Lần', status: 'Active' },
-    'PRD-003': { id: 'PRD-003', name: 'Nhân sự Telesales (Tháng)', sku: 'HR-T-01', type: 'Nhân sự', category: 'BPO', price: 12000000, unit: 'Người/Tháng', status: 'Active' },
-    'PRD-004': { id: 'PRD-004', name: 'Gói lưu trữ dữ liệu 1TB/năm', sku: 'ST-C-01', type: 'Dịch vụ', category: 'Lưu trữ', price: 6000000, unit: 'Năm', status: 'Active' },
-    'PRD-005': { id: 'PRD-005', name: 'Giờ công hỗ trợ Kỹ thuật', sku: 'HR-S-01', type: 'Dịch vụ', category: 'Hỗ trợ', price: 300000, unit: 'Giờ', status: 'Inactive' }
+  productGroups: {
+    'PG-1': { id: 'PG-1', name: 'Dịch vụ', description: 'Các dịch vụ chăm sóc khách hàng và hỗ trợ', status: 'Active' },
+    'PG-2': { id: 'PG-2', name: 'Giải pháp', description: 'Các nền tảng công nghệ và giải pháp phần mềm', status: 'Active' }
   },
-  productIds: ['PRD-001', 'PRD-002', 'PRD-003', 'PRD-004', 'PRD-005'],
+  productGroupIds: ['PG-1', 'PG-2'],
+  productCategories: {
+    'PC-1': { id: 'PC-1', groupId: 'PG-1', name: 'Dịch vụ Tổng đài CSKH toàn trình', description: 'Contact Center Outsourcing', status: 'Active' },
+    'PC-2': { id: 'PC-2', groupId: 'PG-1', name: 'Dịch vụ cho thuê nhân sự hỗ trợ', description: 'BPO', status: 'Active' },
+    'PC-3': { id: 'PC-3', groupId: 'PG-1', name: 'Dịch vụ Gia tăng doanh số', description: 'Upsale', status: 'Active' },
+    'PC-4': { id: 'PC-4', groupId: 'PG-1', name: 'Dịch vụ Bảo hành & sửa chữa', description: 'Warranty & Repair Services', status: 'Active' },
+    'PC-5': { id: 'PC-5', groupId: 'PG-1', name: 'Dịch vụ Tư vấn trải nghiệm khách hàng', description: 'Customer Experience', status: 'Active' },
+    'PC-6': { id: 'PC-6', groupId: 'PG-1', name: 'Dịch vụ khách hàng thân thiết', description: 'Loyalty', status: 'Active' },
+    'PC-7': { id: 'PC-7', groupId: 'PG-1', name: 'Dịch vụ Chỉnh lý và Số hóa Văn bản', description: 'Document Processing and Digitization', status: 'Active' },
+    'PC-8': { id: 'PC-8', groupId: 'PG-2', name: 'OmniX - Nền tảng Tổng đài đa kênh hợp nhất', description: 'Giải pháp tổng đài đa kênh', status: 'Active' },
+    'PC-9': { id: 'PC-9', groupId: 'PG-2', name: 'CXBot - Trợ lý ảo - AI Agent', description: 'Nhân viên tổng đài AI ảo', status: 'Active' },
+    'PC-10': { id: 'PC-10', groupId: 'PG-2', name: 'vCOC - Hệ thống điều hành hoạt động dịch vụ khách hàng', description: 'Hệ thống điều hành DVKH', status: 'Active' },
+    'PC-11': { id: 'PC-11', groupId: 'PG-2', name: 'WorkforceX - Hệ thống quản lý nguồn lực DVKH', description: 'Hệ thống quản lý nguồn lực DVKH', status: 'Active' },
+    'PC-12': { id: 'PC-12', groupId: 'PG-2', name: 'InsightCI - Nền tảng quản lý, phân tích tương tác khách hàng', description: 'Nền tảng quản lý phân tích tương tác', status: 'Active' },
+    'PC-13': { id: 'PC-13', groupId: 'PG-2', name: 'KnowX Hub - Hệ thống Quản lý Tri thức', description: 'Hệ thống Quản lý Tri thức', status: 'Active' },
+    'PC-14': { id: 'PC-14', groupId: 'PG-2', name: 'AI-DMS - Nền tảng quản lý tài liệu thông minh', description: 'Nền tảng quản lý tài liệu thông minh', status: 'Active' }
+  },
+  productCategoryIds: ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9', 'PC-10', 'PC-11', 'PC-12', 'PC-13', 'PC-14'],
+  products: {
+    'PRD-001': { id: 'PRD-001', categoryId: 'PC-8', name: 'License OmniX User/Tháng', description: 'License sử dụng nền tảng OmniX cho 1 User', price: 500000, unit: 'license', tax: 10, status: 'Active' }
+  },
+  productIds: ['PRD-001'],
   orders: {
     'ORD-2026-001': {
         id: 'ORD-2026-001', orderNo: 'DH-2026-001', contractId: 'CTR-2026-001', customerId: 'CUS-1',
@@ -711,7 +729,7 @@ const INITIAL_DATA = {
   customerSurveyIds: ['SRV-001', 'SRV-002']
 };
 
-const STORE_KEY = 'liteErpDataStore_v4';
+const STORE_KEY = 'liteErpDataStore_v5';
 
 export const mockStore = {
   getStore: () => {
@@ -823,8 +841,16 @@ export const mockStore = {
        }
     });
     
-    // Inject orders and products
+    // Inject products and force add mock products
     if (!store.products) store.products = INITIAL_DATA.products || {};
+    if (!store.productIds) store.productIds = INITIAL_DATA.productIds || [];
+    Object.keys(INITIAL_DATA.products || {}).forEach(pId => {
+      if (!store.products[pId]) {
+        store.products[pId] = INITIAL_DATA.products[pId];
+        if (!store.productIds.includes(pId)) store.productIds.push(pId);
+      }
+    });
+    
     if (!store.orders) store.orders = INITIAL_DATA.orders || {};
     if (!store.orderIds) store.orderIds = INITIAL_DATA.orderIds || [];
     // Inject partners and partner billings
@@ -894,6 +920,10 @@ export const mockStore = {
     if (!store.customerSurveys) store.customerSurveys = INITIAL_DATA.customerSurveys || {};
     if (!store.customerSurveyIds) store.customerSurveyIds = INITIAL_DATA.customerSurveyIds || [];
     
+    if (!store.productGroups) store.productGroups = INITIAL_DATA.productGroups || {};
+    if (!store.productGroupIds) store.productGroupIds = INITIAL_DATA.productGroupIds || [];
+    if (!store.productCategories) store.productCategories = INITIAL_DATA.productCategories || {};
+    if (!store.productCategoryIds) store.productCategoryIds = INITIAL_DATA.productCategoryIds || [];
     if (!store.productIds) store.productIds = INITIAL_DATA.productIds || [];
     
     if (!store.projects) store.projects = INITIAL_DATA.projects || {};
@@ -1376,6 +1406,48 @@ export const mockStore = {
   },
 
   // --- PRODUCT & SERVICE METHODS ---
+  getAllProductGroups: () => {
+    const store = mockStore.getStore();
+    return (store.productGroupIds || []).map(id => store.productGroups[id]).filter(Boolean);
+  },
+  saveProductGroup: (id, data) => {
+    const store = mockStore.getStore();
+    if (!store.productGroups[id]) store.productGroupIds.push(id);
+    store.productGroups[id] = data;
+    mockStore.saveStore(store);
+  },
+  getNextProductGroupId: () => {
+    const store = mockStore.getStore();
+    const ids = store.productGroupIds || [];
+    let max = 0;
+    ids.forEach(id => {
+      const n = parseInt(id.split('-')[1], 10);
+      if (n > max) max = n;
+    });
+    return `PG-${max + 1}`;
+  },
+  
+  getAllProductCategories: () => {
+    const store = mockStore.getStore();
+    return (store.productCategoryIds || []).map(id => store.productCategories[id]).filter(Boolean);
+  },
+  saveProductCategory: (id, data) => {
+    const store = mockStore.getStore();
+    if (!store.productCategories[id]) store.productCategoryIds.push(id);
+    store.productCategories[id] = data;
+    mockStore.saveStore(store);
+  },
+  getNextProductCategoryId: () => {
+    const store = mockStore.getStore();
+    const ids = store.productCategoryIds || [];
+    let max = 0;
+    ids.forEach(id => {
+      const n = parseInt(id.split('-')[1], 10);
+      if (n > max) max = n;
+    });
+    return `PC-${max + 1}`;
+  },
+
   getAllProducts: () => {
     const store = mockStore.getStore();
     return (store.productIds || []).map(id => store.products[id]).filter(Boolean);
@@ -1388,6 +1460,20 @@ export const mockStore = {
     const store = mockStore.getStore();
     if (!store.products[id]) store.productIds.push(id);
     store.products[id] = productData;
+    mockStore.saveStore(store);
+  },
+  deleteProductEntity: (type, id) => {
+    const store = mockStore.getStore();
+    if (type === 'group') {
+      delete store.productGroups[id];
+      store.productGroupIds = store.productGroupIds.filter(i => i !== id);
+    } else if (type === 'category') {
+      delete store.productCategories[id];
+      store.productCategoryIds = store.productCategoryIds.filter(i => i !== id);
+    } else if (type === 'product') {
+      delete store.products[id];
+      store.productIds = store.productIds.filter(i => i !== id);
+    }
     mockStore.saveStore(store);
   },
   toggleProductStatus: (id) => {
