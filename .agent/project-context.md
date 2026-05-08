@@ -38,3 +38,9 @@ Khi AI tham gia viết code UI (React/Vite/Tailwind) cho dự án, phải tuân 
   - Phải có icon/avatar tác giả và thời gian.
   - Các dòng log thay đổi dữ liệu phải dùng mũi tên hướng dẫn (VD: `▶ Đơn giá: 0 → 500,000`). Mũi tên và giá trị mới phải được làm nổi bật (màu xanh dương).
 - **Trải nghiệm người dùng (UX):** Không dùng `alert()` mặc định của trình duyệt. Mọi thông báo xóa/lỗi phải dùng Custom Modal Dialog với Overlay làm mờ (backdrop-blur).
+
+---
+
+## 3. Quy trình làm việc (Workflow Rules)
+
+- **Đồng bộ hóa liên tục:** Ngay sau khi hoàn thành xong bất kỳ một tính năng, cập nhật PRD, hoặc kết thúc một phiên làm việc với người dùng, AI Agent có nhiệm vụ **phải tự động nhắc nhở người dùng** (hoặc cung cấp sẵn dòng lệnh `git push`) để đẩy toàn bộ context và code mới nhất lên kho lưu trữ chính thức tại: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`. Điều này đảm bảo không bao giờ bị mất context giữa các máy tính khác nhau.
