@@ -6,6 +6,9 @@
 
 Mọi tài liệu PRD (System Requirements Specification / Kịch bản Use Case) được tạo trong dự án này phải tuân thủ nghiêm ngặt cấu trúc 4 phần sau:
 
+- **Văn phong tài liệu (Tone & Style):** Bắt buộc sử dụng ngôn ngữ hệ thống chuyên môn, trang trọng, súc tích và chính xác (Formal & Technical System Language). Tuyệt đối không sử dụng ngôn ngữ giao tiếp phổ thông, văn nói hay từ lóng trong các tài liệu PRD, Specs hoặc tài liệu kỹ thuật.
+
+
 ### Phần 1: Requirement Details
 - Sử dụng bảng (Markdown table) bao gồm các trường: Mục Đích, Tác Nhân, Điều Kiện Khởi Phát, Tiền Điều Kiện, Hậu Điều Kiện.
 
