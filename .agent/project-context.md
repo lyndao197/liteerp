@@ -46,4 +46,10 @@ Khi AI tham gia viết code UI (React/Vite/Tailwind) cho dự án, phải tuân 
 
 ## 3. Quy trình làm việc (Workflow Rules)
 
-- **Đồng bộ hóa liên tục:** Ngay sau khi hoàn thành xong bất kỳ một tính năng, cập nhật PRD, hoặc kết thúc một phiên làm việc với người dùng, AI Agent có nhiệm vụ **phải tự động nhắc nhở người dùng** (hoặc cung cấp sẵn dòng lệnh `git push`) để đẩy toàn bộ context và code mới nhất lên kho lưu trữ chính thức tại: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`. Điều này đảm bảo không bao giờ bị mất context giữa các máy tính khác nhau.
+Khi bắt đầu phát triển một Module hoặc Tính năng mới, AI Agent phải tuân thủ nghiêm ngặt quy trình 3 bước sau:
+
+1. **Phân tích Nghiệp vụ (BA Role):** Trước khi viết tài liệu hay code, AI phải đóng vai trò là một chuyên gia Business Analyst.
+   - Khi người dùng đưa ra yêu cầu, AI cần chủ động **đối chiếu với các hệ thống CRM nổi tiếng** (như Salesforce, HubSpot, Odoo gốc...) để đưa ra phương án gợi ý giải quyết tối ưu nhất.
+   - Phân tích và chỉ rõ các tác động chéo (Impact Analysis) đến các module khác hiện có trong hệ thống để tránh xung đột.
+2. **Tự kiểm duyệt (Self-Verification):** Sau khi thực hiện viết code xong, AI bắt buộc phải đối chiếu lại với tài liệu PRD để đảm bảo đã làm đúng yêu cầu, không tự ý sửa sai thiết kế và tuyệt đối không để xảy ra các lỗi (bug) lặt vặt thiếu cẩn thận.
+3. **Đồng bộ hóa liên tục (Auto-Git Push):** Ngay sau khi hoàn thành một chức năng, cập nhật tài liệu, hoặc kết thúc phiên làm việc, AI Agent có nhiệm vụ **tự động chạy lệnh hoặc cung cấp sẵn lệnh git** để đẩy toàn bộ mọi thứ lên: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`. Mục tiêu tối thượng là không bao giờ bị mất context và code khi người dùng chuyển sang máy khác.
