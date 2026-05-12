@@ -5,7 +5,7 @@ import { mockStore } from '../utils/mockStore';
 
 // Mock function for edge case testing
 const checkProductUsage = (id) => {
-  if (id === 'PRD-001') return { inUse: true, quotes: 15, orders: 24, leads: 5 };
+  if (id === 'PRD-001') return { inUse: true, leads: 15, contracts: 24, orders: 8 };
   return { inUse: false };
 };
 
@@ -530,7 +530,7 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
                   {isProduct && usage.inUse && (
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#fef3c7', color: '#d97706', padding: '6px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}>
-                        <AlertCircle size={14}/> Đang được dùng trong: {usage.quotes} Báo giá, {usage.orders} Hóa đơn
+                        <AlertCircle size={14}/> Đang được dùng trong: {usage.leads} Lead, {usage.contracts} Hợp đồng, {usage.orders} Đơn hàng
                       </div>
                     </div>
                   )}
