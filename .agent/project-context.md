@@ -34,7 +34,7 @@ Mọi tài liệu PRD (System Requirements Specification / Kịch bản Use Case
 Khi AI tham gia viết code UI (React/Vite/Tailwind) cho dự án, phải tuân thủ:
 - **Màu sắc & Trạng thái:** 
   - Màu nền cảnh báo: Vàng nhạt (yellow-100) chữ cam.
-  - Trạng thái bị khóa/vô hiệu hóa (Inactive): Chữ màu xám nhạt (`#94a3b8`). Nếu do người dùng tự tắt -> Gạch ngang chữ. Nếu bị tắt do kế thừa cấp cha -> Không gạch ngang, hiển thị kèm icon `Lock` 🔒.
+  - Trạng thái Ngừng hoạt động (Inactive): Chữ và icon chuyển màu xám nhạt (`#94a3b8`, `#cbd5e1`), **không gạch ngang**. Nếu bị tắt do kế thừa cấp cha → hiển thị kèm icon `Lock` 🔒.
 - **Tiền tệ:** Luôn format theo chuẩn VNĐ (VD: `500,000 ₫`).
 - **Module Chatter (Lịch sử hoạt động):**
   - Trình bày dạng Timeline dọc có viền trái.

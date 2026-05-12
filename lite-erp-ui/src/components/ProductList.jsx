@@ -125,7 +125,23 @@ export default function ProductList() {
         </div>
       </div>
 
-      <div className="toolbar-row" style={{ marginTop: '24px' }}>
+      {/* Summary Cards */}
+      <div style={{ display: 'flex', gap: '20px', marginTop: '24px' }}>
+        <div style={{ flex: 1, background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '16px 20px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Số lượng sản phẩm/ Gói dịch vụ</div>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: '#0f172a', marginTop: '4px' }}>{products.length}</div>
+        </div>
+        <div style={{ flex: 1, background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '16px 20px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sản phẩm đang hoạt động</div>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: '#0f172a', marginTop: '4px' }}>{products.filter(p => p.status === 'Active').length}</div>
+        </div>
+        <div style={{ flex: 1, background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '16px 20px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sản phẩm ngừng hoạt động</div>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: '#0f172a', marginTop: '4px' }}>{products.filter(p => p.status === 'Inactive').length}</div>
+        </div>
+      </div>
+
+      <div className="toolbar-row" style={{ marginTop: '20px' }}>
         <div className="toolbar-left">
           <div className="search-box-modern">
             <Search size={16} color="#94a3b8" />
@@ -152,7 +168,7 @@ export default function ProductList() {
                 {/* LEVEL 1: GROUP */}
                 <tr style={{ background: '#f8fafc', cursor: 'pointer', borderBottom: '1px solid #e2e8f0' }} onClick={() => toggleGroup(group.id)}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: group.status === 'Inactive' ? '#94a3b8' : '#1e293b', textDecoration: group.status === 'Inactive' ? 'line-through' : 'none' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, color: group.status === 'Inactive' ? '#94a3b8' : '#1e293b' }}>
                       {expandedGroups.has(group.id) ? <ChevronDown size={16} color="#64748b"/> : <ChevronRight size={16} color="#64748b"/>}
                       <Layers size={18} color={group.status === 'Inactive' ? '#cbd5e1' : '#3b82f6'} />
                       {group.name}
@@ -176,7 +192,7 @@ export default function ProductList() {
                     {/* LEVEL 2: CATEGORY */}
                     <tr style={{ background: '#ffffff', cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }} onClick={() => toggleCategory(cat.id)}>
                       <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: (cat.status === 'Inactive' || cat.isInheritedInactive) ? '#94a3b8' : '#334155', paddingLeft: '28px', textDecoration: cat.status === 'Inactive' ? 'line-through' : 'none' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: (cat.status === 'Inactive' || cat.isInheritedInactive) ? '#94a3b8' : '#334155', paddingLeft: '28px' }}>
                           {expandedCategories.has(cat.id) ? <ChevronDown size={16} color="#94a3b8"/> : <ChevronRight size={16} color="#94a3b8"/>}
                           <Folder size={16} color={(cat.status === 'Inactive' || cat.isInheritedInactive) ? '#cbd5e1' : '#f59e0b'} />
                           {cat.name}
@@ -199,7 +215,7 @@ export default function ProductList() {
                     {expandedCategories.has(cat.id) && cat.products.map(prod => (
                       <tr key={prod.id} style={{ background: '#fff', borderBottom: '1px solid #f8fafc' }}>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '64px', color: (prod.status === 'Inactive' || prod.isInheritedInactive) ? '#94a3b8' : '#475569', textDecoration: prod.status === 'Inactive' ? 'line-through' : 'none' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '64px', color: (prod.status === 'Inactive' || prod.isInheritedInactive) ? '#94a3b8' : '#475569' }}>
                             <Package size={14} color={(prod.status === 'Inactive' || prod.isInheritedInactive) ? '#cbd5e1' : '#8b5cf6'} />
                             {prod.name}
                             {prod.isInheritedInactive && prod.status !== 'Inactive' && <Lock size={12} color="#cbd5e1" title="Bị khóa do danh mục cha ngừng hoạt động" />}
@@ -547,9 +563,9 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
               </div>
 
               {isCategory && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Thuộc Danh mục *</label>
-                  <select value={formData.groupId} onChange={e => setFormData({...formData, groupId: e.target.value})} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none' }}>
+                <div title={isParentInactive ? "Không thể thay đổi danh mục cha khi đang bị khóa do kế thừa trạng thái." : ""}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Thuộc Danh mục * {isParentInactive && <Lock size={12} color="#94a3b8"/>}</label>
+                  <select value={formData.groupId} onChange={e => setFormData({...formData, groupId: e.target.value})} disabled={isParentInactive} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none', opacity: isParentInactive ? 0.5 : 1, cursor: isParentInactive ? 'not-allowed' : 'pointer', background: isParentInactive ? '#f1f5f9' : '#fff' }}>
                     <option value="">-- Chọn Danh mục --</option>
                     {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
                   </select>
@@ -557,9 +573,9 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
               )}
 
               {isProduct && (
-                <div>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Thuộc Dòng sản phẩm *</label>
-                  <select value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none' }}>
+                <div title={isParentInactive ? "Không thể thay đổi dòng sản phẩm khi đang bị khóa do kế thừa trạng thái." : ""}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Thuộc Dòng sản phẩm * {isParentInactive && <Lock size={12} color="#94a3b8"/>}</label>
+                  <select value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})} disabled={isParentInactive} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none', opacity: isParentInactive ? 0.5 : 1, cursor: isParentInactive ? 'not-allowed' : 'pointer', background: isParentInactive ? '#f1f5f9' : '#fff' }}>
                     <option value="">-- Chọn Dòng sản phẩm --</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
