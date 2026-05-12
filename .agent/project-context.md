@@ -24,8 +24,12 @@ Mọi tài liệu PRD (System Requirements Specification / Kịch bản Use Case
 - Các mã quy tắc phải map chính xác với con số của bước tương ứng trong sơ đồ tương tác.
 
 ### Phần 4: Mô tả màn hình (UI/UX Layout)
-- Mô tả rõ ràng bố cục màn hình (Header, Toolbar, Bảng dữ liệu, Modal, Tabs).
-- Chỉ rõ vị trí nút bấm, trạng thái của các Input/Dropdown, và mô tả trạng thái Empty (nếu có).
+- Bắt buộc sử dụng **bảng (Markdown table)** với các cột: `#` | `Tên` | `Loại Control` | `Chỉnh Sửa` | `Bắt Buộc` | `Giá Trị Mặc Định` | `Mô Tả`.
+- Mỗi phần tử UI (field, button, label, toggle, dropdown...) chiếm 1 dòng trong bảng.
+- Cột `Loại Control`: ghi rõ loại (Input Text, Dropdown, Toggle, Button, Label, Textarea...).
+- Cột `Chỉnh Sửa`: Yes/No/Conditional (có điều kiện thì ghi rõ rule).
+- Cột `Bắt Buộc`: Yes/No.
+- Cột `Giá Trị Mặc Định`: Giá trị ban đầu khi mở màn hình (nếu có).
 
 ---
 
