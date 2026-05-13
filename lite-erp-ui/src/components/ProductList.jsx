@@ -264,7 +264,7 @@ export default function ProductList() {
             <p style={{ color: '#475569', marginBottom: '24px', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{dialogConfig.message}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
               {dialogConfig.type === 'confirm' && (
-                <button onClick={() => setDialogConfig({ open: false, type: 'alert', message: '', onConfirm: null })} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Hủy bỏ</button>
+                <button onClick={() => setDialogConfig({ open: false, type: 'alert', message: '', onConfirm: null })} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Hủy</button>
               )}
               <button 
                 onClick={() => {
@@ -584,17 +584,7 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
 
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Tên *</label>
-                {isGroup ? (
-                  <CustomCombobox 
-                    value={formData.name} 
-                    onChange={val => setFormData({...formData, name: val})} 
-                    options={['Dịch vụ', 'Giải pháp']}
-                    placeholder="Nhập tên hoặc chọn..."
-                    onEnter={handleSave}
-                  />
-                ) : (
-                  <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none', boxSizing: 'border-box' }} placeholder="Nhập tên..." />
-                )}
+                <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', outline: 'none', boxSizing: 'border-box' }} placeholder="Nhập tên..." />
               </div>
 
               <div>
@@ -689,7 +679,7 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button onClick={onClose} style={{ padding: '10px 20px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 600, cursor: 'pointer' }}>
-              Hủy bỏ
+              Hủy
             </button>
             <button onClick={handleSave} style={{ padding: '10px 20px', borderRadius: '6px', border: 'none', background: '#e32b4c', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={18} /> {action === 'add' ? 'Tạo mới' : 'Lưu cập nhật'}
@@ -708,7 +698,7 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
             <p style={{ color: '#475569', marginBottom: '24px', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{dialogConfig.message}</p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
               {dialogConfig.type === 'confirm' && (
-                <button onClick={() => setDialogConfig({ open: false, type: 'alert', message: '', onConfirm: null })} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Hủy bỏ</button>
+                <button onClick={() => setDialogConfig({ open: false, type: 'alert', message: '', onConfirm: null })} style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Hủy</button>
               )}
               <button 
                 onClick={() => {

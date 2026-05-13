@@ -19,8 +19,8 @@ Mọi tài liệu PRD (System Requirements Specification / Kịch bản Use Case
 - Dùng màu nền trắng viền đen cho node mặc định để dễ nhìn.
 
 ### Phần 3: Quy Tắc Nghiệp Vụ (Business Rules)
-- Sử dụng bảng (Markdown table) gồm 3 cột: `Bước trong Sơ đồ` | `Mã Quy Tắc` | `Mô Tả`.
-- **Định dạng Mã Quy tắc:** Bắt buộc sử dụng format `RULE_01_NAME`, `RULE_02_NAME`... (Không dùng BR 1, BR 2).
+- Sử dụng bảng (Markdown table) gồm 3 cột: `Bước` | `Mã Quy Tắc` | `Mô Tả`.
+- **Định dạng Mã Quy tắc:** Sử dụng format `BR 1`, `BR 2`... (Chuẩn BMAD Method).
 - Các mã quy tắc phải map chính xác với con số của bước tương ứng trong sơ đồ tương tác.
 
 ### Phần 4: Mô tả màn hình (UI/UX Layout)
