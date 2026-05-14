@@ -123,7 +123,9 @@ const LeadForm = () => {
   const [lostDesc, setLostDesc] = useState('');
   
   const [leadStatus, setLeadStatus] = useState('Mới');
-  const isEditable = leadStatus === 'Mới';
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [showContractConfirmModal, setShowContractConfirmModal] = useState(false);
+  const isEditable = !['Đấu thầu', 'POC', 'Kí hợp đồng', 'Thành công', 'Không thành công'].includes(leadStatus);
 
   // LOAD EXISTING LEAD
   useEffect(() => {
@@ -292,6 +294,61 @@ const LeadForm = () => {
     setLeadStatus('Đang tiếp xúc');
     if (id) mockStore.updateLeadStatus(id, 'Đang tiếp xúc');
     addChatterMessage('log', 'Hệ', 'Chuyển trạng thái sang Đang tiếp xúc (Opportunity)', 'just now', '#e0e7ff');
+  };
+
+  const handleStatusChange = (targetStatus) => {
+    if (!isEditable && leadStatus !== 'Không thành công') return;
+
+    const newErrors = {};
+
+    if (['Đang tiếp xúc', 'Đánh giá nhu cầu', 'Đang báo giá', 'Đấu thầu', 'POC', 'Kí hợp đồng'].includes(targetStatus)) {
+       if (!formData.leadName.trim()) newErrors.leadName = true;
+       if (!clientSearch.trim()) newErrors.clientSearch = true;
+       if (!clientAbbr.trim()) newErrors.clientAbbr = true;
+       if (!domainValue) newErrors.domainValue = true;
+    }
+
+    if (['Đánh giá nhu cầu', 'Đang báo giá', 'Đấu thầu', 'POC', 'Kí hợp đồng'].includes(targetStatus)) {
+       if (!formData.province || !formData.district || !formData.ward || !formData.addressDetail.trim()) {
+           newErrors.address = true;
+           alert("Vui lòng điền đầy đủ thông tin địa chỉ khách hàng để chuyển sang Đánh giá nhu cầu.");
+       }
+       const hasValidServiceLine = serviceDetails.some(
+         (line) => line.projectCategory && line.service && line.description.trim()
+       );
+       if (!hasValidServiceLine) {
+           newErrors.serviceDetails = true;
+           alert("Vui lòng nhập đủ thông tin Loại dự án, Dịch vụ và Mô tả sản phẩm.");
+       }
+    }
+
+    if (['Đang báo giá', 'Đấu thầu', 'POC', 'Kí hợp đồng'].includes(targetStatus)) {
+       if (!uploadedFile) {
+           newErrors.upload = true;
+           alert("Vui lòng đính kèm file báo giá.");
+       }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      if (newErrors.leadName) nameRef.current?.focus();
+      else if (newErrors.clientSearch) clientRef.current?.focus();
+      else if (newErrors.domainValue) domainRef.current?.focus();
+      return;
+    }
+
+    if (targetStatus === 'Kí hợp đồng') {
+       if (!id || id === 'new') {
+           alert("Vui lòng nhấn nút Lưu để tạo Lead trước khi chuyển sang Hợp đồng.");
+           return;
+       }
+       setShowContractConfirmModal(true);
+       return;
+    }
+
+    setLeadStatus(targetStatus);
+    if (id && id !== 'new') mockStore.updateLeadStatus(id, targetStatus);
+    addChatterMessage('log', 'Hệ', `Chuyển trạng thái sang ${targetStatus}`, 'just now', '#e0e7ff');
   };
 
   // -------------------------
@@ -473,9 +530,7 @@ const LeadForm = () => {
                <Trash2 size={16} />
              </button>
            )}
-           {leadStatus === 'Mới' && (
-             <button className="btn btn-primary" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={commitSave}>Lưu</button>
-           )}
+           <button className="btn btn-primary" style={{padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white'}} onClick={commitSave}>Lưu</button>
         </div>
       </div>
 
@@ -485,28 +540,36 @@ const LeadForm = () => {
         <div className="lead-form-sheet sheet-inner-wrapper">
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
             <div className="statusbar" style={{ background: 'transparent', margin: 0, gap: '4px' }}>
-              {['Mới', 'Đang tiếp xúc'].map((st) => {
-                const isCurrent = leadStatus === st;
-                return (
-                  <div
-                    key={st}
-                    className="statusbar-item"
-                    style={{
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      fontWeight: 500,
-                      fontSize: '13px',
-                      userSelect: 'none',
-                      whiteSpace: 'nowrap',
-                      backgroundColor: isCurrent ? '#E32B4C' : '#F8FAFC',
-                      color: isCurrent ? 'white' : '#94A3B8',
-                      cursor: 'default'
-                    }}
-                  >
-                    {st}
-                  </div>
-                )
-              })}
+              {(() => {
+                const pipelineStates = ['Mới', 'Đang tiếp xúc', 'Đánh giá nhu cầu', 'Đang báo giá', 'Đấu thầu', 'POC', 'Kí hợp đồng'];
+                if (leadStatus === 'Không thành công') pipelineStates.push('Không thành công');
+                else if (leadStatus === 'Thành công') pipelineStates.push('Thành công');
+                
+                return pipelineStates.map((st) => {
+                  const isCurrent = leadStatus === st;
+                  return (
+                    <div
+                      key={st}
+                      onClick={() => handleStatusChange(st)}
+                      className="statusbar-item"
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        fontWeight: 500,
+                        fontSize: '13px',
+                        userSelect: 'none',
+                        whiteSpace: 'nowrap',
+                        backgroundColor: isCurrent ? '#E32B4C' : '#F8FAFC',
+                        color: isCurrent ? 'white' : '#94A3B8',
+                        cursor: isEditable || st === leadStatus ? 'pointer' : 'not-allowed',
+                        border: '1px solid transparent'
+                      }}
+                    >
+                      {st}
+                    </div>
+                  )
+                });
+              })()}
             </div>
           </div>
           {leadStatus === 'Không thành công' && (
@@ -604,6 +667,28 @@ const LeadForm = () => {
                   <option value="">-- Để trống --</option>
                 </select>
               </div>
+
+              <div className="form-group" style={{flexDirection: 'column', alignItems: 'flex-start'}}>
+                <label className="form-label" style={{width: '100%', marginBottom: '8px'}}>File Đính kèm (Báo giá)</label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <button 
+                    type="button"
+                    className="btn" 
+                    style={{ padding: '6px 12px', fontSize: '13px', backgroundColor: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', cursor: isEditable ? 'pointer' : 'not-allowed' }}
+                    onClick={() => { if(isEditable) setUploadedFile({ name: 'BaoGia_V1.pdf', size: '1.2MB' }) }}
+                    disabled={!isEditable}
+                  >
+                    <Paperclip size={14} style={{ display: 'inline', marginRight: '6px' }}/> {uploadedFile ? 'Đổi File' : 'Upload File'}
+                  </button>
+                  {uploadedFile && (
+                    <span style={{ fontSize: '13px', color: '#16a34a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ✓ {uploadedFile.name}
+                    </span>
+                  )}
+                </div>
+                {errors.upload && <small style={{color: 'red', fontWeight: 500, marginTop: '4px'}}>Yêu cầu có file đính kèm</small>}
+              </div>
+
             </div>
 
             {/* R COLUMN */}
@@ -1065,6 +1150,46 @@ const LeadForm = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showContractConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ width: '440px', borderRadius: '12px', overflow: 'hidden', padding: '0', background: 'white' }}>
+            <div className="modal-header" style={{ borderBottom: 'none', padding: '20px 20px 0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="modal-title" style={{ fontSize: '18px', fontWeight: 'bold', color: '#1e293b' }}>
+                Chuyển trạng thái Ký hợp đồng
+              </div>
+              <button className="modal-close" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }} onClick={() => setShowContractConfirmModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="modal-body" style={{ padding: '24px 20px', textAlign: 'center', color: '#475569', fontSize: '15px' }}>
+              <p style={{ margin: '0 0 6px 0' }}>Bạn cần tạo Hợp đồng để chuyển sang trạng thái này.</p>
+              <p style={{ margin: '0', fontWeight: '600', color: '#1e293b' }}>Bạn có chắc chắn muốn tiếp tục?</p>
+            </div>
+
+            <div className="modal-footer" style={{ borderTop: 'none', display: 'flex', gap: '16px', padding: '0 20px 24px 20px', justifyContent: 'center' }}>
+              <button 
+                className="btn btn-secondary" 
+                style={{ flex: 1, padding: '10px 0', backgroundColor: '#f1f5f9', color: '#475569', border: 'none', fontWeight: '600', borderRadius: '6px' }} 
+                onClick={() => setShowContractConfirmModal(false)}
+              >
+                Hủy thao tác
+              </button>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1, padding: '10px 0', backgroundColor: '#e32b4c', color: 'white', border: 'none', fontWeight: '600', borderRadius: '6px' }} 
+                onClick={() => {
+                   setShowContractConfirmModal(false);
+                   navigate(`/contract/new?leadId=${id}`);
+                }}
+              >
+                Xác nhận
+              </button>
+            </div>
           </div>
         </div>
       )}

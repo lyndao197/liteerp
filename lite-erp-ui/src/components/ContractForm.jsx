@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   FileText,
   User,
@@ -54,7 +54,10 @@ const INITIAL_FORM_STATE = {
 function ContractForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const leadId = queryParams.get('leadId');
+  const [formData, setFormData] = useState({...INITIAL_FORM_STATE, leadId: leadId || ''});
   const [customers, setCustomers] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -82,9 +85,45 @@ function ContractForm() {
     } else {
       // Auto-generate Contract No for NEW only
       const nextNo = mockStore.getNextContractNo();
-      setFormData(prev => ({ ...prev, contractNo: nextNo }));
+      let newFormData = { ...INITIAL_FORM_STATE, contractNo: nextNo, leadId: leadId || '' };
+      
+      // If navigating from Lead
+      if (leadId) {
+         const leadData = (typeof mockStore.getLead === 'function' ? mockStore.getLead(leadId) : null) || (typeof mockStore.getOpp === 'function' ? mockStore.getOpp(leadId) : null) || mockStore.getStore().oppTasks?.[leadId] || mockStore.getStore().tasks?.[leadId];
+         if (leadData) {
+            newFormData.name = leadData.content || '';
+            newFormData.amName = leadData.salesperson || '';
+            const matchedCustomer = allCustomers.find(c => c.name === leadData.company || (c.mst && c.mst === leadData.mst));
+            if (matchedCustomer) {
+               newFormData.customerId = matchedCustomer.id;
+               newFormData.customerName = matchedCustomer.name;
+               newFormData.shortName = matchedCustomer.shortName || '';
+               newFormData.classification = matchedCustomer.type === 'Doanh nghiệp' ? 'Ngoài' : 'Nội bộ';
+            } else {
+               // Tạo khách hàng Dự thảo nếu chưa có
+               const isEnterprise = leadData.tags?.find(t => t.text === 'Doanh nghiệp');
+               const draftCustomer = {
+                 name: leadData.company || leadData.content || 'Khách hàng mới',
+                 mst: leadData.mst || '',
+                 status: 'Dự thảo',
+                 type: isEnterprise ? 'Doanh nghiệp' : 'Nội bộ',
+                 domain: leadData.projectedService || '',
+                 projectType: leadData.projectType || 'outsourcing',
+                 source: 'Lead/Opportunity',
+               };
+               const newCustomerId = mockStore.addCustomer(draftCustomer);
+               newFormData.customerId = newCustomerId;
+               newFormData.customerName = draftCustomer.name;
+               newFormData.classification = isEnterprise ? 'Ngoài' : 'Nội bộ';
+               
+               // Update local customers list to include the newly created draft
+               setCustomers(mockStore.getAllCustomers());
+            }
+         }
+      }
+      setFormData(newFormData);
     }
-  }, [id]);
+  }, [id, leadId]);
 
   const handleCustomerChange = (customerId) => {
     if (!customerId) {
@@ -183,6 +222,12 @@ function ContractForm() {
 
     if (newStatus === 'Hiệu lực') {
       mockStore.createProjectFromContract(contractId, updatedData);
+      
+      if (formData.leadId) {
+          if (typeof mockStore.updateLeadStatus === 'function') mockStore.updateLeadStatus(formData.leadId, 'Kí hợp đồng');
+          if (typeof mockStore.updateOppStatus === 'function') mockStore.updateOppStatus(formData.leadId, 'Kí hợp đồng');
+      }
+
       alert(`Đã cập nhật trạng thái: ${newStatus}`);
       navigate('/contracts');
     } else if (!isEdit) {
@@ -233,6 +278,10 @@ function ContractForm() {
     setFormData(updatedData);
 
     if (isLegal && isManager) {
+       if (updatedData.leadId) {
+           if (typeof mockStore.updateLeadStatus === 'function') mockStore.updateLeadStatus(updatedData.leadId, 'Kí hợp đồng');
+           if (typeof mockStore.updateOppStatus === 'function') mockStore.updateOppStatus(updatedData.leadId, 'Kí hợp đồng');
+       }
        alert('Bản ký đã được duyệt bởi cả Pháp chế và Trưởng phòng. Hợp đồng có hiệu lực!');
        navigate('/contracts');
     }
@@ -407,7 +456,7 @@ function ContractForm() {
                         handleCustomerChange(e.target.value);
                         if (e.target.value) setFormErrors({ ...formErrors, customerId: null });
                       }}
-                      disabled={isReadOnly}
+                      disabled={isReadOnly || !!formData.leadId}
                       style={{ width: '100%', borderColor: formErrors.customerId ? 'red' : undefined }}
                     >
                       <option value="">-- Chọn khách hàng --</option>
@@ -705,6 +754,7 @@ function ContractForm() {
                 </div>
               </div>
             </div>
+          </fieldset>
             {/* Bổ sung Upload File khu vực dành riêng cho Đã duyệt */}
             {(formData.approvalStatus === 'Chờ Upload' || formData.approvalStatus === 'Chờ duyệt bản ký' || formData.approvalStatus === 'Hiệu lực') && (
               <div className="form-section">
@@ -717,13 +767,26 @@ function ContractForm() {
                     <label>Tệp đính kèm chữ ký <span className="required">*</span></label>
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '8px' }}>
                       {formData.approvalStatus === 'Chờ Upload' && (
-                        <button 
-                          className="btn" 
-                          style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: 'white', border: '1px solid #cbd5e1', cursor: 'pointer', borderRadius: '6px' }}
-                          onClick={() => setUploadedFile({ name: 'Ban_Trinh_Ky_01.pdf', size: '2.4MB' })}
-                        >
-                          <Paperclip size={14} style={{ display: 'inline', marginRight: '6px' }}/> Mô phỏng Upload File
-                        </button>
+                        <div>
+                          <input 
+                            type="file" 
+                            id="contractUploadInput" 
+                            style={{ display: 'none' }} 
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                const file = e.target.files[0];
+                                setUploadedFile({ name: file.name, size: (file.size / 1024 / 1024).toFixed(2) + 'MB' });
+                              }
+                            }} 
+                          />
+                          <button 
+                            className="btn" 
+                            style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: 'white', border: '1px solid #cbd5e1', cursor: 'pointer', borderRadius: '6px' }}
+                            onClick={() => document.getElementById('contractUploadInput').click()}
+                          >
+                            <Paperclip size={14} style={{ display: 'inline', marginRight: '6px' }}/> Chọn File Tải Lên
+                          </button>
+                        </div>
                       )}
                       {(uploadedFile || formData.approvalStatus === 'Chờ duyệt bản ký' || formData.approvalStatus === 'Hiệu lực') && (
                         <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '13px', color: '#0f172a' }}>
@@ -773,7 +836,6 @@ function ContractForm() {
                 </div>
               </div>
             )}
-          </fieldset>
         </div>
 
         {/* CHATTER SECTION */}
