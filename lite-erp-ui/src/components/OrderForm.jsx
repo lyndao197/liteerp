@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { mockStore } from '../utils/mockStore';
 import { 
   ArrowLeft, Save, Trash2, Send, UploadCloud, FileText, FileSpreadsheet, File,
-  Download, Mail, MessageSquare, History, ThumbsUp, Heart, MoreVertical, Paperclip, Smile
+  Download, Mail, MessageSquare, History, ThumbsUp, Heart, MoreVertical, Paperclip, Smile,
+  CheckCircle, XCircle, ArrowRightCircle, UserX, HelpCircle, Clock, Hand, XSquare
 } from 'lucide-react';
 import './CustomerForm.css';
 import './ContractForm.css';
@@ -16,6 +17,7 @@ const OrderForm = () => {
     // Header info
     const [contractId, setContractId] = useState('CTR-2026-017'); // Default to our mock contract
     const [salesTeam, setSalesTeam] = useState('Nhóm A _ P.CLKD');
+    const [orderStatus, setOrderStatus] = useState('Xuất hóa đơn'); // Demo trạng thái như trong ảnh
     
     // Buyer info
     const [customerName, setCustomerName] = useState('');
@@ -50,9 +52,11 @@ const OrderForm = () => {
 
     const [activeContracts, setActiveContracts] = useState([]);
 
-    // Chatter State
+    // Chatter & Actions State
     const [chatterTab, setChatterTab] = useState('comment');
     const [commentInput, setCommentInput] = useState('');
+    const [showPreview, setShowPreview] = useState(false);
+    const [showEmail, setShowEmail] = useState(false);
     
     const comments = [
         { id: 1, user: 'Nguyễn Văn A', avatar: 'https://i.pravatar.cc/150?u=1', time: '2h trước', content: 'Đã liên hệ với khách hàng, họ đang xem xét đề xuất.', likes: 45, hearts: 25 },
@@ -64,6 +68,46 @@ const OrderForm = () => {
         { id: 2, user: 'Nguyễn Văn A', avatar: 'https://i.pravatar.cc/150?u=1', time: 'Vừa xong', content: 'Trạng thái : Ngừng hoạt động → Đang hoạt động', isStatus: true }
     ];
 
+    const fillFormFromContract = (ctr) => {
+        const cus = mockStore.getCustomer(ctr.customerId);
+        if (cus) {
+            setCustomerName(cus.name);
+            setEmail(cus.email);
+            setPhone(cus.phone);
+            setBillingAddress(cus.address);
+            setShippingAddress(cus.address);
+            setContactPerson(cus.contactName);
+        }
+
+        if (ctr.products && ctr.products.length > 0) {
+            const newLines = ctr.products.map((p, index) => {
+                const prd = allProducts.find(product => product.id === p.productId);
+                const category = categories.find(c => c.id === prd?.categoryId);
+                const group = groups.find(g => g.id === category?.groupId);
+
+                // Lấy hạn mức còn lại từ mockStore
+                const remaining = mockStore.getRemainingQty(ctr.id, p.productId);
+                const totalContractQty = p.qty || 0;
+
+                return {
+                    id: Date.now() + index,
+                    type: group ? group.id : '',
+                    group: category ? category.id : '',
+                    service: p.productId,
+                    qty: remaining, // Mặc định điền số lượng còn lại
+                    unit: prd ? prd.unit : '--chọn--',
+                    price: prd ? prd.price : '',
+                    tax: prd ? prd.tax : 10,
+                    total: 0,
+                    desc: `Hạn mức: ${remaining}/${totalContractQty}`
+                };
+            });
+            setLines(newLines.filter(l => l.qty > 0)); // Chỉ load những cái còn hạn mức
+        } else {
+            setLines([{ id: Date.now(), type: '', group: '', service: '', qty: 1, unit: '--chọn--', price: '', desc: '', tax: '' }]);
+        }
+    };
+
     useEffect(() => {
         const allContracts = mockStore.getAllContracts().filter(c => c.approvalStatus === 'Hiệu lực');
         setActiveContracts(allContracts);
@@ -72,18 +116,11 @@ const OrderForm = () => {
         if (contractId) {
             const ctr = allContracts.find(c => c.id === contractId);
             if (ctr) {
-                const cus = mockStore.getCustomer(ctr.customerId);
-                if (cus) {
-                    setCustomerName(cus.name);
-                    setEmail(cus.email);
-                    setPhone(cus.phone);
-                    setBillingAddress(cus.address);
-                    setShippingAddress(cus.address);
-                    setContactPerson(cus.contactName);
-                }
+                fillFormFromContract(ctr);
             }
         }
-    }, [contractId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [contractId]); // Suppress eslint warning since mockStore is external
 
     const handleContractChange = (e) => {
         const selectedId = e.target.value;
@@ -96,20 +133,13 @@ const OrderForm = () => {
             setBillingAddress('');
             setShippingAddress('');
             setContactPerson('');
+            setLines([{ id: Date.now(), type: '', group: '', service: '', qty: 1, unit: '--chọn--', price: '', desc: '', tax: '' }]);
             return;
         }
 
         const ctr = activeContracts.find(c => c.id === selectedId);
         if (ctr) {
-            const cus = mockStore.getCustomer(ctr.customerId);
-            if (cus) {
-                setCustomerName(cus.name);
-                setEmail(cus.email);
-                setPhone(cus.phone);
-                setBillingAddress(cus.address);
-                setShippingAddress(cus.address);
-                setContactPerson(cus.contactName);
-            }
+            fillFormFromContract(ctr);
         }
     };
 
@@ -140,6 +170,20 @@ const OrderForm = () => {
                         updatedLine.unit = prd.unit;
                         updatedLine.price = prd.price;
                         updatedLine.tax = prd.tax;
+                        
+                        // Cập nhật hạn mức trong desc
+                        const remaining = mockStore.getRemainingQty(contractId, value);
+                        const ctr = activeContracts.find(c => c.id === contractId);
+                        const cPrd = ctr?.products?.find(p => p.productId === value);
+                        updatedLine.desc = `Hạn mức: ${remaining}/${cPrd?.qty || 0}`;
+                    }
+                } else if (field === 'qty') {
+                    if (contractId) {
+                        const remaining = mockStore.getRemainingQty(contractId, updatedLine.service);
+                        if (parseInt(value) > remaining) {
+                            alert(`Số lượng không được vượt quá hạn mức còn lại (${remaining})`);
+                            updatedLine.qty = remaining;
+                        }
                     }
                 }
                 return updatedLine;
@@ -178,7 +222,97 @@ const OrderForm = () => {
         return { subTotal, vat, total: subTotal + vat };
     };
 
+    const handleGeneratePDF = () => {
+        const newDoc = {
+            id: Date.now(),
+            name: `Don_hang_${contractId || 'Moi'}.pdf`,
+            desc: 'Hệ thống tự động sinh',
+            time: new Date().toLocaleDateString('vi-VN') + ' by TrangNTT55',
+            type: 'pdf'
+        };
+        setDocuments([newDoc, ...documents]);
+        alert('Đã sinh file PDF thành công và đính kèm vào hồ sơ!');
+    };
+
     const totals = calculateTotals();
+
+    const StatusPipeline = () => {
+        const statuses = [
+            { id: 'Dự thảo', label: 'Dự thảo' },
+            { id: 'Chờ duyệt công nợ', label: 'Chờ duyệt công nợ', hasIcons: true },
+            { id: 'Xuất hóa đơn', label: 'Xuất hóa đơn' },
+            { id: 'Đã xuất hóa đơn', label: 'Đã xuất hóa đơn' }
+        ];
+
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', padding: '12px 24px', borderBottom: '1px solid #e2e8f0', gap: '16px', fontSize: '13px' }}>
+                {statuses.map((s, idx) => {
+                    const isActive = orderStatus === s.id;
+                    const isOrange = s.id === 'Xuất hóa đơn' && isActive;
+                    return (
+                        <React.Fragment key={s.id}>
+                            <div style={{ 
+                                color: isOrange ? '#f97316' : (isActive ? '#0f172a' : '#94a3b8'),
+                                fontWeight: isActive ? 600 : 400,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                            }}>
+                                {s.label}
+                                {s.hasIcons && (
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        <CheckCircle size={14} color="#22c55e" />
+                                        <Clock size={14} color="#94a3b8" />
+                                    </div>
+                                )}
+                            </div>
+                            {idx < statuses.length - 1 && <div style={{ color: '#e2e8f0' }}>|</div>}
+                        </React.Fragment>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const renderHeaderButtons = () => {
+        switch (orderStatus) {
+            case 'Dự thảo':
+                return (
+                    <>
+                        <button className="btn btn-secondary"><XSquare size={16} /> Hủy</button>
+                        <button className="btn btn-secondary"><Save size={16} /> Lưu nháp</button>
+                        <button className="btn btn-primary" onClick={() => setOrderStatus('Chờ duyệt công nợ')}>
+                            Gửi yêu cầu bán hàng <ArrowRightCircle size={16} style={{ marginLeft: '8px' }} />
+                        </button>
+                    </>
+                );
+            case 'Chờ duyệt công nợ':
+                return (
+                    <>
+                        <button className="btn btn-secondary"><XSquare size={16} /> Hủy</button>
+                        <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}><Hand size={16} /> Từ chối</button>
+                        <button className="btn btn-primary" onClick={() => setOrderStatus('Xuất hóa đơn')}>
+                            <CheckCircle size={16} /> Phê duyệt
+                        </button>
+                    </>
+                );
+            case 'Xuất hóa đơn':
+                return (
+                    <>
+                        <button className="btn btn-secondary"><XSquare size={16} /> Hủy</button>
+                        <button className="btn btn-primary" onClick={() => setOrderStatus('Đã xuất hóa đơn')}>
+                            Xác nhận xuất hóa đơn
+                        </button>
+                    </>
+                );
+            case 'Đã xuất hóa đơn':
+                return (
+                    <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}>Về dự thảo (Sửa lại)</button>
+                );
+            default:
+                return null;
+        }
+    };
 
     const getFileIcon = (type) => {
         if (type === 'pdf') return <FileText size={16} color="#e32b4c" />;
@@ -188,18 +322,18 @@ const OrderForm = () => {
 
     return (
         <div className="customer-form-modern" style={{ paddingBottom: '100px' }}>
-            <div className="customer-form-header">
-                <div>
-                    <h1 style={{ fontSize: '24px', fontWeight: 600, color: '#0f172a', margin: '0 0 8px 0' }}>Tạo mới yêu cầu bán hàng dự án</h1>
-                    <div className="breadcrumb" style={{ margin: 0 }}>
-                        <span className="breadcrumb-item" onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
-                            <ArrowLeft size={16} /> Trở về
-                        </span>
-                    </div>
+            <StatusPipeline />
+            <div className="customer-form-header" style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '16px 24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <button className="btn-back" onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                        <ArrowLeft size={20} />
+                    </button>
+                    <h1 style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: '#0f172a' }}>
+                        {isEdit ? 'Chi tiết đơn hàng' : 'Tạo mới yêu cầu bán hàng dự án'}
+                    </h1>
                 </div>
                 <div className="header-actions">
-                    <button className="btn btn-secondary"><Save size={16} /> Lưu nháp</button>
-                    <button className="btn btn-primary"><Send size={16} /> Gửi yêu cầu bán hàng</button>
+                    {renderHeaderButtons()}
                 </div>
             </div>
 
@@ -470,20 +604,19 @@ const OrderForm = () => {
                         </tbody>
                     </table>
                 </div>
-                </div>
-                </div>
+            </div>
 
-                {/* KHUNG CHATTER BÊN PHẢI */}
+            {/* KHUNG CHATTER BÊN PHẢI */}
                 <div style={{ width: '400px', flexShrink: 0, position: 'sticky', top: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {/* Header Actions for Document */}
                     <div className="form-card" style={{ padding: '16px', display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
-                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={() => alert('Xem trước PDF')}>
+                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={() => setShowPreview(true)}>
                             <FileText size={16} /> Preview
                         </button>
-                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={() => alert('Đã sinh file PDF')}>
+                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={handleGeneratePDF}>
                             <Download size={16} /> Generate
                         </button>
-                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={() => alert('Mở popup gửi Email')}>
+                        <button className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '8px' }} onClick={() => setShowEmail(true)}>
                             <Mail size={16} /> Email
                         </button>
                     </div>
@@ -586,6 +719,87 @@ const OrderForm = () => {
                 </div>
 
             </div>
+
+            {/* MODAL PREVIEW PDF */}
+            {showPreview && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#fff', width: '800px', height: '90vh', borderRadius: '8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                        <div style={{ padding: '16px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2 style={{ fontSize: '18px', margin: 0, color: '#0f172a' }}>Preview Báo giá / Đơn hàng</h2>
+                            <button onClick={() => setShowPreview(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#64748b' }}>&times;</button>
+                        </div>
+                        <div style={{ flex: 1, padding: '32px', overflowY: 'auto', background: '#f8fafc' }}>
+                            <div style={{ background: '#fff', padding: '40px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                                <h1 style={{ textAlign: 'center', color: '#e32b4c', marginBottom: '24px' }}>ĐƠN ĐẶT HÀNG / BÁO GIÁ</h1>
+                                <div style={{ fontSize: '14px', color: '#475569', lineHeight: '1.6' }}>
+                                    <p><strong>Khách hàng:</strong> {customerName}</p>
+                                    <p><strong>Liên hệ:</strong> {contactPerson} - {phone} - {email}</p>
+                                    <p><strong>Phương thức thanh toán:</strong> {paymentMethod}</p>
+                                </div>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '24px', fontSize: '14px' }}>
+                                    <thead>
+                                        <tr style={{ background: '#f1f5f9', color: '#0f172a' }}>
+                                            <th style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'left' }}>Dịch vụ</th>
+                                            <th style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'center' }}>SL</th>
+                                            <th style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'right' }}>Đơn giá</th>
+                                            <th style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'right' }}>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {lines.map(l => {
+                                            const sName = allProducts.find(p => p.id === l.service)?.name || '';
+                                            const price = parseFloat(String(l.price).replace(/,/g, '')) || 0;
+                                            return (
+                                                <tr key={l.id}>
+                                                    <td style={{ border: '1px solid #cbd5e1', padding: '12px 8px', color: '#475569' }}>{sName}</td>
+                                                    <td style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'center', color: '#475569' }}>{l.qty}</td>
+                                                    <td style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'right', color: '#475569' }}>{price.toLocaleString()} đ</td>
+                                                    <td style={{ border: '1px solid #cbd5e1', padding: '12px 8px', textAlign: 'right', color: '#0f172a', fontWeight: 500 }}>{(price * l.qty).toLocaleString()} đ</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                                <h3 style={{ textAlign: 'right', marginTop: '24px', color: '#0f172a' }}>Tổng cộng: {totals.total.toLocaleString()} đ</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MODAL GỬI EMAIL */}
+            {showEmail && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#fff', width: '600px', borderRadius: '8px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                        <div style={{ padding: '16px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2 style={{ fontSize: '18px', margin: 0, color: '#0f172a' }}>Gửi Email Báo giá</h2>
+                            <button onClick={() => setShowEmail(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#64748b' }}>&times;</button>
+                        </div>
+                        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '8px' }}>Người nhận (To)</label>
+                                <input type="text" className="input-modern" defaultValue={email} />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '8px' }}>Tiêu đề (Subject)</label>
+                                <input type="text" className="input-modern" defaultValue={`Báo giá dịch vụ - ${customerName}`} />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '8px' }}>Nội dung</label>
+                                <textarea className="input-modern" style={{ minHeight: '150px', resize: 'vertical' }} defaultValue={`Kính gửi anh/chị ${contactPerson},\n\nEm gửi anh/chị file báo giá đính kèm. Anh/chị xem và phản hồi lại giúp em nhé!\n\nTrân trọng,\nTrangNTT55`}></textarea>
+                            </div>
+                            <div style={{ padding: '12px', background: '#f1f5f9', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '8px', color: '#0ea5e9', fontSize: '13px' }}>
+                                <FileText size={16} /> Don_hang_{contractId || 'Moi'}.pdf
+                            </div>
+                        </div>
+                        <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                            <button className="btn btn-secondary" onClick={() => setShowEmail(false)}>Hủy</button>
+                            <button className="btn btn-primary" onClick={() => { alert('Đã gửi email thành công!'); setShowEmail(false); }}><Send size={16} /> Gửi Email</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };

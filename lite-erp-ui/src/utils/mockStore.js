@@ -163,6 +163,13 @@ const INITIAL_DATA = {
         contractStatus: 'Đang hiệu lực',
         implementationStatus: 'Chưa triển khai',
         revenueStatus: 'Chưa lên doanh thu',
+        products: [
+            { productId: 'PRD-001', qty: 10 },
+            { productId: 'PRD-002', qty: 1 },
+            { productId: 'PRD-003', qty: 5 },
+            { productId: 'PRD-004', qty: 2 },
+            { productId: 'PRD-005', qty: 20 }
+        ],
         revenueMonth: 'Tháng 05/2026',
         contractValue: '400,000,000',
         unitPrice: '',
@@ -405,9 +412,13 @@ const INITIAL_DATA = {
   },
   productCategoryIds: ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9', 'PC-10', 'PC-11', 'PC-12', 'PC-13', 'PC-14'],
   products: {
-    'PRD-001': { id: 'PRD-001', categoryId: 'PC-8', name: 'License OmniX User/Tháng', description: 'License sử dụng nền tảng OmniX cho 1 User', price: 500000, unit: 'license', tax: 10, status: 'Active' }
+    'PRD-001': { id: 'PRD-001', categoryId: 'PC-8', name: 'License OmniX User/Tháng', description: 'License sử dụng nền tảng OmniX cho 1 User', price: 500000, unit: 'license', tax: 10, status: 'Active' },
+    'PRD-002': { id: 'PRD-002', categoryId: 'PC-8', name: 'Phí khởi tạo hệ thống OmniX', description: 'Phí khởi tạo 1 lần', price: 10000000, unit: 'gói', tax: 10, status: 'Active' },
+    'PRD-003': { id: 'PRD-003', categoryId: 'PC-9', name: 'License CXBot', description: 'Trợ lý ảo AI', price: 2000000, unit: 'license', tax: 10, status: 'Active' },
+    'PRD-004': { id: 'PRD-004', categoryId: 'PC-1', name: 'Nhân sự CSKH toàn trình', description: 'Nhân sự CSKH', price: 15000000, unit: 'người/tháng', tax: 8, status: 'Active' },
+    'PRD-005': { id: 'PRD-005', categoryId: 'PC-2', name: 'Nhân sự BPO nhập liệu', description: 'Nhân sự BPO', price: 12000000, unit: 'người/tháng', tax: 8, status: 'Active' }
   },
-  productIds: ['PRD-001'],
+  productIds: ['PRD-001', 'PRD-002', 'PRD-003', 'PRD-004', 'PRD-005'],
   orders: {
     'ORD-2026-001': {
         id: 'ORD-2026-001', orderNo: 'DH-2026-001', contractId: 'CTR-2026-001', customerId: 'CUS-1',
@@ -426,6 +437,20 @@ const INITIAL_DATA = {
     'ORD-2026-003': {
         id: 'ORD-2026-003', orderNo: 'DH-2026-003', contractId: 'CTR-2026-003', customerId: 'CUS-1',
         orderStatus: 'Mới', orderDate: '2026-03-01', totalAmount: 850000000, discountAmount: 0, notes: '', lines: []
+    },
+    'ORD-2026-017-001': {
+        id: 'ORD-2026-017-001', orderNo: 'DH-VTG-001', contractId: 'CTR-2026-017', customerId: 'CUS-9',
+        orderStatus: 'Đã xuất hóa đơn', orderDate: '2026-05-10', totalAmount: 5000000, 
+        lines: [
+            { productId: 'PRD-001', qty: 4 } // Đã dùng 4/10 License OmniX
+        ]
+    },
+    'ORD-2026-017-002': {
+        id: 'ORD-2026-017-002', orderNo: 'DH-VTG-002', contractId: 'CTR-2026-017', customerId: 'CUS-9',
+        orderStatus: 'Bị từ chối', orderDate: '2026-05-12', totalAmount: 1000000, 
+        lines: [
+            { productId: 'PRD-001', qty: 2 } // Đã bị từ chối -> Phải được hoàn lại hạn mức
+        ]
     },
     'ORD-2026-004': {
         id: 'ORD-2026-004', orderNo: 'DH-2026-004', contractId: 'CTR-2026-004', customerId: 'CUS-2',
@@ -1908,6 +1933,30 @@ export const mockStore = {
       return store.projects[projectId];
     }
     return null;
+  },
+  getRemainingQty: (contractId, productId) => {
+    const store = mockStore.getStore();
+    const contract = store.contracts[contractId];
+    if (!contract || !contract.products) return 0;
+    
+    const contractProduct = contract.products.find(p => p.productId === productId);
+    if (!contractProduct) return 0;
+
+    const totalContractQty = contractProduct.qty;
+    
+    // Tính tổng đã đặt từ các đơn hàng "Hiệu lực" (không phải Từ chối/Hủy/Draft)
+    const validOrders = Object.values(store.orders || {}).filter(o => 
+      o.contractId === contractId && 
+      !['Bị từ chối', 'Đã hủy', 'Dự thảo'].includes(o.orderStatus)
+    );
+
+    let orderedQty = 0;
+    validOrders.forEach(order => {
+      const line = (order.lines || []).find(l => l.productId === productId);
+      if (line) orderedQty += line.qty || 0;
+    });
+
+    return Math.max(0, totalContractQty - orderedQty);
   }
 };
 
