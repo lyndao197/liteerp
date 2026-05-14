@@ -17,7 +17,7 @@ const OrderForm = () => {
     // Header info
     const [contractId, setContractId] = useState('CTR-2026-017'); // Default to our mock contract
     const [salesTeam, setSalesTeam] = useState('Nhóm A _ P.CLKD');
-    const [orderStatus, setOrderStatus] = useState('Xuất hóa đơn'); // Demo trạng thái như trong ảnh
+    const [orderStatus, setOrderStatus] = useState('Dự thảo'); // Trạng thái mặc định khi tạo mới
     
     // Buyer info
     const [customerName, setCustomerName] = useState('');
