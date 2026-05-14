@@ -70,9 +70,17 @@ const INITIAL_DATA = {
       address: '1 Giang Văn Minh, Ba Đình, Hà Nội', domain: 'Hạ tầng mạng',
       projectType: 'outsourcing', source: 'Manual', status: 'Active',
       contractNo: '', signedDate: '', avatars: [], tag: ''
+    },
+    'CUS-9': {
+      id: 'CUS-9', name: 'Viettel Global', shortName: 'VTG', mst: '0102660144', type: 'Doanh nghiệp',
+      classification: 'Tổng công ty', industry: 'Viễn thông', website: 'viettelglobal.vn',
+      contactName: 'Lê Văn Cường', email: 'customer@company.com.vn', phone: '0904123456',
+      address: '307514 PBA Tower, số 487-489 Điện Biên Phủ, phường 09, quận 03, HCM', domain: 'Đầu tư quốc tế',
+      projectType: 'outsourcing', source: 'Manual', status: 'Active',
+      contractNo: 'DA_05042021/HĐMB-VCX-FTI', signedDate: '07/05/2026', avatars: [], tag: 'VIP'
     }
   },
-  customerIds: ['CUS-1', 'CUS-2', 'CUS-3', 'CUS-4', 'CUS-5', 'CUS-6', 'CUS-7', 'CUS-8'],
+  customerIds: ['CUS-1', 'CUS-2', 'CUS-3', 'CUS-4', 'CUS-5', 'CUS-6', 'CUS-7', 'CUS-8', 'CUS-9'],
   contacts: {
     'CON-1': {
       id: 'CON-1', name: 'Le Van Luyen', positionId: 'P_1', position: 'Kỹ thuật', rank: 'N/A', companyId: 'CUS-1', companyName: 'Vinamilk',
@@ -140,8 +148,34 @@ const INITIAL_DATA = {
     'CTR-2026-014': { id: 'CTR-2026-014', contractNo: 'HD/2026/014', name: 'Dịch vụ chăm sóc khách hàng', customerName: 'Viettel Networks', shortName: 'VTN', amName: 'Lê C', approvalStatus: 'Chờ duyệt bản thảo', effectiveDate: '2026-08-01', contractValue: '350,000,000', signedDate: '', isLegalApprovedDraft: false, isManagerApprovedDraft: false },
     'CTR-2026-015': { id: 'CTR-2026-015', contractNo: 'HD/2026/015', name: 'Hợp đồng dự án KnowxHub', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Phạm Q', approvalStatus: 'Chờ duyệt bản ký', effectiveDate: '2026-09-01', contractValue: '4,500,000,000', signedDate: '2026-08-15', isLegalApprovedSigned: true, isManagerApprovedSigned: false },
     'CTR-2026-016': { id: 'CTR-2026-016', contractNo: 'HD/2026/016', name: 'Dự án WorkForceX', customerName: 'Viettel Solution', shortName: 'VTS', amName: 'Nguyễn Văn A', approvalStatus: 'Chờ duyệt bản ký', effectiveDate: '2026-10-01', contractValue: '2,800,000,000', signedDate: '2026-09-20', isLegalApprovedSigned: false, isManagerApprovedSigned: false },
+    'CTR-2026-017': { 
+        id: 'CTR-2026-017', 
+        contractNo: 'DA_05042021/HĐMB-VCX-FTI', 
+        name: 'Hợp đồng mua bán thiết bị', 
+        customerId: 'CUS-9',
+        customerName: 'Viettel Global',
+        shortName: 'VTG',
+        amName: 'TrangNTT55',
+        promotionUnit: 'Nhóm A _ P.CLKD',
+        projectType: 'Mới_xúc tiến',
+        serviceType: 'Thiết bị',
+        classification: 'Ngoài',
+        contractStatus: 'Đang hiệu lực',
+        implementationStatus: 'Chưa triển khai',
+        revenueStatus: 'Chưa lên doanh thu',
+        revenueMonth: 'Tháng 05/2026',
+        contractValue: '400,000,000',
+        unitPrice: '',
+        totalContracts: '1',
+        effectiveDate: '2026-05-01',
+        expiryDate: '2027-05-01',
+        signedDate: '2026-05-07',
+        serviceContent: 'Cung cấp thiết bị mạng',
+        notes: '',
+        approvalStatus: 'Hiệu lực'
+    }
   },
-  contractIds: ['CTR-2026-001', 'CTR-2026-002', 'CTR-2026-003', 'CTR-2026-004', 'CTR-2026-005', 'CTR-2026-006', 'CTR-2026-007', 'CTR-2026-008', 'CTR-2026-009', 'CTR-2026-010', 'CTR-2026-011', 'CTR-2026-012', 'CTR-2026-013', 'CTR-2026-014', 'CTR-2026-015', 'CTR-2026-016'],
+  contractIds: ['CTR-2026-001', 'CTR-2026-002', 'CTR-2026-003', 'CTR-2026-004', 'CTR-2026-005', 'CTR-2026-006', 'CTR-2026-007', 'CTR-2026-008', 'CTR-2026-009', 'CTR-2026-010', 'CTR-2026-011', 'CTR-2026-012', 'CTR-2026-013', 'CTR-2026-014', 'CTR-2026-015', 'CTR-2026-016', 'CTR-2026-017'],
   tasks: {
     'VCB-1': {
       id: 'VCB-1', content: 'Hợp đồng dịch vụ Cloud', company: 'Vietcombank', mst: '0100112437', contactName: 'Nguyễn Văn Định', email: 'dinh.nv@vcb.com.vn',
