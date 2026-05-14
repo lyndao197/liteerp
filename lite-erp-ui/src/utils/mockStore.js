@@ -129,9 +129,43 @@ const INITIAL_DATA = {
         signedDate: '2026-01-10',
         serviceContent: 'Cung cấp nhân sự vận hành tổng đài CSKH',
         notes: 'Khách hàng VIP',
-        approvalStatus: 'Hiệu lực'
+        approvalStatus: 'Hiệu lực',
+        products: [
+            { productId: 'PRD-004', qty: 50 },
+            { productId: 'PRD-005', qty: 20 }
+        ]
     },
-    'CTR-2026-002': { id: 'CTR-2026-002', contractNo: 'HD/2026/002', name: 'Dự án OmniX', customerId: 'CUS-2', customerName: 'Viettel Solution', shortName: 'VTS', amName: 'Vũ Thanh Hằng', promotionUnit: 'Phòng Dự án', projectType: 'Mới_xúc tiến', serviceType: 'Giải pháp, platform', classification: 'Ngoài', contractStatus: 'Đang hiệu lực', implementationStatus: 'Đang triển khai', revenueStatus: 'Chưa lên doanh thu', revenueMonth: 'Tháng 02/2026', contractValue: '2,500,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-02-01', expiryDate: '2027-02-01', signedDate: '2026-01-20', serviceContent: 'Triển khai OmniX CRM', notes: '', approvalStatus: 'Hiệu lực' },
+    'CTR-2026-002': { 
+        id: 'CTR-2026-002', 
+        contractNo: 'HD/2026/002', 
+        name: 'Dự án OmniX', 
+        customerId: 'CUS-2', 
+        customerName: 'Viettel Solution', 
+        shortName: 'VTS', 
+        amName: 'Vũ Thanh Hằng', 
+        promotionUnit: 'Phòng Dự án', 
+        projectType: 'Mới_xúc tiến', 
+        serviceType: 'Giải pháp, platform', 
+        classification: 'Ngoài', 
+        contractStatus: 'Đang hiệu lực', 
+        implementationStatus: 'Đang triển khai', 
+        revenueStatus: 'Chưa lên doanh thu', 
+        revenueMonth: 'Tháng 02/2026', 
+        contractValue: '2,500,000,000', 
+        unitPrice: '', 
+        totalContracts: '1', 
+        effectiveDate: '2026-02-01', 
+        expiryDate: '2027-02-01', 
+        signedDate: '2026-01-20', 
+        serviceContent: 'Triển khai OmniX CRM', 
+        notes: '', 
+        approvalStatus: 'Hiệu lực',
+        products: [
+            { productId: 'PRD-001', qty: 100 },
+            { productId: 'PRD-002', qty: 1 },
+            { productId: 'PRD-003', qty: 10 }
+        ]
+    },
     'CTR-2026-003': { id: 'CTR-2026-003', contractNo: 'HD/2026/003', name: 'Hợp đồng dự án KnowxHub', customerId: 'CUS-1', customerName: 'Viettel Post', shortName: 'VTP', amName: 'Nguyễn Văn A', promotionUnit: 'Phòng Dự án', projectType: 'Duy trì', serviceType: 'Giải pháp, platform', classification: 'Nội bộ', contractStatus: 'Đang hiệu lực', implementationStatus: 'Đã triển khai', revenueStatus: 'Đã lên doanh thu', revenueMonth: 'Tháng 01/2026', contractValue: '850,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-01-15', expiryDate: '2027-01-15', signedDate: '2026-01-05', serviceContent: 'Bảo trì KnowxHUB', notes: '', approvalStatus: 'Hiệu lực' },
     'CTR-2026-004': { id: 'CTR-2026-004', contractNo: 'HD/2026/004', name: 'Dịch vụ chăm sóc khách hàng', customerId: 'CUS-2', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Vũ Thanh Hằng', promotionUnit: 'Phòng Bán hàng', projectType: 'Mới_xúc tiến', serviceType: 'Dịch vụ CC outsourcing', classification: 'Ngoài', contractStatus: 'Đang hiệu lực', implementationStatus: 'Chưa triển khai', revenueStatus: 'Chưa lên doanh thu', revenueMonth: 'Tháng 03/2026', contractValue: '3,200,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-03-01', expiryDate: '2028-03-01', signedDate: '2026-02-15', serviceContent: 'Tổng đài 100 seats', notes: '', approvalStatus: 'Hiệu lực' },
     'CTR-2026-005': { id: 'CTR-2026-005', contractNo: 'HD/2026/005', name: 'Dịch vụ gia tăng doanh số', customerName: 'Viettel Digital', shortName: 'VTT', amName: 'Trần B', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-01', contractValue: '1,000,000,000', signedDate: '2025-12-20' },
