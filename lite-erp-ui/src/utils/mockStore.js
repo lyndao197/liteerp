@@ -131,6 +131,9 @@ const INITIAL_DATA = {
         notes: 'Khách hàng VIP',
         approvalStatus: 'Hiệu lực',
         products: [
+            { productId: 'PRD-001', qty: 10 },
+            { productId: 'PRD-002', qty: 1 },
+            { productId: 'PRD-003', qty: 5 },
             { productId: 'PRD-004', qty: 50 },
             { productId: 'PRD-005', qty: 20 }
         ]
@@ -163,17 +166,83 @@ const INITIAL_DATA = {
         products: [
             { productId: 'PRD-001', qty: 100 },
             { productId: 'PRD-002', qty: 1 },
-            { productId: 'PRD-003', qty: 10 }
+            { productId: 'PRD-003', qty: 10 },
+            { productId: 'PRD-004', qty: 5 },
+            { productId: 'PRD-005', qty: 20 }
         ]
     },
-    'CTR-2026-003': { id: 'CTR-2026-003', contractNo: 'HD/2026/003', name: 'Hợp đồng dự án KnowxHub', customerId: 'CUS-1', customerName: 'Viettel Post', shortName: 'VTP', amName: 'Nguyễn Văn A', promotionUnit: 'Phòng Dự án', projectType: 'Duy trì', serviceType: 'Giải pháp, platform', classification: 'Nội bộ', contractStatus: 'Đang hiệu lực', implementationStatus: 'Đã triển khai', revenueStatus: 'Đã lên doanh thu', revenueMonth: 'Tháng 01/2026', contractValue: '850,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-01-15', expiryDate: '2027-01-15', signedDate: '2026-01-05', serviceContent: 'Bảo trì KnowxHUB', notes: '', approvalStatus: 'Hiệu lực' },
-    'CTR-2026-004': { id: 'CTR-2026-004', contractNo: 'HD/2026/004', name: 'Dịch vụ chăm sóc khách hàng', customerId: 'CUS-2', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Vũ Thanh Hằng', promotionUnit: 'Phòng Bán hàng', projectType: 'Mới_xúc tiến', serviceType: 'Dịch vụ CC outsourcing', classification: 'Ngoài', contractStatus: 'Đang hiệu lực', implementationStatus: 'Chưa triển khai', revenueStatus: 'Chưa lên doanh thu', revenueMonth: 'Tháng 03/2026', contractValue: '3,200,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-03-01', expiryDate: '2028-03-01', signedDate: '2026-02-15', serviceContent: 'Tổng đài 100 seats', notes: '', approvalStatus: 'Hiệu lực' },
-    'CTR-2026-005': { id: 'CTR-2026-005', contractNo: 'HD/2026/005', name: 'Dịch vụ gia tăng doanh số', customerName: 'Viettel Digital', shortName: 'VTT', amName: 'Trần B', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-01', contractValue: '1,000,000,000', signedDate: '2025-12-20' },
-    'CTR-2026-006': { id: 'CTR-2026-006', contractNo: 'HD/2026/006', name: 'Dự án WorkForceX', customerName: 'Viettel Solution', shortName: 'VTS', amName: 'Lê C', approvalStatus: 'Hiệu lực', effectiveDate: '2026-02-10', contractValue: '5,000,000,000', signedDate: '2026-01-25' },
-    'CTR-2026-007': { id: 'CTR-2026-007', contractNo: 'HD/2026/007', name: 'Hợp đồng dự án KnowxHub', customerName: 'Viettel Post', shortName: 'VTP', amName: 'Phạm Q', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-15', contractValue: '750,000,000', signedDate: '2026-01-10' },
-    'CTR-2026-008': { id: 'CTR-2026-008', contractNo: 'HD/2026/008', name: 'Dịch vụ cho thuê nhân sự', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Nguyễn Văn A', approvalStatus: 'Hiệu lực', effectiveDate: '2026-03-01', contractValue: '800,000,000', signedDate: '2026-02-15' },
-    'CTR-2026-009': { id: 'CTR-2026-009', contractNo: 'HD/2026/009', name: 'Dự án OmniX', customerName: 'Viettel HighTech', shortName: 'VHT', amName: 'Trần B', approvalStatus: 'Hiệu lực', effectiveDate: '2026-04-01', contractValue: '400,000,000', signedDate: '2026-03-10' },
-    'CTR-2026-010': { id: 'CTR-2026-010', contractNo: 'HD/2026/010', name: 'Dịch vụ chăm sóc khách hàng', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Lê C', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-01', contractValue: '2,000,000,000', signedDate: '2025-12-25' },
+    'CTR-2026-003': { id: 'CTR-2026-003', contractNo: 'HD/2026/003', name: 'Hợp đồng dự án KnowxHub', customerId: 'CUS-1', customerName: 'Viettel Post', shortName: 'VTP', amName: 'Nguyễn Văn A', promotionUnit: 'Phòng Dự án', projectType: 'Duy trì', serviceType: 'Giải pháp, platform', classification: 'Nội bộ', contractStatus: 'Đang hiệu lực', implementationStatus: 'Đã triển khai', revenueStatus: 'Đã lên doanh thu', revenueMonth: 'Tháng 01/2026', contractValue: '850,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-01-15', expiryDate: '2027-01-15', signedDate: '2026-01-05', serviceContent: 'Bảo trì KnowxHUB', notes: '', approvalStatus: 'Hiệu lực',
+        products: [
+            { productId: 'PRD-001', qty: 15 },
+            { productId: 'PRD-002', qty: 1 },
+            { productId: 'PRD-003', qty: 5 },
+            { productId: 'PRD-004', qty: 2 },
+            { productId: 'PRD-005', qty: 5 }
+        ]
+    },
+    'CTR-2026-004': { id: 'CTR-2026-004', contractNo: 'HD/2026/004', name: 'Dịch vụ chăm sóc khách hàng', customerId: 'CUS-2', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Vũ Thanh Hằng', promotionUnit: 'Phòng Bán hàng', projectType: 'Mới_xúc tiến', serviceType: 'Dịch vụ CC outsourcing', classification: 'Ngoài', contractStatus: 'Đang hiệu lực', implementationStatus: 'Chưa triển khai', revenueStatus: 'Chưa lên doanh thu', revenueMonth: 'Tháng 03/2026', contractValue: '3,200,000,000', unitPrice: '', totalContracts: '1', effectiveDate: '2026-03-01', expiryDate: '2028-03-01', signedDate: '2026-02-15', serviceContent: 'Tổng đài 100 seats', notes: '', approvalStatus: 'Hiệu lực',
+        products: [
+            { productId: 'PRD-001', qty: 25 },
+            { productId: 'PRD-002', qty: 2 },
+            { productId: 'PRD-003', qty: 8 },
+            { productId: 'PRD-004', qty: 15 },
+            { productId: 'PRD-005', qty: 10 }
+        ]
+    },
+    'CTR-2026-005': { id: 'CTR-2026-005', contractNo: 'HD/2026/005', name: 'Dịch vụ gia tăng doanh số', customerName: 'Viettel Digital', shortName: 'VTT', amName: 'Trần B', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-01', contractValue: '1,000,000,000', signedDate: '2025-12-20',
+        products: [
+            { productId: 'PRD-001', qty: 20 },
+            { productId: 'PRD-002', qty: 2 },
+            { productId: 'PRD-003', qty: 10 },
+            { productId: 'PRD-004', qty: 5 },
+            { productId: 'PRD-005', qty: 10 }
+        ]
+    },
+    'CTR-2026-006': { id: 'CTR-2026-006', contractNo: 'HD/2026/006', name: 'Dự án WorkForceX', customerName: 'Viettel Solution', shortName: 'VTS', amName: 'Lê C', approvalStatus: 'Hiệu lực', effectiveDate: '2026-02-10', contractValue: '5,000,000,000', signedDate: '2026-01-25',
+        products: [
+            { productId: 'PRD-001', qty: 50 },
+            { productId: 'PRD-002', qty: 5 },
+            { productId: 'PRD-003', qty: 15 },
+            { productId: 'PRD-004', qty: 10 },
+            { productId: 'PRD-005', qty: 25 }
+        ]
+    },
+    'CTR-2026-007': { id: 'CTR-2026-007', contractNo: 'HD/2026/007', name: 'Hợp đồng dự án KnowxHub', customerName: 'Viettel Post', shortName: 'VTP', amName: 'Phạm Q', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-15', contractValue: '750,000,000', signedDate: '2026-01-10',
+        products: [
+            { productId: 'PRD-001', qty: 30 },
+            { productId: 'PRD-002', qty: 3 },
+            { productId: 'PRD-003', qty: 5 },
+            { productId: 'PRD-004', qty: 8 },
+            { productId: 'PRD-005', qty: 15 }
+        ]
+    },
+    'CTR-2026-008': { id: 'CTR-2026-008', contractNo: 'HD/2026/008', name: 'Dịch vụ cho thuê nhân sự', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Nguyễn Văn A', approvalStatus: 'Hiệu lực', effectiveDate: '2026-03-01', contractValue: '800,000,000', signedDate: '2026-02-15',
+        products: [
+            { productId: 'PRD-001', qty: 10 },
+            { productId: 'PRD-002', qty: 1 },
+            { productId: 'PRD-003', qty: 2 },
+            { productId: 'PRD-004', qty: 5 },
+            { productId: 'PRD-005', qty: 20 }
+        ]
+    },
+    'CTR-2026-009': { id: 'CTR-2026-009', contractNo: 'HD/2026/009', name: 'Dự án OmniX', customerName: 'Viettel HighTech', shortName: 'VHT', amName: 'Trần B', approvalStatus: 'Hiệu lực', effectiveDate: '2026-04-01', contractValue: '400,000,000', signedDate: '2026-03-10',
+        products: [
+            { productId: 'PRD-001', qty: 12 },
+            { productId: 'PRD-002', qty: 2 },
+            { productId: 'PRD-003', qty: 4 },
+            { productId: 'PRD-004', qty: 6 },
+            { productId: 'PRD-005', qty: 8 }
+        ]
+    },
+    'CTR-2026-010': { id: 'CTR-2026-010', contractNo: 'HD/2026/010', name: 'Dịch vụ chăm sóc khách hàng', customerName: 'Viettel Telecom', shortName: 'VTT', amName: 'Lê C', approvalStatus: 'Hiệu lực', effectiveDate: '2026-01-01', contractValue: '2,000,000,000', signedDate: '2025-12-25',
+        products: [
+            { productId: 'PRD-001', qty: 40 },
+            { productId: 'PRD-002', qty: 4 },
+            { productId: 'PRD-003', qty: 10 },
+            { productId: 'PRD-004', qty: 20 },
+            { productId: 'PRD-005', qty: 15 }
+        ]
+    },
     'CTR-2026-011': { id: 'CTR-2026-011', contractNo: 'HD/2026/011', name: 'Dịch vụ gia tăng doanh số', customerName: 'Viettel Solution', shortName: 'VTS', amName: 'Phạm Q', approvalStatus: 'Nháp', effectiveDate: '2026-05-01', contractValue: '600,000,000', signedDate: '2026-04-20' },
     
     // 5 records pending
@@ -456,21 +525,21 @@ const INITIAL_DATA = {
   orders: {
     'ORD-2026-001': {
         id: 'ORD-2026-001', orderNo: 'DH-2026-001', contractId: 'CTR-2026-001', customerId: 'CUS-1',
-        orderStatus: 'Hoàn thành', orderDate: '2026-01-12', totalAmount: 1500000000, discountAmount: 0, notes: 'Khách hàng VIP, triển khai sớm',
+        orderStatus: 'Đã xuất hóa đơn', orderDate: '2026-01-12', totalAmount: 1500000000, discountAmount: 0, notes: 'Khách hàng VIP, triển khai sớm',
         lines: [
             { id: 1, productId: 'PRD-002', productName: 'Phí Setup hệ thống', quantity: 1, unitPrice: 10000000, discount: 0, total: 10000000 }
         ]
     },
     'ORD-2026-002': {
         id: 'ORD-2026-002', orderNo: 'DH-2026-002', contractId: 'CTR-2026-002', customerId: 'CUS-2',
-        orderStatus: 'Đang triển khai', orderDate: '2026-02-15', totalAmount: 2500000000, discountAmount: 0, notes: 'Đang setup server',
+        orderStatus: 'Chờ duyệt công nợ', orderDate: '2026-02-15', totalAmount: 2500000000, discountAmount: 0, notes: 'Đang setup server',
         lines: [
             { id: 2, productId: 'PRD-001', productName: 'License OmniX User/Tháng', quantity: 10, unitPrice: 500000, discount: 0, total: 5000000 }
         ]
     },
     'ORD-2026-003': {
         id: 'ORD-2026-003', orderNo: 'DH-2026-003', contractId: 'CTR-2026-003', customerId: 'CUS-1',
-        orderStatus: 'Mới', orderDate: '2026-03-01', totalAmount: 850000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Dự thảo', orderDate: '2026-03-01', totalAmount: 850000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-017-001': {
         id: 'ORD-2026-017-001', orderNo: 'DH-VTG-001', contractId: 'CTR-2026-017', customerId: 'CUS-9',
@@ -481,18 +550,18 @@ const INITIAL_DATA = {
     },
     'ORD-2026-017-002': {
         id: 'ORD-2026-017-002', orderNo: 'DH-VTG-002', contractId: 'CTR-2026-017', customerId: 'CUS-9',
-        orderStatus: 'Bị từ chối', orderDate: '2026-05-12', totalAmount: 1000000, 
+        orderStatus: 'Đã hủy', orderDate: '2026-05-12', totalAmount: 1000000, 
         lines: [
             { productId: 'PRD-001', qty: 2 } // Đã bị từ chối -> Phải được hoàn lại hạn mức
         ]
     },
     'ORD-2026-004': {
         id: 'ORD-2026-004', orderNo: 'DH-2026-004', contractId: 'CTR-2026-004', customerId: 'CUS-2',
-        orderStatus: 'Mới', orderDate: '2026-03-05', totalAmount: 3200000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Dự thảo', orderDate: '2026-03-05', totalAmount: 3200000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-005': {
         id: 'ORD-2026-005', orderNo: 'DH-2026-005', contractId: 'CTR-2026-005', customerId: 'CUS-2',
-        orderStatus: 'Hoàn thành', orderDate: '2026-01-20', totalAmount: 1000000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Đã xuất hóa đơn', orderDate: '2026-01-20', totalAmount: 1000000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-006': {
         id: 'ORD-2026-006', orderNo: 'DH-2026-006', contractId: 'CTR-2026-006', customerId: 'CUS-2',
@@ -500,19 +569,19 @@ const INITIAL_DATA = {
     },
     'ORD-2026-007': {
         id: 'ORD-2026-007', orderNo: 'DH-2026-007', contractId: 'CTR-2026-007', customerId: 'CUS-2',
-        orderStatus: 'Đang triển khai', orderDate: '2026-02-10', totalAmount: 750000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Chờ duyệt công nợ', orderDate: '2026-02-10', totalAmount: 750000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-008': {
         id: 'ORD-2026-008', orderNo: 'DH-2026-008', contractId: 'CTR-2026-008', customerId: 'CUS-2',
-        orderStatus: 'Hoàn thành', orderDate: '2026-03-15', totalAmount: 800000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Đã xuất hóa đơn', orderDate: '2026-03-15', totalAmount: 800000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-009': {
         id: 'ORD-2026-009', orderNo: 'DH-2026-009', contractId: 'CTR-2026-009', customerId: 'CUS-2',
-        orderStatus: 'Mới', orderDate: '2026-04-10', totalAmount: 400000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Dự thảo', orderDate: '2026-04-10', totalAmount: 400000000, discountAmount: 0, notes: '', lines: []
     },
     'ORD-2026-010': {
         id: 'ORD-2026-010', orderNo: 'DH-2026-010', contractId: 'CTR-2026-010', customerId: 'CUS-2',
-        orderStatus: 'Đang triển khai', orderDate: '2026-01-05', totalAmount: 2000000000, discountAmount: 0, notes: '', lines: []
+        orderStatus: 'Chờ duyệt công nợ', orderDate: '2026-01-05', totalAmount: 2000000000, discountAmount: 0, notes: '', lines: []
     }
   },
   orderIds: ['ORD-2026-001', 'ORD-2026-002', 'ORD-2026-003', 'ORD-2026-004', 'ORD-2026-005', 'ORD-2026-006', 'ORD-2026-007', 'ORD-2026-008', 'ORD-2026-009', 'ORD-2026-010'],
@@ -822,7 +891,7 @@ const INITIAL_DATA = {
   customerSurveyIds: ['SRV-001', 'SRV-002']
 };
 
-const STORE_KEY = 'liteErpDataStore_v5';
+const STORE_KEY = 'liteErpDataStore_v7';
 
 export const mockStore = {
   getStore: () => {
@@ -1968,7 +2037,7 @@ export const mockStore = {
     }
     return null;
   },
-  getRemainingQty: (contractId, productId) => {
+  getRemainingQty: (contractId, productId, excludeOrderId = null) => {
     const store = mockStore.getStore();
     const contract = store.contracts[contractId];
     if (!contract || !contract.products) return 0;
@@ -1978,19 +2047,60 @@ export const mockStore = {
 
     const totalContractQty = contractProduct.qty;
     
-    // Tính tổng đã đặt từ các đơn hàng "Hiệu lực" (không phải Từ chối/Hủy/Draft)
+    // Tính tổng đã đặt từ các đơn hàng (không phải Từ chối/Hủy). Dự thảo cũng giữ chỗ!
     const validOrders = Object.values(store.orders || {}).filter(o => 
       o.contractId === contractId && 
-      !['Bị từ chối', 'Đã hủy', 'Dự thảo'].includes(o.orderStatus)
+      !['Bị từ chối', 'Đã hủy'].includes(o.orderStatus) &&
+      o.id !== excludeOrderId
     );
 
     let orderedQty = 0;
     validOrders.forEach(order => {
       const line = (order.lines || []).find(l => l.productId === productId);
-      if (line) orderedQty += line.qty || 0;
+      if (line) orderedQty += (line.qty || line.quantity || 0);
     });
 
     return Math.max(0, totalContractQty - orderedQty);
+  },
+  saveOrder: (orderData) => {
+    const store = mockStore.getStore();
+    if (!store.orders) store.orders = {};
+    if (!store.orderIds) store.orderIds = [];
+
+    const isNew = !orderData.id;
+    let orderId = orderData.id;
+    let orderNo = orderData.orderNo;
+
+    if (isNew) {
+      // Find max order number
+      let max = 0;
+      store.orderIds.forEach(id => {
+        const parts = id.split('-');
+        if (parts.length >= 3) {
+          const num = parseInt(parts[2], 10);
+          if (!isNaN(num) && num > max) max = num;
+        }
+      });
+      orderId = `ORD-2026-${String(max + 1).padStart(3, '0')}`;
+      orderNo = `DH-2026-${String(max + 1).padStart(3, '0')}`;
+    }
+
+    const existingOrder = store.orders[orderId] || {};
+    const savedOrder = {
+      ...existingOrder,
+      ...orderData,
+      id: orderId,
+      orderNo: orderNo || existingOrder.orderNo || `DH-2026-${orderId.slice(-3)}`,
+      orderDate: orderData.orderDate || existingOrder.orderDate || new Date().toISOString().slice(0, 10),
+      orderStatus: orderData.orderStatus || existingOrder.orderStatus || 'Dự thảo'
+    };
+
+    if (isNew) {
+      store.orderIds.unshift(orderId);
+    }
+    store.orders[orderId] = savedOrder;
+    mockStore.saveStore(store);
+    return savedOrder;
   }
 };
 

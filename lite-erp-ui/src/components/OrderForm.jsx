@@ -17,6 +17,10 @@ const StatusPipeline = ({ orderStatus }) => {
         { id: 'Đã xuất hóa đơn', label: 'Đã xuất hóa đơn' }
     ];
 
+    if (orderStatus === 'Đã hủy') {
+        statuses.push({ id: 'Đã hủy', label: 'Đã hủy' });
+    }
+
     return (
         <div style={{ display: 'flex', alignItems: 'center', background: '#f8fafc', padding: '12px 24px', borderBottom: '1px solid #e2e8f0', gap: '16px', fontSize: '13px' }}>
             {statuses.map((s, idx) => {
@@ -25,7 +29,7 @@ const StatusPipeline = ({ orderStatus }) => {
                 return (
                     <React.Fragment key={s.id}>
                         <div style={{ 
-                            color: isOrange ? '#f97316' : (isActive ? '#0f172a' : '#94a3b8'),
+                            color: orderStatus === 'Đã hủy' && isActive ? '#e32b4c' : (isOrange ? '#f97316' : (isActive ? '#0f172a' : '#94a3b8')),
                             fontWeight: isActive ? 600 : 400,
                             display: 'flex',
                             alignItems: 'center',
@@ -53,7 +57,7 @@ const OrderForm = () => {
     const isEdit = !!id;
 
     // Header info
-    const [contractId, setContractId] = useState('CTR-2026-017'); // Default to our mock contract
+    const [contractId, setContractId] = useState(''); // Default empty, not CTR-2026-017
     const [salesTeam, setSalesTeam] = useState('Nhóm A _ P.CLKD');
     const [orderStatus, setOrderStatus] = useState('Dự thảo'); // Trạng thái mặc định khi tạo mới
     
@@ -95,6 +99,7 @@ const OrderForm = () => {
     const [commentInput, setCommentInput] = useState('');
     const [showPreview, setShowPreview] = useState(false);
     const [showEmail, setShowEmail] = useState(false);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, message: '', onConfirm: null, isAlert: false });
     
     const comments = [
         { id: 1, user: 'Nguyễn Văn A', avatar: 'https://i.pravatar.cc/150?u=1', time: '2h trước', content: 'Đã liên hệ với khách hàng, họ đang xem xét đề xuất.', likes: 45, hearts: 25 },
@@ -123,8 +128,8 @@ const OrderForm = () => {
                 const category = categories.find(c => c.id === prd?.categoryId);
                 const group = groups.find(g => g.id === category?.groupId);
 
-                // Lấy hạn mức còn lại từ mockStore
-                const remaining = mockStore.getRemainingQty(ctr.id, p.productId);
+                // Lấy hạn mức còn lại từ mockStore (Bỏ qua order hiện tại để tính đúng quota)
+                const remaining = mockStore.getRemainingQty(ctr.id, p.productId, id);
                 const totalContractQty = p.qty || 0;
 
                 return {
@@ -150,15 +155,56 @@ const OrderForm = () => {
         const allContracts = mockStore.getAllContracts().filter(c => c.approvalStatus === 'Hiệu lực');
         setActiveContracts(allContracts);
 
-        // Pre-fill if default contract selected
-        if (contractId) {
-            const ctr = allContracts.find(c => c.id === contractId);
-            if (ctr) {
-                fillFormFromContract(ctr);
+        if (isEdit) {
+            const order = storeData.orders[id];
+            if (order) {
+                setContractId(order.contractId);
+                setOrderStatus(order.orderStatus);
+                
+                const ctr = allContracts.find(c => c.id === order.contractId);
+                if (ctr) {
+                    const cus = mockStore.getCustomer(ctr.customerId);
+                    if (cus) {
+                        setCustomerName(cus.name);
+                        setEmail(cus.email);
+                        setPhone(cus.phone);
+                        setBillingAddress(cus.address);
+                        setShippingAddress(cus.address);
+                        setContactPerson(cus.contactName);
+                    }
+
+                    if (order.lines && order.lines.length > 0) {
+                        const newLines = order.lines.map((p, index) => {
+                            const prd = allProducts.find(product => product.id === p.productId);
+                            const category = categories.find(c => c.id === prd?.categoryId);
+                            const group = groups.find(g => g.id === category?.groupId);
+
+                            const remaining = mockStore.getRemainingQty(ctr.id, p.productId, id);
+                            const ctrPrd = ctr.products?.find(cp => cp.productId === p.productId);
+                            const totalContractQty = ctrPrd ? ctrPrd.qty : 0;
+
+                            return {
+                                id: Date.now() + index,
+                                type: group ? group.id : '',
+                                group: category ? category.id : '',
+                                service: p.productId,
+                                qty: p.qty || p.quantity || 1,
+                                unit: prd ? prd.unit : '--chọn--',
+                                price: p.unitPrice || (prd ? prd.price : ''),
+                                tax: prd ? prd.tax : 10,
+                                total: p.total || 0,
+                                desc: `Hạn mức: ${remaining}/${totalContractQty}`
+                            };
+                        });
+                        setLines(newLines);
+                    } else {
+                        setLines([{ id: Date.now(), type: '', group: '', service: '', qty: 1, unit: '--chọn--', price: '', desc: '', tax: '' }]);
+                    }
+                }
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contractId]);
+    }, []);
 
     const handleContractChange = (e) => {
         const selectedId = e.target.value;
@@ -210,16 +256,21 @@ const OrderForm = () => {
                         updatedLine.tax = prd.tax;
                         
                         // Cập nhật hạn mức trong desc
-                        const remaining = mockStore.getRemainingQty(contractId, value);
+                        const remaining = mockStore.getRemainingQty(contractId, value, isEdit ? id : null);
                         const ctr = activeContracts.find(c => c.id === contractId);
                         const cPrd = ctr?.products?.find(p => p.productId === value);
-                        updatedLine.desc = `Hạn mức: ${remaining}/${cPrd?.qty || 0}`;
+                        updatedLine.desc = `Còn lại: ${remaining} / ${cPrd?.qty || 0}`;
                     }
                 } else if (field === 'qty') {
                     if (contractId) {
-                        const remaining = mockStore.getRemainingQty(contractId, updatedLine.service);
+                        const remaining = mockStore.getRemainingQty(contractId, updatedLine.service, id);
                         if (parseInt(value) > remaining) {
-                            alert(`Số lượng không được vượt quá hạn mức còn lại (${remaining})`);
+                            setConfirmModal({
+                                isOpen: true,
+                                message: `Số lượng không được vượt quá hạn mức còn lại (${remaining})`,
+                                isAlert: true,
+                                onConfirm: null
+                            });
                             updatedLine.qty = remaining;
                         }
                     }
@@ -268,20 +319,56 @@ const OrderForm = () => {
             type: 'pdf'
         };
         setDocuments([newDoc, ...documents]);
-        alert('Đã sinh file PDF thành công và đính kèm vào hồ sơ!');
+        setConfirmModal({
+            isOpen: true,
+            message: 'Đã sinh file PDF thành công và đính kèm vào hồ sơ!',
+            isAlert: true,
+            onConfirm: null
+        });
     };
 
     const totals = calculateTotals();
 
     const isReadOnly = !['Dự thảo', 'Bị từ chối', 'Đã hủy'].includes(orderStatus);
 
-    const handleCancel = () => {
-        if (window.confirm('Bạn có chắc chắn muốn hủy yêu cầu bán hàng này không?')) {
-            setOrderStatus('Đã hủy');
+    const saveCurrentOrder = (newStatus, showPopup = true, customMessage = null) => {
+        const orderData = {
+            id: isEdit ? id : null,
+            contractId,
+            orderStatus: newStatus || orderStatus,
+            totalAmount: totals.total,
+            lines: lines.map(l => ({
+                productId: l.service,
+                qty: parseInt(l.qty) || 0,
+                unitPrice: parseFloat(String(l.price).replace(/,/g, '')) || 0,
+                total: (parseFloat(String(l.price).replace(/,/g, '')) || 0) * (parseInt(l.qty) || 0)
+            })).filter(l => l.productId && l.qty > 0)
+        };
+        mockStore.saveOrder(orderData);
+        setOrderStatus(newStatus || orderStatus);
+        
+        if (showPopup) {
+            setConfirmModal({
+                isOpen: true,
+                message: customMessage || 'Đã lưu thông tin đơn hàng thành công!',
+                isAlert: true,
+                onConfirm: null
+            });
         }
     };
 
+    const handleSaveDraft = () => {
+        saveCurrentOrder('Dự thảo', true, 'Đã lưu bản nháp đơn hàng thành công!');
+    };
 
+    const handleCancel = () => {
+        setConfirmModal({
+            isOpen: true,
+            message: 'Bạn có chắc chắn muốn hủy yêu cầu bán hàng này không?',
+            isAlert: false,
+            onConfirm: () => saveCurrentOrder('Đã hủy', true, 'Đơn hàng đã được chuyển sang trạng thái Đã hủy')
+        });
+    };
 
     const renderHeaderButtons = () => {
         switch (orderStatus) {
@@ -289,8 +376,8 @@ const OrderForm = () => {
                 return (
                     <>
                         <button className="btn btn-secondary" onClick={handleCancel}><XSquare size={16} /> Hủy</button>
-                        <button className="btn btn-secondary"><Save size={16} /> Lưu nháp</button>
-                        <button className="btn btn-primary" onClick={() => setOrderStatus('Chờ duyệt công nợ')}>
+                        <button className="btn btn-secondary" onClick={handleSaveDraft}><Save size={16} /> Lưu nháp</button>
+                        <button className="btn btn-primary" onClick={() => saveCurrentOrder('Chờ duyệt công nợ', true, 'Yêu cầu bán hàng đã được gửi đi!')}>
                             Gửi yêu cầu bán hàng <ArrowRightCircle size={16} style={{ marginLeft: '8px' }} />
                         </button>
                     </>
@@ -299,8 +386,8 @@ const OrderForm = () => {
                 return (
                     <>
                         <button className="btn btn-secondary" onClick={handleCancel}><XSquare size={16} /> Hủy</button>
-                        <button className="btn btn-secondary" onClick={() => setOrderStatus('Đã hủy')}><Hand size={16} /> Từ chối</button>
-                        <button className="btn btn-primary" onClick={() => setOrderStatus('Xuất hóa đơn')}>
+                        <button className="btn btn-secondary" onClick={() => saveCurrentOrder('Đã hủy', true, 'Đơn hàng đã bị từ chối!')}><Hand size={16} /> Từ chối</button>
+                        <button className="btn btn-primary" onClick={() => saveCurrentOrder('Xuất hóa đơn', true, 'Phê duyệt đơn hàng thành công!')}>
                             <CheckCircle size={16} /> Phê duyệt
                         </button>
                     </>
@@ -309,18 +396,18 @@ const OrderForm = () => {
                 return (
                     <>
                         <button className="btn btn-secondary" onClick={handleCancel}><XSquare size={16} /> Hủy</button>
-                        <button className="btn btn-primary" onClick={() => setOrderStatus('Đã xuất hóa đơn')}>
+                        <button className="btn btn-primary" onClick={() => saveCurrentOrder('Đã xuất hóa đơn', true, 'Xác nhận xuất hóa đơn thành công!')}>
                             Xác nhận xuất hóa đơn
                         </button>
                     </>
                 );
             case 'Đã xuất hóa đơn':
                 return (
-                    <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}>Về dự thảo (Sửa lại)</button>
+                    <button className="btn btn-secondary" onClick={() => saveCurrentOrder('Dự thảo', true, 'Đơn hàng đã được đưa về trạng thái Dự thảo để chỉnh sửa.')}>Về dự thảo (Sửa lại)</button>
                 );
             case 'Đã hủy':
                 return (
-                    <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}>Chuyển về Dự thảo</button>
+                    <button className="btn btn-secondary" onClick={() => saveCurrentOrder('Dự thảo', true, 'Đã chuyển đơn hàng về trạng thái Dự thảo.')}>Chuyển về Dự thảo</button>
                 );
             default:
                 return null;
@@ -519,7 +606,7 @@ const OrderForm = () => {
                                                 <input type="text" className="input-modern" value={line.price} onChange={e => handleLineChange(line.id, 'price', e.target.value)} placeholder="đ" style={{ padding: '6px 8px', fontSize: '13px', background: isReadOnly ? '#f1f5f9' : '#fff' }} readOnly={isReadOnly} />
                                             </td>
                                             <td style={{ padding: '12px 8px' }}>
-                                                <input type="text" className="input-modern" value={line.desc} readOnly style={{ padding: '6px 8px', fontSize: '13px', background: '#f8fafc', color: '#0ea5e9', fontWeight: 500 }} />
+                                                <div style={{ padding: '6px 12px', fontSize: '12px', background: '#f0f9ff', color: '#0369a1', fontWeight: 600, borderRadius: '6px', border: '1px solid #bae6fd', whiteSpace: 'nowrap', display: 'inline-block' }}>{line.desc || '--'}</div>
                                             </td>
                                             <td style={{ padding: '12px 8px' }}>
                                                 <span style={{ fontSize: '13px', color: '#475569' }}>{line.tax ? `${line.tax}%` : '10%'}</span>
@@ -812,7 +899,41 @@ const OrderForm = () => {
                         </div>
                         <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                             <button className="btn btn-secondary" onClick={() => setShowEmail(false)}>Hủy</button>
-                            <button className="btn btn-primary" onClick={() => { alert('Đã gửi email thành công!'); setShowEmail(false); }}><Send size={16} /> Gửi Email</button>
+                            <button className="btn btn-primary" onClick={() => { 
+                                setConfirmModal({
+                                    isOpen: true,
+                                    message: 'Đã gửi email thành công!',
+                                    isAlert: true,
+                                    onConfirm: null
+                                });
+                                setShowEmail(false); 
+                            }}><Send size={16} /> Gửi Email</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* CUSTOM CONFIRM/ALERT MODAL */}
+            {confirmModal.isOpen && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#fff', width: '400px', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                        <div style={{ padding: '16px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {confirmModal.isAlert ? <XCircle size={20} color="#e32b4c" /> : <CheckCircle size={20} color="#3b82f6" />}
+                            <h2 style={{ fontSize: '16px', margin: 0, color: '#0f172a', fontWeight: 600 }}>Thông báo</h2>
+                        </div>
+                        <div style={{ padding: '24px', fontSize: '14px', color: '#475569', lineHeight: '1.5' }}>
+                            {confirmModal.message}
+                        </div>
+                        <div style={{ padding: '16px 24px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'flex-end', gap: '12px', background: '#f8fafc' }}>
+                            {!confirmModal.isAlert && (
+                                <button className="btn btn-secondary" onClick={() => setConfirmModal({ isOpen: false, message: '', onConfirm: null, isAlert: false })}>Hủy</button>
+                            )}
+                            <button className="btn btn-primary" onClick={() => {
+                                if (confirmModal.onConfirm) confirmModal.onConfirm();
+                                setConfirmModal({ isOpen: false, message: '', onConfirm: null, isAlert: false });
+                            }}>
+                                {confirmModal.isAlert ? 'Đóng' : 'Xác nhận'}
+                            </button>
                         </div>
                     </div>
                 </div>

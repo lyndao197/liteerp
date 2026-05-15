@@ -27,6 +27,7 @@ const OrderManagement = () => {
     const [showColPicker, setShowColPicker] = useState(false);
     const [pickerPos, setPickerPos] = useState({ top: 0, right: 0 });
     const [selectedIds, setSelectedIds] = useState(new Set());
+    const [tabFilter, setTabFilter] = useState('all');
 
     const toggleSelectAll = () => {
         if (selectedIds.size === processedOrders.length && processedOrders.length > 0) {
@@ -101,6 +102,13 @@ const OrderManagement = () => {
                 (o.contractNo?.toLowerCase().includes(low))
             );
         }
+        if (tabFilter === 'all') {
+            // Loại bỏ đơn hàng dự thảo khỏi tab "Tất cả đơn hàng"
+            result = result.filter(o => o.orderStatus !== 'Dự thảo' && o.orderStatus);
+        } else if (tabFilter === 'draft') {
+            // Chỉ hiển thị đơn hàng dự thảo
+            result = result.filter(o => o.orderStatus === 'Dự thảo' || !o.orderStatus);
+        }
         if (statusFilter !== 'All') {
             result = result.filter(o => o.orderStatus === statusFilter);
         }
@@ -119,14 +127,15 @@ const OrderManagement = () => {
             });
         }
         return result;
-    }, [orders, searchTerm, statusFilter, filters, sortConfig]);
+    }, [orders, searchTerm, statusFilter, filters, sortConfig, tabFilter]);
 
     const getStatusClass = (status) => {
         switch(status) {
-            case 'Mới': return 'status-badge-modern status-badge-blue';
-            case 'Đang triển khai': return 'status-badge-modern status-badge-yellow';
-            case 'Hoàn thành': return 'status-badge-modern status-badge-green';
-            case 'Đã hủy': return 'status-badge-modern status-badge-gray';
+            case 'Dự thảo': return 'status-badge-modern status-badge-gray';
+            case 'Chờ duyệt công nợ': return 'status-badge-modern status-badge-yellow';
+            case 'Xuất hóa đơn': return 'status-badge-modern status-badge-blue';
+            case 'Đã xuất hóa đơn': return 'status-badge-modern status-badge-green';
+            case 'Đã hủy': return 'status-badge-modern status-badge-red';
             default: return 'status-badge-modern status-badge-gray';
         }
     };
@@ -181,28 +190,43 @@ const OrderManagement = () => {
 
             <div className="metrics-cards-container" style={{ display: 'flex', gap: '24px', marginBottom: '24px', marginTop: '16px' }}>
                 <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng đơn hàng mới</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng đơn hàng Dự thảo</span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Mới' || !o.orderStatus).length}</span>
+                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Dự thảo' || !o.orderStatus).length}</span>
                     </div>
                 </div>
                 <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng ĐH Hoàn thành</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng ĐH Đã xuất hóa đơn</span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Hoàn thành').length}</span>
+                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Đã xuất hóa đơn').length}</span>
                     </div>
                 </div>
                 <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>ĐH Đang triển khai</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>ĐH Chờ duyệt/Xuất HĐ</span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Đang triển khai').length}</span>
+                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Chờ duyệt công nợ' || o.orderStatus === 'Xuất hóa đơn').length}</span>
                     </div>
                 </div>
                 <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng đơn hàng hủy</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng đơn hàng Đã hủy</span>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
                         <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{orders.filter(o => o.orderStatus === 'Đã hủy').length}</span>
                     </div>
+                </div>
+            </div>
+
+            <div className="tabs-container" style={{ display: 'flex', gap: '24px', borderBottom: '1px solid #e2e8f0', marginBottom: '16px', padding: '0 4px' }}>
+                <div 
+                    onClick={() => setTabFilter('all')}
+                    style={{ padding: '8px 4px', cursor: 'pointer', borderBottom: tabFilter === 'all' ? '2px solid #0f172a' : '2px solid transparent', color: tabFilter === 'all' ? '#0f172a' : '#64748b', fontWeight: tabFilter === 'all' ? 600 : 400 }}
+                >
+                    Tất cả đơn hàng
+                </div>
+                <div 
+                    onClick={() => setTabFilter('draft')}
+                    style={{ padding: '8px 4px', cursor: 'pointer', borderBottom: tabFilter === 'draft' ? '2px solid #0f172a' : '2px solid transparent', color: tabFilter === 'draft' ? '#0f172a' : '#64748b', fontWeight: tabFilter === 'draft' ? 600 : 400 }}
+                >
+                    Đơn hàng Dự thảo
                 </div>
             </div>
 
@@ -214,9 +238,10 @@ const OrderManagement = () => {
                     </div>
                     <select className="select-modern" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{marginLeft: '12px', minWidth: '180px'}}>
                         <option value="All">Tất cả trạng thái</option>
-                        <option value="Mới">Mới</option>
-                        <option value="Đang triển khai">Đang triển khai</option>
-                        <option value="Hoàn thành">Hoàn thành</option>
+                        <option value="Dự thảo">Dự thảo</option>
+                        <option value="Chờ duyệt công nợ">Chờ duyệt công nợ</option>
+                        <option value="Xuất hóa đơn">Xuất hóa đơn</option>
+                        <option value="Đã xuất hóa đơn">Đã xuất hóa đơn</option>
                         <option value="Đã hủy">Đã hủy</option>
                     </select>
                 </div>
