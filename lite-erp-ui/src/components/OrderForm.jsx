@@ -299,7 +299,7 @@ const OrderForm = () => {
                 return (
                     <>
                         <button className="btn btn-secondary" onClick={handleCancel}><XSquare size={16} /> Hủy</button>
-                        <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}><Hand size={16} /> Từ chối</button>
+                        <button className="btn btn-secondary" onClick={() => setOrderStatus('Đã hủy')}><Hand size={16} /> Từ chối</button>
                         <button className="btn btn-primary" onClick={() => setOrderStatus('Xuất hóa đơn')}>
                             <CheckCircle size={16} /> Phê duyệt
                         </button>
@@ -320,7 +320,7 @@ const OrderForm = () => {
                 );
             case 'Đã hủy':
                 return (
-                    <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}>Khôi phục nháp</button>
+                    <button className="btn btn-secondary" onClick={() => setOrderStatus('Dự thảo')}>Chuyển về Dự thảo</button>
                 );
             default:
                 return null;

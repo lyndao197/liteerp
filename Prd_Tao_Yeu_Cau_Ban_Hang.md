@@ -56,6 +56,7 @@ flowchart TD
 | 4 | BR 3 | `Hình thức thanh toán`, `Người liên hệ`, `Loại thanh toán` là các trường bắt buộc. |
 | 5 | BR 4 | Cho phép tùy ý thêm dòng, xóa dòng sản phẩm không bị giới hạn. Có thể thêm sản phẩm ngoài hợp đồng (nếu đơn bị tạo nhầm hoặc chưa phát sinh giao dịch). |
 | 9 | BR 5 | `Tổng thành tiền` = Sum(SL * Đơn giá). `Tổng VAT` = 10% * Tổng thành tiền. `Tổng giá trị` = Tổng thành tiền + VAT. Phải format số sang chuẩn `VND`. |
+| 10 | BR 6 | Quản lý trạng thái và Quota: Khi đơn hàng ở trạng thái "Chờ duyệt công nợ", nếu bị "Từ chối" thì sẽ chuyển sang trạng thái "Đã hủy" để giải phóng (release) hạn mức sản phẩm thay vì đưa về "Dự thảo". Trên đơn hàng "Đã hủy", có nút "Chuyển về Dự thảo" để có thể khôi phục lại khi cần sửa chữa. |
 
 ## 4. Mô tả màn hình (UI/UX Layout)
 
