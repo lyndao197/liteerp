@@ -38,3 +38,8 @@
 2026-05-19 08:19:31.579 +07 [25888] LOG:  listening on IPv6 address "::1", port 5432
 2026-05-19 08:19:31.580 +07 [25888] LOG:  listening on IPv4 address "127.0.0.1", port 5432
 2026-05-19 08:19:31.621 +07 [16748] LOG:  database system was interrupted; last known up at 2026-04-24 10:01:15 +07
+2026-05-19 08:19:34.745 +07 [16748] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-05-19 08:19:34.750 +07 [16748] LOG:  redo starts at 0/5C15678
+2026-05-19 08:19:34.750 +07 [16748] LOG:  invalid record length at 0/5C15760: wanted 24, got 0
+2026-05-19 08:19:34.750 +07 [16748] LOG:  redo done at 0/5C15728 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-05-19 08:19:34.788 +07 [25888] LOG:  database system is ready to accept connections
