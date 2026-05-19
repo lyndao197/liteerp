@@ -34,3 +34,7 @@
 2026-04-17 14:00:13.304 +07 [4888] LOG:  invalid record length at 0/5886838: wanted 24, got 0
 2026-04-17 14:00:13.304 +07 [4888] LOG:  redo done at 0/5886800 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
 2026-04-17 14:00:13.348 +07 [348] LOG:  database system is ready to accept connections
+2026-05-19 08:19:31.575 +07 [25888] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-05-19 08:19:31.579 +07 [25888] LOG:  listening on IPv6 address "::1", port 5432
+2026-05-19 08:19:31.580 +07 [25888] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-05-19 08:19:31.621 +07 [16748] LOG:  database system was interrupted; last known up at 2026-04-24 10:01:15 +07
