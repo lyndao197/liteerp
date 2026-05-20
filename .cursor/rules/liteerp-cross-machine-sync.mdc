@@ -1,0 +1,81 @@
+---
+description: Dong bo day du giua cac may — push tu may dev, pull may khac giong het (code, SRS, Odoo DB, quy trinh).
+alwaysApply: true
+---
+
+# LiteERP — Đồng bộ y hệt giữa các máy
+
+## Mục tiêu
+
+Máy A (đang làm việc với AI) **push** → máy B **pull** → **giống hệt** phần đã đưa lên Git. User **không cần nhớ** lệnh dài.
+
+## Trên máy đang dev (máy A) — trước khi push
+
+AI **bắt buộc** chạy hoặc hướng dẫn chạy:
+
+```bat
+sync-push.bat
+```
+
+Script này: backup Odoo → stage `database/seed/demo.dump` + file liên quan.
+
+Sau đó `git commit` + `git push` (chỉ khi user yêu cầu push).
+
+**Hook `pre-commit`** cũng tự `backup-database.bat` + stage `demo.dump` — mọi commit đều kèm snapshot DB mới nhất.
+
+### Checklist nội dung phải có trên Git
+
+| Thành phần | Vị trí | Ghi chú |
+|------------|--------|---------|
+| Code FE/BE | `lite-erp-ui/`, `odoo-17.0/`, scripts | Commit bình thường |
+| SRS/PRD | `Prd_*.md` | Đồng bộ với code (Doc Sync) |
+| Odoo DB | `database/seed/demo.dump` | Qua `backup-database` / `pre-commit` |
+| Cấu hình IDE | `.vscode/settings.json`, `extensions.json` | Nếu đổi |
+| Rule / context | `.cursor/rules/`, `.agent/project-context.md` | Nếu đổi |
+
+### Frontend — localStorage (quan trọng)
+
+Data runtime FE nằm trong `localStorage` (`liteErpDataStore_v7`), **không** tự lên Git.
+
+- Nếu user **chỉ sửa trên UI** mà không sửa `mockStore.js`: máy khác **không** giống phần data đó.
+- Trước push: AI phải **cập nhật** `lite-erp-ui/src/utils/mockStore.js` (`INITIAL_DATA`) cho khớp data đang dùng, **hoặc** báo user export và commit seed FE (khi có `database/seed/fe-store.json`).
+
+## Trên máy khác (máy B) — sau pull
+
+**Một lần / máy:**
+
+```bat
+install-githooks.bat
+```
+
+**Mỗi lần `git pull`:**
+
+| Hook | Hành vi |
+|------|---------|
+| `post-merge` | Nếu chưa có `pgdata/` **hoặc** `demo.dump` đổi hash → `setup-database.bat` |
+| Sau restore | Ghi `pgdata/.seed-applied-hash` |
+
+**Sau pull, chạy thêm (nếu chưa chạy):**
+
+```bat
+cd lite-erp-ui && npm install && npm run dev
+start_odoo.bat
+```
+
+**FE sau pull:** Xóa `localStorage` key `liteErpDataStore_v7` **một lần** nếu đã cập nhật `INITIAL_DATA` trên Git mà UI vẫn cũ — hoặc hard refresh. Ưu tiên data từ `mockStore.js` khi chưa có localStorage.
+
+## Không đồng bộ qua Git (cài lại trên máy mới)
+
+- `pgdata/`, `pgsql.log` → tạo từ `demo.dump`
+- `node_modules/`, `.venv/` → `npm install`, venv có sẵn trong repo hoặc tạo lại
+- Tab trình duyệt, cache IDE
+
+## Khi user nói
+
+| Câu | AI làm |
+|-----|--------|
+| push / đẩy git / sync máy khác | `sync-push.bat` → commit → push |
+| pull / máy mới / clone | `install-githooks` (nếu chưa) → pull → kiểm tra DB restored → `npm install` |
+| muốn giống hệt máy kia | Xác nhận đã push từ máy A **và** đã pull + hooks trên máy B |
+
+Repo: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`

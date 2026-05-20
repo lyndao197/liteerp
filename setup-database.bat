@@ -29,6 +29,8 @@ if errorlevel 1 (
   exit /b 1
 )
 
+powershell -NoProfile -Command "(Get-FileHash 'database\seed\demo.dump' -Algorithm SHA256).Hash | Set-Content 'pgdata\.seed-applied-hash' -NoNewline" 2>nul
+
 echo.
 echo [OK] Database demo da san sang. Chay start_odoo.bat hoac npm run dev trong lite-erp-ui.
 endlocal

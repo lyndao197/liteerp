@@ -1,14 +1,34 @@
-# LiteERP — Thiết lập sau khi clone
+# LiteERP — Đồng bộ giữa các máy
 
-## Chỉ cần nhớ (một lần / máy)
+## Bạn chỉ cần nhớ 2 việc
+
+| Máy đang làm việc | Lệnh |
+|-------------------|------|
+| **Trước khi push** | `sync-push.bat` → commit → push |
+| **Máy mới (một lần)** | `install-githooks.bat` → sau đó chỉ `git pull` |
+
+`git pull` trên máy B sẽ **tự** restore Odoo nếu database trên Git mới hơn.
+
+## Giống y hệt máy dev?
+
+| Có trên Git + tự sync | Cần lưu ý |
+|------------------------|-----------|
+| Code, SRS, Odoo (`demo.dump`) | `npm install`, `start_odoo.bat` |
+| | Data sửa **trên UI** (localStorage) → phải cập nhật `mockStore.js` trước push |
+
+---
+
+## Thiết lập sau khi clone
 
 ```powershell
 .\install-githooks.bat
+git pull
+cd lite-erp-ui
+npm install
+npm run dev
 ```
 
-Sau đó mỗi lần `git pull` hoặc `git clone`: nếu **chưa có** thư mục `pgdata/`, Git **tự chạy** `setup-database.bat` → có data Odoo, không cần nhớ thêm.
-
-*(Lần đầu clone: chạy `install-githooks.bat` trong thư mục `odoo/`, rồi pull hoặc chạy tay `setup-database.bat`.)*
+Odoo: `.\start_odoo.bat` → http://localhost:8069
 
 ---
 

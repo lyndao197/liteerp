@@ -1,7 +1,19 @@
 #!/bin/sh
-# Sau git clone / checkout branch: tu dong restore DB neu chua co pgdata.
+# Sau clone / checkout: cung logic post-merge.
 cd "$(git rev-parse --show-toplevel)" || exit 0
+[ -f "database/seed/demo.dump" ] || exit 0
+
+NEED=0
 if [ ! -f "pgdata/PG_VERSION" ]; then
-  echo "[LiteERP] Chua co pgdata - dang phuc hoi database tu seed..."
+  NEED=1
+else
+  NEW_HASH=$(sha256sum "database/seed/demo.dump" 2>/dev/null | awk '{print $1}')
+  OLD_HASH=$(cat "pgdata/.seed-applied-hash" 2>/dev/null | tr -d '\r\n')
+  if [ -n "$NEW_HASH" ] && [ "$NEW_HASH" != "$OLD_HASH" ]; then
+    NEED=1
+  fi
+fi
+
+if [ "$NEED" = "1" ]; then
   cmd //c setup-database.bat
 fi

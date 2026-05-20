@@ -1,7 +1,20 @@
 #!/bin/sh
-# Sau git pull: tu dong restore DB neu chua co pgdata (may moi / clone lan dau).
+# Sau git pull: restore DB neu chua co pgdata hoac seed dump doi.
 cd "$(git rev-parse --show-toplevel)" || exit 0
+[ -f "database/seed/demo.dump" ] || exit 0
+
+NEED=0
 if [ ! -f "pgdata/PG_VERSION" ]; then
-  echo "[LiteERP] Chua co pgdata - dang phuc hoi database tu seed..."
+  NEED=1
+else
+  NEW_HASH=$(sha256sum "database/seed/demo.dump" 2>/dev/null | awk '{print $1}')
+  OLD_HASH=$(cat "pgdata/.seed-applied-hash" 2>/dev/null | tr -d '\r\n')
+  if [ -n "$NEW_HASH" ] && [ "$NEW_HASH" != "$OLD_HASH" ]; then
+    echo "[LiteERP] Seed DB moi tren Git - phuc hoi lai database..."
+    NEED=1
+  fi
+fi
+
+if [ "$NEED" = "1" ]; then
   cmd //c setup-database.bat
 fi

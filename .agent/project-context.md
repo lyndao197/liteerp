@@ -59,9 +59,9 @@ Khi bắt đầu phát triển một Module hoặc Tính năng mới, AI Agent p
 3. **Đồng bộ hóa liên tục (Auto-Git Push):** Ngay sau khi hoàn thành một chức năng, cập nhật tài liệu, hoặc kết thúc phiên làm việc, AI Agent có nhiệm vụ **tự động chạy lệnh hoặc cung cấp sẵn lệnh git** để đẩy toàn bộ mọi thứ lên: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`. Mục tiêu tối thượng là không bao giờ bị mất context và code khi người dùng chuyển sang máy khác.
 4. **Tối ưu Token (Token Optimization):** Giao tiếp súc tích, đi thẳng vào vấn đề. Bỏ qua các câu chào hỏi/giải thích rườm rà. Khi xử lý code, hạn chế in ra toàn bộ file lớn mà chỉ tập trung vào các đoạn diff/replace cần thiết để tiết kiệm token tối đa cho người dùng.
 5. **Đồng bộ Code ↔ Tài liệu (Doc Sync):** Mỗi khi sửa code giao diện hoặc logic nghiệp vụ, AI bắt buộc phải cập nhật lại tài liệu PRD tương ứng cho khớp. Ngược lại, khi sửa tài liệu PRD thì cũng phải kiểm tra và cập nhật code nếu cần. Không bao giờ để code và tài liệu bị lệch nhau.
-6. **Database sau clone / pull (không bắt user nhớ lệnh):**
-   - Dữ liệu Odoo nằm trên Git tại `database/seed/demo.dump`, **không** commit `pgdata/`.
-   - Máy mới hoặc chưa có `pgdata/`: chạy `setup-database.bat` (hoặc nhắc user chạy `install-githooks.bat` một lần để `git pull` tự restore).
-   - Đã có `pgdata/`: **không** chạy lại setup (tránh mất dữ liệu local). Cập nhật seed lên Git: `backup-database.bat` rồi commit `demo.dump`.
-   - FE: data mock trong `lite-erp-ui/src/utils/mockStore.js` — clone là đủ, không cần DB.
-   - Chi tiết: `SETUP.md`, rule Cursor `.cursor/rules/liteerp-database-after-pull.mdc`.
+6. **Đồng bộ y hệt giữa các máy (Cross-machine sync):**
+   - **Máy dev trước push:** chạy `sync-push.bat` (backup Odoo + stage file). Hook `pre-commit` tự backup `demo.dump` mỗi commit.
+   - **Máy khác sau pull:** chạy **một lần** `install-githooks.bat` → mỗi `pull` tự restore DB nếu thiếu `pgdata` hoặc `demo.dump` đổi.
+   - **Trên Git:** code, `Prd_*.md`, `database/seed/demo.dump`, cấu hình `.vscode/`, rules.
+   - **FE localStorage:** không lên Git — trước push phải cập nhật `mockStore.js` (`INITIAL_DATA`) nếu đã sửa data trên UI.
+   - Chi tiết: `SETUP.md`, `.cursor/rules/liteerp-cross-machine-sync.mdc`.
