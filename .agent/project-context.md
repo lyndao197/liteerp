@@ -56,12 +56,11 @@ Khi bắt đầu phát triển một Module hoặc Tính năng mới, AI Agent p
    - Khi người dùng đưa ra yêu cầu, AI cần chủ động **đối chiếu với các hệ thống CRM nổi tiếng** (như Salesforce, HubSpot, Odoo gốc...) để đưa ra phương án gợi ý giải quyết tối ưu nhất.
    - Phân tích và chỉ rõ các tác động chéo (Impact Analysis) đến các module khác hiện có trong hệ thống để tránh xung đột.
 2. **Tự kiểm duyệt (Self-Verification):** Sau khi thực hiện viết code xong, AI bắt buộc phải đối chiếu lại với tài liệu PRD để đảm bảo đã làm đúng yêu cầu, không tự ý sửa sai thiết kế và tuyệt đối không để xảy ra các lỗi (bug) lặt vặt thiếu cẩn thận.
-3. **Đồng bộ hóa liên tục (Auto-Git Push):** Ngay sau khi hoàn thành một chức năng, cập nhật tài liệu, hoặc kết thúc phiên làm việc, AI Agent có nhiệm vụ **tự động chạy lệnh hoặc cung cấp sẵn lệnh git** để đẩy toàn bộ mọi thứ lên: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`. Mục tiêu tối thượng là không bao giờ bị mất context và code khi người dùng chuyển sang máy khác.
+3. **Đồng bộ hóa liên tục (Auto-Git Push):** Khi user yêu cầu push hoặc kết thúc phiên/chuyển máy, AI **tự chạy** `sync-push.bat` → commit → push lên `https://github.com/Duc-Manh2303/ManhDND_CRM.git` — **không** đưa danh sách lệnh cho user tự gõ. Chỉ commit/push khi user đã yêu cầu hoặc đồng ý.
 4. **Tối ưu Token (Token Optimization):** Giao tiếp súc tích, đi thẳng vào vấn đề. Bỏ qua các câu chào hỏi/giải thích rườm rà. Khi xử lý code, hạn chế in ra toàn bộ file lớn mà chỉ tập trung vào các đoạn diff/replace cần thiết để tiết kiệm token tối đa cho người dùng.
 5. **Đồng bộ Code ↔ Tài liệu (Doc Sync):** Mỗi khi sửa code giao diện hoặc logic nghiệp vụ, AI bắt buộc phải cập nhật lại tài liệu PRD tương ứng cho khớp. Ngược lại, khi sửa tài liệu PRD thì cũng phải kiểm tra và cập nhật code nếu cần. Không bao giờ để code và tài liệu bị lệch nhau.
-6. **Đồng bộ y hệt giữa các máy (Cross-machine sync):**
-   - **Máy dev trước push:** chạy `sync-push.bat` (backup Odoo + stage file). Hook `pre-commit` tự backup `demo.dump` mỗi commit.
-   - **Máy khác sau pull:** chạy **một lần** `install-githooks.bat` → mỗi `pull` tự restore DB nếu thiếu `pgdata` hoặc `demo.dump` đổi.
-   - **Trên Git:** code, `Prd_*.md`, `database/seed/demo.dump`, cấu hình `.vscode/`, rules.
-   - **FE localStorage:** không lên Git — trước push phải cập nhật `mockStore.js` (`INITIAL_DATA`) nếu đã sửa data trên UI.
-   - Chi tiết: `SETUP.md`, `.cursor/rules/liteerp-cross-machine-sync.mdc`.
+6. **Đồng bộ y hệt giữa các máy — AI tự làm, user không nhớ lệnh:**
+   - **Push:** AI tự `sync-push.bat` + git push (khi user yêu cầu).
+   - **Pull / máy mới:** AI tự `install-githooks.bat silent`, `git pull`, kiểm tra DB; hook restore Odoo; `npm install` nếu cần.
+   - User **không** cần nhớ tên file `.bat` — xem `.cursor/rules/liteerp-cross-machine-sync.mdc`.
+   - **FE localStorage:** AI cập nhật `mockStore.js` trước push nếu đổi data trên UI.

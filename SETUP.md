@@ -1,13 +1,16 @@
 # LiteERP — Đồng bộ giữa các máy
 
-## Bạn chỉ cần nhớ 2 việc
+## Bạn không cần nhớ lệnh
 
-| Máy đang làm việc | Lệnh |
-|-------------------|------|
-| **Trước khi push** | `sync-push.bat` → commit → push |
-| **Máy mới (một lần)** | `install-githooks.bat` → sau đó chỉ `git pull` |
+**Nói với AI trong Cursor:**
 
-`git pull` trên máy B sẽ **tự** restore Odoo nếu database trên Git mới hơn.
+| Việc | Bạn nói |
+|------|---------|
+| Lưu lên Git / sang máy khác | *"push lên git"* |
+| Máy mới / vừa pull | *"setup project"* hoặc *"pull code"* |
+| Chạy app | *"chạy FE BE"* |
+
+AI tự chạy `sync-push`, hooks, restore DB, `npm install` theo rule `.cursor/rules/liteerp-cross-machine-sync.mdc`.
 
 ## Giống y hệt máy dev?
 
