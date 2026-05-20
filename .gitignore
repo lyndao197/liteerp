@@ -1,0 +1,19 @@
+# PostgreSQL / Odoo local runtime (do not commit)
+pgdata/
+pgsql.log
+
+# Python virtual environments
+.venv/
+.venv_broken/
+venv_temp/
+
+# BMAD personal overrides
+_bmad/custom/config.user.toml
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store
+Thumbs.db
