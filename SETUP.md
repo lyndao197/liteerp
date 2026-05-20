@@ -1,5 +1,17 @@
 # LiteERP — Thiết lập sau khi clone
 
+## Chỉ cần nhớ (một lần / máy)
+
+```powershell
+.\install-githooks.bat
+```
+
+Sau đó mỗi lần `git pull` hoặc `git clone`: nếu **chưa có** thư mục `pgdata/`, Git **tự chạy** `setup-database.bat` → có data Odoo, không cần nhớ thêm.
+
+*(Lần đầu clone: chạy `install-githooks.bat` trong thư mục `odoo/`, rồi pull hoặc chạy tay `setup-database.bat`.)*
+
+---
+
 ## Frontend (React)
 
 ```powershell

@@ -1,0 +1,39 @@
+---
+description: Tu dong co data Odoo sau clone/pull; huong dan setup-database va git hooks.
+alwaysApply: true
+---
+
+# LiteERP — Database sau clone / pull
+
+## Muc tieu
+
+Nguoi dung **khong can nho** lenh setup. May moi phai co database `demo` giong seed tren Git.
+
+## Khi nao tu dong / AI phai lam
+
+| Tinh huong | Hanh dong |
+|------------|-----------|
+| User noi **clone, pull, may moi, chua co data, setup project** | Kiem tra `pgdata/PG_VERSION`. Neu **khong co** → chay `setup-database.bat` (tu thu muc goc `odoo/`). |
+| `pgdata/` **da co** | **Khong** chay lai setup (tranh xoa du lieu local). Chi nhac chay `backup-database.bat` + push seed neu user muon cap nhat Git. |
+| User chua cai Git hooks | Chay **mot lan** `install-githooks.bat` → sau do moi `git pull` tu restore neu thieu `pgdata`. |
+
+## Lenh (thu muc goc project)
+
+```bat
+install-githooks.bat    @ REM mot lan / may
+setup-database.bat      @ REM pgdata chua co hoac user yeu cau restore
+backup-database.bat     @ REM cap nhat database/seed/demo.dump len Git
+start_odoo.bat          @ REM Odoo :8069
+```
+
+FE: `cd lite-erp-ui && npm run dev` — data mock trong `mockStore.js`, khong can DB.
+
+## File quan trong
+
+- Seed: `database/seed/demo.dump` (tren Git)
+- Huong dan: `SETUP.md`
+- `pgdata/`, `pgsql.log` — **khong** commit
+
+## Token
+
+Neu chi can xac nhan da co data: kiem tra `pgdata/PG_VERSION` + file seed, khong doc toan bo `pgdata/`.
