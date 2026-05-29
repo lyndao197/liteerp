@@ -132,6 +132,14 @@ function Sidebar() {
             <span>Quản trị triển khai dự án</span>
             <span className="mvp-badge">MVP</span>
           </div>
+          <div
+            className={`nav-item ${location.pathname.includes('/contract-kpi-config') ? 'active' : ''}`}
+            onClick={() => navigate('/contract-kpi-config')}
+          >
+            <Target size={20} />
+            <span>Quản lý KPI/SLA và Năng suất</span>
+            <span className="mvp-badge" style={{ backgroundColor: '#10b981' }}>New</span>
+          </div>
         </div>
 
         {/* Quản lý Nhà cung cấp */}

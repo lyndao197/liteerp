@@ -1,0 +1,224 @@
+/* ContractKpiConfig.css */
+.kpi-container {
+    padding: 24px;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.kpi-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+    margin-top: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.kpi-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.kpi-table th {
+    background: #f1f5f9;
+    padding: 16px 12px;
+    text-align: left;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.kpi-table td {
+    padding: 0; /* Removing padding to let inputs fill the cell */
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.kpi-row {
+    transition: all 0.2s ease;
+}
+
+.kpi-row:hover td {
+    background-color: #f8fafc;
+}
+
+/* Level based styling */
+.kpi-row.level-0 td {
+    background-color: #f0f9ff;
+    border-bottom: 1px solid #bae6fd;
+}
+.kpi-row.level-0:hover td {
+    background-color: #e0f2fe;
+}
+.kpi-row.level-0 input, .kpi-row.level-0 textarea {
+    font-weight: 700;
+    color: #0284c7;
+}
+
+.kpi-row.level-1 td {
+    background-color: #fbfdee;
+}
+.kpi-row.level-1:hover td {
+    background-color: #fefce8;
+}
+
+/* Clean inputs */
+.cell-input {
+    width: 100%;
+    height: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: #334155;
+    transition: all 0.2s ease;
+    resize: vertical;
+}
+
+.cell-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: inset 0 0 0 2px #38bdf8;
+    z-index: 10;
+    position: relative;
+    border-radius: 4px;
+}
+
+.cell-input[readonly] {
+    background: transparent;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.tree-indicator {
+    display: inline-flex;
+    align-items: center;
+    color: #94a3b8;
+    margin-right: 8px;
+    font-weight: 400;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 12px;
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.kpi-row:hover .action-buttons {
+    opacity: 1;
+}
+
+.btn-action {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-action.child {
+    color: #10b981;
+}
+.btn-action.child:hover {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+    transform: translateY(-1px);
+}
+
+.btn-action.sibling {
+    color: #0ea5e9;
+}
+.btn-action.sibling:hover {
+    background: #0ea5e9;
+    color: white;
+    border-color: #0ea5e9;
+    transform: translateY(-1px);
+}
+
+.btn-action.delete {
+    color: #ef4444;
+}
+.btn-action.delete:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    transform: translateY(-1px);
+}
+
+.tab-header {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 12px 12px 0 0;
+    padding: 8px 8px 0 8px;
+    gap: 4px;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    position: relative;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #0f172a;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+}
+
+.tab-btn.active.sla::after { background: #0ea5e9; }
+.tab-btn.active.prod::after { background: #10b981; }
+
+.add-root-btn {
+    width: 100%;
+    padding: 16px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.add-root-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #334155;
+}

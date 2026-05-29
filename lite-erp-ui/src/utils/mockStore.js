@@ -2092,7 +2092,9 @@ export const mockStore = {
       id: orderId,
       orderNo: orderNo || existingOrder.orderNo || `DH-2026-${orderId.slice(-3)}`,
       orderDate: orderData.orderDate || existingOrder.orderDate || new Date().toISOString().slice(0, 10),
-      orderStatus: orderData.orderStatus || existingOrder.orderStatus || 'Dự thảo'
+      orderStatus: orderData.orderStatus || existingOrder.orderStatus || 'Dự thảo',
+      kpiLines: orderData.kpiLines || existingOrder.kpiLines || [],
+      productivityLines: orderData.productivityLines || existingOrder.productivityLines || []
     };
 
     if (isNew) {

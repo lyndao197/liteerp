@@ -41,6 +41,7 @@ import DebtManagement from './components/DebtManagement';
 import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
 import InvoiceManagement from './components/InvoiceManagement';
+import ContractKpiConfig from './components/ContractKpiConfig';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
               <Route path="/supplier-contracts" element={<ContractManagement />} />
               <Route path="/contract/new" element={<ContractForm />} />
               <Route path="/contract/edit/:id" element={<ContractForm />} />
+              <Route path="/contract-kpi-config" element={<ContractKpiConfig />} />
               <Route path="/orders" element={<OrderManagement />} />
               <Route path="/order/new" element={<OrderForm />} />
               <Route path="/order/edit/:id" element={<OrderForm />} />
