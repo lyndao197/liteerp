@@ -1,3 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+}
+
 :root {
   --font-family: 'Inter', sans-serif;
   --bg-sidebar: #1A202C;
@@ -37,10 +43,6 @@ body {
   background-color: var(--bg-main);
   color: var(--text-dark);
   -webkit-font-smoothing: antialiased;
-  zoom: 0.8;
-  width: 125vw;
-  height: 125vh;
-  overflow: hidden;
 }
 
 /* Scrollbar */

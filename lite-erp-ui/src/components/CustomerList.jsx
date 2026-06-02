@@ -22,7 +22,13 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
-  MoreVertical
+  MoreVertical,
+  LayoutGrid,
+  List,
+  ChevronLeft,
+  ChevronsLeft,
+  ChevronsRight,
+  Trash2
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { mockStore } from '../utils/mockStore';
@@ -50,9 +56,10 @@ const CustomerList = () => {
     rules: []
   });
 
-  // PAGINATION
+  // PAGINATION & VIEW MODE
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'grid'
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(8);
 
   // SELECTION & COLUMN VISIBILITY
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -76,11 +83,6 @@ const CustomerList = () => {
   useEffect(() => {
     setCustomers(mockStore.getAllCustomers());
   }, []);
-
-  const getInitials = (name) => {
-    if (!name) return '??';
-    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  };
 
   const handleSort = (key) => {
     let direction = 'asc';
@@ -165,46 +167,27 @@ const CustomerList = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, filters, advancedQuery, sortConfig]);
+  }, [searchTerm, filters, advancedQuery, sortConfig, activeTab]);
 
   const totalItems = processedCustomers.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
   const paginatedData = processedCustomers.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
 
-  const renderActivityIcons = (activities = []) => {
-    if (!activities || activities.length === 0) return null;
-    const iconMap = {
-      'Gọi': { icon: <Phone size={14} />, color: '#3b82f6' },
-      'Meeting': { icon: <Calendar size={14} />, color: '#8b5cf6' },
-      'Email': { icon: <Mail size={14} />, color: '#10b981' },
-      'Task': { icon: <CheckSquare size={14} />, color: '#f59e0b' },
-      'Ghi chú': { icon: <StickyNote size={14} />, color: '#64748b' }
-    };
-    const activeTypes = new Set();
-    activities.forEach(act => {
-      const title = act.title.toLowerCase();
-      if (title.includes('gọi') || title.includes('goi') || title.includes('call') || title.includes('điện thoại')) activeTypes.add('Gọi');
-      else if (title.includes('họp') || title.includes('hop') || title.includes('meeting') || title.includes('lịch') || title.includes('meet')) activeTypes.add('Meeting');
-      else if (title.includes('email') || title.includes('thư') || title.includes('thu') || title.includes('mail')) activeTypes.add('Email');
-      else if (title.includes('công việc') || title.includes('cv') || title.includes('task') || title.includes('giao')) activeTypes.add('Task');
-      else activeTypes.add('Ghi chú');
-    });
-    return (
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        {[...activeTypes].map(type => (
-          <div key={type} title={type} style={{ color: iconMap[type]?.color || '#94a3b8', display: 'flex', alignItems: 'center' }}>{iconMap[type]?.icon || <FileText size={14} />}</div>
-        ))}
-      </div>
-    );
-  };
+  // Statistics Metrics
+  const stats = useMemo(() => {
+    const total = customers.length;
+    const internalCount = customers.filter(c => c.classification === 'Nội bộ' || (c.tag && c.tag.includes('Nội bộ'))).length || 2;
+    const externalCount = Math.max(0, total - internalCount);
+    return { total, internalCount, externalCount };
+  }, [customers]);
 
   // --- SELECTION LOGIC ---
   const toggleSelectAll = () => {
-    if (selectedIds.size === processedCustomers.length) {
+    if (selectedIds.size === paginatedData.length && paginatedData.length > 0) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(processedCustomers.map(c => c.id)));
+      setSelectedIds(new Set(paginatedData.map(c => c.id)));
     }
   };
 
@@ -216,7 +199,6 @@ const CustomerList = () => {
     setSelectedIds(newSelected);
   };
 
-  // --- IMPORT / EXPORT LOGIC (ODoo Style) ---
   const handleExport = () => {
     const exportData = processedCustomers
       .filter(c => selectedIds.size === 0 || selectedIds.has(c.id))
@@ -224,8 +206,8 @@ const CustomerList = () => {
         'ID Khách hàng': c.id,
         'Khách hàng': c.name,
         'Mã số thuế': c.mst,
-        'Dịch vụ': c.domain || 'Dịch vụ',
-        'Số hợp đồng': c.contractNo || '1,000,000,000',
+        'Lĩnh vực': c.industry || 'Lĩnh vực',
+        'Số hợp đồng': c.contractNo || '',
         'Ngày ký': c.signedDate,
         'Nguồn': c.source
       }));
@@ -234,42 +216,6 @@ const CustomerList = () => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Customers");
     XLSX.writeFile(wb, `Danh_sach_khach_hang_${new Date().getTime()}.xlsx`);
-  };
-
-  const handleImport = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: 'binary' });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json(ws);
-
-      if (customers.length > 0) {
-        if (!confirm(`Bảng danh sách Khách hàng hiện tại đang có dữ liệu. Bạn có muốn ghi đè dữ liệu hiện tại không?`)) {
-          return;
-        }
-      }
-
-      // Map English/Vietnamese headers to object fields
-      const mappedData = data.map((item, idx) => ({
-        id: item['ID Khách hàng'] || `CUS-IMPORT-${idx}`,
-        name: item['Tên khách hàng'] || item['Name'] || 'Chưa rõ',
-        mst: item['Mã số thuế'] || item['MST'] || '',
-        domain: item['Dịch vụ'] || '',
-        contractNo: item['Số hợp đồng'] || '',
-        signedDate: item['Ngày ký'] || '',
-        source: 'Import'
-      }));
-
-      mappedData.forEach(c => mockStore.saveCustomer(c.id, c));
-      setCustomers(mockStore.getAllCustomers());
-      alert(`Đã import thành công ${mappedData.length} bản ghi.`);
-    };
-    reader.readAsBinaryString(file);
   };
 
   const handleDeleteMany = () => {
@@ -304,7 +250,7 @@ const CustomerList = () => {
           <div className="column-filter-popup" onClick={e => e.stopPropagation()} style={{ position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '180px', padding: '8px', fontWeight: 'normal', color: '#334155' }}>
             <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px' }}>Lọc: {label}</div>
             <div style={{ padding: '0 4px 8px 4px' }}>
-              <input type="text" placeholder="Tìm kiếm..." value={filterSearchTerm[columnKey] || ''} onChange={e => setFilterSearchTerm({...filterSearchTerm, [columnKey]: e.target.value})} style={{ width: '100%', padding: '4px 8px', fontSize: '11px', border: '1px solid #e2e8f0', borderRadius: '4px', outline: 'none' }} />
+              <input type="text" placeholder="Tìm..." value={filterSearchTerm[columnKey] || ''} onChange={e => setFilterSearchTerm({...filterSearchTerm, [columnKey]: e.target.value})} style={{ width: '100%', padding: '4px 8px', fontSize: '11px', border: '1px solid #e2e8f0', borderRadius: '4px', outline: 'none' }} />
             </div>
             <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
               {getDistinctValues(columnKey)
@@ -322,65 +268,76 @@ const CustomerList = () => {
     );
   };
 
-  const getDisplayId = (customer) => {
-    if (!customer.id) return '---';
-    const numPart = customer.id.includes('-') ? customer.id.split('-')[1] : customer.id;
-    const prefix = customer.shortName || 'CUS';
-    return `${prefix}-${numPart}`;
-  };
-
   return (
     <div className="customer-list-container" onClick={() => setActiveFilterCol(null)}>
+      
+      {/* Header section */}
       <div className="customer-list-header">
         <div className="header-left">
           <h1>Quản lý hồ sơ khách hàng</h1>
-          <p style={{ color: '#64748b', fontSize: '14px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>Hiện có {processedCustomers.length} khách hàng chiến lược đã được xác minh đang hoạt động trong hệ sinh thái.</p>
+          <p style={{ color: '#64748b', fontSize: '12px', margin: '4px 0 0 0', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.6px' }}>
+            Hiện có {totalItems} khách hàng chiến lược đã được xác minh đang hoạt động trong hệ sinh thái.
+          </p>
         </div>
       </div>
 
-      <div className="metrics-cards-container" style={{ display: 'flex', gap: '36px', marginBottom: '24px' }}>
-        <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng khách hàng thêm mới</span>
+      {/* Stats Cards (Figma Aesthetics) */}
+      <div className="metrics-cards-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '24px' }}>
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: '-8px', bottom: '-8px', opacity: 0.05 }}>
+            <FileText size={96} color="#e03" />
+          </div>
+          <span className="metric-label">Tổng khách hàng thêm mới</span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-            <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{customers.length || 0}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10B981', fontSize: '13px', fontWeight: 700, paddingBottom: '4px' }}>
+            <span className="metric-value" style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{stats.total}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#10B981', fontSize: '13px', fontWeight: 700 }}>
               <TrendingUp size={16} strokeWidth={2.5} /> +12%
             </div>
           </div>
         </div>
-        <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng khách hàng nội bộ</span>
+
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: '-8px', bottom: '-8px', opacity: 0.05 }}>
+            <SlidersHorizontal size={96} color="#3b82f6" />
+          </div>
+          <span className="metric-label">Tổng khách hàng nội bộ</span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-            <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{customers.filter(c => c.tags?.some(tag => tag.text === 'Nội bộ')).length || 15}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3B82F6', fontSize: '13px', fontWeight: 700, paddingBottom: '4px' }}>
+            <span className="metric-value" style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{stats.internalCount}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#3B82F6', fontSize: '13px', fontWeight: 700 }}>
               <TrendingUp size={16} strokeWidth={2.5} /> +5%
             </div>
           </div>
         </div>
-        <div className="metric-card" style={{ flex: 1, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', padding: '21px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: '#44494D', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Tổng khách hàng ngoài</span>
+
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: '-8px', bottom: '-8px', opacity: 0.05 }}>
+            <MapPin size={96} color="#f59e0b" />
+          </div>
+          <span className="metric-label">Tổng khách hàng ngoài</span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
-            <span style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{customers.filter(c => !c.tags?.some(tag => tag.text === 'Nội bộ')).length || Math.max(0, customers.length - 15)}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F59E0B', fontSize: '13px', fontWeight: 700, paddingBottom: '4px' }}>
+            <span className="metric-value" style={{ fontSize: '24px', fontWeight: 700, color: '#000', lineHeight: '32px' }}>{stats.externalCount}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F59E0B', fontSize: '13px', fontWeight: 700 }}>
               <TrendingUp size={16} strokeWidth={2.5} /> +8%
             </div>
           </div>
         </div>
       </div>
 
+      {/* Tabs */}
       <div style={{ display: 'flex', gap: '24px', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
         <div 
           onClick={() => { setActiveTab('Chính thức'); setSelectedIds(new Set()); }}
           style={{ cursor: 'pointer', fontWeight: 600, paddingBottom: '8px', borderBottom: activeTab === 'Chính thức' ? '2px solid #e03' : 'none', color: activeTab === 'Chính thức' ? '#e03' : '#64748b' }}>
-          Khách hàng
+          Khách hàng chính thức
         </div>
         <div 
           onClick={() => { setActiveTab('Dự thảo/Mới tạo'); setSelectedIds(new Set()); }}
           style={{ cursor: 'pointer', fontWeight: 600, paddingBottom: '8px', borderBottom: activeTab === 'Dự thảo/Mới tạo' ? '2px solid #e03' : 'none', color: activeTab === 'Dự thảo/Mới tạo' ? '#e03' : '#64748b' }}>
-          Draff/dự thảo & Mới tạo
+          Draft/Dự thảo & Mới tạo
         </div>
       </div>
 
+      {/* Toolbar */}
       <div className="list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
         <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <div className="search-group" style={{ position: 'relative', display: 'flex', gap: '24px', alignItems: 'center' }}>
@@ -416,20 +373,32 @@ const CustomerList = () => {
             <button className="btn-outline-brand" onClick={() => navigate('/customer/new')} style={{ border: '1px solid #f45476', color: '#e03', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
               <Plus size={18} /> Thêm khách hàng
             </button>
-            <button className="btn-outline-brand" onClick={handleExport} title="Xuất dữ liệu" style={{ border: '1px solid #f45476', color: '#e03', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <button className="btn-outline-brand" onClick={handleExport} style={{ border: '1px solid #f45476', color: '#e03', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
               <Download size={18} /> Xuất Excel
             </button>
           </div>
-
+          <div className="view-switcher" style={{ background: '#EFEDED', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px', height: '40px', alignItems: 'center', boxSizing: 'border-box' }}>
+             <button className={`view-btn-modern ${viewMode === 'grid' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'grid' ? 'white' : 'transparent', color: viewMode === 'grid' ? '#e32b4c' : '#64748b', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setViewMode('grid')} title="Giao diện Grid"><LayoutGrid size={16} /></button>
+             <button className={`view-btn-modern ${viewMode === 'list' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'list' ? 'white' : 'transparent', color: viewMode === 'list' ? '#e32b4c' : '#64748b', width: '32px', height: '32px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setViewMode('list')} title="Giao diện List"><List size={16} /></button>
+          </div>
         </div>
       </div>
 
-      <div className="customer-table-container">
-        <table className="customer-table">
+      {/* Grid or List Content */}
+      {processedCustomers.length === 0 ? (
+        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '80px', textAlign: 'center', color: '#64748b' }}>
+          <Search size={48} style={{ margin: '0 auto 16px', display: 'block', opacity: 0.5 }} />
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Không tìm thấy dữ liệu khách hàng</h3>
+          <p style={{ fontSize: '13px', marginTop: '4px' }}>Hãy thử điều chỉnh từ khóa tìm kiếm hoặc các cột lọc.</p>
+        </div>
+      ) : viewMode === 'list' ? (
+        /* List view: Custom table */
+        <div className="customer-table-container">
+          <table className="customer-table">
             <thead>
               <tr>
                 <th style={{ width: '40px', paddingLeft: '16px' }}>
-                  <input type="checkbox" checked={selectedIds.size === processedCustomers.length && processedCustomers.length > 0} onChange={toggleSelectAll} />
+                  <input type="checkbox" checked={selectedIds.size === paginatedData.length && paginatedData.length > 0} onChange={toggleSelectAll} />
                 </th>
                 <TableHeader label="ID khách hàng" columnKey="id_kh" hasFilter={true} />
                 <TableHeader label="Khách hàng" columnKey="name" hasFilter={true} />
@@ -470,35 +439,29 @@ const CustomerList = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedData.length > 0 ? paginatedData.map(customer => {
-                // Determine mock dummy display for pill styling and extra data based on index/id for simulation:
-                const isEven = parseInt(customer.id.replace(/\D/g, '')) % 2 === 0;
-                const srcState = isEven ? 'Yellow' : 'Green';
-                const sColor = srcState === 'Yellow' ? { bg: '#FEF8E9', text: '#F2BB24', val: 'Tiềm năng' } : { bg: '#F0FDF4', text: '#00A63E', val: 'Mới' };
-                const domainState = isEven ? { bg: '#FFE2E2', text: '#EE0033', val: 'Hàng tiêu dùng' } : { bg: '#e0e7ff', text: '#3730a3', val: 'Ngân hàng' };
-
+              {paginatedData.map(customer => {
                 return (
                   <tr key={customer.id} onClick={() => navigate(`/customer/edit/${customer.id}`)} className={selectedIds.has(customer.id) ? 'row-selected' : ''}>
                     <td style={{ paddingLeft: '16px' }} onClick={(e) => toggleSelectRow(e, customer.id)}>
                       <input type="checkbox" checked={selectedIds.has(customer.id)} readOnly onClick={(e) => e.stopPropagation()} />
                     </td>
                     {visibleColumns.includes('id_kh') && (
-                      <td className="id-col" style={{ fontWeight: 500, color: '#334155' }}>
+                      <td className="id-col" style={{ fontWeight: 600, color: '#2563eb' }}>
                         {customer.id}
                       </td>
                     )}
                     {visibleColumns.includes('name') && (
                       <td>
                         <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          <div style={{ fontWeight: 500, color: '#000000', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '14px' }}>{customer.name}</div>
-                          <div style={{ fontSize: '11px', color: '#44494d', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{customer.email || 'user@example.com'}</div>
+                          <div style={{ fontWeight: 700, color: '#000000', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '14px' }}>{customer.name}</div>
+                          <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{customer.email || 'user@example.com'}</div>
                         </div>
                       </td>
                     )}
-                    {visibleColumns.includes('mst') && <td>{customer.mst || '0300588569'}</td>}
+                    {visibleColumns.includes('mst') && <td style={{ fontWeight: 500 }}>{customer.mst || '0300588569'}</td>}
                     {visibleColumns.includes('industry') && (
                       <td>
-                        <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3', fontSize: '12px', border: '1px solid #E0E7FF', display: 'inline-flex' }}>
+                        <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3', fontSize: '12px', border: '1px solid #E0E7FF', display: 'inline-flex', fontWeight: 600 }}>
                           {customer.industry || 'Chưa rõ'}
                         </span>
                       </td>
@@ -514,45 +477,113 @@ const CustomerList = () => {
                     {visibleColumns.includes('contactName') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.name || ''}</td>}
                     {visibleColumns.includes('email') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.email || ''}</td>}
                     {visibleColumns.includes('contactPhone') && <td>{mockStore.getContactsByCompany(customer.id)?.[0]?.phone || ''}</td>}
-                    <td style={{ textAlign: 'center' }}></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); navigate(`/customer/edit/${customer.id}`); }}
+                        style={{ border: '1px solid #f45476', color: '#e03', background: 'transparent', height: '28px', padding: '0 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                      >
+                        Chi tiết
+                      </button>
+                    </td>
                   </tr>
-                )
-              }) : (
-                <tr><td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>Không có dữ liệu phù hợp</td></tr>
-              )}
+                );
+              })}
             </tbody>
           </table>
         </div>
+      ) : (
+        /* Grid view: Cards */
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+          {paginatedData.map(customer => {
+            const firstLetter = customer.name ? customer.name.charAt(0).toUpperCase() : 'C';
+            return (
+              <div 
+                key={customer.id} 
+                onClick={() => navigate(`/customer/edit/${customer.id}`)}
+                style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px', transition: 'all 0.2s', position: 'relative' }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#fff0f2', color: '#e03', border: '1px solid #ffe0e4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '18px' }}>
+                    {firstLetter}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {customer.name}
+                    </h4>
+                    <span style={{ display: 'inline-flex', padding: '2px 8px', borderRadius: '100px', backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', width: 'fit-content', fontWeight: 'bold' }}>
+                      {customer.id}
+                    </span>
+                  </div>
+                </div>
 
-      {/* PAGINATION UI */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+                    <SlidersHorizontal size={14} />
+                    <span style={{ fontWeight: 500 }}>MST: {customer.mst || '0300588569'}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+                    <Mail size={14} />
+                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{customer.email || '—'}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+                    <Phone size={14} />
+                    <span>{customer.phone || '—'}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+                  <span style={{ padding: '3px 9px', borderRadius: '9999px', backgroundColor: '#e0e7ff', color: '#3730a3', fontSize: '10px', fontWeight: 600 }}>
+                    {customer.industry || 'Chưa rõ'}
+                  </span>
+                  <span style={{ padding: '3px 9px', borderRadius: '4px', backgroundColor: '#FEF8E9', color: '#F2BB24', fontSize: '10px', fontWeight: 600 }}>
+                    {customer.tag || 'Tiềm năng'}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Pagination Footer */}
       {processedCustomers.length > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', borderTop: '1px solid #E2E8F0', background: 'white', borderRadius: '0 0 8px 8px', marginTop: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderTop: '1px solid #E2E8F0', background: 'white', borderRadius: '0 0 8px 8px', marginTop: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
           <div style={{ color: '#64748b', fontSize: '13px' }}>
-            Hiển thị {totalItems > 0 ? (safeCurrentPage - 1) * pageSize + 1 : 0}-{Math.min(safeCurrentPage * pageSize, totalItems)} trong số {totalItems} khách hàng
+            Hiển thị <span style={{ fontWeight: 600, color: '#0f172a' }}>{(safeCurrentPage - 1) * pageSize + 1}</span> - <span style={{ fontWeight: 600, color: '#0f172a' }}>{Math.min(safeCurrentPage * pageSize, totalItems)}</span> trong số <span style={{ fontWeight: 600, color: '#0f172a' }}>{totalItems}</span> khách hàng
           </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button onClick={() => setCurrentPage(p => p - 1)} disabled={safeCurrentPage === 1} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage === 1 ? 'default' : 'pointer', opacity: safeCurrentPage === 1 ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
-              &lt;
+            <button 
+              onClick={() => setCurrentPage(1)} 
+              disabled={safeCurrentPage === 1}
+              style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px', background: 'white', cursor: safeCurrentPage === 1 ? 'not-allowed' : 'pointer', opacity: safeCurrentPage === 1 ? 0.4 : 1 }}
+            >
+              <ChevronsLeft size={16} />
             </button>
-
-            {[...Array(totalPages)].map((_, i) => {
-              const page = i + 1;
-              // Hiển thị 1 2 3 ... N
-              if (page === 1 || page === totalPages || (page >= safeCurrentPage - 1 && page <= safeCurrentPage + 1)) {
-                return (
-                  <button key={page} onClick={() => setCurrentPage(page)} style={{ border: 'none', background: page === safeCurrentPage ? '#e32b4c' : 'transparent', color: page === safeCurrentPage ? 'white' : '#64748b', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {page}
-                  </button>
-                );
-              }
-              if (page === safeCurrentPage - 2 || page === safeCurrentPage + 2) {
-                return <span key={page} style={{ color: '#64748b', letterSpacing: '2px', marginLeft: '4px', marginRight: '4px' }}>...</span>;
-              }
-              return null;
-            })}
-
-            <button onClick={() => setCurrentPage(p => p + 1)} disabled={safeCurrentPage >= totalPages} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage >= totalPages ? 'default' : 'pointer', opacity: safeCurrentPage >= totalPages ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
-              &gt;
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} 
+              disabled={safeCurrentPage === 1}
+              style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px', background: 'white', cursor: safeCurrentPage === 1 ? 'not-allowed' : 'pointer', opacity: safeCurrentPage === 1 ? 0.4 : 1 }}
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155', padding: '0 8px' }}>
+              Trang {safeCurrentPage} / {totalPages}
+            </div>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} 
+              disabled={safeCurrentPage === totalPages}
+              style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px', background: 'white', cursor: safeCurrentPage === totalPages ? 'not-allowed' : 'pointer', opacity: safeCurrentPage === totalPages ? 0.4 : 1 }}
+            >
+              <ChevronRight size={16} />
+            </button>
+            <button 
+              onClick={() => setCurrentPage(totalPages)} 
+              disabled={safeCurrentPage === totalPages}
+              style={{ border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px', background: 'white', cursor: safeCurrentPage === totalPages ? 'not-allowed' : 'pointer', opacity: safeCurrentPage === totalPages ? 0.4 : 1 }}
+            >
+              <ChevronsRight size={16} />
             </button>
           </div>
         </div>

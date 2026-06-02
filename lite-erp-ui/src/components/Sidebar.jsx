@@ -134,6 +134,21 @@ function Sidebar() {
           </div>
         </div>
 
+        {/* Quản lý Nghiệm thu */}
+        <div className="nav-group">
+          <div className="group-title">
+            <span>QUẢN LÝ NGHIỆM THU</span>
+          </div>
+          <div
+            className={`nav-item ${location.pathname.includes('/acceptances') ? 'active' : ''}`}
+            onClick={() => navigate('/acceptances')}
+          >
+            <ClipboardList size={20} />
+            <span>Danh sách nghiệm thu</span>
+            <span className="mvp-badge">MVP</span>
+          </div>
+        </div>
+
         {/* Quản lý Nhà cung cấp */}
         <div className="nav-group">
           <div className="group-title">

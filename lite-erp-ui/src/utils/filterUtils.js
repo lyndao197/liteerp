@@ -11,9 +11,13 @@ export const OPERATORS = [
   { value: 'less_than', label: 'Nhỏ hơn (<)' }
 ];
 
-export const evaluateRule = (itemValue, operator, ruleValue) => {
-  const v1 = String(itemValue || '').toLowerCase();
-  const v2 = String(ruleValue || '').toLowerCase();
+export const evaluateRule = (itemValue, operator, ruleValue, field) => {
+  let v1 = String(itemValue || '').toLowerCase();
+  let v2 = String(ruleValue || '').toLowerCase();
+
+  if (field === 'id') {
+    v1 = `act-${new Date().getFullYear()}-${String(itemValue).padStart(5, '0')}`.toLowerCase();
+  }
 
   switch (operator) {
     case 'contains': return v1.includes(v2);
@@ -40,7 +44,7 @@ export const evaluateQuery = (item, query) => {
       return evaluateQuery(item, ruleOrGroup);
     } else {
       // Luật đơn lẻ
-      return evaluateRule(item[ruleOrGroup.field], ruleOrGroup.operator, ruleOrGroup.value);
+      return evaluateRule(item[ruleOrGroup.field], ruleOrGroup.operator, ruleOrGroup.value, ruleOrGroup.field);
     }
   });
 
