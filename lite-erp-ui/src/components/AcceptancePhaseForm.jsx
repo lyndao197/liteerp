@@ -15,6 +15,7 @@ import {
   Send
 } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
+import KpiSlaBlock from './blocks/KpiSlaBlock';
 
 const AcceptancePhaseForm = () => {
   const { parentId, phaseId } = useParams();
@@ -39,12 +40,9 @@ const AcceptancePhaseForm = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [lineItems, setLineItems] = useState([]);
   const [docStatus, setDocStatus] = useState('Tạm tính');
-  const [slaDocStatus, setSlaDocStatus] = useState('Tạm tính');
 
-  // SLA Penalty State
+  // SLA Penalty State (giữ lại cho sidebar tính tiền thực nhận)
   const [slaList, setSlaList] = useState([]);
-  const [selectedSla, setSelectedSla] = useState('SLA-01: Độ sẵn sàng của Hệ thống (Uptime SLA) (Gốc: 2%)');
-  const [penaltyRateInput, setPenaltyRateInput] = useState('1.5');
 
   // Load contract and initial phase if editing
   useEffect(() => {
@@ -114,27 +112,6 @@ const AcceptancePhaseForm = () => {
         { id: 1, desc: 'Cấu hình tích hợp bổ sung hệ thống định danh ngoài SSO', qty: 1, unit: 'Hạng mục', price: '300,000,000', total: '300,000,000' }
       ]);
     }
-  };
-
-  const handleAddSla = () => {
-    const rate = parseFloat(penaltyRateInput);
-    if (isNaN(rate) || rate < 0 || rate > 100) {
-      alert('Vui lòng nhập tỷ lệ phạt SLA hợp lệ từ 0% đến 100%');
-      return;
-    }
-
-    const newSla = {
-      id: `SLA-${Date.now()}`,
-      name: selectedSla,
-      rate: rate
-    };
-
-    setSlaList(prev => [...prev, newSla]);
-    setPenaltyRateInput('0');
-  };
-
-  const handleDeleteSla = (id) => {
-    setSlaList(prev => prev.filter(item => item.id !== id));
   };
 
   const handleSaveAndSubmit = (e) => {
@@ -527,213 +504,15 @@ const AcceptancePhaseForm = () => {
             </div>
           </div>
 
-          {/* Section 4: SLA Penalty */}
-          <div style={{ backgroundColor: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <AlertCircle size={16} style={{ color: '#ed0029' }} />
-                  <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>Tổng hợp SLA/KPI hằng tháng</h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => alert("Đã gửi tổng hợp SLA/KPI đến khách hàng thành công!")}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '6px 12px',
-                    backgroundColor: '#ed0029',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    boxShadow: '0 1px 2px rgba(237,0,41,0.2)'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#d40025'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ed0029'}
-                >
-                  <Send size={12} />
-                  <span>Gửi khách hàng</span>
-                </button>
-              </div>
-
-              {/* Stepper: Tạm tính - Chờ KH confirm - Khóa */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* Step 1: Tạm tính */}
-                <div 
-                  onClick={() => setSlaDocStatus('Tạm tính')}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
-                >
-                  <div style={{ 
-                    width: '20px', 
-                    height: '20px', 
-                    borderRadius: '50%', 
-                    backgroundColor: slaDocStatus === 'Tạm tính' ? '#ed0029' : '#cbd5e1', 
-                    color: 'white', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    fontSize: '11px', 
-                    fontWeight: 'bold',
-                    transition: 'all 0.2s'
-                  }}>
-                    1
-                  </div>
-                  <span style={{ 
-                    fontSize: '12px', 
-                    fontWeight: slaDocStatus === 'Tạm tính' ? 'bold' : '500', 
-                    color: slaDocStatus === 'Tạm tính' ? '#ed0029' : '#64748b',
-                    transition: 'all 0.2s'
-                  }}>
-                    Tạm tính
-                  </span>
-                </div>
-
-                {/* Line 1 */}
-                <div style={{ width: '20px', height: '2px', backgroundColor: (slaDocStatus === 'Chờ KH confirm' || slaDocStatus === 'Khóa') ? '#ed0029' : '#e2e8f0' }} />
-
-                {/* Step 2: Chờ KH confirm */}
-                <div 
-                  onClick={() => setSlaDocStatus('Chờ KH confirm')}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
-                >
-                  <div style={{ 
-                    width: '20px', 
-                    height: '20px', 
-                    borderRadius: '50%', 
-                    backgroundColor: slaDocStatus === 'Chờ KH confirm' ? '#ed0029' : (slaDocStatus === 'Khóa' ? '#ed0029' : '#cbd5e1'), 
-                    color: 'white', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    fontSize: '11px', 
-                    fontWeight: 'bold',
-                    transition: 'all 0.2s'
-                  }}>
-                    2
-                  </div>
-                  <span style={{ 
-                    fontSize: '12px', 
-                    fontWeight: slaDocStatus === 'Chờ KH confirm' ? 'bold' : '500', 
-                    color: slaDocStatus === 'Chờ KH confirm' ? '#ed0029' : '#64748b',
-                    transition: 'all 0.2s'
-                  }}>
-                    Chờ KH confirm
-                  </span>
-                </div>
-
-                {/* Line 2 */}
-                <div style={{ width: '20px', height: '2px', backgroundColor: slaDocStatus === 'Khóa' ? '#ed0029' : '#e2e8f0' }} />
-
-                {/* Step 3: Khóa */}
-                <div 
-                  onClick={() => setSlaDocStatus('Khóa')}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
-                >
-                  <div style={{ 
-                    width: '20px', 
-                    height: '20px', 
-                    borderRadius: '50%', 
-                    backgroundColor: slaDocStatus === 'Khóa' ? '#ed0029' : '#cbd5e1', 
-                    color: 'white', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    fontSize: '11px', 
-                    fontWeight: 'bold',
-                    transition: 'all 0.2s'
-                  }}>
-                    3
-                  </div>
-                  <span style={{ 
-                    fontSize: '12px', 
-                    fontWeight: slaDocStatus === 'Khóa' ? 'bold' : '500', 
-                    color: slaDocStatus === 'Khóa' ? '#ed0029' : '#64748b',
-                    transition: 'all 0.2s'
-                  }}>
-                    Khóa
-                  </span>
-                </div>
-              </div>
+          {/* Section 4: Tổng hợp SLA/KPI hằng tháng */}
+          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)' }}>
+            {/* Section header */}
+            <div style={{ backgroundColor: 'white', padding: '14px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertCircle size={16} style={{ color: '#ed0029' }} />
+              <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>Tổng hợp SLA / KPI hằng tháng</h3>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 140px 120px', gap: '16px', alignItems: 'flex-end' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569' }}>Chọn Chỉ số SLA/KPI</label>
-                <select 
-                  value={selectedSla}
-                  onChange={(e) => setSelectedSla(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', outline: 'none' }}
-                >
-                  <option value="SLA-01: Độ sẵn sàng của Hệ thống (Uptime SLA) (Gốc: 2%)">SLA-01: Độ sẵn sàng của Hệ thống (Uptime SLA) (Gốc: 2%)</option>
-                  <option value="SLA-02: Tỷ lệ khắc phục sự cố đúng hạn (Gốc: 1.5%)">SLA-02: Tỷ lệ khắc phục sự cố đúng hạn (Gốc: 1.5%)</option>
-                  <option value="SLA-03: Chỉ số đo lường hài lòng KH (CSAT) (Gốc: 0.5%)">SLA-03: Chỉ số đo lường hài lòng KH (CSAT) (Gốc: 0.5%)</option>
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569' }}>Nhập tỷ lệ Phạt (?%)</label>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <input 
-                    type="text" 
-                    value={penaltyRateInput}
-                    onChange={(e) => setPenaltyRateInput(e.target.value)}
-                    style={{ width: '100%', padding: '10px 30px 10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
-                  />
-                  <span style={{ position: 'absolute', right: '12px', fontSize: '13px', color: '#64748b', fontWeight: 'bold' }}>%</span>
-                </div>
-              </div>
-
-              <button 
-                type="button"
-                onClick={handleAddSla}
-                style={{ padding: '10px 16px', backgroundColor: '#ed0029', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', height: '39px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-              >
-                <Plus size={14} />
-                <span>Thêm phạt</span>
-              </button>
-            </div>
-
-            {slaList.length === 0 ? (
-              <div style={{ padding: '16px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', textAlign: 'center', fontSize: '12px', color: '#64748b' }}>
-                Không ghi nhận lỗi vi phạm SLA/KPI trong tháng này. Tỷ lệ giảm trừ phạt bằng 0%.
-              </div>
-            ) : (
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px', color: '#475569' }}>
-                  <thead style={{ backgroundColor: '#f8fafc', fontSize: '11px', fontWeight: 'bold', color: '#94a3b8' }}>
-                    <tr>
-                      <th style={{ padding: '8px 16px' }}>Chỉ số SLA vi phạm</th>
-                      <th style={{ padding: '8px 16px' }}>Tỷ lệ phạt</th>
-                      <th style={{ padding: '8px 16px', textAlign: 'right' }}>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {slaList.map((item) => (
-                      <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '8px 16px', fontWeight: '600', color: '#334155' }}>{item.name}</td>
-                        <td style={{ padding: '8px 16px', fontWeight: 'bold', color: '#e11d48' }}>{item.rate}%</td>
-                        <td style={{ padding: '8px 16px', textAlign: 'right' }}>
-                          <button 
-                            type="button" 
-                            onClick={() => handleDeleteSla(item.id)}
-                            style={{ background: 'transparent', border: 'none', color: '#cbd5e1', cursor: 'pointer' }}
-                            onMouseEnter={(e) => e.currentTarget.style.color = '#e11d48'}
-                            onMouseLeave={(e) => e.currentTarget.style.color = '#cbd5e1'}
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            {/* KpiSlaBlock nhúng trực tiếp — tự quản lý status bar + tab KPI/SLA */}
+            <KpiSlaBlock />
           </div>
 
         </div>
