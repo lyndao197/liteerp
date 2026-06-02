@@ -131,6 +131,7 @@ const OpportunityForm = () => {
   const [lostDesc, setLostDesc] = useState('');
 
   const [leadStatus, setLeadStatus] = useState('Mới');
+  const [showContractConfirmModal, setShowContractConfirmModal] = useState(false);
   const isAdvancedStage = leadStatus !== 'Đang tiếp xúc' && leadStatus !== 'Mới';
   const isDisabled = leadStatus !== 'Mới';
   const [pakdCount, setPakdCount] = useState(0);
@@ -448,6 +449,15 @@ Mô tả: ${lostDesc}`, 'just now', '#fee2e2');
     if (leadStatus === 'Đánh giá nhu cầu' && newStatus === 'Đang báo giá' && attachmentFiles.length === 0) {
       showToast('Yêu cầu upload tối thiểu 1 tài liệu ở phần Thông tin chung trước khi chuyển sang Đang báo giá.', 'error');
       return;
+    }
+
+    if (newStatus === 'Kí hợp đồng') {
+       if (!id || id === 'new') {
+           showToast("Vui lòng nhấn nút Lưu để tạo Opportunity trước khi chuyển sang Hợp đồng.", "error");
+           return;
+       }
+       setShowContractConfirmModal(true);
+       return;
     }
 
     if (newStatus === 'Thành công') {
@@ -825,9 +835,7 @@ Mô tả: ${lostDesc}`, 'just now', '#fee2e2');
               <Trash2 size={16} />
             </button>
           )}
-          {leadStatus === 'Mới' && (
-            <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white' }} onClick={commitSave}>Lưu</button>
-          )}
+          <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '13px', backgroundColor: '#e32b4c', borderColor: '#e32b4c', color: 'white' }} onClick={commitSave}>Lưu</button>
         </div>
       </div>
 
@@ -1667,6 +1675,46 @@ Mô tả: ${lostDesc}`, 'just now', '#fee2e2');
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {showContractConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ width: '440px', borderRadius: '12px', overflow: 'hidden', padding: '0', background: 'white' }}>
+            <div className="modal-header" style={{ borderBottom: 'none', padding: '20px 20px 0 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="modal-title" style={{ fontSize: '18px', fontWeight: 'bold', color: '#1e293b' }}>
+                Chuyển trạng thái Ký hợp đồng
+              </div>
+              <button className="modal-close" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }} onClick={() => setShowContractConfirmModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="modal-body" style={{ padding: '24px 20px', textAlign: 'center', color: '#475569', fontSize: '15px' }}>
+              <p style={{ margin: '0 0 6px 0' }}>Bạn cần tạo Hợp đồng để chuyển sang trạng thái này.</p>
+              <p style={{ margin: '0', fontWeight: '600', color: '#1e293b' }}>Bạn có chắc chắn muốn tiếp tục?</p>
+            </div>
+
+            <div className="modal-footer" style={{ borderTop: 'none', display: 'flex', gap: '16px', padding: '0 20px 24px 20px', justifyContent: 'center' }}>
+              <button 
+                className="btn btn-secondary" 
+                style={{ flex: 1, padding: '10px 0', backgroundColor: '#f1f5f9', color: '#475569', border: 'none', fontWeight: '600', borderRadius: '6px' }} 
+                onClick={() => setShowContractConfirmModal(false)}
+              >
+                Hủy thao tác
+              </button>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1, padding: '10px 0', backgroundColor: '#e32b4c', color: 'white', border: 'none', fontWeight: '600', borderRadius: '6px' }} 
+                onClick={() => {
+                   setShowContractConfirmModal(false);
+                   navigate(`/contract/new?leadId=${id}`);
+                }}
+              >
+                Xác nhận
+              </button>
+            </div>
           </div>
         </div>
       )}

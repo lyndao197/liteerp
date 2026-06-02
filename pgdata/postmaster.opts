@@ -1,1 +1,1 @@
-C:/Users/haptn/Downloads/odoo/pgsql/bin/postgres.exe "-D" "./pgdata"
+D:/odoo/pgsql/bin/postgres.exe "-D" "./pgdata"
