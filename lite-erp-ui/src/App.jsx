@@ -42,6 +42,9 @@ import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
 import InvoiceManagement from './components/InvoiceManagement';
 import ContractKpiConfig from './components/ContractKpiConfig';
+import AcceptanceManagement from './components/AcceptanceManagement';
+import AcceptanceDetail from './components/AcceptanceDetail';
+import AcceptancePhaseForm from './components/AcceptancePhaseForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -81,6 +84,10 @@ function App() {
               <Route path="/contract/new" element={<ContractForm />} />
               <Route path="/contract/edit/:id" element={<ContractForm />} />
               <Route path="/contract-kpi-config" element={<ContractKpiConfig />} />
+              <Route path="/acceptances" element={<AcceptanceManagement />} />
+              <Route path="/acceptances/:id" element={<AcceptanceDetail />} />
+              <Route path="/acceptances/:parentId/phase/new" element={<AcceptancePhaseForm />} />
+              <Route path="/acceptances/:parentId/phase/edit/:phaseId" element={<AcceptancePhaseForm />} />
               <Route path="/orders" element={<OrderManagement />} />
               <Route path="/order/new" element={<OrderForm />} />
               <Route path="/order/edit/:id" element={<OrderForm />} />

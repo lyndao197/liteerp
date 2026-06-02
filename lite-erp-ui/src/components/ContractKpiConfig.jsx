@@ -9,6 +9,7 @@ import {
     CornerDownRight
 } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
+import KpiSlaBlock from './blocks/KpiSlaBlock';
 import './ContractKpiConfig.css';
 
 function ContractKpiConfig() {
@@ -18,7 +19,7 @@ function ContractKpiConfig() {
     const [orderStatus, setOrderStatus] = useState('');
     
     // KPI & Productivity State
-    const [activeTab, setActiveTab] = useState('SLA');
+    const [activeTab, setActiveTab] = useState('KPI');
     const [kpiLines, setKpiLines] = useState([]);
     const [productivityLines, setProductivityLines] = useState([]);
     
@@ -156,7 +157,7 @@ function ContractKpiConfig() {
                     <button className="btn-icon" onClick={() => navigate(-1)}>
                         <ArrowLeft size={20} />
                     </button>
-                    <h2>Cấu hình KPI/SLA và Năng suất</h2>
+                    <h2>Cấu hình KPI và SLA</h2>
                 </div>
                 <div className="form-actions">
                     <button className="btn btn-primary" onClick={handleSave} disabled={isReadOnly}>
@@ -184,174 +185,7 @@ function ContractKpiConfig() {
                 </div>
 
                 {selectedContractId && (
-                    <div className="kpi-container">
-                        <div className="tab-header">
-                            <button 
-                                className={`tab-btn sla ${activeTab === 'SLA' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('SLA')}
-                            >
-                                Cấu hình KPI / SLA
-                            </button>
-                            <button 
-                                className={`tab-btn prod ${activeTab === 'PRODUCTIVITY' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('PRODUCTIVITY')}
-                            >
-                                Cấu hình Năng suất
-                            </button>
-                        </div>
-
-                        <div className="kpi-table-wrapper">
-                            <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white' }}>
-                                <h3 style={{ fontSize: '16px', color: '#0f172a', margin: 0, fontWeight: 700 }}>
-                                    {activeTab === 'SLA' ? 'DANH SÁCH CHỈ SỐ KPI/SLA CAM KẾT' : 'DANH SÁCH CHỈ SỐ NĂNG SUẤT CAM KẾT'}
-                                    {isReadOnly && <span style={{ color: '#ef4444', fontSize: '12px', marginLeft: '12px', fontWeight: 'normal', textTransform: 'none' }}>(Chỉ xem - Hợp đồng không ở trạng thái Dự thảo)</span>}
-                                </h3>
-                                <button className="btn btn-primary" onClick={handleSyncToWord} style={{ background: '#0ea5e9', border: 'none', borderRadius: '8px', padding: '10px 20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    <FileText size={18} /> Đồng bộ dữ liệu vào Word
-                                </button>
-                            </div>
-
-                            {activeTab === 'SLA' && (
-                                <div style={{ overflowX: 'auto' }}>
-                                    <table className="kpi-table">
-                                        <thead>
-                                            <tr>
-                                                <th style={{ width: '60px' }}>TT</th>
-                                                <th style={{ minWidth: '250px' }}>Nội dung đánh giá</th>
-                                                <th style={{ width: '250px' }}>Định nghĩa tiêu chí</th>
-                                                <th style={{ width: '120px' }}>Tiêu chuẩn</th>
-                                                <th style={{ width: '100px' }}>Tỷ trọng</th>
-                                                <th style={{ width: '250px' }}>Phương pháp tính điểm</th>
-                                                <th style={{ width: '120px', textAlign: 'center' }}>Thao tác</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {kpiLines.map((line, index) => {
-                                                const level = line.level || 0;
-                                                return (
-                                                <tr key={line.id} className={`kpi-row level-${level}`}>
-                                                    <td>
-                                                        <input type="text" className="cell-input" value={line.index || ''} onChange={e => handleChange(index, 'index', e.target.value, 'kpi')} readOnly={isReadOnly} placeholder="I, 1..." style={{ textAlign: 'center' }} />
-                                                    </td>
-                                                    <td>
-                                                        <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingLeft: `${16 + level * 24}px` }}>
-                                                            {level > 0 && <span className="tree-indicator">|_</span>}
-                                                            <textarea className="cell-input" value={line.name || ''} onChange={e => handleChange(index, 'name', e.target.value, 'kpi')} readOnly={isReadOnly} placeholder="Tên nhóm / Chỉ số..." style={{ paddingLeft: '8px' }} />
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <textarea className="cell-input" value={line.definition || ''} onChange={e => handleChange(index, 'definition', e.target.value, 'kpi')} readOnly={isReadOnly} />
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" className="cell-input" value={line.standard || ''} onChange={e => handleChange(index, 'standard', e.target.value, 'kpi')} readOnly={isReadOnly} />
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" className="cell-input" value={line.weight || ''} onChange={e => handleChange(index, 'weight', e.target.value, 'kpi')} readOnly={isReadOnly} style={{ textAlign: 'center' }} />
-                                                    </td>
-                                                    <td>
-                                                        <textarea className="cell-input" value={line.method || ''} onChange={e => handleChange(index, 'method', e.target.value, 'kpi')} readOnly={isReadOnly} />
-                                                    </td>
-                                                    <td>
-                                                        {!isReadOnly && (
-                                                            <div className="action-buttons">
-                                                                <button className="btn-action child" title="Thêm mục con" onClick={() => handleAddChild(index, 'kpi')}>
-                                                                    <CornerDownRight size={16} />
-                                                                </button>
-                                                                <button className="btn-action sibling" title="Thêm mục cùng cấp" onClick={() => handleAddSibling(index, 'kpi')}>
-                                                                    <Plus size={16} />
-                                                                </button>
-                                                                <button className="btn-action delete" title="Xóa" onClick={() => handleRemove(index, 'kpi')}>
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            )})}
-                                            {kpiLines.length === 0 && (
-                                                <tr><td colSpan="7" style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>Chưa có cấu hình KPI/SLA</td></tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    {!isReadOnly && (
-                                        <div style={{ padding: '24px' }}>
-                                            <button className="add-root-btn" onClick={() => handleAddRoot('kpi')}>
-                                                <Plus size={18} /> Thêm nhóm gốc mới
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {activeTab === 'PRODUCTIVITY' && (
-                                <div style={{ overflowX: 'auto' }}>
-                                    <table className="kpi-table">
-                                        <thead>
-                                            <tr>
-                                                <th style={{ width: '60px' }}>TT</th>
-                                                <th style={{ minWidth: '300px' }}>Kênh</th>
-                                                <th style={{ width: '200px' }}>Đơn vị tính</th>
-                                                <th style={{ width: '150px' }}>Năng suất / Ngày</th>
-                                                <th style={{ width: '250px' }}>Ghi chú</th>
-                                                <th style={{ width: '120px', textAlign: 'center' }}>Thao tác</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {productivityLines.map((line, index) => {
-                                                const level = line.level || 0;
-                                                return (
-                                                <tr key={line.id} className={`kpi-row level-${level}`}>
-                                                    <td>
-                                                        <input type="text" className="cell-input" value={line.index || ''} onChange={e => handleChange(index, 'index', e.target.value, 'productivity')} readOnly={isReadOnly} placeholder="I, 1..." style={{ textAlign: 'center' }} />
-                                                    </td>
-                                                    <td>
-                                                        <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingLeft: `${16 + level * 24}px` }}>
-                                                            {level > 0 && <span className="tree-indicator">|_</span>}
-                                                            <textarea className="cell-input" value={line.name || ''} onChange={e => handleChange(index, 'name', e.target.value, 'productivity')} readOnly={isReadOnly} placeholder="Tên kênh..." style={{ paddingLeft: '8px' }} />
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <textarea className="cell-input" value={line.unit || ''} onChange={e => handleChange(index, 'unit', e.target.value, 'productivity')} readOnly={isReadOnly} placeholder="Cuộc gọi..." />
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" className="cell-input" value={line.target || ''} onChange={e => handleChange(index, 'target', e.target.value, 'productivity')} readOnly={isReadOnly} placeholder="140" style={{ textAlign: 'center' }} />
-                                                    </td>
-                                                    <td>
-                                                        <textarea className="cell-input" value={line.note || ''} onChange={e => handleChange(index, 'note', e.target.value, 'productivity')} readOnly={isReadOnly} />
-                                                    </td>
-                                                    <td>
-                                                        {!isReadOnly && (
-                                                            <div className="action-buttons">
-                                                                <button className="btn-action child" title="Thêm mục con" onClick={() => handleAddChild(index, 'productivity')}>
-                                                                    <CornerDownRight size={16} />
-                                                                </button>
-                                                                <button className="btn-action sibling" title="Thêm mục cùng cấp" onClick={() => handleAddSibling(index, 'productivity')}>
-                                                                    <Plus size={16} />
-                                                                </button>
-                                                                <button className="btn-action delete" title="Xóa" onClick={() => handleRemove(index, 'productivity')}>
-                                                                    <Trash2 size={16} />
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            )})}
-                                            {productivityLines.length === 0 && (
-                                                <tr><td colSpan="6" style={{ padding: '32px', textAlign: 'center', color: '#94a3b8' }}>Chưa có cấu hình Năng suất</td></tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    {!isReadOnly && (
-                                        <div style={{ padding: '24px' }}>
-                                            <button className="add-root-btn" onClick={() => handleAddRoot('productivity')}>
-                                                <Plus size={18} /> Thêm nhóm gốc mới
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    <KpiSlaBlock isReadOnly={isReadOnly} />
                 )}
             </div>
 

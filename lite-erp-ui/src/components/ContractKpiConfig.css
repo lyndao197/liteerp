@@ -198,8 +198,8 @@
     border-radius: 3px 3px 0 0;
 }
 
+.tab-btn.active.kpi::after { background: #6366f1; }
 .tab-btn.active.sla::after { background: #0ea5e9; }
-.tab-btn.active.prod::after { background: #10b981; }
 
 .add-root-btn {
     width: 100%;

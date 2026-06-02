@@ -137,7 +137,15 @@ function Sidebar() {
             onClick={() => navigate('/contract-kpi-config')}
           >
             <Target size={20} />
-            <span>Quản lý KPI/SLA và Năng suất</span>
+            <span>Cấu hình KPI và SLA</span>
+            <span className="mvp-badge" style={{ backgroundColor: '#10b981' }}>New</span>
+          </div>
+          <div
+            className={`nav-item ${location.pathname.startsWith('/acceptances') ? 'active' : ''}`}
+            onClick={() => navigate('/acceptances')}
+          >
+            <FileText size={20} />
+            <span>Danh sách nghiệm thu</span>
             <span className="mvp-badge" style={{ backgroundColor: '#10b981' }}>New</span>
           </div>
         </div>

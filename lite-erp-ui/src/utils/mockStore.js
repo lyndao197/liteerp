@@ -2103,6 +2103,83 @@ export const mockStore = {
     store.orders[orderId] = savedOrder;
     mockStore.saveStore(store);
     return savedOrder;
+  },
+
+  // ===== ACCEPTANCE PHASES =====
+  getAcceptancePhases: (parentAcceptanceId) => {
+    const store = mockStore.getStore();
+    if (!store.acceptancePhases) return [];
+    return Object.values(store.acceptancePhases)
+      .filter(p => p.parentAcceptanceId === parentAcceptanceId);
+  },
+
+  createAcceptancePhase: (parentAcceptanceId, phaseData) => {
+    const store = mockStore.getStore();
+    if (!store.acceptancePhases) store.acceptancePhases = {};
+    if (!store.acceptancePhaseIds) store.acceptancePhaseIds = [];
+
+    const phaseId = `PHASE-${Date.now()}`;
+    const newPhase = {
+      id: phaseId,
+      parentAcceptanceId,
+      status: 'Bản nháp',
+      ...phaseData
+    };
+
+    store.acceptancePhases[phaseId] = newPhase;
+    store.acceptancePhaseIds.unshift(phaseId);
+
+    mockStore.recalculateParentTotals(store, parentAcceptanceId);
+    mockStore.saveStore(store);
+    return newPhase;
+  },
+
+  updateAcceptancePhase: (phaseId, phaseData) => {
+    const store = mockStore.getStore();
+    if (!store.acceptancePhases || !store.acceptancePhases[phaseId]) return null;
+
+    const parentId = store.acceptancePhases[phaseId].parentAcceptanceId;
+    store.acceptancePhases[phaseId] = {
+      ...store.acceptancePhases[phaseId],
+      ...phaseData
+    };
+
+    mockStore.recalculateParentTotals(store, parentId);
+    mockStore.saveStore(store);
+    return store.acceptancePhases[phaseId];
+  },
+
+  deleteAcceptancePhase: (phaseId) => {
+    const store = mockStore.getStore();
+    if (!store.acceptancePhases || !store.acceptancePhases[phaseId]) return;
+
+    const parentId = store.acceptancePhases[phaseId].parentAcceptanceId;
+    delete store.acceptancePhases[phaseId];
+    store.acceptancePhaseIds = (store.acceptancePhaseIds || []).filter(id => id !== phaseId);
+
+    mockStore.recalculateParentTotals(store, parentId);
+    mockStore.saveStore(store);
+  },
+
+  recalculateParentTotals: (store, parentId) => {
+    const phases = Object.values(store.acceptancePhases || {})
+      .filter(p => p.parentAcceptanceId === parentId);
+
+    let totalValue = 0;
+    let totalPenalty = 0;
+
+    phases.forEach(p => {
+      const val = parseFloat(String(p.value || '0').replace(/[^0-9.-]/g, ''));
+      const pen = parseFloat(String(p.penalty || '0').replace(/[^0-9.-]/g, ''));
+      totalValue += isNaN(val) ? 0 : val;
+      totalPenalty += isNaN(pen) ? 0 : pen;
+    });
+
+    if (store.contracts && store.contracts[parentId]) {
+      store.contracts[parentId].totalAcceptedValue = totalValue;
+      store.contracts[parentId].totalPenalty = totalPenalty;
+      store.contracts[parentId].netAcceptedValue = totalValue - totalPenalty;
+    }
   }
 };
 
