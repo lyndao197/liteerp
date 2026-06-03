@@ -1,0 +1,97 @@
+---
+description: AI TU DONG dong bo Git/Odoo/FE — user khong can nho lenh .bat hay git.
+alwaysApply: true
+---
+
+# LiteERP — AI tự động đồng bộ (user không nhớ lệnh)
+
+## Nguyên tắc bắt buộc
+
+1. **KHÔNG** đưa checklist lệnh cho user tự chạy — **AI tự gọi Shell** trong thư mục `odoo/`.
+2. Báo user **1–2 câu kết quả** (vd: "Đã push, máy khác pull là có DB + code").
+3. Chỉ hỏi user khi: lệnh lỗi, conflict git, hoặc chưa rõ có push/commit không.
+
+Repo: `https://github.com/Duc-Manh2303/ManhDND_CRM.git`
+
+---
+
+## A. Đầu phiên / máy mới / user nói pull, clone, máy khác, setup
+
+**AI tự chạy lần lượt** (bỏ qua bước đã xong):
+
+```
+git config core.hooksPath githooks   # hoặc install-githooks.bat silent
+git pull origin main                 # nếu đã clone
+# post-merge hook tu restore DB; neu that bai:
+setup-database.bat
+cd lite-erp-ui && npm install        # neu chua co node_modules
+```
+
+- Kiểm tra: `pgdata/PG_VERSION`, `database/seed/demo.dump`.
+- **Không** nhắc user chạy `install-githooks.bat` — AI chạy hộ.
+
+---
+
+## B. User yêu cầu push / đẩy git / xong việc / sang máy khác / lưu lên git
+
+**AI tự chạy** (user đã yêu cầu commit/push):
+
+```
+sync-push.bat
+git add ... (cac file da sua)
+git commit -m "..."
+git push origin main
+```
+
+- `sync-push.bat` = backup Odoo + stage seed.
+- `pre-commit` hook cũng backup DB khi commit.
+- Nếu user **chưa** nói push: **không** push; có thể nhắc ngắn *"Bảo push khi sang máy khác"*.
+
+---
+
+## C. Kết thúc task lớn (code + SRS xong)
+
+Nếu user không cấm push: **đề xuất 1 câu** rồi **tự push** nếu user đồng ý hoặc đã quen auto-push trong project-context.
+
+Trước push: nếu session có sửa data FE trên UI → cập nhật `mockStore.js` `INITIAL_DATA` cho khớp.
+
+---
+
+## D. User nói chạy FE/BE / mở app
+
+**AI tự chạy** (background nếu chưa chạy):
+
+```
+start_odoo.bat          # hoặc pg_ctl + odoo-bin
+cd lite-erp-ui && npm run dev
+```
+
+---
+
+## E. File script (AI gọi, user không cần nhớ tên)
+
+| Script | Khi AI gọi |
+|--------|------------|
+| `install-githooks.bat silent` | Chưa có `core.hooksPath=githooks` |
+| `sync-push.bat` | Trước commit/push |
+| `setup-database.bat` | Chưa có pgdata hoặc restore fail sau pull |
+| `backup-database.bat` | Chỉ khi cần refresh seed không commit |
+| `start_odoo.bat` | User cần BE |
+
+---
+
+## F. Không tự động được (AI xử lý thay)
+
+| Việc | Cách |
+|------|------|
+| FE `localStorage` | Cập nhật `mockStore.js` trước push nếu đổi data trên UI |
+| `node_modules` | `npm install` khi thiếu |
+| Conflict git | AI hướng dẫn resolve, không force push |
+
+---
+
+## G. Trả lời user
+
+**Sai:** "Bạn chạy sync-push.bat rồi install-githooks..."
+
+**Đúng:** "Mình đã push lên Git (kèm backup DB). Máy kia mở project, bảo AI *pull/setup* là được."
