@@ -131,8 +131,6 @@ export default function KpiSlaBlock() {
                 r.kpisYeuCau, r.cachTinh, r.diemChuan,
                 r.result.kpisDat, r.result.diem, r.result.ghiChu
             ]),
-            [], ['ĐẠI DIỆN BÊN A', '', '', '', 'ĐẠI DIỆN BÊN B'],
-            ['', '', '', '', ''], ['(Ký, ghi rõ họ tên)', '', '', '', '(Ký, ghi rõ họ tên)'],
         ];
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(kpiRows), 'KPI');
 
@@ -146,8 +144,6 @@ export default function KpiSlaBlock() {
                 r.requirement, r.method, r.target,
                 r.evaluations.weight, r.evaluations.score, r.evaluations.note
             ]),
-            [], ['ĐẠI DIỆN BÊN A', '', '', '', 'ĐẠI DIỆN BÊN B'],
-            ['', '', '', '', ''], ['(Ký, ghi rõ họ tên)', '', '', '', '(Ký, ghi rõ họ tên)'],
         ];
         XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(slaRows), 'SLA');
 
@@ -201,9 +197,9 @@ export default function KpiSlaBlock() {
                     <div style={{ fontSize: 11, color: '#64748b', marginBottom: 2 }}>Điểm chuẩn</div>
                     <input className="cell-input editable" value={total.diemChuan} onChange={e => setTotal(p => ({ ...p, diemChuan: e.target.value }))} style={{ textAlign: 'center', fontWeight: 'bold', width: '100%' }} />
                 </div>
-                {/* KPIs đạt được */}
+                {/* Tỷ trọng */}
                 <div style={{ borderLeft: '2px solid #94a3b8', padding: '0 8px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 2 }}>KPIs đạt được</div>
+                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 2 }}>Tỷ trọng</div>
                     <input className="cell-input editable" value={total.kpisDat || ''} onChange={e => setTotal(p => ({ ...p, kpisDat: e.target.value }))} style={{ textAlign: 'center', width: '100%' }} />
                 </div>
                 {/* Điểm */}
@@ -416,20 +412,6 @@ export default function KpiSlaBlock() {
         </div>
     );
 
-    // ─── CHỮ KÝ ─────────────────────────────────────────────────────────────
-    const renderSignature = () => (
-        <div style={{ padding: '32px 48px', borderTop: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48 }}>
-            {['ĐẠI DIỆN BÊN A', 'ĐẠI DIỆN BÊN B'].map(label => (
-                <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 80 }}>
-                    <div style={{ fontWeight: 'bold', fontSize: 13, color: '#1e293b' }}>{label}</div>
-                    <div style={{ width: '60%', borderBottom: '1px solid #475569', paddingBottom: 4, textAlign: 'center', fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
-                        (Ký, ghi rõ họ tên)
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-
     // ─── RENDER ──────────────────────────────────────────────────────────────
     return (
         <div className="kpi-block-container">
@@ -455,7 +437,6 @@ export default function KpiSlaBlock() {
             </div>
 
             {activeTab === 'KPI' ? renderKpiTable() : renderSlaTable()}
-            {renderSignature()}
         </div>
     );
 }
