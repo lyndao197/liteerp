@@ -1,11 +1,20 @@
-# PostgreSQL / Odoo local runtime (do not commit)
+# PostgreSQL / Odoo local runtime
 pgdata/
+pgdata_new/
 pgsql.log
+pgsql/
 
 # Python virtual environments
 .venv/
 .venv_broken/
 venv_temp/
+
+# Node.js runtimes & dependencies
+node_env/
+lite-erp-ui/node_modules/
+lite-erp-ui/dist/
+lite-erp-ui/vite_log.txt
+lite-erp-ui/debug_npm.py
 
 # BMAD personal overrides
 _bmad/custom/config.user.toml
@@ -13,6 +22,12 @@ _bmad/custom/config.user.toml
 # Python cache
 __pycache__/
 *.py[cod]
+
+# Temp / scratch files
+read_excel.py
+*.xls
+*.xlsx
+~$*
 
 # OS
 .DS_Store
