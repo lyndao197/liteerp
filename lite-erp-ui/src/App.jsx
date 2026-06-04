@@ -45,9 +45,6 @@ import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
 import InvoiceManagement from './components/InvoiceManagement';
 import ContractKpiConfig from './components/ContractKpiConfig';
-import AcceptanceManagement from './components/AcceptanceManagement';
-import AcceptanceDetail from './components/AcceptanceDetail';
-import AcceptancePhaseForm from './components/AcceptancePhaseForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
