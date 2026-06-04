@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lite-erp-ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "lite-erp-ui"],
+      "port": 5173,
+      "autoPort": true
+    }
+  ]
+}

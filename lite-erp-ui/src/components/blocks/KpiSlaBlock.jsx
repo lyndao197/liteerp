@@ -26,7 +26,19 @@ const INITIAL_KPI_DATA = [
 // ─── DỮ LIỆU SLA ────────────────────────────────────────────────────────────
 
 // Block tổng điểm riêng (ngoài bảng) cho SLA
-const INIT_SLA_TOTAL = { diemChuan: 100, weight: '100%', score: '', note: '', target: 'Điểm tối đa: 100\n- Từ 95-100 điểm: Không trừ phí\n- Từ 90-<95 điểm: Trừ 0.2%/điểm dưới 95\n- Từ 80-<90 điểm: Trừ 0.3%/điểm dưới 95\n- Từ 70-<80 điểm: Trừ 0.5%/điểm dưới 95\n- Từ 65-<70 điểm: Trừ 1%/điểm dưới 95\n- Dưới 65 điểm: Trừ 8% phí/hợp đồng' };
+// Cột ngưỡng đạt: mỗi mức là 1 dòng riêng (editable, thêm/xóa độc lập)
+const INIT_SLA_TOTAL = {
+    diemChuan: 100, weight: '100%', score: '', note: '',
+    targets: [
+        'Điểm tối đa: 100',
+        'Từ 95-100 điểm: Không trừ phí',
+        'Từ 90-<95 điểm: Trừ 0.2%/điểm dưới 95',
+        'Từ 80-<90 điểm: Trừ 0.3%/điểm dưới 95',
+        'Từ 70-<80 điểm: Trừ 0.5%/điểm dưới 95',
+        'Từ 65-<70 điểm: Trừ 1%/điểm dưới 95',
+        'Dưới 65 điểm: Trừ 8% phí/hợp đồng',
+    ],
+};
 
 const INITIAL_SLA_DATA = [
     // level 0 = tổng, level 1 = nhóm A/B/C, level 2 = chi tiết
@@ -43,14 +55,17 @@ const INITIAL_SLA_DATA = [
 ];
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
+// Cây phân cấp chỉ cho phép 2 level: nhóm (level 1) + chỉ tiêu chi tiết (level 2)
+const MAX_LEVEL = 2;
+
 const newKpiRow = (level) => ({
-    id: `kpi_${Date.now()}_${Math.random()}`, level, isGroup: false,
+    id: `kpi_${Date.now()}_${Math.random()}`, level, isGroup: level === 1,
     stt: '', name: '', dienGiai: '', kpisYeuCau: '', cachTinh: '', diemChuan: '',
     result: { kpisDat: '', diem: '', ghiChu: '' }
 });
 
 const newSlaRow = (level) => ({
-    id: `sla_${Date.now()}_${Math.random()}`, level, isGroup: false,
+    id: `sla_${Date.now()}_${Math.random()}`, level, isGroup: level === 1,
     index: '', name: '', requirement: '', method: '', target: '',
     evaluations: { weight: '', score: '', note: '' }
 });
@@ -90,6 +105,7 @@ export default function KpiSlaBlock() {
 
     const handleAddChild = (idx, list, setter, makeRow) => {
         const level = list[idx].level;
+        if (level >= MAX_LEVEL) return; // chỉ cho phép tối đa 2 level
         setter(insertAfter(list, idx, makeRow(level + 1)));
     };
 
@@ -122,7 +138,7 @@ export default function KpiSlaBlock() {
 
         const slaRows = [
             [`TỔNG ĐIỂM SLA — Điểm chuẩn: ${slaTotal.diemChuan} | Điểm đạt: ${slaTotal.diemDat}`],
-            [`Ngưỡng: ${slaTotal.target}`],
+            [`Ngưỡng: ${(slaTotal.targets || []).join(' | ')}`],
             [],
             ['TT', 'TÊN CHỈ TIÊU', 'YÊU CẦU', 'PHƯƠNG PHÁP', 'NGƯỠNG', 'TỶ TRỌNG', 'ĐIỂM ĐẠT', 'GHI CHÚ'],
             ...slaData.map(r => [
@@ -150,7 +166,33 @@ export default function KpiSlaBlock() {
             <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 80px 140px 80px 160px', gap: 0, alignItems: 'center', padding: '0 24px' }}>
                 <div style={{ padding: '8px 0', fontWeight: 'bold', fontSize: 13, color: '#1e293b' }}>TỔNG ĐIỂM {label}:</div>
                 {label === 'SLA' ? (
-                    <textarea className="cell-input editable" value={total.target} onChange={e => setTotal(p => ({ ...p, target: e.target.value }))} rows={3} style={{ fontSize: 12, resize: 'vertical', margin: '6px 8px' }} />
+                    <div style={{ padding: '6px 8px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <div style={{ fontSize: 11, color: '#64748b' }}>Ngưỡng đạt</div>
+                        {(total.targets || []).map((line, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <span style={{ color: '#94a3b8', fontSize: 12, flexShrink: 0 }}>•</span>
+                                <input
+                                    className="cell-input editable"
+                                    value={line}
+                                    onChange={e => setTotal(p => ({ ...p, targets: p.targets.map((t, idx) => idx === i ? e.target.value : t) }))}
+                                    style={{ flex: 1, fontSize: 12 }}
+                                />
+                                <button
+                                    title="Xóa mức ngưỡng"
+                                    onClick={() => setTotal(p => ({ ...p, targets: p.targets.filter((_, idx) => idx !== i) }))}
+                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 2, flexShrink: 0 }}
+                                    onMouseEnter={e => e.currentTarget.style.color = '#ef4444'}
+                                    onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
+                                ><Trash2 size={13} /></button>
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => setTotal(p => ({ ...p, targets: [...(p.targets || []), ''] }))}
+                            style={{ display: 'flex', alignItems: 'center', gap: 4, alignSelf: 'flex-start', marginTop: 2, padding: '3px 8px', border: '1px dashed #94a3b8', borderRadius: 4, background: '#fff', color: '#475569', cursor: 'pointer', fontSize: 11 }}
+                            onMouseEnter={e => e.currentTarget.style.borderColor = '#3b82f6'}
+                            onMouseLeave={e => e.currentTarget.style.borderColor = '#94a3b8'}
+                        ><Plus size={12} /> Thêm mức ngưỡng</button>
+                    </div>
                 ) : (
                     <div />
                 )}
@@ -179,7 +221,7 @@ export default function KpiSlaBlock() {
     );
 
     // ─── ACTION BUTTONS (thêm cùng cấp / thêm cấp con) ──────────────────────
-    const RowActions = ({ idx, list, setter, makeRow, canDelete, id }) => (
+    const RowActions = ({ idx, list, setter, makeRow, canDelete, id, level }) => (
         <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             <button
                 title="Thêm dòng cùng cấp"
@@ -188,13 +230,15 @@ export default function KpiSlaBlock() {
                 onMouseEnter={e => e.currentTarget.style.color = '#3b82f6'}
                 onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
             ><Plus size={13} /></button>
-            <button
-                title="Thêm dòng cấp con"
-                onClick={() => handleAddChild(idx, list, setter, makeRow)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 3, borderRadius: 3 }}
-                onMouseEnter={e => e.currentTarget.style.color = '#8b5cf6'}
-                onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
-            ><CornerDownRight size={13} /></button>
+            {level < MAX_LEVEL && (
+                <button
+                    title="Thêm dòng cấp con"
+                    onClick={() => handleAddChild(idx, list, setter, makeRow)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 3, borderRadius: 3 }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#8b5cf6'}
+                    onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
+                ><CornerDownRight size={13} /></button>
+            )}
             {canDelete && (
                 <button
                     title="Xóa dòng"
@@ -273,7 +317,7 @@ export default function KpiSlaBlock() {
                                             <input className="cell-input editable" value={row.result.ghiChu} onChange={e => updateKpiResult(row.id, 'ghiChu', e.target.value)} style={{ fontSize: 12 }} />
                                         </td>
                                         <td style={{ background: bg, verticalAlign: 'middle' }}>
-                                            {!row.isTotal && <RowActions idx={idx} list={kpiData} setter={setKpiData} makeRow={newKpiRow} canDelete={canDelete} id={row.id} />}
+                                            {!row.isTotal && <RowActions idx={idx} list={kpiData} setter={setKpiData} makeRow={newKpiRow} canDelete={canDelete} id={row.id} level={row.level} />}
                                         </td>
                                     </tr>
                                 );
@@ -282,11 +326,11 @@ export default function KpiSlaBlock() {
                     </table>
                 </div>
                 <div style={{ padding: '10px 16px' }}>
-                    <button onClick={() => setKpiData(p => [...p, newKpiRow(0)])}
+                    <button onClick={() => setKpiData(p => [...p, newKpiRow(1)])}
                         style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', border: '1px dashed #94a3b8', borderRadius: 6, background: '#fff', color: '#475569', cursor: 'pointer', fontSize: 13 }}
                         onMouseEnter={e => e.currentTarget.style.borderColor = '#3b82f6'}
                         onMouseLeave={e => e.currentTarget.style.borderColor = '#94a3b8'}>
-                        <Plus size={14} /> Thêm dòng gốc
+                        <Plus size={14} /> Thêm nhóm
                     </button>
                 </div>
             </div>
@@ -353,7 +397,7 @@ export default function KpiSlaBlock() {
                                         <input className="cell-input editable" value={row.evaluations.note || ''} onChange={e => updateSlaEval(row.id, 'note', e.target.value)} />
                                     </td>
                                     <td style={{ background: bg, verticalAlign: 'middle' }}>
-                                        {!row.isTotal && <RowActions idx={idx} list={slaData} setter={setSlaData} makeRow={newSlaRow} canDelete={canDelete} id={row.id} />}
+                                        {!row.isTotal && <RowActions idx={idx} list={slaData} setter={setSlaData} makeRow={newSlaRow} canDelete={canDelete} id={row.id} level={row.level} />}
                                     </td>
                                 </tr>
                             );
@@ -362,11 +406,11 @@ export default function KpiSlaBlock() {
                 </table>
             </div>
             <div style={{ padding: '10px 16px' }}>
-                <button onClick={() => setSlaData(p => [...p, newSlaRow(0)])}
+                <button onClick={() => setSlaData(p => [...p, newSlaRow(1)])}
                     style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', border: '1px dashed #94a3b8', borderRadius: 6, background: '#fff', color: '#475569', cursor: 'pointer', fontSize: 13 }}
                     onMouseEnter={e => e.currentTarget.style.borderColor = '#3b82f6'}
                     onMouseLeave={e => e.currentTarget.style.borderColor = '#94a3b8'}>
-                    <Plus size={14} /> Thêm dòng gốc
+                    <Plus size={14} /> Thêm nhóm
                 </button>
             </div>
         </div>
