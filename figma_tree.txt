@@ -1,0 +1,727 @@
+- FRAME: Tạo mới
+  - FRAME: Frame 1437253650
+    - FRAME: Top step-step
+      - INSTANCE: Back
+        - INSTANCE: arrow_back
+          - VECTOR: Vector
+        - TEXT: Continue | Content: Quay lại
+        - INSTANCE: arrow_forward
+          - VECTOR: Vector
+      - FRAME: step-3
+        - INSTANCE: Step-trạng-thái
+          - FRAME: Text
+            - TEXT: Mới | Content: Mới
+          - FRAME: Frame 32
+            - FRAME: Container
+              - FRAME: Text
+                - TEXT: 1 | Content: 1
+              - INSTANCE: check
+                - VECTOR: Vector
+            - FRAME: Container
+        - INSTANCE: Step-trạng-thái
+          - FRAME: Text
+            - TEXT: Mới | Content: Đang thực hiện
+          - FRAME: Frame 32
+            - FRAME: Container
+              - FRAME: Text
+                - TEXT: 1 | Content: 2
+              - INSTANCE: check
+                - VECTOR: Vector
+            - FRAME: Container
+        - INSTANCE: Step-trạng-thái
+          - FRAME: Text
+            - TEXT: Mới | Content: Hoàn thành
+          - FRAME: Frame 32
+            - FRAME: Container
+              - FRAME: Text
+                - TEXT: 1 | Content: 3
+              - INSTANCE: check
+                - VECTOR: Vector
+            - FRAME: Container
+      - FRAME: Frame 31
+        - INSTANCE: btn-del
+          - INSTANCE: delete_outline
+            - VECTOR: Vector
+          - TEXT: Cancel | Content: Hủy
+          - INSTANCE: arrow_forward
+            - VECTOR: Vector
+        - INSTANCE: Button/ Tertiary2
+          - INSTANCE: save
+            - VECTOR: Vector
+          - TEXT: Continue | Content: Không thành công
+          - INSTANCE: arrow_forward
+            - VECTOR: Vector
+        - INSTANCE: Button-large/Primary
+          - INSTANCE: save
+            - VECTOR: Vector
+          - TEXT: Continue | Content: Lưu
+          - INSTANCE: arrow_forward
+            - VECTOR: Vector
+    - FRAME: Head
+      - FRAME: Container
+        - FRAME: Container
+          - FRAME: Heading 2
+            - INSTANCE: Input/select_ver
+              - FRAME: Label
+                - TEXT: Deal Name | Content: Tên nhiệm vụ
+                - TEXT: Deal Name | Content: *
+              - FRAME: Input
+                - FRAME: Frame 1437253639
+                  - FRAME: Container
+                    - TEXT: Global Enterprise | Content: Nhập tên nhiệm vụ
+                  - INSTANCE: clear
+                    - VECTOR: Vector
+              - TEXT: Command Center Search... | Content: Help text
+  - INSTANCE: Sidebar
+    - FRAME: Frame 1437253642
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Quản trị công việc & mục tiêu
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: dashboard_customize
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý tiếp xúc khách hàng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - FRAME: item
+          - INSTANCE: Level1
+            - FRAME: Frame 1
+              - FRAME: 24x24
+                - LINE: Line 3
+              - INSTANCE: data_exploration
+                - VECTOR: Vector
+              - TEXT: Text | Content: Quản lý mục tiêu doanh số
+            - INSTANCE: arrow
+              - VECTOR: Vector
+          - INSTANCE: Level2
+            - FRAME: Frame 1
+              - FRAME: 24x24
+                - LINE: Line 3
+              - INSTANCE: minimize
+                - VECTOR: Vector
+              - TEXT: Text | Content: Kế hoạch doanh thu
+            - INSTANCE: arrow
+              - VECTOR: Vector
+          - INSTANCE: Level2
+            - FRAME: Frame 1
+              - FRAME: 24x24
+                - LINE: Line 3
+              - INSTANCE: minimize
+                - VECTOR: Vector
+              - TEXT: Text | Content: Kết quả doanh thu
+            - INSTANCE: arrow
+              - VECTOR: Vector
+        - FRAME: Frame 1437253640
+          - INSTANCE: Card sidebar
+            - FRAME: Frame 1
+              - FRAME: 24x24
+                - LINE: Line 3
+              - INSTANCE: dashboard
+                - VECTOR: Vector
+              - TEXT: Text | Content: Dashboard cá nhân
+            - INSTANCE: arrow
+              - VECTOR: Vector
+    - FRAME: Frame 1437253643
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Quản tri khách hàng (crm)
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: 24x24
+            - LINE: Line 3
+          - INSTANCE: view_kanban
+            - VECTOR: Vector
+          - TEXT: Text | Content: Q.lý Lead & Cơ hội bán hàng
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: assignment_ind
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý hồ sơ khách hàng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: edit_calendar
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý liên hệ khách hàng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: data_thresholding
+              - VECTOR: Vector
+            - TEXT: Text | Content: Marketing Automation
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: list_alt
+              - VECTOR: Vector
+            - TEXT: Text | Content: Customer service ticketing
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: loyalty
+              - VECTOR: Vector
+            - TEXT: Text | Content: Loyalty
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253645
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Quản lý hợp đồng
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: assignment
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý hợp đồng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: group_work
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản trị triển khai dự án
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253651
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Quản lý Hồ sơ nhà cung cấp
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: assignment
+              - VECTOR: Vector
+            - TEXT: Text | Content: Danh sách hợp đồng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+      - FRAME: Frame 1437253646
+        - TEXT: Strategic & Reports | Content: Quản lý bán hàng
+      - FRAME: Frame 1437253647
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: description
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý đơn hàng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: monetization_on
+              - VECTOR: Vector
+            - TEXT: Text | Content: Tính cước
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253647
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Tài chính và kế toán
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: receipt
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý công nợ
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253649
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Báo cáo & hệ thống
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: settings
+              - VECTOR: Vector
+            - TEXT: Text | Content: Tùy chỉnh báo cáo
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253650
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: quản trị hệ thống
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: person_search
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý người dùng
+          - INSTANCE: arrow
+            - VECTOR: Vector
+      - FRAME: Frame 1437253646
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: supervisor_account
+              - VECTOR: Vector
+            - TEXT: Text | Content: Quản lý vai trò
+          - INSTANCE: arrow
+            - VECTOR: Vector
+      - FRAME: Frame 1437253647
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: playlist_add_check
+              - VECTOR: Vector
+            - TEXT: Text | Content: Cấu hình Sản phẩm & Dịch vụ
+          - INSTANCE: arrow
+            - VECTOR: Vector
+    - FRAME: Frame 1437253648
+      - FRAME: Frame 1437253645
+        - TEXT: Strategic & Reports | Content: Báo cáo dashboard
+      - FRAME: Frame 1437253640
+        - INSTANCE: Card sidebar
+          - FRAME: Frame 1
+            - FRAME: 24x24
+              - LINE: Line 3
+            - INSTANCE: analytics
+              - VECTOR: Vector
+            - TEXT: Text | Content: Báo cáo Dashboard
+          - INSTANCE: arrow
+            - VECTOR: Vector
+  - INSTANCE: Header
+    - RECTANGLE: Artboard 1 1
+    - FRAME: Frame 1437253635
+      - INSTANCE: select/input
+        - FRAME: Frame 1437253652
+          - FRAME: Frame 1437253639
+            - FRAME: Frame 1
+              - INSTANCE: search
+                - VECTOR: Vector
+              - TEXT: Global Enterprise | Content: Tìm kiếm ...
+          - INSTANCE: expand_more
+            - VECTOR: Vector
+        - TEXT: Text error | Content: Text error
+      - FRAME: Container
+        - FRAME: Container
+          - FRAME: Button
+            - FRAME: Container
+              - VECTOR: Icon
+          - FRAME: Button
+            - FRAME: Container
+              - VECTOR: Icon
+        - RECTANGLE: Vertical Divider
+        - FRAME: Container
+          - FRAME: Button
+            - TEXT: Text | Content: Hỗ trợ
+          - FRAME: User Profile
+  - FRAME: center-page-lead-co-hoi
+    - FRAME: Thong tin chung
+      - FRAME: Container
+        - FRAME: Container
+          - FRAME: Heading 2
+            - TEXT: Leads/Deals Pipeline | Content: Thông tin chung
+      - FRAME: Box-bor
+        - FRAME: list
+          - FRAME: Frame 32
+            - FRAME: row
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Phân loại
+                  - TEXT: * | Content: *
+              - INSTANCE: select/input
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: insert_drive_file
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: -- Chọn giá trị --
+                  - INSTANCE: expand_more
+                    - VECTOR: Vector
+                - TEXT: Text error | Content: Text error
+            - FRAME: row-website
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Độ ưu tiên
+                  - TEXT: * | Content: *
+              - INSTANCE: select/input
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: star_purple500
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: Thấp
+                  - INSTANCE: expand_more
+                    - VECTOR: Vector
+                - TEXT: Text error | Content: Text error
+          - GROUP: Group 32
+            - FRAME: row
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Liên kết tới
+                  - TEXT: * | Content: *
+              - INSTANCE: select/input
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: insert_drive_file
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: Chọn cơ hội/KH
+                  - INSTANCE: search
+                    - VECTOR: Vector
+                - TEXT: Text error | Content: Text error
+            - FRAME: row
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Tóm tắt hoạt
+động
+                  - TEXT: * | Content: *
+              - INSTANCE: Textarea
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: insert_drive_file
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: Nhập tóm tắt hoạt động
+                - TEXT: Text error | Content: Text error
+    - FRAME: Thong tin khach hang
+      - FRAME: Container
+        - FRAME: Container
+          - FRAME: Heading 2
+            - TEXT: Leads/Deals Pipeline | Content: Thời gian & phân công
+      - FRAME: Box-bor
+        - FRAME: list
+          - FRAME: Frame 32
+            - FRAME: row
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Báo cáo bởi
+                  - TEXT: * | Content: *
+              - INSTANCE: select/input
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: ic
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: Nguyễn Văn A 
+                  - INSTANCE: expand_more
+                    - VECTOR: Vector
+            - FRAME: row-website
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Hạn chót
+                  - TEXT: * | Content: *
+              - INSTANCE: select/input
+                - FRAME: Frame 1437253652
+                  - FRAME: Frame 1437253639
+                    - FRAME: Frame 1
+                      - INSTANCE: insert_drive_file
+                        - VECTOR: Vector
+                      - TEXT: Global Enterprise | Content: 08/05/2026
+                  - INSTANCE: calendar_today
+                    - VECTOR: Vector
+                - TEXT: Text error | Content: Text error
+          - FRAME: row
+            - FRAME: Frame 31
+              - INSTANCE: Label
+                - FRAME: Frame 1
+                  - TEXT: Deal Name | Content: Giao việc cho
+                  - TEXT: * | Content: *
+              - FRAME: Table-lien-he-KH
+                - FRAME: Frame 1437253614
+                  - FRAME: Frame 1437253610
+                  - FRAME: Frame 1437253616
+                    - TEXT: Họ tên | Content: Người thực hiện
+                  - FRAME: Frame 1437253608
+                    - TEXT: Mô tả | Content: Mô tả
+                  - FRAME: Frame 1437253609
+                    - TEXT: Email | Content: Email
+                  - FRAME: Frame 1437253618
+                    - TEXT: Cấp bậc | Content: Cấp bậc
+                  - FRAME: Frame 1437253619
+                    - TEXT: Chức danh thực tế | Content: Chức danh thực tế
+                  - FRAME: Frame 1437253620
+                    - TEXT: Ngày sinh | Content: Ngày sinh
+                  - FRAME: Frame 1437253621
+                    - TEXT: Trạng thái | Content: Trạng thái
+                - FRAME: Frame 1437253617
+                  - FRAME: Frame 1437253610
+                    - INSTANCE: delete_outline
+                      - VECTOR: Vector
+                  - FRAME: Frame 1437253609
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: -- Chọn liên hệ --
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                    - TEXT: * | Content: *
+                  - FRAME: Frame 1437253611
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Mô tả công việc
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                - FRAME: Frame 1437253618
+                  - FRAME: Frame 1437253610
+                    - INSTANCE: delete_outline
+                      - VECTOR: Vector
+                  - FRAME: Frame 1437253609
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: -- Chọn liên hệ --
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                    - TEXT: * | Content: *
+                  - FRAME: Frame 1437253611
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Nhập sđt
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                    - TEXT: * | Content: *
+                  - FRAME: Frame 1437253612
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Nhập Email
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253614
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: --Chọn--
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253615
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Nhân viên
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253616
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Nhập chức danh
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253617
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: 04/2026
+                        - INSTANCE: calendar_today
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253618
+                    - INSTANCE: Checkbox
+                      - INSTANCE: check_box_outline_blank
+                        - VECTOR: Vector
+              - FRAME: Frame 32
+                - INSTANCE: add
+                  - VECTOR: Vector
+                - TEXT: Thêm giao việc | Content: Thêm giao việc
+    - GROUP: row
+      - FRAME: Container
+        - FRAME: Container
+          - FRAME: Heading 2
+            - TEXT: Leads/Deals Pipeline | Content: Tài liệu đính kèm
+        - INSTANCE: Button/Secondary
+          - INSTANCE: file_download
+            - VECTOR: Vector
+          - TEXT: Continue | Content: Download all
+          - INSTANCE: arrow_forward
+            - VECTOR: Vector
+      - FRAME: Box-bor
+        - FRAME: list
+          - FRAME: row
+            - FRAME: Frame 1437252910
+              - FRAME: Frame 1437253025
+                - TEXT: Drag and drop or Browse your file | Content: Drag and drop or  Browse your file
+                - FRAME: Frame 1437253500
+                  - INSTANCE: Button-upload-file
+                    - INSTANCE: cloud_upload
+                      - VECTOR: Vector
+                    - TEXT: Choose file | Content: Choose file
+                  - TEXT: Type: xls, xlsx, csv. Max size: 20MB | Content: Type: xls, xlsx, pdf, doc. Max size: 20MB
+          - FRAME: row
+            - GROUP: Group 31
+              - FRAME: Table
+                - FRAME: Frame 1437253614
+                  - FRAME: Frame 1437253616
+                  - FRAME: Frame 1437253619
+                    - TEXT: No | Content: No
+                  - FRAME: Frame 1437253608
+                    - TEXT: Tài liệu | Content: Tài liệu
+                  - FRAME: Frame 1437253617
+                    - TEXT: Nội dung tài liệu | Content: Nội dung tài liệu
+                  - FRAME: Frame 1437253618
+                    - TEXT: Thời điểm tải lên | Content: Thời điểm tải lên
+                - FRAME: Frame 1437253617
+                  - FRAME: Frame 1437253610
+                    - INSTANCE: delete_outline
+                      - VECTOR: Vector
+                  - FRAME: Frame 1437253609
+                    - TEXT: 1 | Content: 1
+                  - FRAME: Frame 1437253611
+                    - INSTANCE: Text link
+                      - TEXT: Text link | Content: Hopdongcongchung.pdf
+                  - FRAME: Frame 1437253614
+                    - TEXT: Báo giá sơ bộ gửi KH | Content: Báo giá sơ bộ gửi KH
+                    - INSTANCE: select/input
+                      - FRAME: Frame 1437253652
+                        - FRAME: Frame 1437253639
+                          - FRAME: Frame 1
+                            - INSTANCE: insert_drive_file
+                              - VECTOR: Vector
+                            - TEXT: Global Enterprise | Content: Nhập nội dung
+                        - INSTANCE: expand_more
+                          - VECTOR: Vector
+                      - TEXT: Text error | Content: Text error
+                  - FRAME: Frame 1437253615
+                    - TEXT: 17/04/2026 | Content: 17/04/2026
+  - FRAME: Col-right
+    - FRAME: Container
+      - FRAME: Container
+        - INSTANCE: items-tab-ic
+          - INSTANCE: mode_comment
+            - VECTOR: Vector
+          - TEXT: Comment | Content: Comment
+        - INSTANCE: items-tab-ic
+          - INSTANCE: show_chart
+            - VECTOR: Vector
+          - TEXT: Comment | Content: Hoạt động
+        - INSTANCE: items-tab-ic
+          - INSTANCE: loyalty
+            - VECTOR: Vector
+          - TEXT: Comment | Content: Deal
+        - INSTANCE: items-tab-ic
+          - INSTANCE: history
+            - VECTOR: Vector
+          - TEXT: Comment | Content: Lịch sử
+    - FRAME: Container
+      - INSTANCE: box-comemnt
+        - FRAME: Container
+          - FRAME: Container
+          - FRAME: Container
+            - FRAME: Container
+              - FRAME: Text
+                - TEXT: Nguyễn Văn A | Content: Nguyễn Văn A
+              - FRAME: Frame 32
+                - FRAME: Text
+                  - TEXT: 2h trước | Content: 2h trước
+                - INSTANCE: more_vert
+                  - VECTOR: Vector
+            - FRAME: Paragraph
+              - TEXT: Cần cập nhật thông tin báo giá cho khách hàng. | Content: Cần cập nhật thông tin báo giá cho khách hàng.
+            - FRAME: Rection
+              - INSTANCE: sentiment_satisfied_alt
+                - VECTOR: Vector
+              - FRAME: Frame 32
+                - INSTANCE: thumb_up_alt
+                  - VECTOR: Vector
+                - TEXT: 45 | Content: 45
+              - INSTANCE: thumb_down_alt
+                - VECTOR: Vector
+              - FRAME: Frame 32
+                - INSTANCE: favorite
+                  - VECTOR: Vector
+                - TEXT: 25 | Content: 25
+        - FRAME: Container
+          - FRAME: Container
+          - FRAME: Container
+            - FRAME: Container
+              - FRAME: Text
+                - TEXT: Trần Thị B | Content: Trần Thị B
+              - FRAME: Frame 32
+                - FRAME: Text
+                  - TEXT: 5h trước | Content: 5h trước
+                - INSTANCE: more_vert
+                  - VECTOR: Vector
+            - FRAME: Paragraph
+              - TEXT: Đã liên hệ với khách hàng, họ đang xem xét đề xuất. | Content: Đã liên hệ với khách hàng, họ đang xem xét đề xuất.
+            - FRAME: Rection
+              - INSTANCE: sentiment_satisfied_alt
+                - VECTOR: Vector
+              - FRAME: Frame 32
+                - INSTANCE: thumb_up_alt
+                  - VECTOR: Vector
+                - TEXT: 45 | Content: 45
+              - INSTANCE: thumb_down_alt
+                - VECTOR: Vector
+              - FRAME: Frame 32
+                - INSTANCE: favorite
+                  - VECTOR: Vector
+                - TEXT: 25 | Content: 25
+        - FRAME: Container
+          - FRAME: Container
+            - FRAME: Container
+            - FRAME: Container
+              - FRAME: Text Area
+                - TEXT: Viết comment... | Content: Viết comment...
+              - FRAME: Container
+                - INSTANCE: Button-large/Primary
+                  - INSTANCE: send
+                    - VECTOR: Vector
+                  - TEXT: Continue | Content: Gửi
+                  - INSTANCE: arrow_forward
+                    - VECTOR: Vector

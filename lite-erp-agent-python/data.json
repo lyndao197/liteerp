@@ -1,0 +1,3228 @@
+{
+  "columns": [
+    {
+      "id": "col-1",
+      "title": "Mới",
+      "color": "#E32B4C",
+      "taskIds": [
+        "VCB-1",
+        "VGR-2",
+        "VNP-7",
+        "BIDV-8",
+        "KPMG-9",
+        "VNM-10",
+        "MSN-11",
+        "VIN-12",
+        "TH-13",
+        "HVN-14",
+        "VJ-15",
+        "BB-16",
+        "HAG-17",
+        "HPG-18",
+        "MWG-19",
+        "PNJ-20"
+      ]
+    },
+    {
+      "id": "col-2",
+      "title": "Thành công",
+      "color": "#8B5CF6",
+      "taskIds": [
+        "FSOFT-3",
+        "MB-4"
+      ]
+    },
+    {
+      "id": "col-3",
+      "title": "Không thành công",
+      "color": "#64748B",
+      "taskIds": [
+        "TGDD-5",
+        "TCB-6"
+      ]
+    }
+  ],
+  "customers": {
+    "CUS-1": {
+      "id": "CUS-1",
+      "name": "Công ty Cổ phần Sữa Việt Nam",
+      "shortName": "Vinamilk",
+      "mst": "0300588569",
+      "type": "Doanh nghiệp",
+      "classification": "Doanh nghiệp lớn",
+      "industry": "F&B",
+      "website": "www.vinamilk.com.vn",
+      "contactName": "Nguyễn Thu Phương",
+      "email": "phuong.nt@vinamilk.com.vn",
+      "phone": "02839300350",
+      "address": "10 Tân Trào, Tân Phú, Quận 7, TP. Hồ Chí Minh",
+      "domain": "Hàng tiêu dùng",
+      "projectType": "product",
+      "source": "Lead Conversion",
+      "status": "Active",
+      "contractNo": "HD-2026-001",
+      "signedDate": "10/01/2026",
+      "avatars": [
+        "avatar1.png"
+      ],
+      "tag": "VIP"
+    },
+    "CUS-2": {
+      "id": "CUS-2",
+      "name": "Ngân hàng TMCP Quân đội",
+      "shortName": "MB Bank",
+      "mst": "0100283873",
+      "type": "Doanh nghiệp",
+      "classification": "Ngân hàng",
+      "industry": "Tài chính",
+      "website": "www.mbbank.com.vn",
+      "contactName": "Vũ Thanh Hằng",
+      "email": "hang.vt@mbbank.com.vn",
+      "phone": "02437674050",
+      "address": "21 Cát Linh, Đống Đa, Hà Nội",
+      "domain": "Tài chính",
+      "projectType": "outsourcing",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "HD-2026-005",
+      "signedDate": "12/01/2026",
+      "avatars": [
+        "avatar2.png"
+      ],
+      "tag": "Tiềm năng"
+    },
+    "CUS-3": {
+      "id": "CUS-3",
+      "name": "Tập đoàn Công nghiệp Viễn thông Quân đội - Viettel Telecom",
+      "shortName": "Viettel Telecom",
+      "mst": "0100109106",
+      "type": "Doanh nghiệp",
+      "classification": "Tập đoàn",
+      "industry": "Viễn thông",
+      "website": "www.viettel.vn",
+      "contactName": "Nguyễn Mạnh Hùng",
+      "email": "contact@viettel.com.vn",
+      "phone": "02432001166",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "Viễn thông",
+      "projectType": "outsourcing",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": "VIP"
+    },
+    "CUS-4": {
+      "id": "CUS-4",
+      "name": "Tổng Công ty Giải pháp Doanh nghiệp Viettel",
+      "shortName": "Viettel Solution",
+      "mst": "0108869738",
+      "type": "Doanh nghiệp",
+      "classification": "Tổng công ty",
+      "industry": "CNTT",
+      "website": "vds.vn",
+      "contactName": "Trần Quang Hùng",
+      "email": "contact@vds.vn",
+      "phone": "02432001166",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "CNTT & Phần mềm",
+      "projectType": "product",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": "VIP"
+    },
+    "CUS-5": {
+      "id": "CUS-5",
+      "name": "Tổng Công ty Bưu chính Viettel",
+      "shortName": "Viettel Post",
+      "mst": "0106685762",
+      "type": "Doanh nghiệp",
+      "classification": "Tổng công ty",
+      "industry": "Logistics",
+      "website": "viettelpost.vn",
+      "contactName": "Phạm Thị Lan",
+      "email": "info@viettelpost.vn",
+      "phone": "02473001111",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "Logistics",
+      "projectType": "outsourcing",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": "Tiềm năng"
+    },
+    "CUS-6": {
+      "id": "CUS-6",
+      "name": "Tổng Công ty Dịch vụ số Viettel",
+      "shortName": "Viettel Digital",
+      "mst": "0100109107",
+      "type": "Doanh nghiệp",
+      "classification": "Tổng công ty",
+      "industry": "Viễn thông",
+      "website": "vietteldigital.vn",
+      "contactName": "Lê Minh Đức",
+      "email": "info@vietteldigital.vn",
+      "phone": "02432001200",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "Viễn thông - Dịch vụ số",
+      "projectType": "product",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": "Tiềm năng"
+    },
+    "CUS-7": {
+      "id": "CUS-7",
+      "name": "Tổng Công ty Công nghệ cao Viettel",
+      "shortName": "Viettel HighTech",
+      "mst": "0108988023",
+      "type": "Doanh nghiệp",
+      "classification": "Tổng công ty",
+      "industry": "CNTT Phần cứng",
+      "website": "viettelhightech.vn",
+      "contactName": "Đỗ Quang Tùng",
+      "email": "info@viettelhightech.vn",
+      "phone": "02432001300",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "Phần cứng & Vi điện tử",
+      "projectType": "product",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": ""
+    },
+    "CUS-8": {
+      "id": "CUS-8",
+      "name": "Tổng Công ty Mạng lưới Viettel",
+      "shortName": "Viettel Networks",
+      "mst": "0108988099",
+      "type": "Doanh nghiệp",
+      "classification": "Tổng công ty",
+      "industry": "Viễn thông",
+      "website": "viettelnetworks.vn",
+      "contactName": "Nguyễn Văn Bình",
+      "email": "info@viettelnetworks.vn",
+      "phone": "02432001400",
+      "address": "1 Giang Văn Minh, Ba Đình, Hà Nội",
+      "domain": "Hạ tầng mạng",
+      "projectType": "outsourcing",
+      "source": "Manual",
+      "status": "Active",
+      "contractNo": "",
+      "signedDate": "",
+      "avatars": [],
+      "tag": ""
+    }
+  },
+  "customerIds": [
+    "CUS-1",
+    "CUS-2",
+    "CUS-3",
+    "CUS-4",
+    "CUS-5",
+    "CUS-6",
+    "CUS-7",
+    "CUS-8"
+  ],
+  "contacts": {
+    "CON-1": {
+      "id": "CON-1",
+      "name": "Le Van Luyen",
+      "positionId": "P_1",
+      "position": "Kỹ thuật",
+      "rank": "N/A",
+      "companyId": "CUS-1",
+      "companyName": "Vinamilk",
+      "email": "",
+      "phone": "",
+      "status": "Active",
+      "dob": "",
+      "avatars": []
+    },
+    "CON-3": {
+      "id": "CON-3",
+      "name": "Nguyễn Thu Phương",
+      "positionId": "P_3",
+      "position": "Trưởng phòng Thu mua",
+      "rank": "Trưởng phòng",
+      "companyId": "CUS-1",
+      "companyName": "Vinamilk",
+      "email": "phuong.nt@vinamilk.com.vn",
+      "phone": "02839300350",
+      "status": "Active",
+      "dob": "1985-05-15",
+      "avatars": [
+        "avatar1.png"
+      ]
+    },
+    "CON-4": {
+      "id": "CON-4",
+      "name": "Lê Minh Hải",
+      "positionId": "P_4",
+      "position": "Kế toán trưởng",
+      "rank": "Quản lý",
+      "companyId": "CUS-1",
+      "companyName": "Vinamilk",
+      "email": "hai.lm@vinamilk.com.vn",
+      "phone": "0912345678",
+      "status": "Active",
+      "dob": "1990-01-12",
+      "avatars": []
+    },
+    "CON-2": {
+      "id": "CON-2",
+      "name": "Vũ Thanh Hằng",
+      "positionId": "P_2",
+      "position": "Giám đốc Marketing",
+      "rank": "Lãnh đạo",
+      "companyId": "CUS-2",
+      "companyName": "MB Bank",
+      "email": "hang.vt@mbbank.com.vn",
+      "phone": "02437674050",
+      "status": "Active",
+      "dob": "1988-10-20",
+      "avatars": [
+        "avatar2.png"
+      ]
+    },
+    "CON-5": {
+      "id": "CON-5",
+      "name": "Phạm Thị Mai",
+      "positionId": "P_5",
+      "position": "Quản lý dự án",
+      "rank": "Quản lý",
+      "companyId": "CUS-2",
+      "companyName": "MB Bank",
+      "email": "mai.pt@mbbank.com.vn",
+      "phone": "0901112223",
+      "status": "Active",
+      "dob": "1991-03-08",
+      "avatars": []
+    }
+  },
+  "contactIds": [
+    "CON-1",
+    "CON-3",
+    "CON-4",
+    "CON-2",
+    "CON-5"
+  ],
+  "contracts": {
+    "CTR-2026-001": {
+      "id": "CTR-2026-001",
+      "contractNo": "HD/2026/001",
+      "name": "Hợp đồng Dịch vụ chăm sóc khách hàng",
+      "customerId": "CUS-1",
+      "customerName": "Công ty Cổ phần Sữa Việt Nam",
+      "shortName": "Vinamilk",
+      "amName": "Nguyễn Văn A",
+      "promotionUnit": "Phòng Bán hàng",
+      "projectType": "Mới_xúc tiến",
+      "serviceType": "Dịch vụ CC outsourcing",
+      "classification": "Ngoài",
+      "contractStatus": "Đang hiệu lực",
+      "implementationStatus": "Đã triển khai",
+      "revenueStatus": "Đã lên doanh thu",
+      "revenueMonth": "Tháng 01/2026",
+      "contractValue": "1,500,000,000",
+      "unitPrice": "150,000,000",
+      "totalContracts": "1",
+      "effectiveDate": "2026-01-10",
+      "expiryDate": "2027-01-10",
+      "signedDate": "2026-01-10",
+      "serviceContent": "Cung cấp nhân sự vận hành tổng đài CSKH",
+      "notes": "Khách hàng VIP",
+      "approvalStatus": "Hiệu lực"
+    },
+    "CTR-2026-002": {
+      "id": "CTR-2026-002",
+      "contractNo": "HD/2026/002",
+      "name": "Dự án OmniX",
+      "customerId": "CUS-2",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "amName": "Vũ Thanh Hằng",
+      "promotionUnit": "Phòng Dự án",
+      "projectType": "Mới_xúc tiến",
+      "serviceType": "Giải pháp, platform",
+      "classification": "Ngoài",
+      "contractStatus": "Đang hiệu lực",
+      "implementationStatus": "Đang triển khai",
+      "revenueStatus": "Chưa lên doanh thu",
+      "revenueMonth": "Tháng 02/2026",
+      "contractValue": "2,500,000,000",
+      "unitPrice": "",
+      "totalContracts": "1",
+      "effectiveDate": "2026-02-01",
+      "expiryDate": "2027-02-01",
+      "signedDate": "2026-01-20",
+      "serviceContent": "Triển khai OmniX CRM",
+      "notes": "",
+      "approvalStatus": "Hiệu lực"
+    },
+    "CTR-2026-003": {
+      "id": "CTR-2026-003",
+      "contractNo": "HD/2026/003",
+      "name": "Hợp đồng dự án KnowxHub",
+      "customerId": "CUS-1",
+      "customerName": "Viettel Post",
+      "shortName": "VTP",
+      "amName": "Nguyễn Văn A",
+      "promotionUnit": "Phòng Dự án",
+      "projectType": "Duy trì",
+      "serviceType": "Giải pháp, platform",
+      "classification": "Nội bộ",
+      "contractStatus": "Đang hiệu lực",
+      "implementationStatus": "Đã triển khai",
+      "revenueStatus": "Đã lên doanh thu",
+      "revenueMonth": "Tháng 01/2026",
+      "contractValue": "850,000,000",
+      "unitPrice": "",
+      "totalContracts": "1",
+      "effectiveDate": "2026-01-15",
+      "expiryDate": "2027-01-15",
+      "signedDate": "2026-01-05",
+      "serviceContent": "Bảo trì KnowxHUB",
+      "notes": "",
+      "approvalStatus": "Hiệu lực"
+    },
+    "CTR-2026-004": {
+      "id": "CTR-2026-004",
+      "contractNo": "HD/2026/004",
+      "name": "Dịch vụ chăm sóc khách hàng",
+      "customerId": "CUS-2",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "amName": "Vũ Thanh Hằng",
+      "promotionUnit": "Phòng Bán hàng",
+      "projectType": "Mới_xúc tiến",
+      "serviceType": "Dịch vụ CC outsourcing",
+      "classification": "Ngoài",
+      "contractStatus": "Đang hiệu lực",
+      "implementationStatus": "Chưa triển khai",
+      "revenueStatus": "Chưa lên doanh thu",
+      "revenueMonth": "Tháng 03/2026",
+      "contractValue": "3,200,000,000",
+      "unitPrice": "",
+      "totalContracts": "1",
+      "effectiveDate": "2026-03-01",
+      "expiryDate": "2028-03-01",
+      "signedDate": "2026-02-15",
+      "serviceContent": "Tổng đài 100 seats",
+      "notes": "",
+      "approvalStatus": "Hiệu lực"
+    },
+    "CTR-2026-005": {
+      "id": "CTR-2026-005",
+      "contractNo": "HD/2026/005",
+      "name": "Dịch vụ gia tăng doanh số",
+      "customerName": "Viettel Digital",
+      "shortName": "VTT",
+      "amName": "Trần B",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-01-01",
+      "contractValue": "1,000,000,000",
+      "signedDate": "2025-12-20"
+    },
+    "CTR-2026-006": {
+      "id": "CTR-2026-006",
+      "contractNo": "HD/2026/006",
+      "name": "Dự án WorkForceX",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "amName": "Lê C",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-02-10",
+      "contractValue": "5,000,000,000",
+      "signedDate": "2026-01-25"
+    },
+    "CTR-2026-007": {
+      "id": "CTR-2026-007",
+      "contractNo": "HD/2026/007",
+      "name": "Hợp đồng dự án KnowxHub",
+      "customerName": "Viettel Post",
+      "shortName": "VTP",
+      "amName": "Phạm Q",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-01-15",
+      "contractValue": "750,000,000",
+      "signedDate": "2026-01-10"
+    },
+    "CTR-2026-008": {
+      "id": "CTR-2026-008",
+      "contractNo": "HD/2026/008",
+      "name": "Dịch vụ cho thuê nhân sự",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "amName": "Nguyễn Văn A",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-03-01",
+      "contractValue": "800,000,000",
+      "signedDate": "2026-02-15"
+    },
+    "CTR-2026-009": {
+      "id": "CTR-2026-009",
+      "contractNo": "HD/2026/009",
+      "name": "Dự án OmniX",
+      "customerName": "Viettel HighTech",
+      "shortName": "VHT",
+      "amName": "Trần B",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-04-01",
+      "contractValue": "400,000,000",
+      "signedDate": "2026-03-10"
+    },
+    "CTR-2026-010": {
+      "id": "CTR-2026-010",
+      "contractNo": "HD/2026/010",
+      "name": "Dịch vụ chăm sóc khách hàng",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "amName": "Lê C",
+      "approvalStatus": "Hiệu lực",
+      "effectiveDate": "2026-01-01",
+      "contractValue": "2,000,000,000",
+      "signedDate": "2025-12-25"
+    },
+    "CTR-2026-011": {
+      "id": "CTR-2026-011",
+      "contractNo": "HD/2026/011",
+      "name": "Dịch vụ gia tăng doanh số",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "amName": "Phạm Q",
+      "approvalStatus": "Nháp",
+      "effectiveDate": "2026-05-01",
+      "contractValue": "600,000,000",
+      "signedDate": "2026-04-20"
+    },
+    "CTR-2026-012": {
+      "id": "CTR-2026-012",
+      "contractNo": "HD/2026/012",
+      "name": "Dự án OmniX",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "amName": "Nguyễn Văn A",
+      "approvalStatus": "Chờ duyệt bản thảo",
+      "effectiveDate": "2026-06-01",
+      "contractValue": "1,200,000,000",
+      "signedDate": "",
+      "isLegalApprovedDraft": true,
+      "isManagerApprovedDraft": false
+    },
+    "CTR-2026-013": {
+      "id": "CTR-2026-013",
+      "contractNo": "HD/2026/013",
+      "name": "Dịch vụ gia tăng doanh số",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "amName": "Trần B",
+      "approvalStatus": "Chờ duyệt bản thảo",
+      "effectiveDate": "2026-07-01",
+      "contractValue": "800,000,000",
+      "signedDate": "",
+      "isLegalApprovedDraft": false,
+      "isManagerApprovedDraft": true
+    },
+    "CTR-2026-014": {
+      "id": "CTR-2026-014",
+      "contractNo": "HD/2026/014",
+      "name": "Dịch vụ chăm sóc khách hàng",
+      "customerName": "Viettel Networks",
+      "shortName": "VTN",
+      "amName": "Lê C",
+      "approvalStatus": "Chờ duyệt bản thảo",
+      "effectiveDate": "2026-08-01",
+      "contractValue": "350,000,000",
+      "signedDate": "",
+      "isLegalApprovedDraft": false,
+      "isManagerApprovedDraft": false
+    },
+    "CTR-2026-015": {
+      "id": "CTR-2026-015",
+      "contractNo": "HD/2026/015",
+      "name": "Hợp đồng dự án KnowxHub",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "amName": "Phạm Q",
+      "approvalStatus": "Chờ duyệt bản ký",
+      "effectiveDate": "2026-09-01",
+      "contractValue": "4,500,000,000",
+      "signedDate": "2026-08-15",
+      "isLegalApprovedSigned": true,
+      "isManagerApprovedSigned": false
+    },
+    "CTR-2026-016": {
+      "id": "CTR-2026-016",
+      "contractNo": "HD/2026/016",
+      "name": "Dự án WorkForceX",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "amName": "Nguyễn Văn A",
+      "approvalStatus": "Chờ duyệt bản ký",
+      "effectiveDate": "2026-10-01",
+      "contractValue": "2,800,000,000",
+      "signedDate": "2026-09-20",
+      "isLegalApprovedSigned": false,
+      "isManagerApprovedSigned": false
+    }
+  },
+  "contractIds": [
+    "CTR-2026-001",
+    "CTR-2026-002",
+    "CTR-2026-003",
+    "CTR-2026-004",
+    "CTR-2026-005",
+    "CTR-2026-006",
+    "CTR-2026-007",
+    "CTR-2026-008",
+    "CTR-2026-009",
+    "CTR-2026-010",
+    "CTR-2026-011",
+    "CTR-2026-012",
+    "CTR-2026-013",
+    "CTR-2026-014",
+    "CTR-2026-015",
+    "CTR-2026-016"
+  ],
+  "tasks": {
+    "VCB-1": {
+      "id": "VCB-1",
+      "content": "Hợp đồng dịch vụ Cloud",
+      "company": "Vietcombank",
+      "mst": "0100112437",
+      "contactName": "Nguyễn Văn Định",
+      "email": "dinh.nv@vcb.com.vn",
+      "district": "Quận Hoàn Kiếm",
+      "ward": "Phường Tràng Tiền",
+      "city": "Hà Nội",
+      "projectedService": "Kiểm soát / Nhập liệu",
+      "assignedPartner": "Viettel Telecom",
+      "date": "11/1/2026",
+      "tags": [
+        {
+          "text": "Nội bộ",
+          "color": "#e0e7ff",
+          "textCol": "#3730a3"
+        },
+        {
+          "text": "Khẩn cấp",
+          "color": "#fee2e2",
+          "textCol": "#991b1b"
+        }
+      ],
+      "attachments": 3,
+      "comments": 2,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "1,500,000,000 ₫",
+      "probability": "10%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "VGR-2": {
+      "id": "VGR-2",
+      "content": "Giải pháp ERP",
+      "company": "Vingroup",
+      "mst": "0101245486",
+      "contactName": "Lê Minh Trí",
+      "email": "tri.lm@vingroup.net",
+      "district": "Quận Cầu Giấy",
+      "ward": "Phường Dịch Vọng Hậu",
+      "city": "Hà Nội",
+      "projectedService": "Telesales",
+      "assignedPartner": "FPT IS",
+      "date": "11/1/2026",
+      "tags": [
+        {
+          "text": "Doanh nghiệp",
+          "color": "#dcfce7",
+          "textCol": "#166534"
+        }
+      ],
+      "attachments": 0,
+      "comments": 3,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "4,000,000,000 ₫",
+      "probability": "25%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "FSOFT-3": {
+      "id": "FSOFT-3",
+      "content": "Hệ thống CRM",
+      "company": "FPT Software",
+      "mst": "0101778163",
+      "contactName": "Phạm Hồng Thái",
+      "email": "thai.ph@fsoft.com.vn",
+      "district": "Quận 9",
+      "ward": "Phường Tân Phú",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Chăm sóc khách hàng",
+      "assignedPartner": "TMA Solutions",
+      "date": "12/1/2026",
+      "tags": [
+        {
+          "text": "Nội bộ",
+          "color": "#e0e7ff",
+          "textCol": "#3730a3"
+        },
+        {
+          "text": "KH tiềm năng",
+          "color": "#ffedd5",
+          "textCol": "#9a3412"
+        }
+      ],
+      "attachments": 1,
+      "comments": 4,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "800,000,000 ₫",
+      "probability": "90%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Thành công"
+    },
+    "MB-4": {
+      "id": "MB-4",
+      "content": "Tổng đài IP",
+      "company": "MB Bank",
+      "mst": "0100283873",
+      "contactName": "Vũ Thanh Hằng",
+      "email": "hang.vt@mbbank.com.vn",
+      "district": "Quận Đống Đa",
+      "ward": "Phường Cát Linh",
+      "city": "Hà Nội",
+      "projectedService": "Telesales",
+      "assignedPartner": "CMC Corp",
+      "date": "12/1/2026",
+      "tags": [
+        {
+          "text": "Doanh nghiệp",
+          "color": "#dcfce7",
+          "textCol": "#166534"
+        }
+      ],
+      "attachments": 0,
+      "comments": 1,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "250,000,000 ₫",
+      "probability": "100%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Thành công"
+    },
+    "TGDD-5": {
+      "id": "TGDD-5",
+      "content": "Marketing Automation",
+      "company": "The Gioi Di Dong",
+      "mst": "0303288350",
+      "contactName": "Trần Trọng Đạt",
+      "email": "dat.tt@tgdd.vn",
+      "district": "Quận 1",
+      "ward": "Phường Bến Nghé",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Chăm sóc khách hàng",
+      "assignedPartner": "Mat Bao",
+      "date": "10/1/2026",
+      "tags": [
+        {
+          "text": "KH tiềm năng",
+          "color": "#ffedd5",
+          "textCol": "#9a3412"
+        }
+      ],
+      "attachments": 0,
+      "comments": 3,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "120,000,000 ₫",
+      "probability": "0%",
+      "salesperson": "Lê Thị C",
+      "status": "Không thành công"
+    },
+    "TCB-6": {
+      "id": "TCB-6",
+      "content": "Call Center Solution",
+      "company": "Techcombank",
+      "mst": "0100230800",
+      "contactName": "Đinh Tiến Dũng",
+      "email": "dung.dt@techcombank.com",
+      "district": "Quận Hải Châu",
+      "ward": "Phường Thạch Thang",
+      "city": "Đà Nẵng",
+      "projectedService": "Kiểm soát / Nhập liệu",
+      "assignedPartner": "MobiFone",
+      "date": "10/1/2026",
+      "tags": [
+        {
+          "text": "Doanh nghiệp",
+          "color": "#dcfce7",
+          "textCol": "#166534"
+        }
+      ],
+      "attachments": 0,
+      "comments": 1,
+      "avatars": [
+        "avatar1.png",
+        "avatar2.png"
+      ],
+      "revenue": "3,000,000,000 ₫",
+      "probability": "0%",
+      "salesperson": "Trần B",
+      "status": "Không thành công"
+    },
+    "VNP-7": {
+      "id": "VNP-7",
+      "content": "Thiết lập hạ tầng mạng",
+      "company": "VNPT",
+      "mst": "0100684378",
+      "contactName": "Trần Đại Nghĩa",
+      "email": "nghia.td@vnpt.vn",
+      "district": "Quận Đống Đa",
+      "ward": "Phường Láng Hạ",
+      "city": "Hà Nội",
+      "projectedService": "Cho thuê máy chủ",
+      "assignedPartner": "Viettel IDC",
+      "date": "15/1/2026",
+      "tags": [],
+      "attachments": 1,
+      "comments": 0,
+      "avatars": [],
+      "revenue": "1,200,000,000 ₫",
+      "probability": "50%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới"
+    },
+    "BIDV-8": {
+      "id": "BIDV-8",
+      "content": "Nâng cấp bảo mật",
+      "company": "BIDV",
+      "mst": "0100150619",
+      "contactName": "Lê Hoàng",
+      "email": "hoangl@bidv.com.vn",
+      "district": "Quận Hoàn Kiếm",
+      "ward": "Phường Trần Hưng Đạo",
+      "city": "Hà Nội",
+      "projectedService": "Kiểm soát / Nhập liệu",
+      "assignedPartner": "FPT IS",
+      "date": "16/1/2026",
+      "tags": [],
+      "attachments": 2,
+      "comments": 1,
+      "avatars": [],
+      "revenue": "5,000,000,000 ₫",
+      "probability": "80%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "KPMG-9": {
+      "id": "KPMG-9",
+      "content": "Dịch vụ kế toán",
+      "company": "KPMG Vietnam",
+      "mst": "0100112233",
+      "contactName": "Phạm Tuấn",
+      "email": "tuan@kpmg.vn",
+      "district": "Quận 1",
+      "ward": "Phường Bến Nghé",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Kiểm soát / Nhập liệu",
+      "assignedPartner": "TMA Solutions",
+      "date": "17/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 0,
+      "avatars": [],
+      "revenue": "500,000,000 ₫",
+      "probability": "40%",
+      "salesperson": "Lê Thị C",
+      "status": "Mới"
+    },
+    "VNM-10": {
+      "id": "VNM-10",
+      "content": "Triển khai quản trị nhân sự",
+      "company": "Vinamilk",
+      "mst": "0300588569",
+      "contactName": "Nguyễn Thu Phương",
+      "email": "phuong.nt@vinamilk.com.vn",
+      "district": "Quận 7",
+      "ward": "Phường Tân Thuận Đông",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Chăm sóc khách hàng",
+      "assignedPartner": "CMC Corp",
+      "date": "17/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 1,
+      "avatars": [],
+      "revenue": "2,500,000,000 ₫",
+      "probability": "60%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới"
+    },
+    "MSN-11": {
+      "id": "MSN-11",
+      "content": "Nền tảng thương mại điện tử",
+      "company": "Masan Group",
+      "mst": "0303576603",
+      "contactName": "Lý Quốc Bảo",
+      "email": "bao.lq@masan.vn",
+      "district": "Quận 1",
+      "ward": "Phường Bến Nghé",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Telesales",
+      "assignedPartner": "Mat Bao",
+      "date": "18/1/2026",
+      "tags": [],
+      "attachments": 1,
+      "comments": 0,
+      "avatars": [],
+      "revenue": "1,800,000,000 ₫",
+      "probability": "30%",
+      "salesperson": "Lê Thị C",
+      "status": "Mới"
+    },
+    "VIN-12": {
+      "id": "VIN-12",
+      "content": "Giải pháp Smart City",
+      "company": "Vinhomes",
+      "mst": "0102671977",
+      "contactName": "Trịnh Vĩnh",
+      "email": "vinh.t@vinhomes.vn",
+      "district": "Quận Long Biên",
+      "ward": "Phường Phúc Lợi",
+      "city": "Hà Nội",
+      "projectedService": "Cho thuê máy chủ",
+      "assignedPartner": "Viettel Telecom",
+      "date": "18/1/2026",
+      "tags": [],
+      "attachments": 3,
+      "comments": 5,
+      "avatars": [],
+      "revenue": "8,000,000,000 ₫",
+      "probability": "25%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "TH-13": {
+      "id": "TH-13",
+      "content": "Hệ thống lưu trữ Cloud",
+      "company": "TH True Milk",
+      "mst": "0309999999",
+      "contactName": "Đặng Vân Anh",
+      "email": "anh.dv@th.com.vn",
+      "district": "Quận Ba Đình",
+      "ward": "Phường Liễu Giai",
+      "city": "Hà Nội",
+      "projectedService": "Cho thuê máy chủ",
+      "assignedPartner": "FPT IS",
+      "date": "19/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 0,
+      "avatars": [],
+      "revenue": "900,000,000 ₫",
+      "probability": "40%",
+      "salesperson": "Lê Thị C",
+      "status": "Mới"
+    },
+    "HVN-14": {
+      "id": "HVN-14",
+      "content": "Dịch vụ SMS Brandname",
+      "company": "Vietnam Airlines",
+      "mst": "0100107506",
+      "contactName": "Lê Thế Hùng",
+      "email": "hung.lt@vietnamairlines.com",
+      "district": "Quận Long Biên",
+      "ward": "Phường Gia Thụy",
+      "city": "Hà Nội",
+      "projectedService": "Telesales",
+      "assignedPartner": "MobiFone",
+      "date": "20/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 2,
+      "avatars": [],
+      "revenue": "300,000,000 ₫",
+      "probability": "70%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới"
+    },
+    "VJ-15": {
+      "id": "VJ-15",
+      "content": "Nâng cấp tổng đài CSKH",
+      "company": "Vietjet Air",
+      "mst": "0102325399",
+      "contactName": "Hoàng Thái Tú",
+      "email": "tu.ht@vietjetair.com",
+      "district": "Quận Tân Bình",
+      "ward": "Phường 2",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Chăm sóc khách hàng",
+      "assignedPartner": "CMC Corp",
+      "date": "21/1/2026",
+      "tags": [],
+      "attachments": 1,
+      "comments": 1,
+      "avatars": [],
+      "revenue": "650,000,000 ₫",
+      "probability": "85%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "BB-16": {
+      "id": "BB-16",
+      "content": "Hệ thống tracking hành lý",
+      "company": "Bamboo Airways",
+      "mst": "0107867370",
+      "contactName": "Bùi Tuấn Anh",
+      "email": "anh.bt@bamboo.com",
+      "district": "Quận Cầu Giấy",
+      "ward": "Phường Dịch Vọng",
+      "city": "Hà Nội",
+      "projectedService": "Kiểm soát / Nhập liệu",
+      "assignedPartner": "Viettel Telecom",
+      "date": "21/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 0,
+      "avatars": [],
+      "revenue": "1,500,000,000 ₫",
+      "probability": "20%",
+      "salesperson": "Lê Thị C",
+      "status": "Mới"
+    },
+    "HAG-17": {
+      "id": "HAG-17",
+      "content": "Hệ thống nông nghiệp IOT",
+      "company": "Hoàng Anh Gia Lai",
+      "mst": "5900189668",
+      "contactName": "Đoàn Nguyên",
+      "email": "nguyen.d@hagl.com.vn",
+      "district": "Thành Phố Pleiku",
+      "ward": "Phường Phù Đổng",
+      "city": "Gia Lai",
+      "projectedService": "Cho thuê máy chủ",
+      "assignedPartner": "FPT IS",
+      "date": "22/1/2026",
+      "tags": [],
+      "attachments": 2,
+      "comments": 4,
+      "avatars": [],
+      "revenue": "3,200,000,000 ₫",
+      "probability": "30%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới"
+    },
+    "HPG-18": {
+      "id": "HPG-18",
+      "content": "Quản lý chuỗi cung ứng",
+      "company": "Hòa Phát Group",
+      "mst": "0900189284",
+      "contactName": "Võ Minh Quân",
+      "email": "quan.vm@hoaphat.com.vn",
+      "district": "Quận Hai Bà Trưng",
+      "ward": "Phường Bùi Thị Xuân",
+      "city": "Hà Nội",
+      "projectedService": "Telesales",
+      "assignedPartner": "TMA Solutions",
+      "date": "23/1/2026",
+      "tags": [],
+      "attachments": 0,
+      "comments": 1,
+      "avatars": [],
+      "revenue": "4,500,000,000 ₫",
+      "probability": "60%",
+      "salesperson": "Trần B",
+      "status": "Mới"
+    },
+    "MWG-19": {
+      "id": "MWG-19",
+      "content": "Omnichannel CRM",
+      "company": "Thế Giới Di Động",
+      "mst": "0303288350",
+      "contactName": "Nguyễn Đức Tài",
+      "email": "tai.nd@thegioididong.com",
+      "district": "Quận Thủ Đức",
+      "ward": "Phường Linh Xuân",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Chăm sóc khách hàng",
+      "assignedPartner": "CMC Corp",
+      "date": "24/1/2026",
+      "tags": [],
+      "attachments": 5,
+      "comments": 2,
+      "avatars": [],
+      "revenue": "5,000,000,000 ₫",
+      "probability": "45%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới"
+    },
+    "PNJ-20": {
+      "id": "PNJ-20",
+      "content": "Giải pháp Loyalty",
+      "company": "PNJ",
+      "mst": "0300521758",
+      "contactName": "Cao Ngọc Dung",
+      "email": "dung.cn@pnj.com.vn",
+      "district": "Quận Phú Nhuận",
+      "ward": "Phường 9",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Telesales",
+      "assignedPartner": "Mat Bao",
+      "date": "25/1/2026",
+      "tags": [],
+      "attachments": 1,
+      "comments": 1,
+      "avatars": [],
+      "revenue": "2,100,000,000 ₫",
+      "probability": "80%",
+      "salesperson": "Lê Thị C",
+      "status": "Mới"
+    }
+  },
+  "goals": {
+    "GOAL-1": {
+      "id": "GOAL-1",
+      "name": "Mục tiêu tháng 01",
+      "category": "Doanh thu",
+      "subCategory": "Nội bộ",
+      "unit": "%",
+      "weight": "20",
+      "startDate": "2026-01-01",
+      "endDate": "2026-01-31",
+      "approvalStatus": "Hoàn thành",
+      "actualProgress": "100"
+    },
+    "GOAL-2": {
+      "id": "GOAL-2",
+      "name": "Mục tiêu tháng 02",
+      "category": "Doanh thu",
+      "subCategory": "Ngoài",
+      "unit": "%",
+      "weight": "20",
+      "startDate": "2026-02-01",
+      "endDate": "2026-02-28",
+      "approvalStatus": "Hoàn thành",
+      "actualProgress": "105"
+    },
+    "GOAL-3": {
+      "id": "GOAL-3",
+      "name": "Mục tiêu tháng 03 - Chờ đánh giá",
+      "category": "Xúc tiến",
+      "subCategory": "Tiếp xúc",
+      "unit": "KH",
+      "weight": "15",
+      "startDate": "2026-03-01",
+      "endDate": "2026-03-31",
+      "approvalStatus": "Chờ đánh giá",
+      "actualProgress": "120"
+    },
+    "GOAL-4": {
+      "id": "GOAL-4",
+      "name": "Mục tiêu tháng 04 - Chờ đánh giá",
+      "category": "Doanh thu",
+      "subCategory": "Bảo hành",
+      "unit": "%",
+      "weight": "15",
+      "startDate": "2026-04-01",
+      "endDate": "2026-04-30",
+      "approvalStatus": "Chờ đánh giá",
+      "actualProgress": "90"
+    },
+    "GOAL-5": {
+      "id": "GOAL-5",
+      "name": "Mục tiêu tháng 05 - Chờ đánh giá",
+      "category": "Nhiệm vụ",
+      "subCategory": "Hỗ trợ",
+      "unit": "Điểm",
+      "weight": "10",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-31",
+      "approvalStatus": "Chờ đánh giá",
+      "actualProgress": "8"
+    },
+    "GOAL-6": {
+      "id": "GOAL-6",
+      "name": "Mục tiêu tháng 06 - Chờ đánh giá",
+      "category": "Doanh thu",
+      "subCategory": "Nội bộ",
+      "unit": "%",
+      "weight": "10",
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-30",
+      "approvalStatus": "Chờ đánh giá",
+      "actualProgress": "95"
+    },
+    "GOAL-7": {
+      "id": "GOAL-7",
+      "name": "Mục tiêu tháng 07",
+      "category": "Doanh thu",
+      "subCategory": "Ngoài",
+      "unit": "%",
+      "weight": "10",
+      "startDate": "2026-07-01",
+      "endDate": "2026-07-31",
+      "approvalStatus": "Mới",
+      "actualProgress": ""
+    },
+    "GOAL-8": {
+      "id": "GOAL-8",
+      "name": "Mục tiêu tháng 08",
+      "category": "Xúc tiến",
+      "subCategory": "Tiềm năng",
+      "unit": "KH",
+      "weight": "10",
+      "startDate": "2026-08-01",
+      "endDate": "2026-08-31",
+      "approvalStatus": "Đang thực hiện",
+      "actualProgress": ""
+    },
+    "GOAL-9": {
+      "id": "GOAL-9",
+      "name": "Mục tiêu tháng 09",
+      "category": "Doanh thu",
+      "subCategory": "Ngoài",
+      "unit": "%",
+      "weight": "10",
+      "startDate": "2026-09-01",
+      "endDate": "2026-09-30",
+      "approvalStatus": "Không hoàn thành",
+      "actualProgress": "40"
+    },
+    "GOAL-10": {
+      "id": "GOAL-10",
+      "name": "Mục tiêu tháng 10",
+      "category": "Xúc tiến",
+      "subCategory": "Tiếp xúc",
+      "unit": "KH",
+      "weight": "10",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-31",
+      "approvalStatus": "Mới",
+      "actualProgress": ""
+    },
+    "GOAL-11": {
+      "id": "GOAL-11",
+      "name": "Mục tiêu tháng 11",
+      "category": "Doanh thu",
+      "subCategory": "Dịch vụ",
+      "unit": "%",
+      "weight": "5",
+      "startDate": "2026-11-01",
+      "endDate": "2026-11-30",
+      "approvalStatus": "Mới",
+      "actualProgress": ""
+    },
+    "GOAL-12": {
+      "id": "GOAL-12",
+      "name": "Mục tiêu tháng 12",
+      "category": "Nhiệm vụ",
+      "subCategory": "Khác",
+      "unit": "%",
+      "weight": "5",
+      "startDate": "2026-12-01",
+      "endDate": "2026-12-31",
+      "approvalStatus": "Mới",
+      "actualProgress": ""
+    }
+  },
+  "goalIds": [
+    "GOAL-1",
+    "GOAL-2",
+    "GOAL-3",
+    "GOAL-4",
+    "GOAL-5",
+    "GOAL-6",
+    "GOAL-7",
+    "GOAL-8",
+    "GOAL-9",
+    "GOAL-10",
+    "GOAL-11",
+    "GOAL-12"
+  ],
+  "oppColumns": [
+    {
+      "id": "opp-0",
+      "title": "Mới",
+      "color": "#e32b4c",
+      "taskIds": [
+        "NEW-1",
+        "NEW-2",
+        "NEW-3"
+      ]
+    },
+    {
+      "id": "opp-1",
+      "title": "Đang tiếp xúc",
+      "color": "#3b82f6",
+      "taskIds": [
+        "FPT-1",
+        "VNPT-1"
+      ]
+    },
+    {
+      "id": "opp-2",
+      "title": "Đánh giá nhu cầu",
+      "color": "#6366f1",
+      "taskIds": [
+        "MB-1"
+      ]
+    },
+    {
+      "id": "opp-3",
+      "title": "Đang báo giá",
+      "color": "#8b5cf6",
+      "taskIds": [
+        "VNM-1"
+      ]
+    },
+    {
+      "id": "opp-4",
+      "title": "Đấu thầu",
+      "color": "#ec4899",
+      "taskIds": [
+        "VCB-1"
+      ]
+    },
+    {
+      "id": "opp-5",
+      "title": "POC",
+      "color": "#f43f5e",
+      "taskIds": [
+        "VIN-1"
+      ]
+    },
+    {
+      "id": "opp-6",
+      "title": "Kí hợp đồng",
+      "color": "#f97316",
+      "taskIds": [
+        "VHM-1"
+      ]
+    },
+    {
+      "id": "opp-7",
+      "title": "Triển khai",
+      "color": "#eab308",
+      "taskIds": [
+        "BAM-1"
+      ]
+    },
+    {
+      "id": "opp-8",
+      "title": "Thành công",
+      "color": "#22c55e",
+      "taskIds": [
+        "TCB-1"
+      ]
+    },
+    {
+      "id": "opp-9",
+      "title": "Không thành công",
+      "color": "#64748b",
+      "taskIds": [
+        "TGDD-1"
+      ]
+    }
+  ],
+  "oppTasks": {
+    "NEW-1": {
+      "id": "NEW-1",
+      "content": "Giải pháp CRM Sales",
+      "company": "Công ty StartUp ABC",
+      "mst": "0101999888",
+      "contactName": "Nguyễn T",
+      "email": "t@startup.vn",
+      "district": "Thanh Xuân",
+      "ward": "Khương Đình",
+      "city": "Hà Nội",
+      "projectedService": "CRM",
+      "assignedPartner": "MatBao",
+      "date": "13/04/2026",
+      "revenue": "20,000,000 ₫",
+      "probability": "5%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Mới",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": []
+    },
+    "NEW-2": {
+      "id": "NEW-2",
+      "content": "Mua license Office 365",
+      "company": "Đại học Edu",
+      "mst": "0102111222",
+      "contactName": "Trương K",
+      "email": "k@edu.vn",
+      "district": "Hai Bà Trưng",
+      "ward": "Bách Khoa",
+      "city": "Hà Nội",
+      "projectedService": "License",
+      "assignedPartner": "FPT IS",
+      "date": "14/04/2026",
+      "revenue": "150,000,000 ₫",
+      "probability": "10%",
+      "salesperson": "Trần B",
+      "status": "Mới",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": []
+    },
+    "NEW-3": {
+      "id": "NEW-3",
+      "content": "Thiết kế nhận diện thương hiệu",
+      "company": "Công ty Đồ họa XYZ",
+      "mst": "0103444555",
+      "contactName": "Lê Minh",
+      "email": "minh@xyzdesign.com",
+      "district": "Cầu Giấy",
+      "ward": "Nghĩa Đô",
+      "city": "Hà Nội",
+      "projectedService": "Design",
+      "assignedPartner": "TMA",
+      "date": "15/04/2026",
+      "revenue": "50,000,000 ₫",
+      "probability": "15%",
+      "salesperson": "Lê V",
+      "status": "Mới",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": []
+    },
+    "FPT-1": {
+      "id": "FPT-1",
+      "content": "Cơ hội dịch vụ Cloud FPT",
+      "company": "FPT Corp",
+      "mst": "0101248141",
+      "contactName": "Trịnh Văn A",
+      "email": "a@fpt.com",
+      "district": "Cầu Giấy",
+      "ward": "Dịch Vọng",
+      "city": "Hà Nội",
+      "projectedService": "Cloud",
+      "assignedPartner": "Viettel",
+      "date": "01/01/2026",
+      "revenue": "500,000,000 ₫",
+      "probability": "10%",
+      "salesperson": "Lê V",
+      "status": "Đang tiếp xúc",
+      "attachments": 1,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t1",
+          "type": "mail",
+          "status": "todo",
+          "title": "Gửi báo giá chào mừng"
+        },
+        {
+          "id": "t2",
+          "type": "phone",
+          "status": "overdue",
+          "title": "Gọi xác nhận nhu cầu"
+        }
+      ]
+    },
+    "VNPT-1": {
+      "id": "VNPT-1",
+      "content": "Thuê chỗ đặt Server",
+      "company": "VNPT",
+      "mst": "0100684378",
+      "contactName": "Lý T",
+      "email": "t@vnpt.vn",
+      "district": "Đống Đa",
+      "ward": "Láng Hạ",
+      "city": "Hà Nội",
+      "projectedService": "Server",
+      "assignedPartner": "CMC",
+      "date": "02/01/2026",
+      "revenue": "200,000,000 ₫",
+      "probability": "30%",
+      "salesperson": "Trần B",
+      "status": "Đang tiếp xúc",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t3",
+          "type": "meeting",
+          "status": "today",
+          "title": "Khảo sát DC"
+        }
+      ]
+    },
+    "MB-1": {
+      "id": "MB-1",
+      "content": "Dịch vụ Email Marketing",
+      "company": "MB Bank",
+      "mst": "0100283873",
+      "contactName": "Hằng V",
+      "email": "hang@mb.com",
+      "district": "Đống Đa",
+      "ward": "Cát Linh",
+      "city": "Hà Nội",
+      "projectedService": "Email CRM",
+      "assignedPartner": "MatBao",
+      "date": "03/01/2026",
+      "revenue": "50,000,000 ₫",
+      "probability": "50%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Đánh giá nhu cầu",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t4",
+          "type": "mail",
+          "status": "done",
+          "title": "Gửi profile"
+        },
+        {
+          "id": "t5",
+          "type": "meeting",
+          "status": "todo",
+          "title": "Trình bày giải pháp"
+        }
+      ]
+    },
+    "VNM-1": {
+      "id": "VNM-1",
+      "content": "Tổng đài chăm sóc KH",
+      "company": "Vinamilk",
+      "mst": "0300588569",
+      "contactName": "Phượng N",
+      "email": "phuong@vnm.vn",
+      "district": "Quận 7",
+      "ward": "Tân Phú",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Telesales",
+      "assignedPartner": "Viettel",
+      "date": "04/01/2026",
+      "revenue": "1,500,000,000 ₫",
+      "probability": "60%",
+      "salesperson": "Lê Thị C",
+      "status": "Đang báo giá",
+      "attachments": 2,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t6",
+          "type": "phone",
+          "status": "today",
+          "title": "Xác nhận file báo giá"
+        }
+      ]
+    },
+    "VCB-1": {
+      "id": "VCB-1",
+      "content": "Nâng cấp mạng nội bộ",
+      "company": "Vietcombank",
+      "mst": "0100112437",
+      "contactName": "Định N",
+      "email": "dinh@vcb.com",
+      "district": "Hoàn Kiếm",
+      "ward": "Tràng Tiền",
+      "city": "Hà Nội",
+      "projectedService": "Network",
+      "assignedPartner": "FPT IS",
+      "date": "05/01/2026",
+      "revenue": "3,000,000,000 ₫",
+      "probability": "70%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Đấu thầu",
+      "attachments": 4,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t7",
+          "type": "mail",
+          "status": "overdue",
+          "title": "Xin duyệt chi phí Mkt"
+        },
+        {
+          "id": "t8",
+          "type": "meeting",
+          "status": "todo",
+          "title": "Họp hội đồng quản trị"
+        },
+        {
+          "id": "t9",
+          "type": "mail",
+          "status": "done",
+          "title": "Báo cáo tháng"
+        }
+      ]
+    },
+    "VIN-1": {
+      "id": "VIN-1",
+      "content": "Giải pháp ERP",
+      "company": "Vingroup",
+      "mst": "0101245486",
+      "contactName": "Trí L",
+      "email": "tri@vin.com",
+      "district": "Cầu Giấy",
+      "ward": "Dịch Vọng Hậu",
+      "city": "Hà Nội",
+      "projectedService": "Tích hợp",
+      "assignedPartner": "TMA",
+      "date": "06/01/2026",
+      "revenue": "4,000,000,000 ₫",
+      "probability": "80%",
+      "salesperson": "Trần B",
+      "status": "POC",
+      "attachments": 1,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t10",
+          "type": "phone",
+          "status": "todo",
+          "title": "Feedback POC"
+        }
+      ]
+    },
+    "VHM-1": {
+      "id": "VHM-1",
+      "content": "Smart Home Hub",
+      "company": "Vinhomes",
+      "mst": "0102671977",
+      "contactName": "Vĩnh T",
+      "email": "vinh@vinhomes.vn",
+      "district": "Long Biên",
+      "ward": "Phúc Lợi",
+      "city": "Hà Nội",
+      "projectedService": "IOT",
+      "assignedPartner": "CMC",
+      "date": "07/01/2026",
+      "revenue": "8,000,000,000 ₫",
+      "probability": "90%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Kí hợp đồng",
+      "attachments": 3,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t11",
+          "type": "meeting",
+          "status": "done",
+          "title": "Ký biên bản"
+        },
+        {
+          "id": "t12",
+          "type": "mail",
+          "status": "today",
+          "title": "Gửi bản scan PDF HD"
+        }
+      ]
+    },
+    "BAM-1": {
+      "id": "BAM-1",
+      "content": "Hệ thống tracking hành lý",
+      "company": "Bamboo Airways",
+      "mst": "0107867370",
+      "contactName": "Tuấn B",
+      "email": "tuan@bamboo.vn",
+      "district": "Cầu Giấy",
+      "ward": "Dịch Vọng",
+      "city": "Hà Nội",
+      "projectedService": "Tracking",
+      "assignedPartner": "Viettel IDC",
+      "date": "08/01/2026",
+      "revenue": "1,500,000,000 ₫",
+      "probability": "95%",
+      "salesperson": "Trần B",
+      "status": "Triển khai",
+      "attachments": 2,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t13",
+          "type": "meeting",
+          "status": "overdue",
+          "title": "Golive Demo"
+        }
+      ]
+    },
+    "TCB-1": {
+      "id": "TCB-1",
+      "content": "Triển khai bảo mật AWS",
+      "company": "Techcombank",
+      "mst": "0100230800",
+      "contactName": "Dũng Đ",
+      "email": "dung@tcb.vn",
+      "district": "Hải Châu",
+      "ward": "Thạch Thang",
+      "city": "Đà Nẵng",
+      "projectedService": "Security",
+      "assignedPartner": "FPT IS",
+      "date": "09/01/2026",
+      "revenue": "3,000,000,000 ₫",
+      "probability": "100%",
+      "salesperson": "Lê V",
+      "status": "Thành công",
+      "attachments": 5,
+      "avatars": [],
+      "tasks": [
+        {
+          "id": "t14",
+          "type": "mail",
+          "status": "done",
+          "title": "Nghiệm thu"
+        }
+      ]
+    },
+    "TGDD-1": {
+      "id": "TGDD-1",
+      "content": "CRM Sales",
+      "company": "Thế Giới Di Động",
+      "mst": "0303288350",
+      "contactName": "Đạt T",
+      "email": "dat@tgdd.vn",
+      "district": "Quận 1",
+      "ward": "Bến Nghé",
+      "city": "TP. Hồ Chí Minh",
+      "projectedService": "Salesforce",
+      "assignedPartner": "MatBao",
+      "date": "10/01/2026",
+      "revenue": "120,000,000 ₫",
+      "probability": "0%",
+      "salesperson": "Nguyễn Văn A",
+      "status": "Không thành công",
+      "attachments": 0,
+      "avatars": [],
+      "tasks": []
+    }
+  },
+  "products": {
+    "PRD-001": {
+      "id": "PRD-001",
+      "name": "License OmniX User/Tháng",
+      "sku": "SV-L-01",
+      "type": "Dịch vụ",
+      "category": "Phần mềm",
+      "price": 500000,
+      "unit": "Tháng",
+      "status": "Active"
+    },
+    "PRD-002": {
+      "id": "PRD-002",
+      "name": "Phí Setup hệ thống",
+      "sku": "SV-S-01",
+      "type": "Dịch vụ",
+      "category": "Triển khai",
+      "price": 10000000,
+      "unit": "Lần",
+      "status": "Active"
+    },
+    "PRD-003": {
+      "id": "PRD-003",
+      "name": "Nhân sự Telesales (Tháng)",
+      "sku": "HR-T-01",
+      "type": "Nhân sự",
+      "category": "BPO",
+      "price": 12000000,
+      "unit": "Người/Tháng",
+      "status": "Active"
+    },
+    "PRD-004": {
+      "id": "PRD-004",
+      "name": "Gói lưu trữ dữ liệu 1TB/năm",
+      "sku": "ST-C-01",
+      "type": "Dịch vụ",
+      "category": "Lưu trữ",
+      "price": 6000000,
+      "unit": "Năm",
+      "status": "Active"
+    },
+    "PRD-005": {
+      "id": "PRD-005",
+      "name": "Giờ công hỗ trợ Kỹ thuật",
+      "sku": "HR-S-01",
+      "type": "Dịch vụ",
+      "category": "Hỗ trợ",
+      "price": 300000,
+      "unit": "Giờ",
+      "status": "Inactive"
+    }
+  },
+  "productIds": [
+    "PRD-001",
+    "PRD-002",
+    "PRD-003",
+    "PRD-004",
+    "PRD-005"
+  ],
+  "orders": {
+    "ORD-2026-001": {
+      "id": "ORD-2026-001",
+      "orderNo": "DH-2026-001",
+      "contractId": "CTR-2026-001",
+      "customerId": "CUS-1",
+      "orderStatus": "Hoàn thành",
+      "orderDate": "2026-01-12",
+      "totalAmount": 1500000000,
+      "discountAmount": 0,
+      "notes": "Khách hàng VIP, triển khai sớm",
+      "lines": [
+        {
+          "id": 1,
+          "productId": "PRD-002",
+          "productName": "Phí Setup hệ thống",
+          "quantity": 1,
+          "unitPrice": 10000000,
+          "discount": 0,
+          "total": 10000000
+        }
+      ]
+    },
+    "ORD-2026-002": {
+      "id": "ORD-2026-002",
+      "orderNo": "DH-2026-002",
+      "contractId": "CTR-2026-002",
+      "customerId": "CUS-2",
+      "orderStatus": "Đang triển khai",
+      "orderDate": "2026-02-15",
+      "totalAmount": 2500000000,
+      "discountAmount": 0,
+      "notes": "Đang setup server",
+      "lines": [
+        {
+          "id": 2,
+          "productId": "PRD-001",
+          "productName": "License OmniX User/Tháng",
+          "quantity": 10,
+          "unitPrice": 500000,
+          "discount": 0,
+          "total": 5000000
+        }
+      ]
+    },
+    "ORD-2026-003": {
+      "id": "ORD-2026-003",
+      "orderNo": "DH-2026-003",
+      "contractId": "CTR-2026-003",
+      "customerId": "CUS-1",
+      "orderStatus": "Mới",
+      "orderDate": "2026-03-01",
+      "totalAmount": 850000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-004": {
+      "id": "ORD-2026-004",
+      "orderNo": "DH-2026-004",
+      "contractId": "CTR-2026-004",
+      "customerId": "CUS-2",
+      "orderStatus": "Mới",
+      "orderDate": "2026-03-05",
+      "totalAmount": 3200000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-005": {
+      "id": "ORD-2026-005",
+      "orderNo": "DH-2026-005",
+      "contractId": "CTR-2026-005",
+      "customerId": "CUS-2",
+      "orderStatus": "Hoàn thành",
+      "orderDate": "2026-01-20",
+      "totalAmount": 1000000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-006": {
+      "id": "ORD-2026-006",
+      "orderNo": "DH-2026-006",
+      "contractId": "CTR-2026-006",
+      "customerId": "CUS-2",
+      "orderStatus": "Đã hủy",
+      "orderDate": "2026-02-25",
+      "totalAmount": 5000000000,
+      "discountAmount": 0,
+      "notes": "Khách hàng dời lịch",
+      "lines": []
+    },
+    "ORD-2026-007": {
+      "id": "ORD-2026-007",
+      "orderNo": "DH-2026-007",
+      "contractId": "CTR-2026-007",
+      "customerId": "CUS-2",
+      "orderStatus": "Đang triển khai",
+      "orderDate": "2026-02-10",
+      "totalAmount": 750000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-008": {
+      "id": "ORD-2026-008",
+      "orderNo": "DH-2026-008",
+      "contractId": "CTR-2026-008",
+      "customerId": "CUS-2",
+      "orderStatus": "Hoàn thành",
+      "orderDate": "2026-03-15",
+      "totalAmount": 800000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-009": {
+      "id": "ORD-2026-009",
+      "orderNo": "DH-2026-009",
+      "contractId": "CTR-2026-009",
+      "customerId": "CUS-2",
+      "orderStatus": "Mới",
+      "orderDate": "2026-04-10",
+      "totalAmount": 400000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    },
+    "ORD-2026-010": {
+      "id": "ORD-2026-010",
+      "orderNo": "DH-2026-010",
+      "contractId": "CTR-2026-010",
+      "customerId": "CUS-2",
+      "orderStatus": "Đang triển khai",
+      "orderDate": "2026-01-05",
+      "totalAmount": 2000000000,
+      "discountAmount": 0,
+      "notes": "",
+      "lines": []
+    }
+  },
+  "orderIds": [
+    "ORD-2026-001",
+    "ORD-2026-002",
+    "ORD-2026-003",
+    "ORD-2026-004",
+    "ORD-2026-005",
+    "ORD-2026-006",
+    "ORD-2026-007",
+    "ORD-2026-008",
+    "ORD-2026-009",
+    "ORD-2026-010"
+  ],
+  "partners": {
+    "PRT-001": {
+      "id": "PRT-001",
+      "name": "Công ty CP Dịch vụ Hoa Sao",
+      "shortName": "Hoa Sao",
+      "type": "Tổng đài",
+      "contact": "Nguyễn Văn Sao",
+      "email": "info@hoasao.vn",
+      "phone": "02413305678"
+    },
+    "PRT-002": {
+      "id": "PRT-002",
+      "name": "Công ty TNHH GEM Global",
+      "shortName": "GEM",
+      "type": "outsourcing",
+      "contact": "Trần Bá Thành",
+      "email": "info@gem.com.vn",
+      "phone": "02813001199"
+    },
+    "PRT-003": {
+      "id": "PRT-003",
+      "name": "Công ty CP Hoa Kim",
+      "shortName": "Hoa Kim",
+      "type": "Nhân sự",
+      "contact": "Lê Thị Kim",
+      "email": "lienhe@hoakim.vn",
+      "phone": "02432005566"
+    },
+    "PRT-004": {
+      "id": "PRT-004",
+      "name": "Công ty CP CNTT TMA Solutions",
+      "shortName": "TMA",
+      "type": "Phần mềm",
+      "contact": "Phạm Quốc Hoà",
+      "email": "contact@tmasolutions.vn",
+      "phone": "02838123456"
+    },
+    "PRT-005": {
+      "id": "PRT-005",
+      "name": "Công ty TNHH Harveynash",
+      "shortName": "HarveyNash",
+      "type": "Nhân sự",
+      "contact": "David Nguyen",
+      "email": "vietnam@harveynash.com",
+      "phone": "02439745678"
+    },
+    "PRT-006": {
+      "id": "PRT-006",
+      "name": "Công ty TNHH Fujinet Systems",
+      "shortName": "Fujinet",
+      "type": "Phần mềm",
+      "contact": "Cao Văn Phú",
+      "email": "info@fujinet.vn",
+      "phone": "02432889900"
+    }
+  },
+  "partnerIds": [
+    "PRT-001",
+    "PRT-002",
+    "PRT-003",
+    "PRT-004",
+    "PRT-005",
+    "PRT-006"
+  ],
+  "partnerBillings": {
+    "PB-2026-001": {
+      "id": "PB-2026-001",
+      "billingNo": "CD-2026-001",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "serviceDesc": "Cầp cung cấp nhân sự CSKH thoáng đài",
+      "billingDate": "2026-01-15",
+      "amount": 800000000,
+      "status": "Hoàn thành",
+      "month": 1,
+      "year": 2026
+    },
+    "PB-2026-002": {
+      "id": "PB-2026-002",
+      "billingNo": "CD-2026-002",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "contractRef": "CTR-2026-004",
+      "serviceDesc": "Nhân sự Telesales tháng 01",
+      "billingDate": "2026-01-20",
+      "amount": 1200000000,
+      "status": "Đang triển khai",
+      "month": 1,
+      "year": 2026
+    },
+    "PB-2026-003": {
+      "id": "PB-2026-003",
+      "billingNo": "CD-2026-003",
+      "partnerId": "PRT-003",
+      "partnerName": "Hoa Kim",
+      "contractRef": "CTR-2026-008",
+      "serviceDesc": "Cho thuê nhân sự IT tháng 01",
+      "billingDate": "2026-01-25",
+      "amount": 450000000,
+      "status": "Hoàn thành",
+      "month": 1,
+      "year": 2026
+    },
+    "PB-2026-004": {
+      "id": "PB-2026-004",
+      "billingNo": "CD-2026-004",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "serviceDesc": "Cấp nhân sự CSKH tháng 02",
+      "billingDate": "2026-02-15",
+      "amount": 820000000,
+      "status": "Hoàn thành",
+      "month": 2,
+      "year": 2026
+    },
+    "PB-2026-005": {
+      "id": "PB-2026-005",
+      "billingNo": "CD-2026-005",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "contractRef": "CTR-2026-004",
+      "serviceDesc": "Nhân sự Telesales tháng 02",
+      "billingDate": "2026-02-20",
+      "amount": 1250000000,
+      "status": "Đang triển khai",
+      "month": 2,
+      "year": 2026
+    },
+    "PB-2026-006": {
+      "id": "PB-2026-006",
+      "billingNo": "CD-2026-006",
+      "partnerId": "PRT-004",
+      "partnerName": "TMA",
+      "contractRef": "CTR-2026-002",
+      "serviceDesc": "Phí lập trình viên OmniX tháng 02",
+      "billingDate": "2026-02-25",
+      "amount": 380000000,
+      "status": "Hoàn thành",
+      "month": 2,
+      "year": 2026
+    },
+    "PB-2026-007": {
+      "id": "PB-2026-007",
+      "billingNo": "CD-2026-007",
+      "partnerId": "PRT-003",
+      "partnerName": "Hoa Kim",
+      "contractRef": "CTR-2026-008",
+      "serviceDesc": "Cho thuê nhân sự IT tháng 02",
+      "billingDate": "2026-02-25",
+      "amount": 460000000,
+      "status": "Hoàn thành",
+      "month": 2,
+      "year": 2026
+    },
+    "PB-2026-008": {
+      "id": "PB-2026-008",
+      "billingNo": "CD-2026-008",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "serviceDesc": "Cấp nhân sự CSKH tháng 03",
+      "billingDate": "2026-03-14",
+      "amount": 850000000,
+      "status": "Đang triển khai",
+      "month": 3,
+      "year": 2026
+    },
+    "PB-2026-009": {
+      "id": "PB-2026-009",
+      "billingNo": "CD-2026-009",
+      "partnerId": "PRT-005",
+      "partnerName": "HarveyNash",
+      "contractRef": "CTR-2026-006",
+      "serviceDesc": "Cung ứng nhân lực dự án WorkForceX",
+      "billingDate": "2026-03-20",
+      "amount": 2100000000,
+      "status": "Đang triển khai",
+      "month": 3,
+      "year": 2026
+    },
+    "PB-2026-010": {
+      "id": "PB-2026-010",
+      "billingNo": "CD-2026-010",
+      "partnerId": "PRT-006",
+      "partnerName": "Fujinet",
+      "contractRef": "CTR-2026-003",
+      "serviceDesc": "Phí bảo trì KnowxHub tháng 03",
+      "billingDate": "2026-03-25",
+      "amount": 280000000,
+      "status": "Hoàn thành",
+      "month": 3,
+      "year": 2026
+    },
+    "PB-2026-011": {
+      "id": "PB-2026-011",
+      "billingNo": "CD-2026-011",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "contractRef": "CTR-2026-004",
+      "serviceDesc": "Nhân sự Telesales tháng 03",
+      "billingDate": "2026-03-28",
+      "amount": 1280000000,
+      "status": "Đang triển khai",
+      "month": 3,
+      "year": 2026
+    },
+    "PB-2026-012": {
+      "id": "PB-2026-012",
+      "billingNo": "CD-2026-012",
+      "partnerId": "PRT-004",
+      "partnerName": "TMA",
+      "contractRef": "CTR-2026-002",
+      "serviceDesc": "Phí lập trình viên OmniX tháng 03",
+      "billingDate": "2026-03-30",
+      "amount": 400000000,
+      "status": "Đang triển khai",
+      "month": 3,
+      "year": 2026
+    },
+    "PB-2026-013": {
+      "id": "PB-2026-013",
+      "billingNo": "CD-2026-013",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "contractRef": "CTR-2026-010",
+      "serviceDesc": "Cấp nhân sự CSKH Viettel Tháng 04",
+      "billingDate": "2026-04-10",
+      "amount": 870000000,
+      "status": "Đang triển khai",
+      "month": 4,
+      "year": 2026
+    },
+    "PB-2026-014": {
+      "id": "PB-2026-014",
+      "billingNo": "CD-2026-014",
+      "partnerId": "PRT-003",
+      "partnerName": "Hoa Kim",
+      "contractRef": "CTR-2026-008",
+      "serviceDesc": "Cho thuê nhân sự IT tháng 04",
+      "billingDate": "2026-04-12",
+      "amount": 470000000,
+      "status": "Đang triển khai",
+      "month": 4,
+      "year": 2026
+    }
+  },
+  "partnerBillingIds": [
+    "PB-2026-001",
+    "PB-2026-002",
+    "PB-2026-003",
+    "PB-2026-004",
+    "PB-2026-005",
+    "PB-2026-006",
+    "PB-2026-007",
+    "PB-2026-008",
+    "PB-2026-009",
+    "PB-2026-010",
+    "PB-2026-011",
+    "PB-2026-012",
+    "PB-2026-013",
+    "PB-2026-014"
+  ],
+  "outboundReconciliations": {
+    "OBR-2026-001": {
+      "id": "OBR-2026-001",
+      "reconcNo": "DS-2026-001",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "partnerFullName": "Công ty CP Dịch vụ Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "contractNo": "HD/2026/001",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "seatTableFileName": "bang_cong_seat_T01_2026_HoaSao.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 1",
+          "totalWork": 634.5,
+          "standardSeats": 25,
+          "seatsPayable": 25.38
+        },
+        {
+          "id": 2,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 3",
+          "totalWork": 5869.5,
+          "standardSeats": 25,
+          "seatsPayable": 214.78
+        }
+      ],
+      "penaltyItems": [
+        {
+          "id": 1,
+          "content": "Điểm đạt 89.09 dưới ngưỡng điểm chuẩn 5.91 điểm",
+          "zone": "Hồ Chí Minh",
+          "penaltyRate": 0.47,
+          "baseCost": 2916508880,
+          "penaltyAmount": 13707592,
+          "note": ""
+        }
+      ],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 25.38,
+          "unitPrice": 11518000,
+          "totalPayment": 292326840
+        },
+        {
+          "id": 2,
+          "type": "Loại 3",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 214.78,
+          "unitPrice": 12218000,
+          "totalPayment": 2624182040
+        }
+      ],
+      "totalSeatsPayment": 2916508880,
+      "totalPenalty": 13707592,
+      "totalAfterPenalty": 2902801288,
+      "vatRate": 8,
+      "vatAmount": 232224103,
+      "grandTotal": 3135025391,
+      "notes": "",
+      "createdDate": "2026-02-05",
+      "confirmedDate": "2026-02-10"
+    },
+    "OBR-2026-002": {
+      "id": "OBR-2026-002",
+      "reconcNo": "DS-2026-002",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "partnerFullName": "Công ty TNHH GEM Global",
+      "contractRef": "CTR-2026-004",
+      "contractNo": "HD/2026/004",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "seatTableFileName": "bang_cong_seat_T01_2026_GEM.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hà Nội",
+          "type": "Loại 1",
+          "totalWork": 1240,
+          "standardSeats": 20,
+          "seatsPayable": 62
+        },
+        {
+          "id": 2,
+          "zone": "Hà Nội",
+          "type": "Loại 2",
+          "totalWork": 820,
+          "standardSeats": 20,
+          "seatsPayable": 41
+        }
+      ],
+      "penaltyItems": [],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "Hà Nội",
+          "seatsPayable": 62,
+          "unitPrice": 10500000,
+          "totalPayment": 651000000
+        },
+        {
+          "id": 2,
+          "type": "Loại 2",
+          "zone": "Hà Nội",
+          "seatsPayable": 41,
+          "unitPrice": 9800000,
+          "totalPayment": 401800000
+        }
+      ],
+      "totalSeatsPayment": 1052800000,
+      "totalPenalty": 0,
+      "totalAfterPenalty": 1052800000,
+      "vatRate": 8,
+      "vatAmount": 84224000,
+      "grandTotal": 1137024000,
+      "notes": "",
+      "createdDate": "2026-02-08",
+      "confirmedDate": "2026-02-15"
+    },
+    "OBR-2026-003": {
+      "id": "OBR-2026-003",
+      "reconcNo": "DS-2026-003",
+      "partnerId": "PRT-003",
+      "partnerName": "Hoa Kim",
+      "partnerFullName": "Công ty CP Hoa Kim",
+      "contractRef": "CTR-2026-008",
+      "contractNo": "HD/2026/008",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "seatTableFileName": "bang_cong_seat_T01_2026_HoaKim.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "TP.HCM",
+          "type": "Loại 1",
+          "totalWork": 420,
+          "standardSeats": 15,
+          "seatsPayable": 28
+        }
+      ],
+      "penaltyItems": [],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "TP.HCM",
+          "seatsPayable": 28,
+          "unitPrice": 12000000,
+          "totalPayment": 336000000
+        }
+      ],
+      "totalSeatsPayment": 336000000,
+      "totalPenalty": 0,
+      "totalAfterPenalty": 336000000,
+      "vatRate": 8,
+      "vatAmount": 26880000,
+      "grandTotal": 362880000,
+      "notes": "",
+      "createdDate": "2026-02-06",
+      "confirmedDate": "2026-02-12"
+    },
+    "OBR-2026-004": {
+      "id": "OBR-2026-004",
+      "reconcNo": "DS-2026-004",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "partnerFullName": "Công ty CP Dịch vụ Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "contractNo": "HD/2026/001",
+      "month": 2,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "seatTableFileName": "bang_cong_seat_T02_2026_HoaSao.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 1",
+          "totalWork": 598,
+          "standardSeats": 25,
+          "seatsPayable": 23.92
+        },
+        {
+          "id": 2,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 3",
+          "totalWork": 5680,
+          "standardSeats": 25,
+          "seatsPayable": 227.2
+        }
+      ],
+      "penaltyItems": [
+        {
+          "id": 1,
+          "content": "Tỷ lệ cuộc gọi lỡ vượt ngưỡng 5%",
+          "zone": "Hồ Chí Minh",
+          "penaltyRate": 0.3,
+          "baseCost": 2850000000,
+          "penaltyAmount": 8550000,
+          "note": ""
+        }
+      ],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 23.92,
+          "unitPrice": 11518000,
+          "totalPayment": 275470560
+        },
+        {
+          "id": 2,
+          "type": "Loại 3",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 227.2,
+          "unitPrice": 12218000,
+          "totalPayment": 2773929600
+        }
+      ],
+      "totalSeatsPayment": 3049400160,
+      "totalPenalty": 8550000,
+      "totalAfterPenalty": 3040850160,
+      "vatRate": 8,
+      "vatAmount": 243268013,
+      "grandTotal": 3284118173,
+      "notes": "",
+      "createdDate": "2026-03-05",
+      "confirmedDate": "2026-03-10"
+    },
+    "OBR-2026-005": {
+      "id": "OBR-2026-005",
+      "reconcNo": "DS-2026-005",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "partnerFullName": "Công ty TNHH GEM Global",
+      "contractRef": "CTR-2026-004",
+      "contractNo": "HD/2026/004",
+      "month": 2,
+      "year": 2026,
+      "status": "Điều chỉnh",
+      "seatTableFileName": "bang_cong_seat_T02_2026_GEM.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hà Nội",
+          "type": "Loại 1",
+          "totalWork": 1180,
+          "standardSeats": 20,
+          "seatsPayable": 59
+        },
+        {
+          "id": 2,
+          "zone": "Hà Nội",
+          "type": "Loại 2",
+          "totalWork": 800,
+          "standardSeats": 20,
+          "seatsPayable": 40
+        }
+      ],
+      "penaltyItems": [
+        {
+          "id": 1,
+          "content": "Chất lượng dịch vụ không đạt KPI tháng 2",
+          "zone": "Hà Nội",
+          "penaltyRate": 1,
+          "baseCost": 1022500000,
+          "penaltyAmount": 10225000,
+          "note": "Đang xem xét"
+        }
+      ],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "Hà Nội",
+          "seatsPayable": 59,
+          "unitPrice": 10500000,
+          "totalPayment": 619500000
+        },
+        {
+          "id": 2,
+          "type": "Loại 2",
+          "zone": "Hà Nội",
+          "seatsPayable": 40,
+          "unitPrice": 9800000,
+          "totalPayment": 392000000
+        }
+      ],
+      "totalSeatsPayment": 1011500000,
+      "totalPenalty": 10225000,
+      "totalAfterPenalty": 1001275000,
+      "vatRate": 8,
+      "vatAmount": 80102000,
+      "grandTotal": 1081377000,
+      "notes": "GEM đang phản hồi về mức phạt",
+      "createdDate": "2026-03-06",
+      "confirmedDate": ""
+    },
+    "OBR-2026-006": {
+      "id": "OBR-2026-006",
+      "reconcNo": "DS-2026-006",
+      "partnerId": "PRT-001",
+      "partnerName": "Hoa Sao",
+      "partnerFullName": "Công ty CP Dịch vụ Hoa Sao",
+      "contractRef": "CTR-2026-001",
+      "contractNo": "HD/2026/001",
+      "month": 3,
+      "year": 2026,
+      "status": "Chờ xác nhận",
+      "seatTableFileName": "bang_cong_seat_T03_2026_HoaSao.xlsx",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 1",
+          "totalWork": 620,
+          "standardSeats": 25,
+          "seatsPayable": 24.8
+        },
+        {
+          "id": 2,
+          "zone": "Hồ Chí Minh",
+          "type": "Loại 3",
+          "totalWork": 5910,
+          "standardSeats": 25,
+          "seatsPayable": 236.4
+        }
+      ],
+      "penaltyItems": [],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Loại 1",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 24.8,
+          "unitPrice": 11518000,
+          "totalPayment": 285646400
+        },
+        {
+          "id": 2,
+          "type": "Loại 3",
+          "zone": "Hồ Chí Minh",
+          "seatsPayable": 236.4,
+          "unitPrice": 12218000,
+          "totalPayment": 2888335200
+        }
+      ],
+      "totalSeatsPayment": 3173981600,
+      "totalPenalty": 0,
+      "totalAfterPenalty": 3173981600,
+      "vatRate": 8,
+      "vatAmount": 253918528,
+      "grandTotal": 3427900128,
+      "notes": "",
+      "createdDate": "2026-04-05",
+      "confirmedDate": ""
+    },
+    "OBR-2026-007": {
+      "id": "OBR-2026-007",
+      "reconcNo": "DS-2026-007",
+      "partnerId": "PRT-005",
+      "partnerName": "HarveyNash",
+      "partnerFullName": "Công ty TNHH Harveynash",
+      "contractRef": "CTR-2026-006",
+      "contractNo": "HD/2026/006",
+      "month": 3,
+      "year": 2026,
+      "status": "Nháp",
+      "seatTableFileName": "",
+      "seatItems": [
+        {
+          "id": 1,
+          "zone": "Hà Nội",
+          "type": "Senior Dev",
+          "totalWork": 880,
+          "standardSeats": 22,
+          "seatsPayable": 40
+        }
+      ],
+      "penaltyItems": [],
+      "seatPrices": [
+        {
+          "id": 1,
+          "type": "Senior Dev",
+          "zone": "Hà Nội",
+          "seatsPayable": 40,
+          "unitPrice": 35000000,
+          "totalPayment": 1400000000
+        }
+      ],
+      "totalSeatsPayment": 1400000000,
+      "totalPenalty": 0,
+      "totalAfterPenalty": 1400000000,
+      "vatRate": 8,
+      "vatAmount": 112000000,
+      "grandTotal": 1512000000,
+      "notes": "",
+      "createdDate": "2026-04-08",
+      "confirmedDate": ""
+    },
+    "OBR-2026-008": {
+      "id": "OBR-2026-008",
+      "reconcNo": "DS-2026-008",
+      "partnerId": "PRT-002",
+      "partnerName": "GEM",
+      "partnerFullName": "Công ty TNHH GEM Global",
+      "contractRef": "CTR-2026-004",
+      "contractNo": "HD/2026/004",
+      "month": 3,
+      "year": 2026,
+      "status": "Nháp",
+      "seatTableFileName": "",
+      "seatItems": [],
+      "penaltyItems": [],
+      "seatPrices": [],
+      "totalSeatsPayment": 0,
+      "totalPenalty": 0,
+      "totalAfterPenalty": 0,
+      "vatRate": 8,
+      "vatAmount": 0,
+      "grandTotal": 0,
+      "notes": "",
+      "createdDate": "2026-04-09",
+      "confirmedDate": ""
+    }
+  },
+  "outboundReconciliationIds": [
+    "OBR-2026-001",
+    "OBR-2026-002",
+    "OBR-2026-003",
+    "OBR-2026-004",
+    "OBR-2026-005",
+    "OBR-2026-006",
+    "OBR-2026-007",
+    "OBR-2026-008"
+  ],
+  "inboundReconciliations": {
+    "IBR-2026-001": {
+      "id": "IBR-2026-001",
+      "reconcNo": "DSKH-2026-001",
+      "customerId": "CUS-3",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "contractNo": "HD/2026/004",
+      "month": 3,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "kpiItems": [
+        {
+          "id": 1,
+          "category": "Tỷ lệ kết nối thành công",
+          "subCategory": "Tổng đài 18008000_N2",
+          "target": ">= 95%",
+          "result": "99.26%",
+          "evaluation": "Đạt"
+        },
+        {
+          "id": 2,
+          "category": "Mức độ hài lòng Khách hàng",
+          "subCategory": "Mức độ hài lòng kênh FO",
+          "target": ">= 85",
+          "result": "96.54%",
+          "evaluation": "Đạt"
+        }
+      ],
+      "slaScore": 98,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dịch vụ tổng đài 18008000 (N2,N3,N4,N5), 1789N3, Email",
+          "seats": 32.02,
+          "unitPrice": 15133948,
+          "total": 484589015
+        },
+        {
+          "id": 2,
+          "description": "Kiểm duyệt hồ sơ",
+          "seats": 2,
+          "unitPrice": 15133948,
+          "total": 30267896
+        }
+      ],
+      "totalBeforePenalty": 514856911,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 514856911,
+      "vatRate": 8,
+      "vatAmount": 41188553,
+      "grandTotal": 556045464,
+      "notes": "",
+      "createdDate": "2026-04-05",
+      "confirmedDate": "2026-04-10"
+    },
+    "IBR-2026-002": {
+      "id": "IBR-2026-002",
+      "reconcNo": "DSKH-2026-002",
+      "customerId": "CUS-4",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "contractNo": "HD/2026/002",
+      "month": 4,
+      "year": 2026,
+      "status": "Chờ xác nhận",
+      "slaScore": 100,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dịch vụ ERP Cloud",
+          "seats": 10,
+          "unitPrice": 25000000,
+          "total": 250000000
+        }
+      ],
+      "totalBeforePenalty": 250000000,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 250000000,
+      "vatRate": 8,
+      "vatAmount": 20000000,
+      "grandTotal": 270000000,
+      "notes": "",
+      "createdDate": "2026-04-13",
+      "confirmedDate": ""
+    },
+    "IBR-2026-003": {
+      "id": "IBR-2026-003",
+      "reconcNo": "DSKH-2026-003",
+      "customerId": "CUS-5",
+      "customerName": "Viettel Post",
+      "shortName": "VTP",
+      "contractNo": "HD/2026/003",
+      "month": 3,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 95,
+      "penaltyRate": 0.5,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Bảo trì hệ thống KnowxHub",
+          "seats": 1,
+          "unitPrice": 850000000,
+          "total": 850000000
+        }
+      ],
+      "totalBeforePenalty": 850000000,
+      "penaltyAmount": 4250000,
+      "totalAfterPenalty": 845750000,
+      "vatRate": 8,
+      "vatAmount": 67660000,
+      "grandTotal": 913410000,
+      "notes": "",
+      "createdDate": "2026-04-05",
+      "confirmedDate": "2026-04-08"
+    },
+    "IBR-2026-004": {
+      "id": "IBR-2026-004",
+      "reconcNo": "DSKH-2026-004",
+      "customerId": "CUS-6",
+      "customerName": "Viettel Digital",
+      "shortName": "VDG",
+      "contractNo": "HD/2026/005",
+      "month": 2,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 92,
+      "penaltyRate": 1,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dịch vụ Digital Marketing",
+          "seats": 5,
+          "unitPrice": 40000000,
+          "total": 200000000
+        }
+      ],
+      "totalBeforePenalty": 200000000,
+      "penaltyAmount": 2000000,
+      "totalAfterPenalty": 198000000,
+      "vatRate": 8,
+      "vatAmount": 15840000,
+      "grandTotal": 213840000,
+      "notes": "",
+      "createdDate": "2026-03-05",
+      "confirmedDate": "2026-03-12"
+    },
+    "IBR-2026-005": {
+      "id": "IBR-2026-005",
+      "reconcNo": "DSKH-2026-005",
+      "customerId": "CUS-7",
+      "customerName": "Viettel HighTech",
+      "shortName": "VHT",
+      "contractNo": "HD/2026/011",
+      "month": 3,
+      "year": 2026,
+      "status": "Điều chỉnh",
+      "slaScore": 88,
+      "penaltyRate": 2,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Hỗ trợ kỹ thuật phần cứng",
+          "seats": 100,
+          "unitPrice": 300000,
+          "total": 30000000
+        }
+      ],
+      "totalBeforePenalty": 30000000,
+      "penaltyAmount": 600000,
+      "totalAfterPenalty": 29400000,
+      "vatRate": 8,
+      "vatAmount": 2352000,
+      "grandTotal": 31752000,
+      "notes": "Khách hàng đang khiếu nại mức phạt SLA",
+      "createdDate": "2026-04-05",
+      "confirmedDate": ""
+    },
+    "IBR-2026-006": {
+      "id": "IBR-2026-006",
+      "reconcNo": "DSKH-2026-006",
+      "customerId": "CUS-8",
+      "customerName": "Viettel Networks",
+      "shortName": "VTN",
+      "contractNo": "HD/2026/014",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 99,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Thuê hạ tầng mạng",
+          "seats": 1,
+          "unitPrice": 350000000,
+          "total": 350000000
+        }
+      ],
+      "totalBeforePenalty": 350000000,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 350000000,
+      "vatRate": 8,
+      "vatAmount": 28000000,
+      "grandTotal": 378000000,
+      "notes": "",
+      "createdDate": "2026-02-05",
+      "confirmedDate": "2026-02-10"
+    },
+    "IBR-2026-007": {
+      "id": "IBR-2026-007",
+      "reconcNo": "DSKH-2026-007",
+      "customerId": "CUS-3",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "contractNo": "HD/2026/001",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 97,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dịch vụ CSKH Tháng 01",
+          "seats": 50,
+          "unitPrice": 15000000,
+          "total": 750000000
+        }
+      ],
+      "totalBeforePenalty": 750000000,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 750000000,
+      "vatRate": 8,
+      "vatAmount": 60000000,
+      "grandTotal": 810000000,
+      "notes": "",
+      "createdDate": "2026-02-05",
+      "confirmedDate": "2026-02-15"
+    },
+    "IBR-2026-008": {
+      "id": "IBR-2026-008",
+      "reconcNo": "DSKH-2026-008",
+      "customerId": "CUS-4",
+      "customerName": "Viettel Solution",
+      "shortName": "VTS",
+      "contractNo": "HD/2026/006",
+      "month": 2,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 96,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dự án WorkForceX Phase 1",
+          "seats": 1,
+          "unitPrice": 1200000000,
+          "total": 1200000000
+        }
+      ],
+      "totalBeforePenalty": 1200000000,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 1200000000,
+      "vatRate": 8,
+      "vatAmount": 96000000,
+      "grandTotal": 1296000000,
+      "notes": "",
+      "createdDate": "2026-03-05",
+      "confirmedDate": "2026-03-10"
+    },
+    "IBR-2026-009": {
+      "id": "IBR-2026-009",
+      "reconcNo": "DSKH-2026-009",
+      "customerId": "CUS-5",
+      "customerName": "Viettel Post",
+      "shortName": "VTP",
+      "contractNo": "HD/2026/007",
+      "month": 1,
+      "year": 2026,
+      "status": "Đã xác nhận",
+      "slaScore": 94,
+      "penaltyRate": 1,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Hệ thống tracking hành lý",
+          "seats": 1,
+          "unitPrice": 750000000,
+          "total": 750000000
+        }
+      ],
+      "totalBeforePenalty": 750000000,
+      "penaltyAmount": 7500000,
+      "totalAfterPenalty": 742500000,
+      "vatRate": 8,
+      "vatAmount": 59400000,
+      "grandTotal": 801900000,
+      "notes": "",
+      "createdDate": "2026-02-05",
+      "confirmedDate": "2026-02-08"
+    },
+    "IBR-2026-010": {
+      "id": "IBR-2026-010",
+      "reconcNo": "DSKH-2026-010",
+      "customerId": "CUS-3",
+      "customerName": "Viettel Telecom",
+      "shortName": "VTT",
+      "contractNo": "HD/2026/004",
+      "month": 4,
+      "year": 2026,
+      "status": "Nháp",
+      "slaScore": 0,
+      "penaltyRate": 0,
+      "seatItems": [
+        {
+          "id": 1,
+          "description": "Dịch vụ tổng đài April 2026",
+          "seats": 35,
+          "unitPrice": 15133948,
+          "total": 529688180
+        }
+      ],
+      "totalBeforePenalty": 529688180,
+      "penaltyAmount": 0,
+      "totalAfterPenalty": 529688180,
+      "vatRate": 8,
+      "vatAmount": 42375054,
+      "grandTotal": 572063234,
+      "notes": "Bản thảo cho đối soát tháng 4",
+      "createdDate": "2026-04-14",
+      "confirmedDate": ""
+    }
+  },
+  "inboundReconciliationIds": [
+    "IBR-2026-001",
+    "IBR-2026-002",
+    "IBR-2026-003",
+    "IBR-2026-004",
+    "IBR-2026-005",
+    "IBR-2026-006",
+    "IBR-2026-007",
+    "IBR-2026-008",
+    "IBR-2026-009",
+    "IBR-2026-010"
+  ],
+  "users": {
+    "USR-001": {
+      "id": "USR-001",
+      "username": "admin",
+      "fullName": "Administrator",
+      "email": "admin@viettel.com.vn",
+      "role": "Quản trị hệ thống",
+      "department": "TT Công nghệ Thông tin",
+      "status": "Active",
+      "lastLogin": "2026-04-14 08:30"
+    },
+    "USR-002": {
+      "id": "USR-002",
+      "username": "hung.nv",
+      "fullName": "Nguyễn Văn Hùng",
+      "email": "hung.nv@viettel.com.vn",
+      "role": "Giám đốc kinh doanh",
+      "department": "Phòng Bán hàng",
+      "status": "Active",
+      "lastLogin": "2026-04-14 07:15"
+    },
+    "USR-003": {
+      "id": "USR-003",
+      "username": "phuong.tt",
+      "fullName": "Trần Thị Phương",
+      "email": "phuong.tt@viettel.com.vn",
+      "role": "Kế toán trưởng",
+      "department": "Phòng Tài chính",
+      "status": "Active",
+      "lastLogin": "2026-04-13 17:45"
+    },
+    "USR-004": {
+      "id": "USR-004",
+      "username": "thanh.le",
+      "fullName": "Lê Văn Thanh",
+      "email": "thanh.le@viettel.com.vn",
+      "role": "Chuyên viên AM",
+      "department": "Phòng Bán hàng",
+      "status": "Inactive",
+      "lastLogin": "2026-04-10 09:00"
+    }
+  },
+  "userIds": [
+    "USR-001",
+    "USR-002",
+    "USR-003",
+    "USR-004"
+  ],
+  "roles": {
+    "ROL-001": {
+      "id": "ROL-001",
+      "name": "Quản trị hệ thống",
+      "description": "Toàn quyền điều hành hệ thống, quản lý người dùng và tham số.",
+      "status": "Active",
+      "userCount": 1
+    },
+    "ROL-002": {
+      "id": "ROL-002",
+      "name": "Giám đốc kinh doanh",
+      "description": "Xem toàn bộ báo cáo, phê duyệt các hợp đồng và mục tiêu lớn.",
+      "status": "Active",
+      "userCount": 1
+    },
+    "ROL-003": {
+      "id": "ROL-003",
+      "name": "Chuyên viên AM",
+      "description": "Quản lý Lead, Cơ hội, Hợp đồng và Đơn hàng của cá nhân phụ trách.",
+      "status": "Active",
+      "userCount": 10
+    },
+    "ROL-004": {
+      "id": "ROL-004",
+      "name": "Kế toán",
+      "description": "Quản lý đối soát, tính cước và công nợ khách hàng/đối tác.",
+      "status": "Active",
+      "userCount": 3
+    }
+  },
+  "roleIds": [
+    "ROL-001",
+    "ROL-002",
+    "ROL-003",
+    "ROL-004"
+  ],
+  "projects": {
+    "PRJ-001": {
+      "id": "PRJ-001",
+      "name": "Triển khai OmniX Viettel Pay",
+      "customer": "Viettel Digital",
+      "manager": "Nguyễn Văn A",
+      "status": "On Track",
+      "tasks": 25,
+      "completed": 18,
+      "deadline": "2026-06-15",
+      "color": "#3b82f6"
+    },
+    "PRJ-002": {
+      "id": "PRJ-002",
+      "name": "Nâng cấp KnowxHUB VCB",
+      "customer": "Vietcombank",
+      "manager": "Trần B",
+      "status": "At Risk",
+      "tasks": 40,
+      "completed": 12,
+      "deadline": "2026-05-20",
+      "color": "#f59e0b"
+    },
+    "PRJ-003": {
+      "id": "PRJ-003",
+      "name": "Dịch vụ BPO MB Bank Q3",
+      "customer": "MB Bank",
+      "manager": "Lê Thị C",
+      "status": "On Track",
+      "tasks": 15,
+      "completed": 15,
+      "deadline": "2026-04-30",
+      "color": "#16a34a"
+    },
+    "PRJ-004": {
+      "id": "PRJ-004",
+      "name": "Setup hạ tầng Cloud Vinamilk",
+      "customer": "Vinamilk",
+      "manager": "admin",
+      "status": "Off Track",
+      "tasks": 30,
+      "completed": 5,
+      "deadline": "2026-08-10",
+      "color": "#ef4444"
+    }
+  },
+  "projectIds": [
+    "PRJ-001",
+    "PRJ-002",
+    "PRJ-003",
+    "PRJ-004"
+  ],
+  "projectTasks": {},
+  "campaigns": {
+    "CMP-001": {
+      "id": "CMP-001",
+      "name": "Chiến dịch Email Q2/2026",
+      "type": "Email Marketing",
+      "target": "Khách hàng tiềm năng",
+      "status": "Running",
+      "startDate": "2026-04-01",
+      "endDate": "2026-06-30",
+      "sentCount": 1200,
+      "openRate": "15%"
+    },
+    "CMP-002": {
+      "id": "CMP-002",
+      "name": "Sự kiện Offline Viettel Day",
+      "type": "Event",
+      "target": "Khách hàng VIP",
+      "status": "Draft",
+      "startDate": "2026-05-15",
+      "endDate": "2026-05-15",
+      "sentCount": 0,
+      "openRate": "0%"
+    }
+  },
+  "campaignIds": [
+    "CMP-001",
+    "CMP-002"
+  ],
+  "tickets": {
+    "TIC-001": {
+      "id": "TIC-001",
+      "title": "Lỗi không login được Portal",
+      "customerName": "Vinamilk",
+      "priority": "High",
+      "status": "Open",
+      "createdDate": "2026-04-13 14:20",
+      "assignedTo": "admin"
+    },
+    "TIC-002": {
+      "id": "TIC-002",
+      "title": "Yêu cầu xuất lại hóa đơn T3",
+      "customerName": "MB Bank",
+      "priority": "Medium",
+      "status": "In progress",
+      "createdDate": "2026-04-14 09:00",
+      "assignedTo": "hung.nv"
+    }
+  },
+  "ticketIds": [
+    "TIC-001",
+    "TIC-002"
+  ],
+  "loyaltyPrograms": {
+    "LYP-001": {
+      "id": "LYP-001",
+      "name": "Khách hàng Thân thiết 2026",
+      "type": "Tiered",
+      "status": "Active",
+      "members": 1500,
+      "pointsFormula": "100,000 VND = 1 Point"
+    },
+    "LYP-002": {
+      "id": "LYP-002",
+      "name": "Ưu đãi Đối tác Công nghệ",
+      "type": "Discount",
+      "status": "Active",
+      "members": 50,
+      "pointsFormula": "N/A"
+    }
+  },
+  "loyaltyProgramIds": [
+    "LYP-001",
+    "LYP-002"
+  ],
+  "customerSurveys": {
+    "SRV-001": {
+      "id": "SRV-001",
+      "title": "Khảo sát sau triển khai dự án OmniX",
+      "customerName": "Vinamilk",
+      "channel": "Email",
+      "score": 4,
+      "status": "Đã gửi",
+      "createdDate": "2026-04-14",
+      "owner": "Trần B"
+    },
+    "SRV-002": {
+      "id": "SRV-002",
+      "title": "Khảo sát mức độ hài lòng dịch vụ CSKH",
+      "customerName": "MB Bank",
+      "channel": "Điện thoại",
+      "score": 5,
+      "status": "Đã phản hồi",
+      "createdDate": "2026-04-15",
+      "owner": "Nguyễn Văn A"
+    }
+  },
+  "customerSurveyIds": [
+    "SRV-001",
+    "SRV-002"
+  ]
+}

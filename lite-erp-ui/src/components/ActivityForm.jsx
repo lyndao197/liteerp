@@ -21,6 +21,7 @@ function ActivityForm() {
     isDaily: false,
     notes: '',
     assignee: 'Trần B (Bạn)',
+    assignees: [{ name: 'Trần B (Bạn)', description: '' }],
     reporter: 'Trần B (Bạn)'
   });
 
@@ -166,6 +167,7 @@ function ActivityForm() {
                  Xóa
                </button>
              )}
+             <button type="button" className="btn btn-secondary" onClick={() => navigate('/activities')}>Hủy</button>
              <button type="button" className="btn btn-primary" onClick={handleSave} disabled={isReadOnly}>Lưu</button>
            </div>
         </div>
@@ -259,11 +261,80 @@ function ActivityForm() {
             {/* R COLUMN */}
             <div className="form-column">
               <div className="column-title">Thời gian & Phân công</div>
-              <div className="form-group">
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">Giao việc cho</label>
-                <select className="form-control" name="assignee" value={formData.assignee} onChange={handleChange} disabled={isReadOnly}>
-                  {EMPLOYEES.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
+                <div style={{ border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead style={{ backgroundColor: '#f8fafc' }}>
+                      <tr>
+                        <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#64748b', fontWeight: 600, width: '40%' }}>Người thực hiện</th>
+                        <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Mô tả</th>
+                        {!isReadOnly && <th style={{ padding: '8px', width: '40px', borderBottom: '1px solid #e2e8f0' }}></th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formData.assignees && formData.assignees.map((assignee, idx) => (
+                        <tr key={idx}>
+                          <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0' }}>
+                            <select 
+                              className="form-control" 
+                              value={assignee.name} 
+                              onChange={(e) => {
+                                const newAssignees = [...formData.assignees];
+                                newAssignees[idx].name = e.target.value;
+                                hf('assignees', newAssignees);
+                              }} 
+                              disabled={isReadOnly}
+                              style={{ border: 'none', background: 'transparent', padding: '4px', width: '100%', height: '32px' }}
+                            >
+                              <option value="">-- Chọn người --</option>
+                              {EMPLOYEES.map(e => <option key={e} value={e}>{e}</option>)}
+                            </select>
+                          </td>
+                          <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0' }}>
+                            <input 
+                              type="text" 
+                              className="form-control" 
+                              value={assignee.description}
+                              onChange={(e) => {
+                                const newAssignees = [...formData.assignees];
+                                newAssignees[idx].description = e.target.value;
+                                hf('assignees', newAssignees);
+                              }} 
+                              disabled={isReadOnly}
+                              placeholder="Mô tả công việc..."
+                              style={{ border: 'none', background: 'transparent', padding: '4px', width: '100%', height: '32px' }}
+                            />
+                          </td>
+                          {!isReadOnly && (
+                            <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0', textAlign: 'center' }}>
+                              <Trash2 
+                                size={14} 
+                                color="#ef4444" 
+                                style={{ cursor: 'pointer' }} 
+                                onClick={() => {
+                                  const newAssignees = formData.assignees.filter((_, i) => i !== idx);
+                                  hf('assignees', newAssignees);
+                                }} 
+                              />
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {!isReadOnly && (
+                    <div style={{ padding: '8px' }}>
+                      <button 
+                        type="button" 
+                        onClick={() => hf('assignees', [...(formData.assignees || []), { name: '', description: '' }])}
+                        style={{ background: 'transparent', border: 'none', color: '#0f172a', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        + Thêm dòng
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="form-group">

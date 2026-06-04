@@ -1,0 +1,51 @@
+2026-04-02 13:41:23.091 +07 [36804] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-02 13:41:23.095 +07 [36804] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-02 13:41:23.095 +07 [36804] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-02 13:41:23.140 +07 [25612] LOG:  database system was shut down at 2026-04-02 13:41:00 +07
+2026-04-02 13:41:23.225 +07 [36804] LOG:  database system is ready to accept connections
+2026-04-15 05:23:47.165 +07 [5644] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-15 05:23:47.169 +07 [5644] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-15 05:23:47.169 +07 [5644] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-15 05:23:47.205 +07 [9264] LOG:  database system was interrupted; last known up at 2026-04-02 14:56:57 +07
+2026-04-15 05:23:50.728 +07 [9264] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-04-15 05:23:50.731 +07 [9264] LOG:  redo starts at 0/58866A0
+2026-04-15 05:23:50.731 +07 [9264] LOG:  invalid record length at 0/5886788: wanted 24, got 0
+2026-04-15 05:23:50.731 +07 [9264] LOG:  redo done at 0/5886750 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-04-15 05:23:50.762 +07 [5644] LOG:  database system is ready to accept connections
+2026-04-16 16:19:23.551 +07 [1528] FATAL:  could not open directory "pg_notify": No such file or directory
+2026-04-16 16:19:23.553 +07 [1528] LOG:  database system is shut down
+2026-04-21 08:59:30.899 +07 [20808] FATAL:  could not open directory "pg_notify": No such file or directory
+2026-04-21 08:59:30.901 +07 [20808] LOG:  database system is shut down
+2026-04-21 09:00:49.571 +07 [34628] LOG:  starting PostgreSQL 14.11, compiled by Visual C++ build 1937, 64-bit
+2026-04-21 09:00:49.574 +07 [34628] LOG:  listening on IPv6 address "::1", port 5432
+2026-04-21 09:00:49.575 +07 [34628] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-04-21 09:00:49.643 +07 [34712] LOG:  database system was interrupted; last known up at 2026-04-15 05:23:50 +07
+2026-04-21 09:00:50.439 +07 [34712] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-04-21 09:00:50.463 +07 [34712] LOG:  could not open directory "pg_snapshots": No such file or directory
+2026-04-21 09:00:50.463 +07 [34712] LOG:  redo starts at 0/5886800
+2026-04-21 09:00:50.464 +07 [34712] LOG:  invalid record length at 0/5886838: wanted 24, got 0
+2026-04-21 09:00:50.464 +07 [34712] LOG:  redo done at 0/5886800 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-04-21 09:00:50.597 +07 [34628] LOG:  database system is ready to accept connections
+2026-04-21 09:11:15.125 +07 [23688] ERROR:  could not serialize access due to concurrent update
+2026-04-21 09:11:15.125 +07 [23688] STATEMENT:  
+	            SELECT *
+	            FROM ir_cron
+	            WHERE active = true
+	              AND numbercall != 0
+	              AND (nextcall <= (now() at time zone 'UTC')
+	                OR EXISTS (
+	                    SELECT cron_id
+	                    FROM ir_cron_trigger
+	                    WHERE call_at <= (now() at time zone 'UTC')
+	                      AND cron_id = ir_cron.id
+	                )
+	              )
+	              AND id in (9)
+	            ORDER BY priority
+	            LIMIT 1 FOR NO KEY UPDATE SKIP LOCKED
+	        
+2026-04-21 09:12:48.175 +07 [34628] LOG:  server process (PID 40068) was terminated by exception 0xC000013A
+2026-04-21 09:12:48.175 +07 [34628] DETAIL:  Failed process was running: ROLLBACK
+2026-04-21 09:12:48.175 +07 [34628] HINT:  See C include file "ntstatus.h" for a description of the hexadecimal value.
+2026-04-21 09:12:48.175 +07 [34628] LOG:  terminating any other active server processes
+^C

@@ -16,6 +16,7 @@ const ALL_COLUMNS = [
   { key: 'dueDate', label: 'Hạn chót' },
   { key: 'priority', label: 'Độ ưu tiên' },
   { key: 'source', label: 'Nguồn' },
+  { key: 'createdDate', label: 'Ngày tạo' },
   { key: 'status', label: 'Trạng thái' }
 ];
 
@@ -45,7 +46,6 @@ function ActivityBoard() {
   const currentColumns = [
     { id: 'todo', title: 'Mới', color: '#64748b' },
     { id: 'processing', title: 'Đang thực hiện', color: '#3b82f6' },
-    { id: 'cancelled', title: 'Hủy', color: '#ef4444' },
     { id: 'done', title: 'Hoàn thành', color: '#22c55e' },
   ];
 
@@ -272,8 +272,17 @@ function ActivityBoard() {
          });
          return (
            <div className="kanban-header" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}>
-             <div style={{ textAlign: 'left', width: '100%' }}>
-               <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý tiếp xúc Khách hàng</h1>
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+               <div style={{ textAlign: 'left' }}>
+                 <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý tiếp xúc Khách hàng</h1>
+               </div>
+               <button 
+                 className="btn" 
+                 style={{ backgroundColor: '#e32b4c', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}
+                 onClick={() => navigate('/activity/new')}
+               >
+                 + Hoạt động
+               </button>
              </div>
              
             <div className="metrics-cards-container" style={{ width: '100%' }}>
@@ -327,34 +336,6 @@ function ActivityBoard() {
                  </div>
               </div>
             )}
-          </div>
-
-          <div className="status-filter-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Trạng thái:</span>
-            <select 
-              value={statusFilter} 
-              onChange={e => setStatusFilter(e.target.value)} 
-              style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#F8F8F8', fontSize: '14px', outline: 'none', color: '#44494D', cursor: 'pointer' }}
-            >
-              <option value="All">Tất cả</option>
-              {currentColumns.map(col => (
-                <option key={col.id} value={col.id}>{col.title}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="status-filter-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Độ ưu tiên:</span>
-            <select 
-              value={priorityFilter} 
-              onChange={e => setPriorityFilter(e.target.value)} 
-              style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#F8F8F8', fontSize: '14px', outline: 'none', color: '#44494D', cursor: 'pointer' }}
-            >
-              <option value="All">Tất cả</option>
-              <option value="critical">Rất gấp</option>
-              <option value="high">Gấp</option>
-              <option value="normal">Bình thường</option>
-            </select>
           </div>
         </div>
 
@@ -434,7 +415,7 @@ function ActivityBoard() {
                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                                       <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '999px', flexShrink: 0 }}>
-                                        #{activity.id}
+                                        {`ACT-2026-${String(activity.id).padStart(5, '0')}`}
                                       </span>
                                       <div className="card-title" title={activity.title} style={{ minWidth: 0 }}>{activity.title}</div>
                                     </div>
@@ -561,7 +542,7 @@ function ActivityBoard() {
                     }}/>
                   </td>
                   
-                  {visibleColumns.includes('id') && <td style={{ fontWeight: 700, color: '#0f172a' }}>#{activity.id}</td>}
+                  {visibleColumns.includes('id') && <td style={{ fontWeight: 700, color: '#0f172a' }}>{`ACT-2026-${String(activity.id).padStart(5, '0')}`}</td>}
                   {visibleColumns.includes('title') && (
                     <td style={{ fontWeight: 500 }}>
                       {activity.title} 
@@ -580,6 +561,7 @@ function ActivityBoard() {
                     </td>
                   )}
                   {visibleColumns.includes('source') && <td title={activity.source || ''}>{activity.source || '-'}</td>}
+                  {visibleColumns.includes('createdDate') && <td>{activity.createdDate || '11/04/2026'}</td>}
                   {visibleColumns.includes('status') && (
                     <td>
                       {activity.status === 'todo' && <span className="status-badge" style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Mới</span>}
@@ -589,15 +571,6 @@ function ActivityBoard() {
                     </td>
                   )}
                   <td style={{ textAlign: 'center' }}>
-                    {activity.status === 'todo' && (
-                      <button 
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b' }}
-                        onClick={(e) => { e.stopPropagation(); navigate(`/activity/edit/${activity.id}`); }}
-                        title="Chỉnh sửa"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                    )}
                   </td>
                 </tr>
               )) : (
