@@ -17,6 +17,9 @@ Mọi tài liệu PRD (System Requirements Specification / Kịch bản Use Case
 - **Bắt buộc** chia Swimlane (Subgraph) rõ ràng giữa `[User]` và `[System]`.
 - Mọi node thao tác phải được đánh số thứ tự ở đầu, ví dụ: `"(1) Click nút Lưu"`, `"(2) Kiểm tra dữ liệu"`.
 - Dùng màu nền trắng viền đen cho node mặc định để dễ nhìn.
+- **Bắt buộc kèm thêm 1 State Diagram:** Ngoài sơ đồ tương tác (Swimlane), phải bổ sung 1 **State Diagram** mô tả các trạng thái và chuyển đổi của đối tượng nghiệp vụ liên quan (vd: hợp đồng, SLA, đơn hàng...).
+  - Dùng `Mermaid` dạng `stateDiagram-v2`.
+  - Thể hiện rõ trạng thái bắt đầu `[*]`, trạng thái kết thúc, và nhãn điều kiện/hành động trên mỗi mũi tên chuyển đổi.
 
 ### Phần 3: Quy Tắc Nghiệp Vụ (Business Rules)
 - Sử dụng bảng (Markdown table) gồm 3 cột: `Bước` | `Mã Quy Tắc` | `Mô Tả`.
