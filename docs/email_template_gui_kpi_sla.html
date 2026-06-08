@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[xERP] Gửi hợp đồng dịch vụ - Công ty ABC</title>
+  <style>
+    /* ─── Reset ─── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      padding: 32px 16px;
+    }
+
+    /* ─── Email wrapper ─── */
+    .email-wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* ─── Header metadata (To / CC / Subject) ─── */
+    .email-meta {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .email-meta p {
+      line-height: 1.7;
+      font-size: 13.5px;
+      color: #333;
+    }
+    .email-meta strong {
+      color: #111;
+      font-weight: 600;
+      min-width: 120px;
+      display: inline-block;
+    }
+    .email-meta .subject-value {
+      color: #111;
+      font-weight: 500;
+    }
+
+    /* ─── Body ─── */
+    .email-body {
+      padding: 24px 28px;
+    }
+    .email-body p {
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    .email-body p:last-child { margin-bottom: 0; }
+
+    /* ─── Section divider ─── */
+    .divider {
+      border: none;
+      border-top: 1px solid #e8e8e8;
+      margin: 20px 0;
+    }
+
+    /* ─── Info block (blue left border) ─── */
+    .info-block {
+      border-left: 4px solid #1a73e8;
+      padding: 14px 18px;
+      margin: 20px 0;
+      background: #fafafa;
+      border-radius: 0 4px 4px 0;
+    }
+    .info-block .block-title {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #111;
+      margin-bottom: 12px;
+    }
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .info-table td {
+      padding: 7px 10px;
+      border: 1px solid #ddd;
+      color: #333;
+      vertical-align: top;
+    }
+    .info-table td:first-child {
+      width: 40%;
+      color: #555;
+      background: #f5f5f5;
+      font-weight: 500;
+    }
+    .info-table td:last-child {
+      color: #111;
+    }
+
+    /* ─── Portal link ─── */
+    .portal-section {
+      margin: 20px 0;
+    }
+    .portal-section .portal-label {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #111;
+      margin-bottom: 8px;
+    }
+    .portal-link {
+      color: #1a73e8;
+      text-decoration: none;
+      font-size: 13.5px;
+      word-break: break-all;
+    }
+    .portal-link:hover { text-decoration: underline; }
+
+    /* ─── Attachment box ─── */
+    .attachment-box {
+      background: #fffbea;
+      border: 1px solid #f0e68c;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #555;
+    }
+    .attachment-box .attach-icon {
+      font-size: 16px;
+    }
+    .attachment-box strong {
+      color: #333;
+    }
+    .attachment-box .file-name {
+      color: #1a73e8;
+      font-weight: 500;
+    }
+
+    /* ─── Signature ─── */
+    .signature {
+      margin-top: 24px;
+      font-size: 13.5px;
+      color: #555;
+      line-height: 1.8;
+    }
+    .signature .sender-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #111;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 480px) {
+      .email-meta, .email-body { padding: 16px; }
+      .email-meta strong { min-width: 80px; font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="email-wrapper">
+
+    <!-- ① Header metadata -->
+    <div class="email-meta">
+      <p><strong>Người nhận (To):</strong> {{TO_EMAIL}}</p>
+      <p><strong>CC:</strong> {{CC_EMAIL}}</p>
+      <p><strong>Tiêu đề:</strong>
+        <span class="subject-value">[xERP] Gửi hợp đồng dịch vụ - Công ty ABC</span>
+      </p>
+    </div>
+
+    <!-- ② Body -->
+    <div class="email-body">
+
+      <p>Dear Anh/Chị Quý công ty <strong>Công ty ABC</strong>,</p>
+
+      <p>
+        Chúng tôi xin gửi đến Quý công ty hợp đồng dịch vụ để kiểm tra và xác nhận thông tin.
+      </p>
+
+      <p>
+        Anh/chị vui lòng xem file đính kèm và phản hồi lại cho chúng tôi nếu cần điều chỉnh
+        hoặc bổ sung thêm nội dung.
+      </p>
+
+      <hr class="divider" />
+
+      <!-- ③ Thông tin hợp đồng -->
+      <div class="info-block">
+        <p class="block-title">Thông tin hợp đồng:</p>
+        <table class="info-table">
+          <tbody>
+            <tr>
+              <td>Mã hợp đồng</td>
+              <td>{{CONTRACT_CODE}}</td>
+            </tr>
+            <tr>
+              <td>Tên hợp đồng</td>
+              <td>{{CONTRACT_NAME}}</td>
+            </tr>
+            <tr>
+              <td>Tên khách hàng</td>
+              <td>Công ty ABC</td>
+            </tr>
+            <tr>
+              <td>Giá trị hợp đồng</td>
+              <td>{{CONTRACT_VALUE}} VNĐ</td>
+            </tr>
+            <tr>
+              <td>Kỳ đánh giá</td>
+              <td>{{PERIOD}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ④ Portal link -->
+      <div class="portal-section">
+        <p class="portal-label">Đường dẫn truy cập hợp đồng:</p>
+        <a class="portal-link" href="https://xerp.company.vn/contracts/{{CONTRACT_CODE}}">
+          https://xerp.company.vn/contracts/{{CONTRACT_CODE}}
+        </a>
+      </div>
+
+      <!-- ⑤ Attachment -->
+      <div class="attachment-box">
+        <span class="attach-icon">📎</span>
+        <span>
+          <strong>File đính kèm:</strong>
+          <span class="file-name">bangtinhdukien.pdf</span>
+        </span>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- ⑥ Signature -->
+      <div class="signature">
+        <p>Trân trọng,</p>
+        <p class="sender-name">{{COMPANY_SENDER}}</p>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
