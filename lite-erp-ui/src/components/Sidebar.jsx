@@ -24,7 +24,8 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   Layers,
-  Briefcase
+  Briefcase,
+  FileSliders
 } from 'lucide-react';
 
 function Sidebar() {
@@ -32,10 +33,20 @@ function Sidebar() {
   const location = useLocation();
   const [billingOpen, setBillingOpen] = useState(location.pathname.includes('/billing'));
   const [contractsOpen, setContractsOpen] = useState(location.pathname.includes('/contracts'));
+  const [goalsOpen, setGoalsOpen] = useState(location.pathname.includes('/goals'));
 
   return (
     <aside className="sidebar">
       <div className="sidebar-logo" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ width: '36px', height: '36px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#EE0033" fillOpacity="0.1"/>
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="#EE0033"/>
+            <circle cx="12" cy="4" r="2.5" fill="#EE0033"/>
+            <circle cx="4.5" cy="16" r="2.5" fill="#EE0033"/>
+            <circle cx="19.5" cy="16" r="2.5" fill="#EE0033"/>
+          </svg>
+        </div>
         <div style={{ display: 'flex', alignItems: 'baseline', fontStyle: 'normal', lineHeight: '1' }}>
           <span style={{ fontSize: '18px', fontWeight: '900', color: '#EE0033', letterSpacing: '-1px', fontFamily: 'Arial Black, sans-serif', marginRight: '2px' }}>x</span>
           <span style={{ fontSize: '30px', fontWeight: '900', color: '#000', letterSpacing: '-1.5px', fontFamily: 'Arial Black, sans-serif' }}>ERP</span>
@@ -60,11 +71,39 @@ function Sidebar() {
             <span>Quản lý tiếp xúc Khách hàng</span>
             <span className="mvp-badge">MVP</span>
           </div>
-          <div className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`} onClick={() => navigate('/goals')}>
-            <Target size={20} />
-            <span>Quản lý mục tiêu doanh số</span>
-            <span className="mvp-badge">MVP</span>
+          {/* Goals - Collapsible */}
+          <div
+            className={`nav-item ${location.pathname.includes('/goals') ? 'active' : ''}`}
+            onClick={() => setGoalsOpen(o => !o)}
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Target size={20} />
+              <span>Quản lý mục tiêu doanh số</span>
+              <span className="mvp-badge">MVP</span>
+            </div>
+            {goalsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
+          {goalsOpen && (
+            <div style={{ paddingLeft: '16px' }}>
+              <div
+                className={`nav-item ${location.pathname === '/goals' || location.pathname.includes('/goal/') ? 'active' : ''}`}
+                onClick={() => navigate('/goals')}
+                style={{ fontSize: '13px' }}
+              >
+                <FileText size={16} />
+                <span>Kế hoạch doanh thu</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results')}
+                style={{ fontSize: '13px' }}
+              >
+                <BarChart2 size={16} />
+                <span>Kết quả doanh thu</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Section 2 */}
@@ -115,6 +154,7 @@ function Sidebar() {
             <span>Quản lý hợp đồng</span>
             <span className="mvp-badge">MVP</span>
           </div>
+
           <div
             className={`nav-item ${location.pathname.includes('/projects') ? 'active' : ''}`}
             onClick={() => navigate('/projects')}
@@ -240,6 +280,10 @@ function Sidebar() {
             <ListTodo size={20} />
             <span>Cấu hình Sản phẩm & Dịch vụ</span>
           </div>
+          <div className={`nav-item ${location.pathname.includes('/config-file') ? 'active' : ''}`} onClick={() => navigate('/config-files')}>
+            <FileSliders size={20} />
+            <span>Cấu hình File</span>
+          </div>
         </div>
 
         {/* Section 7 */}
@@ -254,7 +298,13 @@ function Sidebar() {
           </div>
         </div>
 
-
+        {/* Footer Logo Section */}
+        <div style={{ padding: '24px 20px', marginTop: 'auto', borderTop: '1px solid #f1f5f9' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '16px', fontWeight: '800', color: '#EE0033', lineHeight: '1', fontFamily: 'sans-serif' }}>viettel</span>
+            <span style={{ fontSize: '9px', color: '#444', lineHeight: '1', fontWeight: '600', textTransform: 'lowercase', marginTop: '1px' }}>customer service</span>
+          </div>
+        </div>
       </nav>
     </aside>
   );
