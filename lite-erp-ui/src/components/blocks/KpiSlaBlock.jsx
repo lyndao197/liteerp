@@ -72,6 +72,18 @@ const newSlaRow = (level) => ({
 
 const INDENT = 20; // px per level
 
+// ─── Tính % phạt phí dịch vụ từ tổng điểm SLA (theo ngưỡng trừ phí hợp đồng) ───
+// 95-100: 0% | 90-<95: 0.2%/điểm | 80-<90: 0.3%/điểm | 70-<80: 0.5%/điểm | 65-<70: 1%/điểm | <65: 8%
+export const calcSLAPenaltyRate = (score) => {
+    const s = parseFloat(score) || 0;
+    if (s >= 95) return 0;
+    if (s >= 90) return (95 - s) * 0.2;
+    if (s >= 80) return (95 - s) * 0.3;
+    if (s >= 70) return (95 - s) * 0.5;
+    if (s >= 65) return (95 - s) * 1;
+    return 8;
+};
+
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 export default function KpiSlaBlock() {
     const [activeTab, setActiveTab] = useState('SLA');
