@@ -888,7 +888,37 @@ const INITIAL_DATA = {
     'SRV-001': { id: 'SRV-001', title: 'Khảo sát sau triển khai dự án OmniX', customerName: 'Vinamilk', channel: 'Email', score: 4, status: 'Đã gửi', createdDate: '2026-04-14', owner: 'Trần B' },
     'SRV-002': { id: 'SRV-002', title: 'Khảo sát mức độ hài lòng dịch vụ CSKH', customerName: 'MB Bank', channel: 'Điện thoại', score: 5, status: 'Đã phản hồi', createdDate: '2026-04-15', owner: 'Nguyễn Văn A' }
   },
-  customerSurveyIds: ['SRV-001', 'SRV-002']
+  customerSurveyIds: ['SRV-001', 'SRV-002'],
+  configFiles: {
+    'CFG-001': { id: 'CFG-001', code: 'CFG-001', menu: 'Quản lý hợp đồng', tenMau: 'Mẫu hợp đồng dịch vụ CNTT', name: 'Mẫu hợp đồng dịch vụ CNTT', spdv: ['Dịch vụ CNTT', 'Giải pháp doanh nghiệp'], donViApDung: ['Viettel Solution'], loaiChungTu: 'Hợp đồng', trangThai: 'Hiệu lực', status: 'Hiệu lực', cauHinhTruong: [], createdDate: '2026-01-10', createdBy: 'admin' },
+    'CFG-002': { id: 'CFG-002', code: 'CFG-002', menu: 'Tính cước', tenMau: 'Mẫu tính cước khách hàng', name: 'Mẫu tính cước khách hàng', spdv: ['Dịch vụ viễn thông'], donViApDung: ['Viettel Telecom', 'Phòng Kinh doanh'], loaiChungTu: 'Hóa đơn', trangThai: 'Hiệu lực', status: 'Hiệu lực', cauHinhTruong: [], createdDate: '2026-01-15', createdBy: 'admin' },
+    'CFG-003': { id: 'CFG-003', code: 'CFG-003', menu: 'Quản lý nghiệm thu', tenMau: 'Mẫu biên bản nghiệm thu dự án', name: 'Mẫu biên bản nghiệm thu dự án', spdv: ['Phần mềm ERP'], donViApDung: ['Viettel Digital', 'Viettel Solution'], loaiChungTu: 'Biên bản nghiệm thu', trangThai: 'Hiệu lực', status: 'Hiệu lực', cauHinhTruong: [
+      { _fid: 1, tenTruong: 'so_bien_ban', tenHienThi: 'Số biên bản', stt: '1', trangThai: true },
+      { _fid: 2, tenTruong: 'ten_du_an', tenHienThi: 'Tên dự án', stt: '2', trangThai: true },
+      { _fid: 3, tenTruong: 'ngay_nghiem_thu', tenHienThi: 'Ngày nghiệm thu', stt: '3', trangThai: true },
+      { _fid: 4, tenTruong: 'gia_tri_nghiem_thu', tenHienThi: 'Giá trị nghiệm thu (VND)', stt: '4', trangThai: true },
+      { _fid: 5, tenTruong: 'dai_dien_ben_a', tenHienThi: 'Đại diện Bên A', stt: '5', trangThai: true },
+      { _fid: 6, tenTruong: 'dai_dien_ben_b', tenHienThi: 'Đại diện Bên B', stt: '6', trangThai: true },
+      { _fid: 7, tenTruong: 'ket_qua_nghiem_thu', tenHienThi: 'Kết quả nghiệm thu', stt: '7', trangThai: true },
+      { _fid: 8, tenTruong: 'ghi_chu', tenHienThi: 'Ghi chú', stt: '8', trangThai: false }
+    ], createdDate: '2026-02-01', createdBy: 'admin' },
+    'CFG-004': { id: 'CFG-004', code: 'CFG-004', menu: 'Quản lý nghiệm thu', tenMau: 'Mẫu xác nhận thanh toán dịch vụ CNTT', name: 'Mẫu xác nhận thanh toán dịch vụ CNTT', spdv: ['Dịch vụ CNTT'], donViApDung: ['Viettel Solution'], loaiChungTu: 'Hợp đồng', trangThai: 'Hiệu lực', status: 'Hiệu lực', cauHinhTruong: [
+      { _fid: 1, tenTruong: 'so_xac_nhan', tenHienThi: 'Số xác nhận', stt: '1', trangThai: true },
+      { _fid: 2, tenTruong: 'ten_khach_hang', tenHienThi: 'Tên khách hàng', stt: '2', trangThai: true },
+      { _fid: 3, tenTruong: 'ky_thanh_toan', tenHienThi: 'Kỳ thanh toán', stt: '3', trangThai: true },
+      { _fid: 4, tenTruong: 'so_tien', tenHienThi: 'Số tiền (VND)', stt: '4', trangThai: true },
+      { _fid: 5, tenTruong: 'so_luong_seat', tenHienThi: 'Số lượng Seat', stt: '5', trangThai: true },
+      { _fid: 6, tenTruong: 'ghi_chu', tenHienThi: 'Ghi chú', stt: '6', trangThai: false }
+    ], createdDate: '2026-02-10', createdBy: 'admin' },
+    'CFG-005': { id: 'CFG-005', code: 'CFG-005', menu: 'Quản lý nghiệm thu', tenMau: 'Mẫu biên bản bàn giao Cloud Services', name: 'Mẫu biên bản bàn giao Cloud Services', spdv: ['Cloud Services'], donViApDung: ['Viettel HighTech'], loaiChungTu: 'Biên bản bàn giao', trangThai: 'Hiệu lực', status: 'Hiệu lực', cauHinhTruong: [
+      { _fid: 1, tenTruong: 'so_bien_ban', tenHienThi: 'Số biên bản bàn giao', stt: '1', trangThai: true },
+      { _fid: 2, tenTruong: 'ten_he_thong', tenHienThi: 'Tên hệ thống / dịch vụ', stt: '2', trangThai: true },
+      { _fid: 3, tenTruong: 'ngay_ban_giao', tenHienThi: 'Ngày bàn giao', stt: '3', trangThai: true },
+      { _fid: 4, tenTruong: 'don_vi_tiep_nhan', tenHienThi: 'Đơn vị tiếp nhận', stt: '4', trangThai: true },
+      { _fid: 5, tenTruong: 'ghi_chu', tenHienThi: 'Ghi chú', stt: '5', trangThai: false }
+    ], createdDate: '2026-03-01', createdBy: 'admin' }
+  },
+  configFileIds: ['CFG-001', 'CFG-002', 'CFG-003', 'CFG-004', 'CFG-005']
 };
 
 const STORE_KEY = 'liteErpDataStore_v7';
@@ -1113,6 +1143,22 @@ export const mockStore = {
 
     if (!store.acceptancePhases) store.acceptancePhases = {};
     if (!store.acceptancePhaseIds) store.acceptancePhaseIds = [];
+
+    if (!store.configFiles) store.configFiles = {};
+    if (!store.configFileIds) store.configFileIds = [];
+    // Migration: remove old-schema records (no 'menu' field)
+    store.configFileIds = store.configFileIds.filter(cfgId => {
+      if (store.configFiles[cfgId] && !store.configFiles[cfgId].menu) {
+        delete store.configFiles[cfgId];
+        return false;
+      }
+      return true;
+    });
+    // Force-inject demo config files to ensure schema consistency
+    Object.keys(INITIAL_DATA.configFiles || {}).forEach(cfgId => {
+      store.configFiles[cfgId] = INITIAL_DATA.configFiles[cfgId];
+      if (!store.configFileIds.includes(cfgId)) store.configFileIds.push(cfgId);
+    });
 
     return store;
   },
@@ -2008,6 +2054,39 @@ export const mockStore = {
       if (!Number.isNaN(n) && n > max) max = n;
     });
     return `SRV-${String(max + 1).padStart(3, '0')}`;
+  },
+
+  // --- CONFIG FILE METHODS ---
+  getAllConfigFiles: () => {
+    const store = mockStore.getStore();
+    return (store.configFileIds || []).map(id => store.configFiles[id]).filter(Boolean);
+  },
+  getConfigFile: (id) => {
+    const store = mockStore.getStore();
+    return store.configFiles[id];
+  },
+  saveConfigFile: (id, data) => {
+    const store = mockStore.getStore();
+    if (!store.configFiles[id]) store.configFileIds.push(id);
+    store.configFiles[id] = data;
+    mockStore.saveStore(store);
+  },
+  deleteConfigFile: (id) => {
+    const store = mockStore.getStore();
+    if (store.configFiles[id]) {
+      delete store.configFiles[id];
+      store.configFileIds = (store.configFileIds || []).filter(cfgId => cfgId !== id);
+      mockStore.saveStore(store);
+    }
+  },
+  getNextConfigFileId: () => {
+    const store = mockStore.getStore();
+    let max = 0;
+    (store.configFileIds || []).forEach(id => {
+      const n = parseInt(String(id).split('-')[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    });
+    return `CFG-${String(max + 1).padStart(3, '0')}`;
   },
 
   // --- PROJECT METHODS ---

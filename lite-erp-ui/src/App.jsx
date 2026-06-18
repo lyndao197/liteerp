@@ -21,10 +21,12 @@ import AcceptanceManagement from './components/AcceptanceManagement';
 import AcceptanceDetail from './components/AcceptanceDetail';
 import AcceptancePhaseForm from './components/AcceptancePhaseForm';
 import ContractForm from './components/ContractForm';
+import ContractDrafting from './components/ContractDrafting';
 import OrderManagement from './components/OrderManagement';
 import OrderForm from './components/OrderForm';
 import GoalList from './components/GoalList';
 import GoalForm from './components/GoalForm';
+import GoalResultList from './components/GoalResultList';
 import PersonalDashboard from './components/PersonalDashboard';
 import InboundBillingList from './components/InboundBillingList';
 import InboundBillingForm from './components/InboundBillingForm';
@@ -40,6 +42,8 @@ import ServiceTicketList from './components/ServiceTicketList';
 import CustomerSurveyList from './components/CustomerSurveyList';
 import LoyaltyProgramList from './components/LoyaltyProgramList';
 import ProductList from './components/ProductList';
+import ConfigFileList from './components/ConfigFileList';
+import ConfigFileForm from './components/ConfigFileForm';
 import DebtManagement from './components/DebtManagement';
 import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
@@ -81,17 +85,20 @@ function App() {
               <Route path="/projects" element={<ProjectList />} />
               <Route path="/projects/:id" element={<ProjectTaskBoard />} />
               <Route path="/supplier-contracts" element={<ContractManagement />} />
-              <Route path="/contract/new" element={<ContractForm />} />
-              <Route path="/contract/edit/:id" element={<ContractForm />} />
-              <Route path="/contract-kpi-config" element={<ContractKpiConfig />} />
               <Route path="/acceptances" element={<AcceptanceManagement />} />
               <Route path="/acceptances/:id" element={<AcceptanceDetail />} />
               <Route path="/acceptances/:parentId/phase/new" element={<AcceptancePhaseForm />} />
               <Route path="/acceptances/:parentId/phase/edit/:phaseId" element={<AcceptancePhaseForm />} />
+              <Route path="/contract/new" element={<ContractForm />} />
+              <Route path="/contract/edit/:id" element={<ContractForm />} />
+              <Route path="/contract/:id" element={<ContractForm />} />
+              <Route path="/contract-kpi-config" element={<ContractKpiConfig />} />
+              <Route path="/contract-drafting" element={<ContractDrafting />} />
               <Route path="/orders" element={<OrderManagement />} />
               <Route path="/order/new" element={<OrderForm />} />
               <Route path="/order/edit/:id" element={<OrderForm />} />
               <Route path="/goals" element={<GoalList />} />
+              <Route path="/goals/results" element={<GoalResultList />} />
               <Route path="/goal/new" element={<GoalForm />} />
               <Route path="/goal/edit/:id" element={<GoalForm />} />
               <Route path="/billing/in" element={<InboundBillingList />} />
@@ -114,6 +121,9 @@ function App() {
               <Route path="/customer-service/surveys" element={<CustomerSurveyList />} />
               <Route path="/loyalty" element={<LoyaltyProgramList />} />
               <Route path="/products" element={<ProductList />} />
+              <Route path="/config-files" element={<ConfigFileList />} />
+              <Route path="/config-file/new" element={<ConfigFileForm />} />
+              <Route path="/config-file/edit/:id" element={<ConfigFileForm />} />
               <Route path="/debt" element={<DebtManagement />} />
               <Route path="/invoices" element={<InvoiceManagement />} />
             </Routes>

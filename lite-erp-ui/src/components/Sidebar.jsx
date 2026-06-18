@@ -24,7 +24,8 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   Layers,
-  Briefcase
+  Briefcase,
+  FileSliders
 } from 'lucide-react';
 
 function Sidebar() {
@@ -32,6 +33,7 @@ function Sidebar() {
   const location = useLocation();
   const [billingOpen, setBillingOpen] = useState(location.pathname.includes('/billing'));
   const [contractsOpen, setContractsOpen] = useState(location.pathname.includes('/contracts'));
+  const [goalsOpen, setGoalsOpen] = useState(location.pathname.includes('/goals'));
 
   return (
     <aside className="sidebar">
@@ -69,11 +71,39 @@ function Sidebar() {
             <span>Quản lý tiếp xúc Khách hàng</span>
             <span className="mvp-badge">MVP</span>
           </div>
-          <div className={`nav-item ${location.pathname === '/goals' ? 'active' : ''}`} onClick={() => navigate('/goals')}>
-            <Target size={20} />
-            <span>Quản lý mục tiêu doanh số</span>
-            <span className="mvp-badge">MVP</span>
+          {/* Goals - Collapsible */}
+          <div
+            className={`nav-item ${location.pathname.includes('/goals') ? 'active' : ''}`}
+            onClick={() => setGoalsOpen(o => !o)}
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Target size={20} />
+              <span>Quản lý mục tiêu doanh số</span>
+              <span className="mvp-badge">MVP</span>
+            </div>
+            {goalsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
+          {goalsOpen && (
+            <div style={{ paddingLeft: '16px' }}>
+              <div
+                className={`nav-item ${location.pathname === '/goals' || location.pathname.includes('/goal/') ? 'active' : ''}`}
+                onClick={() => navigate('/goals')}
+                style={{ fontSize: '13px' }}
+              >
+                <FileText size={16} />
+                <span>Kế hoạch doanh thu</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results')}
+                style={{ fontSize: '13px' }}
+              >
+                <BarChart2 size={16} />
+                <span>Kết quả doanh thu</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Section 2 */}
@@ -124,6 +154,7 @@ function Sidebar() {
             <span>Quản lý hợp đồng</span>
             <span className="mvp-badge">MVP</span>
           </div>
+
           <div
             className={`nav-item ${location.pathname.includes('/projects') ? 'active' : ''}`}
             onClick={() => navigate('/projects')}
@@ -264,6 +295,10 @@ function Sidebar() {
           <div className={`nav-item ${location.pathname.includes('/product') ? 'active' : ''}`} onClick={() => navigate('/products')}>
             <ListTodo size={20} />
             <span>Cấu hình Sản phẩm & Dịch vụ</span>
+          </div>
+          <div className={`nav-item ${location.pathname.includes('/config-file') ? 'active' : ''}`} onClick={() => navigate('/config-files')}>
+            <FileSliders size={20} />
+            <span>Cấu hình File</span>
           </div>
         </div>
 
