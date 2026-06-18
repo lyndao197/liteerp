@@ -422,7 +422,8 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
     price: data?.price || 0,
     unit: data?.unit || '',
     tax: data?.tax !== undefined ? String(data?.tax) : '',
-    status: data?.status || 'Active'
+    status: data?.status || 'Active',
+    skipKpiCalculation: data?.skipKpiCalculation || false
   });
 
   const parentGroup = isCategory ? groups.find(g => g.id === (data?.groupId || parentId)) : (isProduct ? groups.find(g => g.id === categories.find(c => c.id === (data?.categoryId || parentId))?.groupId) : null);
@@ -461,6 +462,8 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
         if (data.price != formData.price) changes.push({ field: 'Đơn giá', old: data.price ? Number(data.price).toLocaleString() : '0', new: formData.price ? Number(formData.price).toLocaleString() : '0' });
         if (data.unit !== formData.unit) changes.push({ field: 'Đơn vị tính', old: data.unit || 'None', new: formData.unit || 'None' });
         if (data.tax != formData.tax) changes.push({ field: 'Mức thuế', old: data.tax + '%', new: formData.tax + '%' });
+        const skipLabel = (v) => v ? 'Có' : 'Không';
+        if (!!data.skipKpiCalculation !== !!formData.skipKpiCalculation) changes.push({ field: 'Bỏ qua tính KL&KPI/SLA', old: skipLabel(data.skipKpiCalculation), new: skipLabel(formData.skipKpiCalculation) });
       }
     }
 
@@ -482,7 +485,8 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
         price: Number(saveData.price),
         unit: saveData.unit,
         tax: Number(saveData.tax || 0),
-        status: saveData.status
+        status: saveData.status,
+        skipKpiCalculation: !!saveData.skipKpiCalculation
       });
     }
 
@@ -612,12 +616,23 @@ function ProductModal({ config, onClose, onSave, groups, categories }) {
                   </div>
                   <div style={{ flex: '1 1 100%' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Mức Thuế (%)</label>
-                    <CustomCombobox 
-                      value={formData.tax} 
-                      onChange={val => setFormData({...formData, tax: val})} 
+                    <CustomCombobox
+                      value={formData.tax}
+                      onChange={val => setFormData({...formData, tax: val})}
                       options={['0', '8', '10', '15']}
                       placeholder="-- Chọn Mức Thuế --"
                     />
+                  </div>
+                  <div style={{ flex: '1 1 100%' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.skipKpiCalculation} 
+                        onChange={e => setFormData({...formData, skipKpiCalculation: e.target.checked})} 
+                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                      />
+                      Bỏ qua tính KL&KPI/SLA
+                    </label>
                   </div>
                 </div>
               )}

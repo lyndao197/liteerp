@@ -498,30 +498,38 @@ const INITIAL_DATA = {
   },
   productGroupIds: ['PG-1', 'PG-2'],
   productCategories: {
-    'PC-1': { id: 'PC-1', groupId: 'PG-1', name: 'Dịch vụ Tổng đài CSKH toàn trình', description: 'Contact Center Outsourcing', status: 'Active' },
-    'PC-2': { id: 'PC-2', groupId: 'PG-1', name: 'Dịch vụ cho thuê nhân sự hỗ trợ', description: 'BPO', status: 'Active' },
-    'PC-3': { id: 'PC-3', groupId: 'PG-1', name: 'Dịch vụ Gia tăng doanh số', description: 'Upsale', status: 'Active' },
-    'PC-4': { id: 'PC-4', groupId: 'PG-1', name: 'Dịch vụ Bảo hành & sửa chữa', description: 'Warranty & Repair Services', status: 'Active' },
-    'PC-5': { id: 'PC-5', groupId: 'PG-1', name: 'Dịch vụ Tư vấn trải nghiệm khách hàng', description: 'Customer Experience', status: 'Active' },
-    'PC-6': { id: 'PC-6', groupId: 'PG-1', name: 'Dịch vụ khách hàng thân thiết', description: 'Loyalty', status: 'Active' },
-    'PC-7': { id: 'PC-7', groupId: 'PG-1', name: 'Dịch vụ Chỉnh lý và Số hóa Văn bản', description: 'Document Processing and Digitization', status: 'Active' },
-    'PC-8': { id: 'PC-8', groupId: 'PG-2', name: 'OmniX - Nền tảng Tổng đài đa kênh hợp nhất', description: 'Giải pháp tổng đài đa kênh', status: 'Active' },
-    'PC-9': { id: 'PC-9', groupId: 'PG-2', name: 'CXBot - Trợ lý ảo - AI Agent', description: 'Nhân viên tổng đài AI ảo', status: 'Active' },
-    'PC-10': { id: 'PC-10', groupId: 'PG-2', name: 'vCOC - Hệ thống điều hành hoạt động dịch vụ khách hàng', description: 'Hệ thống điều hành DVKH', status: 'Active' },
-    'PC-11': { id: 'PC-11', groupId: 'PG-2', name: 'WorkforceX - Hệ thống quản lý nguồn lực DVKH', description: 'Hệ thống quản lý nguồn lực DVKH', status: 'Active' },
-    'PC-12': { id: 'PC-12', groupId: 'PG-2', name: 'InsightCI - Nền tảng quản lý, phân tích tương tác khách hàng', description: 'Nền tảng quản lý phân tích tương tác', status: 'Active' },
-    'PC-13': { id: 'PC-13', groupId: 'PG-2', name: 'KnowX Hub - Hệ thống Quản lý Tri thức', description: 'Hệ thống Quản lý Tri thức', status: 'Active' },
-    'PC-14': { id: 'PC-14', groupId: 'PG-2', name: 'AI-DMS - Nền tảng quản lý tài liệu thông minh', description: 'Nền tảng quản lý tài liệu thông minh', status: 'Active' }
+    'PC-1': { id: 'PC-1', groupId: 'PG-1', name: 'DV CC outsourcing', description: '', status: 'Active' },
+    'PC-2': { id: 'PC-2', groupId: 'PG-1', name: 'DV BPO', description: '', status: 'Active' },
+    'PC-3': { id: 'PC-3', groupId: 'PG-1', name: 'Upsell (Telesale, digital sale)', description: '', status: 'Active' },
+    'PC-4': { id: 'PC-4', groupId: 'PG-1', name: 'Loyalty, quà tặng', description: '', status: 'Active' },
+    'PC-5': { id: 'PC-5', groupId: 'PG-1', name: 'DV khác', description: '', status: 'Active' },
+    'PC-6': { id: 'PC-6', groupId: 'PG-2', name: 'Giải pháp', description: '', status: 'Active' }
   },
-  productCategoryIds: ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6', 'PC-7', 'PC-8', 'PC-9', 'PC-10', 'PC-11', 'PC-12', 'PC-13', 'PC-14'],
+  productCategoryIds: ['PC-1', 'PC-2', 'PC-3', 'PC-4', 'PC-5', 'PC-6'],
   products: {
-    'PRD-001': { id: 'PRD-001', categoryId: 'PC-8', name: 'License OmniX User/Tháng', description: 'License sử dụng nền tảng OmniX cho 1 User', price: 500000, unit: 'license', tax: 10, status: 'Active' },
-    'PRD-002': { id: 'PRD-002', categoryId: 'PC-8', name: 'Phí khởi tạo hệ thống OmniX', description: 'Phí khởi tạo 1 lần', price: 10000000, unit: 'gói', tax: 10, status: 'Active' },
-    'PRD-003': { id: 'PRD-003', categoryId: 'PC-9', name: 'License CXBot', description: 'Trợ lý ảo AI', price: 2000000, unit: 'license', tax: 10, status: 'Active' },
-    'PRD-004': { id: 'PRD-004', categoryId: 'PC-1', name: 'Nhân sự CSKH toàn trình', description: 'Nhân sự CSKH', price: 15000000, unit: 'người/tháng', tax: 8, status: 'Active' },
-    'PRD-005': { id: 'PRD-005', categoryId: 'PC-2', name: 'Nhân sự BPO nhập liệu', description: 'Nhân sự BPO', price: 12000000, unit: 'người/tháng', tax: 8, status: 'Active' }
+    'PRD-001': { id: 'PRD-001', categoryId: 'PC-1', name: 'FO', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-002': { id: 'PRD-002', categoryId: 'PC-1', name: 'Happy call', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-003': { id: 'PRD-003', categoryId: 'PC-1', name: 'Hỗ trợ kênh', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-004': { id: 'PRD-004', categoryId: 'PC-1', name: 'BO GQKN', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-005': { id: 'PRD-005', categoryId: 'PC-1', name: 'BO CSKH', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-006': { id: 'PRD-006', categoryId: 'PC-1', name: 'BO Antispam', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-007': { id: 'PRD-007', categoryId: 'PC-1', name: 'BO Reputa', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-008': { id: 'PRD-008', categoryId: 'PC-2', name: 'Chỉnh lý, số hóa tài liệu', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-009': { id: 'PRD-009', categoryId: 'PC-3', name: 'DV bán hàng telesale/Kênh TLS/Digital Sales', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-010': { id: 'PRD-010', categoryId: 'PC-3', name: 'Hoa hồng kênh CC', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-011': { id: 'PRD-011', categoryId: 'PC-4', name: 'Phòng chờ, đón tiễn', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-012': { id: 'PRD-012', categoryId: 'PC-4', name: 'Quà tặng', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-013': { id: 'PRD-013', categoryId: 'PC-5', name: 'Bảo hành', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-014': { id: 'PRD-014', categoryId: 'PC-5', name: 'Đo kiểm', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-015': { id: 'PRD-015', categoryId: 'PC-5', name: 'Sự kiện', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-016': { id: 'PRD-016', categoryId: 'PC-5', name: 'Lễ tân', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-017': { id: 'PRD-017', categoryId: 'PC-5', name: 'CX', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-018': { id: 'PRD-018', categoryId: 'PC-6', name: 'OmniX/QualityX', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-019': { id: 'PRD-019', categoryId: 'PC-6', name: 'CXBot/CallBOT', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false },
+    'PRD-020': { id: 'PRD-020', categoryId: 'PC-6', name: 'KnowX Hub & AgentMate', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: true },
+    'PRD-021': { id: 'PRD-021', categoryId: 'PC-6', name: 'Camera AI', description: '', price: 500000, unit: 'license', tax: 10, status: 'Active', skipKpiCalculation: false }
   },
-  productIds: ['PRD-001', 'PRD-002', 'PRD-003', 'PRD-004', 'PRD-005'],
+  productIds: ['PRD-001', 'PRD-002', 'PRD-003', 'PRD-004', 'PRD-005', 'PRD-006', 'PRD-007', 'PRD-008', 'PRD-009', 'PRD-010', 'PRD-011', 'PRD-012', 'PRD-013', 'PRD-014', 'PRD-015', 'PRD-016', 'PRD-017', 'PRD-018', 'PRD-019', 'PRD-020', 'PRD-021'],
   orders: {
     'ORD-2026-001': {
         id: 'ORD-2026-001', orderNo: 'DH-2026-001', contractId: 'CTR-2026-001', customerId: 'CUS-1',
@@ -921,7 +929,7 @@ const INITIAL_DATA = {
   configFileIds: ['CFG-001', 'CFG-002', 'CFG-003', 'CFG-004', 'CFG-005']
 };
 
-const STORE_KEY = 'liteErpDataStore_v7';
+const STORE_KEY = 'liteErpDataStore_v10';
 
 export const mockStore = {
   getStore: () => {
@@ -1159,6 +1167,13 @@ export const mockStore = {
       store.configFiles[cfgId] = INITIAL_DATA.configFiles[cfgId];
       if (!store.configFileIds.includes(cfgId)) store.configFileIds.push(cfgId);
     });
+
+    // Migration: sản phẩm cũ chưa có quy trình nghiệm thu → mặc định 2 bước
+    if (store.products) {
+      Object.keys(store.products).forEach(pid => {
+        if (!store.products[pid].acceptanceStepMode) store.products[pid].acceptanceStepMode = 'two_step';
+      });
+    }
 
     return store;
   },

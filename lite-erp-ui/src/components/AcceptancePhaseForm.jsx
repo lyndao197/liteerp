@@ -189,6 +189,9 @@ const AcceptancePhaseForm = () => {
   // Điểm SLA tổng (lấy từ KpiSlaBlock qua callback)
   const [slaScore, setSlaScore] = useState('86'); // default = giá trị ban đầu trong mock data
 
+  // Sản phẩm nghiệm thu (cấp 3) — mỗi đợt gắn 1 sản phẩm; quyết định quy trình 2 bước / 1 bước
+  const [acceptanceProductId, setAcceptanceProductId] = useState('');
+
   // Bước đang active (1, 2, 3)
   const [activeStep, setActiveStep] = useState(1);
 
@@ -291,6 +294,7 @@ const AcceptancePhaseForm = () => {
         setNotes(phase.notes || '');
         if (phase.fromDate) setFromDate(phase.fromDate);
         if (phase.toDate) setToDate(phase.toDate);
+        if (phase.acceptanceProductId) setAcceptanceProductId(phase.acceptanceProductId);
         if (phase.slaList) setSlaList(phase.slaList);
         if (phase.lineItems) {
           setLineItems(phase.lineItems);
@@ -299,6 +303,29 @@ const AcceptancePhaseForm = () => {
       }
     }
   }, [parentId, phaseId]);
+
+  // Danh sách sản phẩm (cấp 3) của hợp đồng — nguồn để chọn sản phẩm nghiệm thu
+  const contractProducts = useMemo(() => {
+    if (!contract?.products) return [];
+    const store = mockStore.getStore();
+    return contract.products.map(p => store.products?.[p.productId]).filter(Boolean);
+  }, [contract]);
+
+  const selectedProduct = contractProducts.find(p => p.id === acceptanceProductId) || null;
+  const stepMode = selectedProduct?.acceptanceStepMode || 'two_step';
+  const isOneStep = stepMode === 'one_step';
+
+  // Mặc định chọn sản phẩm đầu tiên của hợp đồng
+  useEffect(() => {
+    if (!acceptanceProductId && contractProducts.length > 0) {
+      setAcceptanceProductId(contractProducts[0].id);
+    }
+  }, [contractProducts, acceptanceProductId]);
+
+  // Sản phẩm 1 bước → bỏ qua Bước 1, vào thẳng Bước 2
+  useEffect(() => {
+    if (isOneStep) setActiveStep(2);
+  }, [isOneStep]);
 
   // Recalculate values based on items and SLA score
   const totals = useMemo(() => {
@@ -361,7 +388,8 @@ const AcceptancePhaseForm = () => {
       toDate,
       slaList,
       lineItems,
-      uploadedFileName: uploadedFile
+      uploadedFileName: uploadedFile,
+      acceptanceProductId
     };
 
     if (phaseId) {
@@ -401,15 +429,40 @@ const AcceptancePhaseForm = () => {
         </div>
       </div>
 
-      {/* Stepper Steps (2 Steps Progress Bar) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        {[
-          { step: 1, title: 'Bước 1: Trích xuất & Lũy kế', desc: 'Kế thừa hợp đồng, nạp nhiều tệp khối lượng & SLA' },
-          { step: 2, title: 'Bước 2: Trình biên ký số & Hóa đơn', desc: 'Xác nhận biên bản, gửi KH, đính kèm hóa đơn VAT' },
-        ].map(({ step, title, desc }, idx) => {
+      {/* Sản phẩm nghiệm thu — mỗi đợt gắn 1 sản phẩm (cấp 3 của hợp đồng) */}
+      <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', minWidth: '320px', flex: 1 }}>
+          <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', textTransform: 'uppercase' }}>Sản phẩm nghiệm thu</label>
+          <select
+            value={acceptanceProductId}
+            onChange={(e) => setAcceptanceProductId(e.target.value)}
+            style={{ width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', outline: 'none' }}
+          >
+            <option value="">-- Chọn sản phẩm --</option>
+            {contractProducts.map(p => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 600, background: isOneStep ? '#ecfeff' : '#f1f5f9', color: isOneStep ? '#0e7490' : '#475569', alignSelf: 'flex-end' }}>
+          Quy trình: {isOneStep ? '1 bước (Chỉ Ký & Hóa đơn)' : '2 bước (Khối lượng + Ký & Hóa đơn)'}
+        </div>
+      </div>
+
+      {/* Stepper Steps (động theo quy trình sản phẩm) */}
+      {(() => {
+        const STEPPER = isOneStep
+          ? [{ step: 2, title: 'Bước 2: Trình biên ký số & Hóa đơn', desc: 'Xác nhận biên bản, gửi KH, đính kèm hóa đơn VAT' }]
+          : [
+              { step: 1, title: 'Bước 1: Trích xuất & Lũy kế', desc: 'Kế thừa hợp đồng, nạp nhiều tệp khối lượng & SLA' },
+              { step: 2, title: 'Bước 2: Trình biên ký số & Hóa đơn', desc: 'Xác nhận biên bản, gửi KH, đính kèm hóa đơn VAT' },
+            ];
+        return (
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${STEPPER.length}, 1fr)`, backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+        {STEPPER.map(({ step, title, desc }, idx) => {
           const isActive = activeStep === step;
           const isCompleted = activeStep > step;
-          const isDisabled = step === 2 && billStatus !== 'KH đã confirm';
+          const isDisabled = !isOneStep && step === 2 && billStatus !== 'KH đã confirm';
           return (
             <div
               key={step}
@@ -417,7 +470,7 @@ const AcceptancePhaseForm = () => {
               title={isDisabled ? 'Cần xác nhận KH trước khi vào Bước 2' : undefined}
               style={{
                 display: 'flex', gap: '16px', padding: '16px 24px',
-                borderRight: idx < 1 ? '1px solid #e2e8f0' : 'none',
+                borderRight: idx < STEPPER.length - 1 ? '1px solid #e2e8f0' : 'none',
                 backgroundColor: isActive ? '#fff1f2' : 'white',
                 opacity: isDisabled ? 0.4 : (isActive || isCompleted ? 1 : 0.7),
                 cursor: isDisabled ? 'not-allowed' : 'pointer', transition: 'all 0.2s'
@@ -434,6 +487,8 @@ const AcceptancePhaseForm = () => {
           );
         })}
       </div>
+        );
+      })()}
 
       {/* Main Grid Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: activeStep === 1 ? '1fr 360px' : '1fr', gap: '20px', alignItems: 'start' }}>
@@ -741,13 +796,15 @@ const AcceptancePhaseForm = () => {
               </div>
             </div>
 
-            {/* Back button */}
+            {/* Back button — ẩn với sản phẩm 1 bước (không có Bước 1) */}
+            {!isOneStep && (
             <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <button type="button" onClick={() => setActiveStep(1)}
                 style={{ padding: '10px 20px', border: '1px solid #e2e8f0', backgroundColor: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', color: '#475569' }}>
                 ← Quay lại Bước 1
               </button>
             </div>
+            )}
 
           </div>
         )}
