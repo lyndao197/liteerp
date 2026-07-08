@@ -49,7 +49,6 @@ import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
 import InvoiceManagement from './components/InvoiceManagement';
 import ContractKpiConfig from './components/ContractKpiConfig';
-import PermissionManagement from './components/PermissionManagement';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -115,7 +114,7 @@ function App() {
               <Route path="/roles" element={<RoleList />} />
               <Route path="/role/new" element={<RoleForm />} />
               <Route path="/role/edit/:id" element={<RoleForm />} />
-              <Route path="/permissions" element={<PermissionManagement />} />
+              <Route path="/permissions" element={<RoleList />} />
               <Route path="/marketing" element={<MarketingCampaignList />} />
               <Route path="/ticketing" element={<ServiceTicketList />} />
               <Route path="/customer-service" element={<ServiceTicketList />} />
