@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save, Shield, List, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronUp, Save, Shield, List, CheckCircle2, AlertCircle } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
 
 export default function RoleForm() {
@@ -13,15 +13,109 @@ export default function RoleForm() {
     name: '',
     description: '',
     status: 'Active',
-    permissions: [] // Mock permissions
+    permissions: []
   });
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   const PERMISSION_GROUPS = [
-    { name: 'Khách hàng (CRM)', keys: ['crm_view', 'crm_create', 'crm_edit', 'crm_delete'] },
-    { name: 'Hợp đồng', keys: ['contract_view', 'contract_create', 'contract_approve'] },
-    { name: 'Bán hàng & Đơn hàng', keys: ['order_view', 'order_create', 'order_edit'] },
-    { name: 'Tính cước & Đối soát', keys: ['billing_view', 'billing_create', 'billing_confirm'] },
-    { name: 'Hệ thống', keys: ['user_manage', 'role_manage', 'report_view'] }
+    {
+      name: 'Quản lý Lead & CHBH',
+      keys: [
+        'lead_create',
+        'lead_edit',
+        'lead_search',
+        'lead_detail',
+        'lead_export',
+        'lead_delete',
+        'lead_mark_failed'
+      ]
+    },
+    {
+      name: 'Quản lý Khách hàng',
+      keys: [
+        'customer_create',
+        'customer_edit',
+        'customer_detail',
+        'customer_view',
+        'customer_export'
+      ]
+    },
+    {
+      name: 'To do list',
+      keys: [
+        'task_create',
+        'task_edit',
+        'task_delete',
+        'task_view',
+        'task_detail',
+        'task_export'
+      ]
+    },
+    {
+      name: 'Quản lý mục tiêu',
+      keys: [
+        'goal_plan_create',
+        'goal_plan_edit',
+        'goal_plan_delete',
+        'goal_plan_view',
+        'goal_plan_detail',
+        'goal_plan_export',
+        'goal_result_create',
+        'goal_result_export'
+      ]
+    },
+    {
+      name: 'Quản lý Hợp đồng',
+      keys: [
+        'contract_create',
+        'contract_delete_draft',
+        'contract_edit',
+        'contract_approve',
+        'contract_confirm',
+        'contract_cancel',
+        'contract_view',
+        'contract_detail',
+        'contract_create_appendix',
+        'contract_pdf_generate',
+        'contract_export',
+        'contract_share',
+        'contract_send_customer_confirmation',
+        'contract_sign'
+      ]
+    },
+    {
+      name: 'Nghiệm thu đầu ra',
+      keys: [
+        'acceptance_create',
+        'acceptance_edit',
+        'acceptance_view',
+        'acceptance_detail',
+        'acceptance_export',
+        'acceptance_template_detail',
+        'acceptance_report_edit'
+      ]
+    },
+    {
+      name: 'Thanh lý Hợp Đồng',
+      keys: [
+        'liquidation_create',
+        'liquidation_edit',
+        'liquidation_cancel',
+        'liquidation_approve',
+        'liquidation_reject_approval',
+        'liquidation_generate_report',
+        'liquidation_sign',
+        'liquidation_export'
+      ]
+    },
+    {
+      name: 'Báo cáo',
+      keys: [
+        'report_create',
+        'report_view',
+        'report_export'
+      ]
+    }
   ];
 
   useEffect(() => {
@@ -46,6 +140,76 @@ export default function RoleForm() {
     setFormData({ ...formData, permissions: newPerms });
   };
 
+  const permissionLabels = {
+    lead_create: 'Tạo lead',
+    lead_edit: 'Chỉnh sửa lead',
+    lead_search: 'Xem danh sách/Tìm kiếm/Lọc lead',
+    lead_detail: 'Xem chi tiết lead',
+    lead_export: 'Export danh sách lead',
+    lead_delete: 'Xóa LEAD',
+    lead_mark_failed: 'Không thành công Lead',
+
+    customer_create: 'Tạo mới hồ sơ khách hàng',
+    customer_edit: 'Chỉnh sửa hồ sơ khách hàng',
+    customer_detail: 'Xem chi tiết hồ sơ khách hàng',
+    customer_view: 'Xem danh sách/Tìm kiếm',
+    customer_export: 'Export danh sách khách hàng',
+
+    task_create: 'Thêm mới công việc',
+    task_edit: 'Chỉnh sửa công việc',
+    task_delete: 'Xóa công việc',
+    task_view: 'Xem danh sách công việc',
+    task_detail: 'Xem chi tiết công việc',
+    task_export: 'Export danh sách công việc',
+
+    goal_plan_create: 'Thêm mới kế hoạch',
+    goal_plan_edit: 'Chỉnh sửa kế hoạch',
+    goal_plan_delete: 'Xóa kế hoạch',
+    goal_plan_view: 'Xem danh sách/lọc/tìm kiếm kế hoạch',
+    goal_plan_detail: 'Xem chi tiết kế hoạch',
+    goal_plan_export: 'Export danh sách kế hoạch',
+    goal_result_create: 'Tạo kết quả',
+    goal_result_export: 'Export kết quả mục tiêu',
+
+    contract_create: 'Tạo hợp đồng + Tạo phụ lục',
+    contract_delete_draft: 'Xóa HĐ',
+    contract_edit: 'Chỉnh sửa hợp đồng',
+    contract_approve: 'Phê duyệt hợp đồng',
+    contract_confirm: 'Xác nhận Hợp đồng',
+    contract_cancel: 'Hủy hợp đồng',
+    contract_view: 'Xem danh sách/Tìm kiếm/Lọc HĐ',
+    contract_detail: 'Xem chi tiết HĐ',
+    contract_create_appendix: 'Tạo phụ lục HĐ',
+    contract_pdf_generate: 'Gen PDF Hợp đồng',
+    contract_export: 'Xuất danh sách Hợp đồng',
+    contract_share: 'Chia sẻ Hợp đồng',
+    contract_send_customer_confirmation: 'Gửi KH confirm Hợp đồng',
+    contract_sign: 'Trình ký Hợp đồng',
+
+    acceptance_create: 'Tạo nghiệm thu',
+    acceptance_edit: 'Chỉnh sửa nghiệm thu',
+    acceptance_view: 'Xem danh sách nghiệm thu',
+    acceptance_detail: 'Xem chi tiết nghiệm thu',
+    acceptance_export: 'Xuất biên bản nghiệm thu & biên bản xác nhận thanh toán',
+    acceptance_template_detail: 'Xem chi tiết mẫu biên bản',
+    acceptance_report_edit: 'Chỉnh sửa biên bản nghiệm thu',
+
+    liquidation_create: 'Tạo thanh lý',
+    liquidation_edit: 'Chỉnh sửa biên bản thanh lý',
+    liquidation_cancel: 'Hủy thanh lý',
+    liquidation_approve: 'Phê duyệt thanh lý',
+    liquidation_reject_approval: 'Từ chối phê duyệt thanh lý',
+    liquidation_generate_report: 'Gen biên bản thanh lý',
+    liquidation_sign: 'Trình ký thanh lý',
+    liquidation_export: 'Xuất BB thanh lý',
+
+    report_create: 'Tạo báo cáo',
+    report_view: 'Xem báo cáo',
+    report_export: 'Xuất báo cáo'
+  };
+
+  const getPermissionLabel = (key) => permissionLabels[key] || key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
   return (
     <div className="contract-form-container">
       <div className="contract-form-header">
@@ -53,7 +217,7 @@ export default function RoleForm() {
           <ChevronLeft size={20} /> Quay lại danh sách
         </button>
         <div style={{ marginTop: '16px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800 }}>{isEdit ? 'Thiết lập vai trò' : 'Thêm vai trò mới'}</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800 }}>{isEdit ? 'Chỉnh sửa vai trò' : 'Thêm vai trò mới'}</h1>
           <p style={{ color: '#64748b' }}>Định nghĩa quyền hạn và phạm vi truy cập cho nhóm người dùng.</p>
         </div>
       </div>
@@ -90,6 +254,7 @@ export default function RoleForm() {
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
                 ></textarea>
               </div>
+
             </div>
 
             {/* Permissions Matrix */}
@@ -99,25 +264,32 @@ export default function RoleForm() {
               </h2>
 
               <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
-                {PERMISSION_GROUPS.map((group, idx) => (
-                  <div key={group.name} style={{ borderBottom: idx === PERMISSION_GROUPS.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                    <div style={{ background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
-                      {group.name}
+                {PERMISSION_GROUPS.map((group, idx) => {
+                  const expanded = expandedGroups[group.name] ?? true;
+                  return (
+                    <div key={group.name} style={{ borderBottom: idx === PERMISSION_GROUPS.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b', cursor: 'pointer' }} onClick={() => toggleGroup(group.name)}>
+                        <span>{group.name}</span>
+                        {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </div>
+                      {expanded && (
+                        <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                          {group.keys.map(key => (
+                            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#475569' }}>
+                              <input 
+                                type="checkbox" 
+                                checked={formData.permissions.includes(key)} 
+                                onChange={() => togglePermission(key)}
+                              />
+                              {getPermissionLabel(key)}
+                            </label>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                      {group.keys.map(key => (
-                        <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#475569' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={formData.permissions.includes(key)} 
-                            onChange={() => togglePermission(key)}
-                          />
-                          {key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
+
               </div>
             </div>
           </div>
@@ -132,12 +304,12 @@ export default function RoleForm() {
                 value={formData.status}
                 onChange={e => setFormData({ ...formData, status: e.target.value })}
               >
-                <option value="Active">Đang áp dụng (Active)</option>
-                <option value="Inactive">Ngừng áp dụng (Inactive)</option>
+                <option value="Active">Đang áp dụng</option>
+                <option value="Inactive">Ngừng áp dụng</option>
               </select>
 
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0', height: '44px', justifyContent: 'center' }}>
-                <Save size={18} /> Lưu vai trò
+                <Save size={18} /> {isEdit ? 'Lưu thay đổi' : 'Tạo vai trò'}
               </button>
 
               <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #f1f5f9' }}>

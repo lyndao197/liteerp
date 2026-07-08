@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save, User, Mail, Shield, Building2, Lock, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Save, User, Mail, Shield, Building2, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
 
 export default function UserForm() {
@@ -14,19 +14,62 @@ export default function UserForm() {
     fullName: '',
     email: '',
     role: '',
+    unit: '',
     department: '',
+    team: '',
+    position: '',
+    managerId: '',
+    employeeCode: '',
+    phone: '',
+    leaveEndDate: '',
+    leaveReason: '',
+    isManager: false,
     status: 'Active',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const roles = mockStore.getAllRoles();
+  const allUsers = mockStore.getAllUsers();
+  const UNIT_OPTIONS = [
+    'Kinh doanh',
+    'Tài chính',
+    'Công nghệ',
+    'Nhân sự',
+    'Marketing',
+    'Hành chính'
+  ];
+  const DEPARTMENT_OPTIONS = [
+    'Phòng Bán hàng',
+    'Phòng Tài chính',
+    'Phòng Công nghệ',
+    'Phòng Nhân sự',
+    'Phòng Marketing',
+    'Phòng Hành chính'
+  ];
+  const TEAM_OPTIONS = [
+    'Phòng Bán hàng',
+    'Phòng Tài chính',
+    'Phòng Công nghệ',
+    'Phòng Nhân sự',
+    'Phòng Marketing',
+    'Phòng Hành chính'
+  ];
+  const POSITION_OPTIONS = [
+    'Nhân viên',
+    'Chuyên viên',
+    'Trưởng nhóm',
+    'Quản lý',
+    'Kế toán trưởng',
+    'Giám đốc'
+  ];
 
   useEffect(() => {
     if (isEdit) {
       const user = mockStore.getUser(id);
       if (user) setFormData({ ...user, password: '••••••••' });
     } else {
-      setFormData(prev => ({ ...prev, id: mockStore.getNextUserId() }));
+      setFormData(prev => ({ ...prev, id: mockStore.getNextUserId(), employeeCode: mockStore.getNextEmployeeCode() }));
     }
   }, [id, isEdit]);
 
@@ -58,24 +101,21 @@ export default function UserForm() {
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               <div className="form-group">
-                <label>Họ và tên <span style={{ color: '#EE0033' }}>*</span></label>
+                <label>Mã nhân viên</label>
+                <input
+                  type="text"
+                  className="input-modern"
+                  value={formData.employeeCode}
+                  onChange={e => setFormData({ ...formData, employeeCode: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Tên nhân viên</label>
                 <input 
                   type="text" 
                   className="input-modern" 
                   value={formData.fullName} 
                   onChange={e => setFormData({ ...formData, fullName: e.target.value })} 
-                  required 
-                />
-              </div>
-              <div className="form-group">
-                <label>Tên đăng nhập (Username) <span style={{ color: '#EE0033' }}>*</span></label>
-                <input 
-                  type="text" 
-                  className="input-modern" 
-                  value={formData.username} 
-                  onChange={e => setFormData({ ...formData, username: e.target.value })} 
-                  required 
-                  disabled={isEdit}
                 />
               </div>
               <div className="form-group">
@@ -93,17 +133,89 @@ export default function UserForm() {
                 </div>
               </div>
               <div className="form-group">
-                <label>Đơn vị / Phòng ban</label>
-                <div style={{ position: 'relative' }}>
-                  <Building2 size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-                  <input 
-                    type="text" 
-                    className="input-modern" 
-                    style={{ paddingLeft: '36px' }}
-                    value={formData.department} 
-                    onChange={e => setFormData({ ...formData, department: e.target.value })} 
-                  />
+                <label>Số điện thoại</label>
+                <input
+                  type="text"
+                  className="input-modern"
+                  value={formData.phone}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Đơn vị</label>
+                <div style={{ position: 'relative', width: '100%' }}>
+                  <Building2 size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }} />
+                  <select
+                    className="select-modern"
+                    style={{ width: '100%', paddingLeft: '46px', paddingRight: '30px', boxSizing: 'border-box' }}
+                    value={formData.unit}
+                    onChange={e => setFormData({ ...formData, unit: e.target.value })}
+                  >
+                    <option value="">-- Chọn đơn vị --</option>
+                    {UNIT_OPTIONS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
+                  </select>
                 </div>
+              </div>
+              <div className="form-group">
+                <label>Phòng ban</label>
+                <div style={{ position: 'relative', width: '100%' }}>
+                  <Building2 size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }} />
+                  <select
+                    className="select-modern"
+                    style={{ width: '100%', paddingLeft: '46px', paddingRight: '30px', boxSizing: 'border-box' }}
+                    value={formData.department}
+                    onChange={e => setFormData({ ...formData, department: e.target.value })}
+                  >
+                    <option value="">-- Chọn phòng ban --</option>
+                    {DEPARTMENT_OPTIONS.map(department => <option key={department} value={department}>{department}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Tổ nhóm</label>
+                <select
+                  className="select-modern"
+                  value={formData.team}
+                  onChange={e => setFormData({ ...formData, team: e.target.value })}
+                >
+                  <option value="">-- Chọn tổ nhóm --</option>
+                  {TEAM_OPTIONS.map(team => <option key={team} value={team}>{team}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Chức danh</label>
+                <select
+                  className="select-modern"
+                  value={formData.position}
+                  onChange={e => setFormData({ ...formData, position: e.target.value })}
+                >
+                  <option value="">-- Chọn chức danh --</option>
+                  {POSITION_OPTIONS.map(position => <option key={position} value={position}>{position}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Tên đăng nhập <span style={{ color: '#EE0033' }}>*</span></label>
+                <input 
+                  type="text" 
+                  className="input-modern" 
+                  value={formData.username} 
+                  onChange={e => setFormData({ ...formData, username: e.target.value })} 
+                  required 
+                  disabled={isEdit}
+                />
+              </div>
+              <div className="form-group">
+                <label>Chọn quản lý</label>
+                <select
+                  className="select-modern"
+                  value={formData.managerId || ''}
+                  onChange={e => setFormData({ ...formData, managerId: e.target.value })}
+                >
+                  <option value="">-- Không có quản lý --</option>
+                  {allUsers.filter(u => u.id !== formData.id).map(u => (
+                    <option key={u.id} value={u.id}>{u.fullName}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -114,13 +226,38 @@ export default function UserForm() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div className="form-group">
                   <label>Mật khẩu <span style={{ color: '#EE0033' }}>*</span></label>
-                  <input 
-                    type="password" 
-                    className="input-modern" 
-                    value={formData.password} 
-                    onChange={e => setFormData({ ...formData, password: e.target.value })} 
-                    required={!isEdit}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      className="input-modern" 
+                      style={{ paddingRight: '108px' }}
+                      value={formData.password} 
+                      onChange={e => setFormData({ ...formData, password: e.target.value })} 
+                      required={!isEdit}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(prev => !prev)}
+                      style={{
+                        position: 'absolute',
+                        right: '8px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        border: 'none',
+                        background: 'transparent',
+                        color: '#475569',
+                        padding: '8px 10px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '13px'
+                      }}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showPassword ? 'Ẩn' : 'Hiện'}
+                    </button>
+                  </div>
                 </div>
                 <div className="form-group">
                   <label>Vai trò hệ thống <span style={{ color: '#EE0033' }}>*</span></label>
@@ -139,6 +276,7 @@ export default function UserForm() {
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -147,13 +285,18 @@ export default function UserForm() {
               <label style={{ fontWeight: 700, fontSize: '14px', marginBottom: '12px', display: 'block' }}>Trạng thái tài khoản</label>
               <select 
                 className="select-modern" 
-                style={{ width: '100%', marginBottom: '20px' }}
+                style={{ width: '100%', marginBottom: '12px' }}
                 value={formData.status}
                 onChange={e => setFormData({ ...formData, status: e.target.value })}
               >
-                <option value="Active">Hoạt động (Active)</option>
-                <option value="Inactive">Tạm khóa (Inactive)</option>
+                <option value="Active">Hoạt động</option>
+                <option value="Inactive">Tạm khóa</option>
               </select>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '13px', marginBottom: '6px' }}>Lý do nghỉ</label>
+                <textarea className="input-modern" rows={3} value={formData.leaveReason} onChange={e => setFormData({ ...formData, leaveReason: e.target.value })} />
+              </div>
 
               <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px', color: '#64748b' }}>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
@@ -164,7 +307,7 @@ export default function UserForm() {
               </div>
 
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '24px', height: '44px', justifyContent: 'center' }}>
-                <Save size={18} /> Lưu thay đổi
+                <Save size={18} /> {isEdit ? 'Lưu thay đổi' : 'Thêm người dùng'}
               </button>
             </div>
           </div>

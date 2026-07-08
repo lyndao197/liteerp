@@ -856,10 +856,10 @@ const INITIAL_DATA = {
   },
   inboundReconciliationIds: ['IBR-2026-001','IBR-2026-002','IBR-2026-003','IBR-2026-004','IBR-2026-005','IBR-2026-006','IBR-2026-007','IBR-2026-008','IBR-2026-009','IBR-2026-010'],
   users: {
-    'USR-001': { id: 'USR-001', username: 'admin', fullName: 'Administrator', email: 'admin@viettel.com.vn', role: 'Quản trị hệ thống', department: 'TT Công nghệ Thông tin', status: 'Active', lastLogin: '2026-04-14 08:30' },
-    'USR-002': { id: 'USR-002', username: 'hung.nv', fullName: 'Nguyễn Văn Hùng', email: 'hung.nv@viettel.com.vn', role: 'Giám đốc kinh doanh', department: 'Phòng Bán hàng', status: 'Active', lastLogin: '2026-04-14 07:15' },
-    'USR-003': { id: 'USR-003', username: 'phuong.tt', fullName: 'Trần Thị Phương', email: 'phuong.tt@viettel.com.vn', role: 'Kế toán trưởng', department: 'Phòng Tài chính', status: 'Active', lastLogin: '2026-04-13 17:45' },
-    'USR-004': { id: 'USR-004', username: 'thanh.le', fullName: 'Lê Văn Thanh', email: 'thanh.le@viettel.com.vn', role: 'Chuyên viên AM', department: 'Phòng Bán hàng', status: 'Inactive', lastLogin: '2026-04-10 09:00' }
+    'USR-001': { id: 'USR-001', username: 'admin', fullName: 'Administrator', email: 'admin@viettel.com.vn', role: 'Quản trị hệ thống', department: 'TT Công nghệ Thông tin', status: 'Active', lastLogin: '2026-04-14 08:30', customPermissions: [] },
+    'USR-002': { id: 'USR-002', username: 'hung.nv', fullName: 'Nguyễn Văn Hùng', email: 'hung.nv@viettel.com.vn', role: 'Giám đốc kinh doanh', department: 'Phòng Bán hàng', status: 'Active', lastLogin: '2026-04-14 07:15', customPermissions: [] },
+    'USR-003': { id: 'USR-003', username: 'phuong.tt', fullName: 'Trần Thị Phương', email: 'phuong.tt@viettel.com.vn', role: 'Kế toán trưởng', department: 'Phòng Tài chính', status: 'Active', lastLogin: '2026-04-13 17:45', customPermissions: [] },
+    'USR-004': { id: 'USR-004', username: 'thanh.le', fullName: 'Lê Văn Thanh', email: 'thanh.le@viettel.com.vn', role: 'Chuyên viên AM', department: 'Phòng Bán hàng', status: 'Inactive', lastLogin: '2026-04-10 09:00', customPermissions: [] }
   },
   userIds: ['USR-001', 'USR-002', 'USR-003', 'USR-004'],
   roles: {
@@ -1154,6 +1154,13 @@ export const mockStore = {
 
     if (!store.configFiles) store.configFiles = {};
     if (!store.configFileIds) store.configFileIds = [];
+    if (store.users) {
+      Object.keys(store.users).forEach(userId => {
+        if (!Array.isArray(store.users[userId].customPermissions)) {
+          store.users[userId].customPermissions = [];
+        }
+      });
+    }
     // Migration: remove old-schema records (no 'menu' field)
     store.configFileIds = store.configFileIds.filter(cfgId => {
       if (store.configFiles[cfgId] && !store.configFiles[cfgId].menu) {
@@ -1935,7 +1942,8 @@ export const mockStore = {
   saveUser: (id, userData) => {
     const store = mockStore.getStore();
     if (!store.users[id]) store.userIds.push(id);
-    store.users[id] = userData;
+    const customPermissions = Array.isArray(userData.customPermissions) ? userData.customPermissions : [];
+    store.users[id] = { ...userData, customPermissions };
     mockStore.saveStore(store);
   },
   toggleUserStatus: (id) => {
@@ -1954,6 +1962,19 @@ export const mockStore = {
       if (n > max) max = n;
     });
     return `USR-${(max + 1).toString().padStart(3, '0')}`;
+  },
+  getNextEmployeeCode: () => {
+    const store = mockStore.getStore();
+    const users = (store.userIds || []).map(id => store.users[id]).filter(Boolean);
+    let max = 0;
+    users.forEach(user => {
+      const match = String(user.employeeCode || '').match(/EMP-(\d+)/);
+      if (match) {
+        const n = parseInt(match[1], 10);
+        if (n > max) max = n;
+      }
+    });
+    return `EMP-${(max + 1).toString().padStart(4, '0')}`;
   },
 
   // --- ROLE METHODS ---
