@@ -294,6 +294,16 @@ export default function UserForm() {
               </select>
 
               <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '13px', marginBottom: '6px' }}>Ngày hết hạn nghỉ</label>
+                <input
+                  type="date"
+                  className="input-modern"
+                  value={formData.leaveEndDate}
+                  onChange={e => setFormData({ ...formData, leaveEndDate: e.target.value })}
+                />
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', fontSize: '13px', marginBottom: '6px' }}>Lý do nghỉ</label>
                 <textarea className="input-modern" rows={3} value={formData.leaveReason} onChange={e => setFormData({ ...formData, leaveReason: e.target.value })} />
               </div>
