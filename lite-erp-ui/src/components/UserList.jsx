@@ -53,17 +53,15 @@ export default function UserList() {
   const LABELS = {
     role: 'Vai trò',
     status: 'Trạng thái',
-    unit: 'Đơn vị',
     department: 'Phòng ban',
-    team: 'Tổ nhóm',
     position: 'Chức danh'
   };
 
-  const filterKeys = ['role', 'status', 'unit', 'department', 'team', 'position'];
+  const filterKeys = ['role', 'status', 'department', 'position'];
 
   const handleExport = () => {
     const cols = [
-      'id','employeeCode','fullName','email','phone','unit','department','team','position','role','isManager','status','leaveEndDate','leaveReason','lastLogin'
+      'id','employeeCode','fullName','email','phone','department','position','role','isManager','status','leaveEndDate','leaveReason','lastLogin'
     ];
     const rows = users.map(u => cols.map(c => {
       const v = u[c];
@@ -97,13 +95,13 @@ export default function UserList() {
     const rawHeaders = lines[0].split(splitRegex).map(h => h.replace(/^"|"$/g, '').trim());
 
     const headerMap = {
-      'Người dùng': 'fullName', 'Username': 'username', 'Email': 'email', 'Mã NV': 'employeeCode',
-      'Số điện thoại': 'phone', 'Tổ nhóm': 'team', 'Chức danh': 'position', 'Đơn vị/Phòng ban': 'department',
+      'Người dùng': 'fullName', 'Username': 'username', 'Tên đăng nhập': 'username', 'Email': 'email', 'Mã NV': 'employeeCode',
+      'Số điện thoại': 'phone', 'Chức danh': 'position', 'Phòng ban': 'department', 'Đơn vị/Phòng ban': 'department',
       'Quản lý trực tiếp': 'managerId', 'Vai trò': 'role', 'Lần đăng nhập cuối': 'lastLogin', 'Ngày hết hạn nghỉ': 'leaveEndDate',
       'Lý do nghỉ': 'leaveReason', 'Quản lý': 'isManager', 'Trạng thái': 'status'
     };
 
-    const allowedKeys = ['id','fullName','username','email','employeeCode','phone','team','position','department','managerId','role','lastLogin','leaveEndDate','leaveReason','isManager','status'];
+    const allowedKeys = ['id','fullName','username','email','employeeCode','phone','position','department','managerId','role','lastLogin','leaveEndDate','leaveReason','isManager','status'];
 
     const mappedHeaders = rawHeaders.map(h => {
       if (headerMap[h]) return headerMap[h];
@@ -134,6 +132,13 @@ export default function UserList() {
         const m = existing.find(u => u.username === row.managerId || u.fullName === row.managerId || u.id === row.managerId);
         row.managerId = m ? m.id : '';
       }
+
+      const normalizedEmail = (row.email || row.username || '').trim();
+      if (!normalizedEmail) {
+        throw new Error(`Thiếu Email ở dòng ${i + 1}.`);
+      }
+      row.email = normalizedEmail;
+      row.username = normalizedEmail;
 
       const id = row.id || mockStore.getNextUserId();
       mockStore.saveUser(id, Object.assign({ id }, row));
@@ -291,9 +296,7 @@ export default function UserList() {
               <th>Tên nhân viên</th>
               <th>Email</th>
               <th>Số điện thoại</th>
-              <th>Đơn vị</th>
               <th>Phòng ban</th>
-              <th>Tổ nhóm</th>
               <th>Chức danh</th>
               <th>Quản lý</th>
               <th>Ngày hết hạn nghỉ</th>
@@ -318,9 +321,7 @@ export default function UserList() {
                 </td>
                 <td>{u.email}</td>
                 <td>{u.phone || ''}</td>
-                <td>{u.unit || ''}</td>
                 <td>{u.department || ''}</td>
-                <td>{u.team || ''}</td>
                 <td>{u.position || ''}</td>
                 <td style={{ textAlign: 'center' }}>
                   {u.isManager ? <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 600 }}>Quản lý</span> : ''}
@@ -346,7 +347,7 @@ export default function UserList() {
               </tr>
             )) : (
               <tr>
-                <td colSpan="14" style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                <td colSpan="13" style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
                   Không tìm thấy người dùng nào.
                 </td>
               </tr>

@@ -1161,6 +1161,22 @@ export const mockStore = {
         }
       });
     }
+    if (store.roles) {
+      Object.keys(store.roles).forEach(roleId => {
+        if (!Array.isArray(store.roles[roleId].permissions)) {
+          store.roles[roleId].permissions = [];
+        }
+        if (!Array.isArray(store.roles[roleId].inheritedRoleIds)) {
+          store.roles[roleId].inheritedRoleIds = [];
+        }
+        if (!Array.isArray(store.roles[roleId].inheritedByRoleIds)) {
+          store.roles[roleId].inheritedByRoleIds = [];
+        }
+        if (!Array.isArray(store.roles[roleId].additionalPermissions)) {
+          store.roles[roleId].additionalPermissions = [];
+        }
+      });
+    }
     // Migration: remove old-schema records (no 'menu' field)
     store.configFileIds = store.configFileIds.filter(cfgId => {
       if (store.configFiles[cfgId] && !store.configFiles[cfgId].menu) {
@@ -1989,7 +2005,53 @@ export const mockStore = {
   saveRole: (id, roleData) => {
     const store = mockStore.getStore();
     if (!store.roles[id]) store.roleIds.push(id);
-    store.roles[id] = roleData;
+    const previousRole = store.roles[id] || {};
+    const inheritedRoleIds = Array.isArray(roleData.inheritedRoleIds)
+      ? Array.from(new Set(roleData.inheritedRoleIds.filter(roleId => roleId && roleId !== id)))
+      : (previousRole.inheritedRoleIds || []);
+
+    const inheritedByRoleIds = Array.isArray(roleData.inheritedByRoleIds)
+      ? Array.from(new Set(roleData.inheritedByRoleIds.filter(roleId => roleId && roleId !== id)))
+      : (previousRole.inheritedByRoleIds || []);
+
+    store.roles[id] = {
+      ...previousRole,
+      ...roleData,
+      permissions: Array.isArray(roleData.permissions) ? roleData.permissions : (previousRole.permissions || []),
+      inheritedRoleIds,
+      inheritedByRoleIds,
+      additionalPermissions: Array.isArray(roleData.additionalPermissions) ? roleData.additionalPermissions : (previousRole.additionalPermissions || [])
+    };
+
+    // Keep inheritance relation consistent in both directions.
+    Object.keys(store.roles || {}).forEach(roleId => {
+      if (roleId === id) return;
+      const role = store.roles[roleId];
+      const currentInheritedIds = Array.isArray(role.inheritedRoleIds) ? role.inheritedRoleIds : [];
+
+      if (inheritedByRoleIds.includes(roleId)) {
+        if (!currentInheritedIds.includes(id)) {
+          role.inheritedRoleIds = [...currentInheritedIds, id];
+        }
+      } else {
+        role.inheritedRoleIds = currentInheritedIds.filter(inheritedId => inheritedId !== id);
+      }
+
+      role.inheritedByRoleIds = Object.keys(store.roles)
+        .filter(otherRoleId => otherRoleId !== roleId)
+        .filter(otherRoleId => {
+          const otherRole = store.roles[otherRoleId];
+          return Array.isArray(otherRole.inheritedRoleIds) && otherRole.inheritedRoleIds.includes(roleId);
+        });
+    });
+
+    store.roles[id].inheritedByRoleIds = Object.keys(store.roles)
+      .filter(roleId => roleId !== id)
+      .filter(roleId => {
+        const role = store.roles[roleId];
+        return Array.isArray(role.inheritedRoleIds) && role.inheritedRoleIds.includes(id);
+      });
+
     mockStore.saveStore(store);
   },
   toggleRoleStatus: (id) => {

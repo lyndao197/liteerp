@@ -14,9 +14,7 @@ export default function UserForm() {
     fullName: '',
     email: '',
     role: '',
-    unit: '',
     department: '',
-    team: '',
     position: '',
     managerId: '',
     employeeCode: '',
@@ -31,23 +29,7 @@ export default function UserForm() {
 
   const roles = mockStore.getAllRoles();
   const allUsers = mockStore.getAllUsers();
-  const UNIT_OPTIONS = [
-    'Kinh doanh',
-    'Tài chính',
-    'Công nghệ',
-    'Nhân sự',
-    'Marketing',
-    'Hành chính'
-  ];
   const DEPARTMENT_OPTIONS = [
-    'Phòng Bán hàng',
-    'Phòng Tài chính',
-    'Phòng Công nghệ',
-    'Phòng Nhân sự',
-    'Phòng Marketing',
-    'Phòng Hành chính'
-  ];
-  const TEAM_OPTIONS = [
     'Phòng Bán hàng',
     'Phòng Tài chính',
     'Phòng Công nghệ',
@@ -67,7 +49,7 @@ export default function UserForm() {
   useEffect(() => {
     if (isEdit) {
       const user = mockStore.getUser(id);
-      if (user) setFormData({ ...user, password: '••••••••' });
+      if (user) setFormData({ ...user, username: user.email || '', password: '••••••••' });
     } else {
       setFormData(prev => ({ ...prev, id: mockStore.getNextUserId(), employeeCode: mockStore.getNextEmployeeCode() }));
     }
@@ -75,7 +57,8 @@ export default function UserForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mockStore.saveUser(formData.id, formData);
+    const dataToSave = { ...formData, username: formData.email };
+    mockStore.saveUser(formData.id, dataToSave);
     navigate('/users');
   };
 
@@ -127,7 +110,10 @@ export default function UserForm() {
                     className="input-modern" 
                     style={{ paddingLeft: '36px' }}
                     value={formData.email} 
-                    onChange={e => setFormData({ ...formData, email: e.target.value })} 
+                    onChange={e => {
+                      const nextEmail = e.target.value;
+                      setFormData({ ...formData, email: nextEmail, username: nextEmail });
+                    }} 
                     required 
                   />
                 </div>
@@ -140,21 +126,6 @@ export default function UserForm() {
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
                 />
-              </div>
-              <div className="form-group">
-                <label>Đơn vị</label>
-                <div style={{ position: 'relative', width: '100%' }}>
-                  <Building2 size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }} />
-                  <select
-                    className="select-modern"
-                    style={{ width: '100%', paddingLeft: '46px', paddingRight: '30px', boxSizing: 'border-box' }}
-                    value={formData.unit}
-                    onChange={e => setFormData({ ...formData, unit: e.target.value })}
-                  >
-                    <option value="">-- Chọn đơn vị --</option>
-                    {UNIT_OPTIONS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
-                  </select>
-                </div>
               </div>
               <div className="form-group">
                 <label>Phòng ban</label>
@@ -170,17 +141,6 @@ export default function UserForm() {
                     {DEPARTMENT_OPTIONS.map(department => <option key={department} value={department}>{department}</option>)}
                   </select>
                 </div>
-              </div>
-              <div className="form-group">
-                <label>Tổ nhóm</label>
-                <select
-                  className="select-modern"
-                  value={formData.team}
-                  onChange={e => setFormData({ ...formData, team: e.target.value })}
-                >
-                  <option value="">-- Chọn tổ nhóm --</option>
-                  {TEAM_OPTIONS.map(team => <option key={team} value={team}>{team}</option>)}
-                </select>
               </div>
               <div className="form-group">
                 <label>Chức danh</label>
@@ -199,9 +159,8 @@ export default function UserForm() {
                   type="text" 
                   className="input-modern" 
                   value={formData.username} 
-                  onChange={e => setFormData({ ...formData, username: e.target.value })} 
-                  required 
-                  disabled={isEdit}
+                  readOnly
+                  disabled
                 />
               </div>
               <div className="form-group">
@@ -216,6 +175,27 @@ export default function UserForm() {
                     <option key={u.id} value={u.id}>{u.fullName}</option>
                   ))}
                 </select>
+              </div>
+              <div className="form-group">
+                <label>Ngày hết hạn nghỉ</label>
+                <input
+                  type="date"
+                  className="input-modern"
+                  value={formData.leaveEndDate}
+                  onChange={e => setFormData({ ...formData, leaveEndDate: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label style={{ color: !formData.leaveEndDate ? '#94a3b8' : undefined }}>Lý do nghỉ</label>
+                <textarea
+                  className="input-modern"
+                  rows={3}
+                  value={formData.leaveReason}
+                  onChange={e => setFormData({ ...formData, leaveReason: e.target.value })}
+                  disabled={!formData.leaveEndDate}
+                  placeholder={!formData.leaveEndDate ? 'Vui lòng nhập ngày hết hạn nghỉ trước' : ''}
+                  style={{ background: !formData.leaveEndDate ? '#f1f5f9' : undefined, cursor: !formData.leaveEndDate ? 'not-allowed' : undefined }}
+                />
               </div>
             </div>
 
@@ -292,21 +272,6 @@ export default function UserForm() {
                 <option value="Active">Hoạt động</option>
                 <option value="Inactive">Tạm khóa</option>
               </select>
-
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', fontSize: '13px', marginBottom: '6px' }}>Ngày hết hạn nghỉ</label>
-                <input
-                  type="date"
-                  className="input-modern"
-                  value={formData.leaveEndDate}
-                  onChange={e => setFormData({ ...formData, leaveEndDate: e.target.value })}
-                />
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', fontSize: '13px', marginBottom: '6px' }}>Lý do nghỉ</label>
-                <textarea className="input-modern" rows={3} value={formData.leaveReason} onChange={e => setFormData({ ...formData, leaveReason: e.target.value })} />
-              </div>
 
               <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px', color: '#64748b' }}>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
