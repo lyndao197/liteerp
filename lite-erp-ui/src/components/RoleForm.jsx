@@ -21,6 +21,7 @@ export default function RoleForm() {
   });
   const [expandedGroups, setExpandedGroups] = useState({});
   const [activePermissionTab, setActivePermissionTab] = useState('detailed');
+  const [submitError, setSubmitError] = useState('');
 
   const PERMISSION_GROUPS = [
     {
@@ -192,7 +193,30 @@ export default function RoleForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mockStore.saveRole(formData.id, formData);
+
+    const normalizedName = String(formData.name || '').trim();
+    const duplicateRole = allRoles.find(
+      role => role.id !== formData.id && String(role.name || '').trim().toLowerCase() === normalizedName.toLowerCase()
+    );
+
+    if (!normalizedName) {
+      setSubmitError('Tên vai trò là bắt buộc.');
+      return;
+    }
+
+    if (duplicateRole) {
+      setSubmitError(`Tên vai trò đã tồn tại: ${duplicateRole.name}`);
+      return;
+    }
+
+    const dataToSave = {
+      ...formData,
+      name: normalizedName,
+      description: String(formData.description || '').trim()
+    };
+
+    setSubmitError('');
+    mockStore.saveRole(formData.id, dataToSave);
     navigate('/roles');
   };
 
@@ -608,6 +632,13 @@ export default function RoleForm() {
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '0', height: '44px', justifyContent: 'center' }}>
                 <Save size={18} /> {isEdit ? 'Lưu thay đổi' : 'Tạo vai trò'}
               </button>
+
+              {submitError && (
+                <div style={{ marginTop: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start', color: '#dc2626', fontSize: '12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '10px' }}>
+                  <AlertCircle size={14} style={{ marginTop: '1px', flexShrink: 0 }} />
+                  <span>{submitError}</span>
+                </div>
+              )}
 
               <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #f1f5f9' }}>
                 <div style={{ display: 'flex', gap: '8px', color: '#16a34a', marginBottom: '12px' }}>
