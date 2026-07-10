@@ -17,7 +17,6 @@ export default function UserForm() {
     department: '',
     position: '',
     managerId: '',
-    employeeCode: '',
     phone: '',
     leaveEndDate: '',
     leaveReason: '',
@@ -51,7 +50,7 @@ export default function UserForm() {
       const user = mockStore.getUser(id);
       if (user) setFormData({ ...user, username: user.email || '', password: '••••••••' });
     } else {
-      setFormData(prev => ({ ...prev, id: mockStore.getNextUserId(), employeeCode: mockStore.getNextEmployeeCode() }));
+      setFormData(prev => ({ ...prev, id: mockStore.getNextUserId() }));
     }
   }, [id, isEdit]);
 
@@ -83,15 +82,6 @@ export default function UserForm() {
             </h2>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div className="form-group">
-                <label>Mã nhân viên</label>
-                <input
-                  type="text"
-                  className="input-modern"
-                  value={formData.employeeCode}
-                  onChange={e => setFormData({ ...formData, employeeCode: e.target.value })}
-                />
-              </div>
               <div className="form-group">
                 <label>Tên nhân viên</label>
                 <input 

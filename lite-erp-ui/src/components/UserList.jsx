@@ -61,7 +61,7 @@ export default function UserList() {
 
   const handleExport = () => {
     const cols = [
-      'id','employeeCode','fullName','email','phone','department','position','role','isManager','status','leaveEndDate','leaveReason','lastLogin'
+      'id','fullName','username','email','phone','department','position','managerId','isManager','leaveEndDate','leaveReason','role','status'
     ];
     const rows = users.map(u => cols.map(c => {
       const v = u[c];
@@ -95,13 +95,13 @@ export default function UserList() {
     const rawHeaders = lines[0].split(splitRegex).map(h => h.replace(/^"|"$/g, '').trim());
 
     const headerMap = {
-      'Người dùng': 'fullName', 'Username': 'username', 'Tên đăng nhập': 'username', 'Email': 'email', 'Mã NV': 'employeeCode',
+      'Người dùng': 'fullName', 'Username': 'username', 'Tên đăng nhập': 'username', 'Email': 'email',
       'Số điện thoại': 'phone', 'Chức danh': 'position', 'Phòng ban': 'department', 'Đơn vị/Phòng ban': 'department',
       'Quản lý trực tiếp': 'managerId', 'Vai trò': 'role', 'Lần đăng nhập cuối': 'lastLogin', 'Ngày hết hạn nghỉ': 'leaveEndDate',
       'Lý do nghỉ': 'leaveReason', 'Quản lý': 'isManager', 'Trạng thái': 'status'
     };
 
-    const allowedKeys = ['id','fullName','username','email','employeeCode','phone','position','department','managerId','role','lastLogin','leaveEndDate','leaveReason','isManager','status'];
+    const allowedKeys = ['id','fullName','username','email','phone','position','department','managerId','role','lastLogin','leaveEndDate','leaveReason','isManager','status'];
 
     const mappedHeaders = rawHeaders.map(h => {
       if (headerMap[h]) return headerMap[h];
@@ -292,25 +292,24 @@ export default function UserList() {
           <thead>
             <tr>
               <th>STT</th>
-              <th>Mã nhân viên</th>
               <th>Tên nhân viên</th>
+              <th>Tên đăng nhập</th>
               <th>Email</th>
               <th>Số điện thoại</th>
               <th>Phòng ban</th>
               <th>Chức danh</th>
-              <th>Quản lý</th>
+              <th>Quản lý trực tiếp</th>
+              <th>Là quản lý</th>
               <th>Ngày hết hạn nghỉ</th>
               <th>Lý do nghỉ</th>
               <th>Vai trò hệ thống</th>
               <th>Trạng thái</th>
-              <th>Lần đăng nhập cuối</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.length > 0 ? filteredUsers.map((u, idx) => (
               <tr key={u.id} onClick={() => navigate(`/user/edit/${u.id}`)} style={{ cursor: 'pointer' }}>
                 <td style={{ textAlign: 'center' }}>{idx + 1}</td>
-                <td>{u.employeeCode || ''}</td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EE003310', color: '#EE0033', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
@@ -319,10 +318,12 @@ export default function UserList() {
                     <div style={{ fontWeight: 600, color: '#1e293b' }}>{u.fullName}</div>
                   </div>
                 </td>
+                <td>{u.username || ''}</td>
                 <td>{u.email}</td>
                 <td>{u.phone || ''}</td>
                 <td>{u.department || ''}</td>
                 <td>{u.position || ''}</td>
+                <td>{users.find(manager => manager.id === u.managerId)?.fullName || ''}</td>
                 <td style={{ textAlign: 'center' }}>
                   {u.isManager ? <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 600 }}>Quản lý</span> : ''}
                 </td>
@@ -343,7 +344,6 @@ export default function UserList() {
                     {u.status === 'Active' ? 'Hoạt động' : 'Tạm khóa'}
                   </button>
                 </td>
-                <td style={{ fontSize: '12px', color: '#64748b' }}>{u.lastLogin}</td>
               </tr>
             )) : (
               <tr>
