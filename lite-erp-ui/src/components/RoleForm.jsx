@@ -16,8 +16,7 @@ export default function RoleForm() {
     status: 'Active',
     permissions: [],
     inheritedRoleIds: [],
-    inheritedByRoleIds: [],
-    additionalPermissions: []
+    inheritedByRoleIds: []
   });
   const [expandedGroups, setExpandedGroups] = useState({});
   const [activePermissionTab, setActivePermissionTab] = useState('detailed');
@@ -132,38 +131,6 @@ export default function RoleForm() {
 
   const INHERITABLE_ROLES = allRoles.filter(role => role.id !== formData.id);
 
-  const NON_OWNER_PERMISSION_MAP = {
-    lead_view_non_owner: 'lead_detail',
-    customer_view_non_owner: 'customer_detail',
-    task_view_non_owner: 'task_detail',
-    goal_plan_view_non_owner: 'goal_plan_detail',
-    contract_view_non_owner: 'contract_detail',
-    acceptance_view_non_owner: 'acceptance_detail'
-  };
-
-  const ADDITIONAL_PERMISSIONS = [
-    {
-      key: 'record_view_non_owner_all',
-      title: 'Xem bản ghi không phải owner (toàn hệ thống)',
-      description: 'Bật nhanh quyền xem bản ghi ngoài phạm vi cá nhân ở các module hỗ trợ.'
-    },
-    {
-      key: 'permission_audit_log_view',
-      title: 'Xem nhật ký phân quyền',
-      description: 'Theo dõi lịch sử thay đổi vai trò, kế thừa quyền và quyền bổ sung.'
-    },
-    {
-      key: 'permission_delegate_temporary',
-      title: 'Ủy quyền tạm thời',
-      description: 'Cho phép cấp quyền tạm thời theo thời hạn cho người dùng khác.'
-    },
-    {
-      key: 'permission_bulk_assign',
-      title: 'Gán quyền hàng loạt',
-      description: 'Cho phép gán vai trò/quyền cho nhiều tài khoản cùng lúc.'
-    }
-  ];
-
   useEffect(() => {
     if (isEdit) {
       const role = mockStore.getRole(id);
@@ -176,8 +143,7 @@ export default function RoleForm() {
           ...role,
           permissions: role.permissions || [],
           inheritedRoleIds: role.inheritedRoleIds || [],
-          inheritedByRoleIds,
-          additionalPermissions: role.additionalPermissions || []
+          inheritedByRoleIds
         });
       }
     } else {
@@ -185,8 +151,7 @@ export default function RoleForm() {
         ...prev,
         id: mockStore.getNextRoleId(),
         inheritedRoleIds: [],
-        inheritedByRoleIds: [],
-        additionalPermissions: []
+        inheritedByRoleIds: []
       }));
     }
   }, [id, isEdit]);
@@ -212,7 +177,9 @@ export default function RoleForm() {
     const dataToSave = {
       ...formData,
       name: normalizedName,
-      description: String(formData.description || '').trim()
+      description: String(formData.description || '').trim(),
+      inheritedRoleIds: selectedInheritedRoleIds,
+      inheritedByRoleIds: selectedInheritedByRoleIds
     };
 
     setSubmitError('');
@@ -245,33 +212,33 @@ export default function RoleForm() {
     setFormData({ ...formData, inheritedByRoleIds });
   };
 
-  const toggleAdditionalPermission = (key) => {
-    if (key === 'record_view_non_owner_all') {
-      const currentlyEnabled = formData.additionalPermissions.includes(key);
-      const additionalPermissions = currentlyEnabled
-        ? formData.additionalPermissions.filter(p => p !== key)
-        : [...formData.additionalPermissions, key];
+  const normalizeRoleIds = (roleIds) => Array.from(new Set((roleIds || []).filter(roleId => roleId && roleId !== formData.id)));
 
-      let permissions = formData.permissions;
-      if (currentlyEnabled) {
-        permissions = permissions.filter(p => !Object.keys(NON_OWNER_PERMISSION_MAP).includes(p));
-      } else {
-        permissions = Array.from(new Set([...permissions, ...Object.keys(NON_OWNER_PERMISSION_MAP)]));
-      }
-
-      setFormData({ ...formData, additionalPermissions, permissions });
-      return;
-    }
-
-    const additionalPermissions = formData.additionalPermissions.includes(key)
-      ? formData.additionalPermissions.filter(p => p !== key)
-      : [...formData.additionalPermissions, key];
-    setFormData({ ...formData, additionalPermissions });
+  const updateRoleRow = (field, index, roleId) => {
+    const nextRoleIds = [...formData[field]];
+    nextRoleIds[index] = roleId;
+    setFormData({ ...formData, [field]: nextRoleIds });
   };
+
+  const addRoleRow = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ''] });
+  };
+
+  const removeRoleRow = (field, index) => {
+    setFormData({ ...formData, [field]: formData[field].filter((_, rowIndex) => rowIndex !== index) });
+  };
+
+  const isRoleSelectedElsewhere = (list, index, roleId) => {
+    if (!roleId) return false;
+    return list.some((item, itemIndex) => itemIndex !== index && item === roleId);
+  };
+
+  const selectedInheritedRoleIds = normalizeRoleIds(formData.inheritedRoleIds);
+  const selectedInheritedByRoleIds = normalizeRoleIds(formData.inheritedByRoleIds);
 
   const inheritedPermissions = Array.from(
     new Set(
-      formData.inheritedRoleIds
+      selectedInheritedRoleIds
         .map(roleId => mockStore.getRole(roleId))
         .filter(Boolean)
         .flatMap(role => role.permissions || [])
@@ -280,8 +247,8 @@ export default function RoleForm() {
 
   const effectivePermissions = Array.from(new Set([...(formData.permissions || []), ...inheritedPermissions]));
 
-  const inheritedFromRoles = allRoles.filter(role => formData.inheritedRoleIds.includes(role.id));
-  const inheritedByRoles = allRoles.filter(role => formData.inheritedByRoleIds.includes(role.id));
+  const inheritedFromRoles = allRoles.filter(role => selectedInheritedRoleIds.includes(role.id));
+  const inheritedByRoles = allRoles.filter(role => selectedInheritedByRoleIds.includes(role.id));
 
   const permissionLabels = {
     lead_create: 'Tạo lead',
@@ -444,22 +411,7 @@ export default function RoleForm() {
                       cursor: 'pointer'
                     }}
                   >
-                    Quyền kế thừa
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActivePermissionTab('additional')}
-                    style={{
-                      border: 'none',
-                      background: activePermissionTab === 'additional' ? '#fff' : 'transparent',
-                      color: activePermissionTab === 'additional' ? '#EE0033' : '#475569',
-                      fontWeight: 700,
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Quyền bổ sung
+                    Kế thừa quyền
                   </button>
                 </div>
               </div>
@@ -496,122 +448,99 @@ export default function RoleForm() {
               )}
 
               {activePermissionTab === 'inherited' && (
-                <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', padding: '16px' }}>
-                  <p style={{ marginTop: 0, marginBottom: '16px', fontSize: '13px', color: '#64748b' }}>
-                    Thiết lập kế thừa giống Odoo: chọn vai trò nguồn để nhận quyền và chọn vai trò đích sẽ kế thừa từ vai trò hiện tại.
-                  </p>
+                <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '16px', background: '#fff' }}>
+                  <div style={{ marginBottom: '16px', padding: '12px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
+                    Thêm từng dòng để cấu hình kế thừa quyền.
+                  </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>Người được kế thừa</div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>Vai trò nguồn mà vai trò hiện tại sẽ nhận quyền.</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
-                        {INHERITABLE_ROLES.length === 0 && (
-                          <div style={{ fontSize: '13px', color: '#94a3b8' }}>Chưa có vai trò nào để kế thừa.</div>
+                  <div style={{ display: 'grid', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', background: '#ffffff' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '4px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>Kế thừa từ</div>
+                        <button
+                          type="button"
+                          onClick={() => addRoleRow('inheritedRoleIds')}
+                          style={{ border: '1px solid #cbd5e1', background: '#fff', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                        >
+                          Thêm dòng
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Mỗi dòng là một vai trò nguồn để vai trò hiện tại lấy toàn bộ quyền.</div>
+                      <div style={{ display: 'grid', gap: '8px' }}>
+                        {formData.inheritedRoleIds.length === 0 && (
+                          <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>Chưa có dòng nào. Nhấn “Thêm dòng” để chọn vai trò nguồn.</div>
                         )}
-                        {INHERITABLE_ROLES.map(role => (
-                          <label key={`from-${role.id}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px', cursor: 'pointer' }}>
-                            <input
-                              type="checkbox"
-                              checked={formData.inheritedRoleIds.includes(role.id)}
-                              onChange={() => toggleInheritedRole(role.id)}
-                            />
-                            <span>
-                              <span style={{ display: 'block', fontWeight: 600, fontSize: '13px', color: '#1e293b' }}>{role.name}</span>
-                              <span style={{ display: 'block', fontSize: '12px', color: '#64748b' }}>{role.description}</span>
-                            </span>
-                          </label>
+                        {formData.inheritedRoleIds.map((roleId, index) => (
+                          <div key={`from-row-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px' }}>
+                            <select
+                              className="select-modern"
+                              value={roleId}
+                              onChange={e => updateRoleRow('inheritedRoleIds', index, e.target.value)}
+                            >
+                              <option value="">-- Chọn vai trò nguồn --</option>
+                              {INHERITABLE_ROLES.map(role => (
+                                <option key={role.id} value={role.id} disabled={isRoleSelectedElsewhere(formData.inheritedRoleIds, index, role.id)}>
+                                  {role.name}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => removeRoleRow('inheritedRoleIds', index)}
+                              style={{ border: 'none', background: '#fef2f2', color: '#dc2626', borderRadius: '8px', padding: '8px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}
+                            >
+                              Xóa
+                            </button>
+                          </div>
                         ))}
                       </div>
                     </div>
 
-                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px' }}>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>Người kế thừa</div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '10px' }}>Vai trò sẽ tự động kế thừa quyền từ vai trò hiện tại.</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
-                        {INHERITABLE_ROLES.length === 0 && (
-                          <div style={{ fontSize: '13px', color: '#94a3b8' }}>Chưa có vai trò nào để cấu hình kế thừa.</div>
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', background: '#ffffff' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '4px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>Được kế thừa bởi</div>
+                        <button
+                          type="button"
+                          onClick={() => addRoleRow('inheritedByRoleIds')}
+                          style={{ border: '1px solid #cbd5e1', background: '#fff', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                        >
+                          Thêm dòng
+                        </button>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Mỗi dòng là một vai trò sẽ nhận toàn bộ quyền từ vai trò hiện tại.</div>
+                      <div style={{ display: 'grid', gap: '8px' }}>
+                        {formData.inheritedByRoleIds.length === 0 && (
+                          <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>Chưa có dòng nào. Nhấn “Thêm dòng” để chọn vai trò nhận quyền.</div>
                         )}
-                        {INHERITABLE_ROLES.map(role => (
-                          <label key={`by-${role.id}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px', cursor: 'pointer' }}>
-                            <input
-                              type="checkbox"
-                              checked={formData.inheritedByRoleIds.includes(role.id)}
-                              onChange={() => toggleInheritedByRole(role.id)}
-                            />
-                            <span>
-                              <span style={{ display: 'block', fontWeight: 600, fontSize: '13px', color: '#1e293b' }}>{role.name}</span>
-                              <span style={{ display: 'block', fontSize: '12px', color: '#64748b' }}>{role.description}</span>
-                            </span>
-                          </label>
+                        {formData.inheritedByRoleIds.map((roleId, index) => (
+                          <div key={`by-row-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px' }}>
+                            <select
+                              className="select-modern"
+                              value={roleId}
+                              onChange={e => updateRoleRow('inheritedByRoleIds', index, e.target.value)}
+                            >
+                              <option value="">-- Chọn vai trò nhận quyền --</option>
+                              {INHERITABLE_ROLES.map(role => (
+                                <option key={role.id} value={role.id} disabled={isRoleSelectedElsewhere(formData.inheritedByRoleIds, index, role.id)}>
+                                  {role.name}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => removeRoleRow('inheritedByRoleIds', index)}
+                              style={{ border: 'none', background: '#fef2f2', color: '#dc2626', borderRadius: '8px', padding: '8px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}
+                            >
+                              Xóa
+                            </button>
+                          </div>
                         ))}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', padding: '12px' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '8px' }}>Quyền kế thừa hiệu lực ({inheritedPermissions.length})</div>
-                    {inheritedPermissions.length === 0 ? (
-                      <div style={{ fontSize: '12px', color: '#94a3b8' }}>Chưa có quyền kế thừa.</div>
-                    ) : (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {inheritedPermissions.map(key => (
-                          <span key={key} style={{ fontSize: '12px', color: '#334155', background: '#e2e8f0', padding: '4px 8px', borderRadius: '999px' }}>
-                            {getPermissionLabel(key)}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div style={{ marginTop: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Nguồn kế thừa đã chọn ({inheritedFromRoles.length})</div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>
-                        {inheritedFromRoles.length === 0 ? 'Chưa chọn.' : inheritedFromRoles.map(r => r.name).join(', ')}
-                      </div>
-                    </div>
-                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '10px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Vai trò kế thừa từ vai trò này ({inheritedByRoles.length})</div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>
-                        {inheritedByRoles.length === 0 ? 'Chưa chọn.' : inheritedByRoles.map(r => r.name).join(', ')}
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
-
-              {activePermissionTab === 'additional' && (
-                <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', padding: '16px' }}>
-                  <p style={{ marginTop: 0, marginBottom: '12px', fontSize: '13px', color: '#64748b' }}>
-                    Quyền bổ sung giúp cấu hình nhanh các quyền đặc biệt ngoài bộ phân quyền chuẩn.
-                  </p>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
-                    {ADDITIONAL_PERMISSIONS.map(item => (
-                      <label key={item.key} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '12px', cursor: 'pointer' }}>
-                        <input
-                          type="checkbox"
-                          checked={formData.additionalPermissions.includes(item.key)}
-                          onChange={() => toggleAdditionalPermission(item.key)}
-                        />
-                        <span>
-                          <span style={{ display: 'block', fontWeight: 600, fontSize: '13px', color: '#1e293b' }}>{item.title}</span>
-                          <span style={{ display: 'block', fontSize: '12px', color: '#64748b' }}>{item.description}</span>
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-
-                  <div style={{ marginTop: '12px', fontSize: '12px', color: '#334155', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '8px', padding: '10px' }}>
-                    Khi bật quyền "Xem bản ghi không phải owner (toàn hệ thống)", hệ thống sẽ tự thêm các quyền xem ngoài owner cho Lead, Khách hàng, Công việc, Mục tiêu, Hợp đồng và Nghiệm thu.
-                  </div>
-                </div>
-              )}
-
-              <div style={{ marginTop: '16px', padding: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', fontSize: '12px', color: '#475569' }}>
-                Tổng quyền hiệu lực hiện tại: <strong>{effectivePermissions.length}</strong>
-              </div>
             </div>
           </div>
 
