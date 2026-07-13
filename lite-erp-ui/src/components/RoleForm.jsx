@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronDown, ChevronUp, Save, Shield, List, CheckCircle2, AlertCircle } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
@@ -15,11 +15,13 @@ export default function RoleForm() {
     description: '',
     status: 'Active',
     permissions: [],
+    dataPermissions: [],
     inheritedRoleIds: [],
     inheritedByRoleIds: []
   });
   const [expandedGroups, setExpandedGroups] = useState({});
   const [activePermissionTab, setActivePermissionTab] = useState('detailed');
+  const [detailedRecordScope, setDetailedRecordScope] = useState('own');
   const [submitError, setSubmitError] = useState('');
 
   const PERMISSION_GROUPS = [
@@ -129,7 +131,87 @@ export default function RoleForm() {
     }
   ];
 
+  const DATA_FIELD_CATALOG = useMemo(() => ({
+    owner_id: { label: 'Owner', description: 'Người sở hữu bản ghi' },
+    status: { label: 'Trạng thái', description: 'Trạng thái xử lý nghiệp vụ' },
+    priority: { label: 'Độ ưu tiên', description: 'Mức ưu tiên xử lý' },
+    tags: { label: 'Nhãn', description: 'Phân loại bản ghi bằng tag' },
+    expected_revenue: { label: 'Doanh thu kỳ vọng', description: 'Giá trị dự kiến của cơ hội' },
+    contract_value: { label: 'Giá trị hợp đồng', description: 'Giá trị tài chính của hợp đồng' },
+    billing_amount: { label: 'Giá trị thanh toán', description: 'Giá trị thanh toán theo hóa đơn' },
+    customer_name: { label: 'Tên khách hàng', description: 'Tên doanh nghiệp/cá nhân' },
+    customer_code: { label: 'Mã khách hàng', description: 'Định danh nội bộ khách hàng' },
+    tax_code: { label: 'Mã số thuế', description: 'Thông tin định danh pháp lý' },
+    phone: { label: 'Số điện thoại', description: 'Thông tin liên hệ chính' },
+    email: { label: 'Email', description: 'Địa chỉ thư điện tử liên hệ' },
+    address: { label: 'Địa chỉ', description: 'Địa chỉ giao dịch/liên hệ' },
+    start_date: { label: 'Ngày bắt đầu', description: 'Ngày hiệu lực bắt đầu' },
+    end_date: { label: 'Ngày kết thúc', description: 'Ngày hết hiệu lực' },
+    created_at: { label: 'Ngày tạo', description: 'Thời điểm tạo bản ghi' },
+    updated_at: { label: 'Ngày cập nhật', description: 'Thời điểm chỉnh sửa gần nhất' }
+  }), []);
+
+  const DATA_PERMISSION_RECORDS = useMemo(() => ([
+    {
+      key: 'lead',
+      label: 'Lead',
+      fields: ['owner_id', 'status', 'priority', 'expected_revenue', 'tags', 'created_at', 'updated_at']
+    },
+    {
+      key: 'customer',
+      label: 'Khách hàng',
+      fields: ['owner_id', 'customer_name', 'customer_code', 'tax_code', 'phone', 'email', 'address', 'tags', 'status', 'created_at', 'updated_at']
+    },
+    {
+      key: 'contract',
+      label: 'Hợp đồng',
+      fields: ['owner_id', 'contract_value', 'status', 'start_date', 'end_date', 'customer_code', 'tags', 'created_at', 'updated_at']
+    },
+    {
+      key: 'acceptance',
+      label: 'Nghiệm thu',
+      fields: ['owner_id', 'status', 'start_date', 'end_date', 'billing_amount', 'customer_code', 'created_at', 'updated_at']
+    }
+  ]), []);
+
+  const allDataPermissionKeys = useMemo(
+    () => DATA_PERMISSION_RECORDS.flatMap(record => record.fields.map(fieldKey => `${record.key}.${fieldKey}`)),
+    [DATA_PERMISSION_RECORDS]
+  );
+
   const INHERITABLE_ROLES = allRoles.filter(role => role.id !== formData.id);
+
+  const NON_OWNER_PERMISSION_DEPENDENCIES = {
+    lead_view_non_owner: ['lead_search', 'lead_detail'],
+    customer_view_non_owner: ['customer_view'],
+    task_view_non_owner: ['task_view'],
+    goal_plan_view_non_owner: ['goal_plan_view'],
+    contract_view_non_owner: ['contract_view'],
+    acceptance_view_non_owner: ['acceptance_view']
+  };
+
+  const NON_OWNER_PERMISSION_KEYS = Object.keys(NON_OWNER_PERMISSION_DEPENDENCIES);
+  const CREATE_PERMISSION_KEYS = PERMISSION_GROUPS
+    .flatMap(group => group.keys)
+    .filter(key => key.endsWith('_create'));
+
+  const applyRecordScopeToPermissions = (permissions, scope) => {
+    const normalized = Array.from(new Set(permissions || []));
+    if (scope === 'own') {
+      return normalized.filter(key => !NON_OWNER_PERMISSION_KEYS.includes(key));
+    }
+
+    let result = normalized.filter(key => !CREATE_PERMISSION_KEYS.includes(key));
+    NON_OWNER_PERMISSION_KEYS.forEach(nonOwnerKey => {
+      const dependencies = NON_OWNER_PERMISSION_DEPENDENCIES[nonOwnerKey] || [];
+      const canEnable = dependencies.some(dependencyKey => result.includes(dependencyKey));
+      if (canEnable && !result.includes(nonOwnerKey)) {
+        result.push(nonOwnerKey);
+      }
+    });
+
+    return result;
+  };
 
   useEffect(() => {
     if (isEdit) {
@@ -142,19 +224,25 @@ export default function RoleForm() {
         setFormData({
           ...role,
           permissions: role.permissions || [],
+          dataPermissions: Object.prototype.hasOwnProperty.call(role, 'dataPermissions')
+            ? (role.dataPermissions || [])
+            : allDataPermissionKeys,
           inheritedRoleIds: role.inheritedRoleIds || [],
           inheritedByRoleIds
         });
+        setDetailedRecordScope((role.permissions || []).some(key => NON_OWNER_PERMISSION_KEYS.includes(key)) ? 'all' : 'own');
       }
     } else {
       setFormData(prev => ({
         ...prev,
         id: mockStore.getNextRoleId(),
+        dataPermissions: allDataPermissionKeys,
         inheritedRoleIds: [],
         inheritedByRoleIds: []
       }));
+      setDetailedRecordScope('own');
     }
-  }, [id, isEdit]);
+  }, [id, isEdit, allDataPermissionKeys]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -188,14 +276,45 @@ export default function RoleForm() {
   };
 
   const togglePermission = (key) => {
+    if (detailedRecordScope === 'own' && NON_OWNER_PERMISSION_KEYS.includes(key)) {
+      return;
+    }
+
+    if (detailedRecordScope === 'all' && CREATE_PERMISSION_KEYS.includes(key)) {
+      return;
+    }
+
     const newPerms = formData.permissions.includes(key)
       ? formData.permissions.filter(k => k !== key)
       : [...formData.permissions, key];
-    setFormData({ ...formData, permissions: newPerms });
+
+    setFormData({ ...formData, permissions: applyRecordScopeToPermissions(newPerms, detailedRecordScope) });
+  };
+
+  const handleChangeDetailedRecordScope = (scope) => {
+    setDetailedRecordScope(scope);
+    setFormData({
+      ...formData,
+      permissions: applyRecordScopeToPermissions(formData.permissions || [], scope)
+    });
   };
 
   const toggleGroup = (groupName) => {
     setExpandedGroups(prev => ({ ...prev, [groupName]: !(prev[groupName] ?? true) }));
+  };
+
+  const getDataPermissionKey = (recordKey, fieldKey) => `${recordKey}.${fieldKey}`;
+
+  const hasDataPermission = (recordKey, fieldKey) =>
+    (formData.dataPermissions || []).includes(getDataPermissionKey(recordKey, fieldKey));
+
+  const toggleDataPermission = (recordKey, fieldKey) => {
+    const permissionKey = getDataPermissionKey(recordKey, fieldKey);
+    const currentPermissions = formData.dataPermissions || [];
+    const dataPermissions = currentPermissions.includes(permissionKey)
+      ? currentPermissions.filter(key => key !== permissionKey)
+      : [...currentPermissions, permissionKey];
+    setFormData({ ...formData, dataPermissions });
   };
 
   const toggleInheritedRole = (roleId) => {
@@ -257,7 +376,7 @@ export default function RoleForm() {
     lead_detail: 'Xem chi tiết lead',
     lead_export: 'Export danh sách lead',
     lead_delete: 'Xóa LEAD',
-    lead_mark_failed: 'Không thành công Lead',
+    lead_mark_failed: 'Đánh dấu Lead thất bại',
 
     customer_create: 'Tạo mới hồ sơ khách hàng',
     customer_edit: 'Chỉnh sửa hồ sơ khách hàng',
@@ -413,37 +532,95 @@ export default function RoleForm() {
                   >
                     Kế thừa quyền
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setActivePermissionTab('data')}
+                    style={{
+                      border: 'none',
+                      background: activePermissionTab === 'data' ? '#fff' : 'transparent',
+                      color: activePermissionTab === 'data' ? '#EE0033' : '#475569',
+                      fontWeight: 700,
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Quyền dữ liệu
+                  </button>
                 </div>
               </div>
 
               {activePermissionTab === 'detailed' && (
-                <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
-                  {PERMISSION_GROUPS.map((group, idx) => {
-                    const expanded = expandedGroups[group.name] ?? true;
-                    return (
-                      <div key={group.name} style={{ borderBottom: idx === PERMISSION_GROUPS.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b', cursor: 'pointer' }} onClick={() => toggleGroup(group.name)}>
-                          <span>{group.name}</span>
-                          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', background: '#fff' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '10px' }}>Phạm vi bản ghi</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(220px, 1fr))', gap: '8px' }}>
+                      <label style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', alignItems: 'start', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="detailed-record-scope"
+                          checked={detailedRecordScope === 'own'}
+                          onChange={() => handleChangeDetailedRecordScope('own')}
+                          style={{ marginTop: '2px' }}
+                        />
+                        <div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Chỉ của tôi</div>
                         </div>
-                        {expanded && (
-                          <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                            {group.keys.map(key => (
-                              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#475569' }}>
-                                <input
-                                  type="checkbox"
-                                  checked={formData.permissions.includes(key)}
-                                  onChange={() => togglePermission(key)}
-                                />
-                                {getPermissionLabel(key)}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                      </label>
 
+                      <label style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', alignItems: 'start', cursor: 'pointer' }}>
+                        <input
+                          type="radio"
+                          name="detailed-record-scope"
+                          checked={detailedRecordScope === 'all'}
+                          onChange={() => handleChangeDetailedRecordScope('all')}
+                          style={{ marginTop: '2px' }}
+                        />
+                        <div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Tất cả</div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
+                    {PERMISSION_GROUPS.map((group, idx) => {
+                      const expanded = expandedGroups[group.name] ?? true;
+                      const visibleGroupKeys = group.keys.filter(key => !NON_OWNER_PERMISSION_KEYS.includes(key));
+                      return (
+                        <div key={group.name} style={{ borderBottom: idx === PERMISSION_GROUPS.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b', cursor: 'pointer' }} onClick={() => toggleGroup(group.name)}>
+                            <span>{group.name}</span>
+                            {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </div>
+                          {expanded && (
+                            <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                              {visibleGroupKeys.map(key => {
+                                const isNonOwnerPermission = NON_OWNER_PERMISSION_KEYS.includes(key);
+                                const isCreatePermission = CREATE_PERMISSION_KEYS.includes(key);
+                                const isDisabled =
+                                  (isNonOwnerPermission && detailedRecordScope === 'own')
+                                  || (isCreatePermission && detailedRecordScope === 'all');
+
+                                return (
+                                  <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: isDisabled ? 'not-allowed' : 'pointer', fontSize: '13px', color: isDisabled ? '#94a3b8' : '#475569' }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={formData.permissions.includes(key)}
+                                      onChange={() => togglePermission(key)}
+                                      disabled={isDisabled}
+                                    />
+                                    {getPermissionLabel(key)}
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                  </div>
                 </div>
               )}
 
@@ -499,40 +676,31 @@ export default function RoleForm() {
                     <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', background: '#ffffff' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '4px' }}>
                         <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>Được kế thừa bởi</div>
-                        <button
-                          type="button"
-                          onClick={() => addRoleRow('inheritedByRoleIds')}
-                          style={{ border: '1px solid #cbd5e1', background: '#fff', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
-                        >
-                          Thêm dòng
-                        </button>
                       </div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Mỗi dòng là một vai trò sẽ nhận toàn bộ quyền từ vai trò hiện tại.</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>
+                        Danh sách này lấy từ cấu hình của các vai trò khác (chỉ hiển thị, không chỉnh sửa tại đây).
+                      </div>
                       <div style={{ display: 'grid', gap: '8px' }}>
-                        {formData.inheritedByRoleIds.length === 0 && (
-                          <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>Chưa có dòng nào. Nhấn “Thêm dòng” để chọn vai trò nhận quyền.</div>
+                        {inheritedByRoles.length === 0 && (
+                          <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>
+                            Chưa có vai trò nào kế thừa role này.
+                          </div>
                         )}
-                        {formData.inheritedByRoleIds.map((roleId, index) => (
-                          <div key={`by-row-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px' }}>
-                            <select
-                              className="select-modern"
-                              value={roleId}
-                              onChange={e => updateRoleRow('inheritedByRoleIds', index, e.target.value)}
-                            >
-                              <option value="">-- Chọn vai trò nhận quyền --</option>
-                              {INHERITABLE_ROLES.map(role => (
-                                <option key={role.id} value={role.id} disabled={isRoleSelectedElsewhere(formData.inheritedByRoleIds, index, role.id)}>
-                                  {role.name}
-                                </option>
-                              ))}
-                            </select>
-                            <button
-                              type="button"
-                              onClick={() => removeRoleRow('inheritedByRoleIds', index)}
-                              style={{ border: 'none', background: '#fef2f2', color: '#dc2626', borderRadius: '8px', padding: '8px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 700 }}
-                            >
-                              Xóa
-                            </button>
+                        {inheritedByRoles.map((role) => (
+                          <div
+                            key={role.id}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr auto',
+                              gap: '8px',
+                              alignItems: 'center',
+                              border: '1px solid #e2e8f0',
+                              borderRadius: '10px',
+                              padding: '10px'
+                            }}
+                          >
+                            <div style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>{role.name}</div>
+                            <div style={{ fontSize: '11px', color: '#64748b' }}>{role.id}</div>
                           </div>
                         ))}
                       </div>
@@ -541,6 +709,55 @@ export default function RoleForm() {
 
                 </div>
               )}
+
+              {activePermissionTab === 'data' && (
+                <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '16px', background: '#fff' }}>
+                  <div style={{ marginBottom: '14px', padding: '12px 14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '13px', color: '#334155', lineHeight: '1.6' }}>
+                    Cho phép giới hạn: vai trò nào được xem một trường thông tin cụ thể trên bản ghi (ví dụ: chỉ Quản lý mới xem được Doanh thu dự kiến, Nhân viên thường sẽ không thấy trường này).
+                  </div>
+
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    {DATA_PERMISSION_RECORDS.map(record => {
+                      const selectedCount = record.fields.filter(fieldKey => hasDataPermission(record.key, fieldKey)).length;
+
+                      return (
+                        <div key={record.key} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            <div>
+                              <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>{record.label}</div>
+                              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '3px' }}>{selectedCount}/{record.fields.length} cột đang view</div>
+                            </div>
+                          </div>
+
+                          <div style={{ padding: '12px 14px', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(220px, 1fr))', gap: '10px' }}>
+                            {record.fields.map(fieldKey => {
+                              return (
+                                <label key={`${record.key}-${fieldKey}`} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', alignItems: 'start', border: '1px solid #f1f5f9', borderRadius: '10px', padding: '9px 10px', cursor: 'pointer' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={hasDataPermission(record.key, fieldKey)}
+                                    onChange={() => toggleDataPermission(record.key, fieldKey)}
+                                    style={{ marginTop: '2px' }}
+                                  />
+                                  <div>
+                                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>
+                                      {DATA_FIELD_CATALOG[fieldKey]?.label || getPermissionLabel(fieldKey)}
+                                    </div>
+                                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
+                                      {DATA_FIELD_CATALOG[fieldKey]?.description || 'Field dữ liệu'}
+                                    </div>
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
 
