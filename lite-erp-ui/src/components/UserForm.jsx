@@ -162,7 +162,7 @@ export default function UserForm() {
                 >
                   <option value="">-- Không có quản lý --</option>
                   {allUsers.filter(u => u.id !== formData.id).map(u => (
-                    <option key={u.id} value={u.id}>{u.fullName}</option>
+                    <option key={u.id} value={u.id}>{u.username || u.email || u.fullName}</option>
                   ))}
                 </select>
               </div>
