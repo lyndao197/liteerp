@@ -299,7 +299,6 @@ export default function UserList() {
               <th>Phòng ban</th>
               <th>Chức danh</th>
               <th>Quản lý trực tiếp</th>
-              <th>Là quản lý</th>
               <th>Ngày hết hạn nghỉ</th>
               <th>Lý do nghỉ</th>
               <th>Vai trò hệ thống</th>
@@ -324,9 +323,6 @@ export default function UserList() {
                 <td>{u.department || ''}</td>
                 <td>{u.position || ''}</td>
                 <td>{users.find(manager => manager.id === u.managerId)?.fullName || ''}</td>
-                <td style={{ textAlign: 'center' }}>
-                  {u.isManager ? <span style={{ background: '#f1f5f9', color: '#0f172a', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 600 }}>Quản lý</span> : ''}
-                </td>
                 <td style={{ fontSize: '12px', color: '#0f172a' }}>{u.leaveEndDate || ''}</td>
                 <td style={{ fontSize: '12px', color: '#64748b' }}>{u.leaveReason || ''}</td>
                 <td>
