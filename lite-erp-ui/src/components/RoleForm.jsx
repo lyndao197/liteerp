@@ -132,45 +132,79 @@ export default function RoleForm() {
   ];
 
   const DATA_FIELD_CATALOG = useMemo(() => ({
-    owner_id: { label: 'Owner', description: 'Người sở hữu bản ghi' },
+    id: { label: 'ID', description: 'Mã bản ghi' },
+    content: { label: 'Tên lead', description: 'Tên lead hiển thị trên board' },
+    company: { label: 'Tên khách hàng', description: 'Tên doanh nghiệp/công ty' },
+    mst: { label: 'Mã số thuế', description: 'Thông tin định danh pháp lý' },
+    projectedService: { label: 'Dịch vụ dự kiến', description: 'Dịch vụ chính của lead' },
+    probability: { label: 'Xác suất', description: 'Xác suất chốt lead' },
     status: { label: 'Trạng thái', description: 'Trạng thái xử lý nghiệp vụ' },
-    priority: { label: 'Độ ưu tiên', description: 'Mức ưu tiên xử lý' },
     tags: { label: 'Nhãn', description: 'Phân loại bản ghi bằng tag' },
-    expected_revenue: { label: 'Doanh thu kỳ vọng', description: 'Giá trị dự kiến của cơ hội' },
-    contract_value: { label: 'Giá trị hợp đồng', description: 'Giá trị tài chính của hợp đồng' },
-    billing_amount: { label: 'Giá trị thanh toán', description: 'Giá trị thanh toán theo hóa đơn' },
-    customer_name: { label: 'Tên khách hàng', description: 'Tên doanh nghiệp/cá nhân' },
-    customer_code: { label: 'Mã khách hàng', description: 'Định danh nội bộ khách hàng' },
-    tax_code: { label: 'Mã số thuế', description: 'Thông tin định danh pháp lý' },
-    phone: { label: 'Số điện thoại', description: 'Thông tin liên hệ chính' },
-    email: { label: 'Email', description: 'Địa chỉ thư điện tử liên hệ' },
-    address: { label: 'Địa chỉ', description: 'Địa chỉ giao dịch/liên hệ' },
-    start_date: { label: 'Ngày bắt đầu', description: 'Ngày hiệu lực bắt đầu' },
-    end_date: { label: 'Ngày kết thúc', description: 'Ngày hết hiệu lực' },
-    created_at: { label: 'Ngày tạo', description: 'Thời điểm tạo bản ghi' },
-    updated_at: { label: 'Ngày cập nhật', description: 'Thời điểm chỉnh sửa gần nhất' }
+    revenue: { label: 'Doanh thu dự kiến', description: 'Giá trị doanh thu dự kiến' },
+    salesperson: { label: 'Sale phụ trách', description: 'Nhân sự phụ trách chính' },
+    date: { label: 'Ngày tạo', description: 'Ngày tạo lead' },
+    attachments: { label: 'Số tệp đính kèm', description: 'Tổng tệp đính kèm' },
+    comments: { label: 'Số bình luận', description: 'Tổng bình luận' },
+
+    contractNo: { label: 'Số hợp đồng', description: 'Mã số hợp đồng' },
+    name: { label: 'Tên hợp đồng', description: 'Tên hiển thị của hợp đồng' },
+    customerId: { label: 'Mã khách hàng', description: 'Định danh khách hàng' },
+    customerName: { label: 'Tên khách hàng', description: 'Tên doanh nghiệp/cá nhân' },
+    shortName: { label: 'Tên viết tắt', description: 'Tên ngắn của khách hàng' },
+    amName: { label: 'AM phụ trách', description: 'Nhân sự account phụ trách' },
+    promotionUnit: { label: 'Đơn vị xúc tiến', description: 'Đơn vị triển khai/xúc tiến' },
+    projectType: { label: 'Loại dự án', description: 'Nhóm dự án triển khai' },
+    serviceType: { label: 'Loại dịch vụ', description: 'Phân loại dịch vụ hợp đồng' },
+    classification: { label: 'Phân loại', description: 'Ngoài/Nội bộ' },
+    contractStatus: { label: 'Trạng thái hợp đồng', description: 'Tình trạng hiện tại của hợp đồng' },
+    implementationStatus: { label: 'Trạng thái triển khai', description: 'Mức độ triển khai thực tế' },
+    revenueStatus: { label: 'Trạng thái doanh thu', description: 'Đã/Chưa ghi nhận doanh thu' },
+    revenueMonth: { label: 'Tháng ghi nhận doanh thu', description: 'Thời điểm ghi nhận doanh thu' },
+    contractValue: { label: 'Giá trị hợp đồng', description: 'Tổng giá trị tài chính' },
+    unitPrice: { label: 'Đơn giá', description: 'Đơn giá trung bình/đơn vị' },
+    totalContracts: { label: 'Tổng số hợp đồng', description: 'Số lượng hợp đồng liên quan' },
+    effectiveDate: { label: 'Ngày hiệu lực', description: 'Ngày bắt đầu hiệu lực' },
+    expiryDate: { label: 'Ngày hết hiệu lực', description: 'Ngày kết thúc hiệu lực' },
+    signedDate: { label: 'Ngày ký', description: 'Ngày ký hợp đồng' },
+    serviceContent: { label: 'Nội dung dịch vụ', description: 'Mô tả phạm vi dịch vụ' },
+    notes: { label: 'Ghi chú', description: 'Thông tin bổ sung' },
+    approvalStatus: { label: 'Trạng thái phê duyệt', description: 'Trạng thái phê duyệt nội bộ' },
+
+    reconcNo: { label: 'Số đối soát', description: 'Mã đợt đối soát' },
+    month: { label: 'Tháng', description: 'Tháng đối soát' },
+    year: { label: 'Năm', description: 'Năm đối soát' },
+    slaScore: { label: 'Điểm SLA', description: 'Điểm chất lượng SLA' },
+    penaltyRate: { label: 'Tỷ lệ phạt', description: 'Tỷ lệ phạt SLA' },
+    totalBeforePenalty: { label: 'Tổng trước phạt', description: 'Tổng giá trị trước khấu trừ' },
+    penaltyAmount: { label: 'Tiền phạt', description: 'Số tiền bị khấu trừ' },
+    totalAfterPenalty: { label: 'Tổng sau phạt', description: 'Tổng giá trị sau khấu trừ' },
+    vatRate: { label: 'VAT (%)', description: 'Tỷ lệ VAT áp dụng' },
+    vatAmount: { label: 'Tiền VAT', description: 'Số tiền VAT' },
+    grandTotal: { label: 'Tổng cộng', description: 'Giá trị thanh toán cuối cùng' },
+    createdDate: { label: 'Ngày tạo', description: 'Ngày tạo bản ghi đối soát' },
+    confirmedDate: { label: 'Ngày xác nhận', description: 'Ngày xác nhận đối soát' }
   }), []);
 
   const DATA_PERMISSION_RECORDS = useMemo(() => ([
     {
       key: 'lead',
       label: 'Lead',
-      fields: ['owner_id', 'status', 'priority', 'expected_revenue', 'tags', 'created_at', 'updated_at']
+      fields: ['id', 'content', 'company', 'mst', 'projectedService', 'probability', 'status', 'tags', 'revenue', 'salesperson', 'date', 'attachments', 'comments']
     },
     {
       key: 'customer',
       label: 'Khách hàng',
-      fields: ['owner_id', 'customer_name', 'customer_code', 'tax_code', 'phone', 'email', 'address', 'tags', 'status', 'created_at', 'updated_at']
+      fields: ['id', 'customerName', 'shortName', 'mst', 'customerId', 'status', 'tags', 'notes']
     },
     {
       key: 'contract',
       label: 'Hợp đồng',
-      fields: ['owner_id', 'contract_value', 'status', 'start_date', 'end_date', 'customer_code', 'tags', 'created_at', 'updated_at']
+      fields: ['id', 'contractNo', 'name', 'customerId', 'customerName', 'shortName', 'amName', 'promotionUnit', 'projectType', 'serviceType', 'classification', 'contractStatus', 'implementationStatus', 'revenueStatus', 'revenueMonth', 'contractValue', 'unitPrice', 'totalContracts', 'effectiveDate', 'expiryDate', 'signedDate', 'serviceContent', 'notes', 'approvalStatus']
     },
     {
       key: 'acceptance',
       label: 'Nghiệm thu',
-      fields: ['owner_id', 'status', 'start_date', 'end_date', 'billing_amount', 'customer_code', 'created_at', 'updated_at']
+      fields: ['id', 'reconcNo', 'customerId', 'customerName', 'shortName', 'contractNo', 'month', 'year', 'status', 'slaScore', 'penaltyRate', 'totalBeforePenalty', 'penaltyAmount', 'totalAfterPenalty', 'vatRate', 'vatAmount', 'grandTotal', 'notes', 'createdDate', 'confirmedDate']
     }
   ]), []);
 

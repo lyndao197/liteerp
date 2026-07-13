@@ -294,7 +294,7 @@ export default function UserList() {
               <th>STT</th>
               <th>Tên nhân viên</th>
               <th>Tên đăng nhập</th>
-              <th>Email</th>
+              <th>Email liên hệ</th>
               <th>Số điện thoại</th>
               <th>Phòng ban</th>
               <th>Chức danh</th>
