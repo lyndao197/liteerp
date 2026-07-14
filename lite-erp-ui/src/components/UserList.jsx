@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, ShieldCheck, Download, Upload, Filter } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
@@ -8,6 +8,8 @@ export default function UserList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({});
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   const [users, setUsers] = useState(() => mockStore.getAllUsers());
 
@@ -25,6 +27,24 @@ export default function UserList() {
       return matchSearch && matchFilters;
     });
   }, [users, searchTerm, filters]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredUsers.slice(start, start + pageSize);
+  }, [filteredUsers, currentPage]);
+
+  const displayStart = filteredUsers.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const displayEnd = filteredUsers.length === 0 ? 0 : Math.min(currentPage * pageSize, filteredUsers.length);
 
   const handleToggleStatus = (e, id) => {
     e.stopPropagation();
@@ -306,9 +326,9 @@ export default function UserList() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length > 0 ? filteredUsers.map((u, idx) => (
+            {filteredUsers.length > 0 ? paginatedUsers.map((u, idx) => (
               <tr key={u.id} onClick={() => navigate(`/user/edit/${u.id}`)} style={{ cursor: 'pointer' }}>
-                <td style={{ textAlign: 'center' }}>{idx + 1}</td>
+                <td style={{ textAlign: 'center' }}>{(currentPage - 1) * pageSize + idx + 1}</td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#EE003310', color: '#EE0033', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
@@ -343,13 +363,72 @@ export default function UserList() {
               </tr>
             )) : (
               <tr>
-                <td colSpan="13" style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
+                <td colSpan="12" style={{ textAlign: 'center', padding: '48px', color: '#94a3b8' }}>
                   Không tìm thấy người dùng nào.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      <div
+        style={{
+          marginTop: '14px',
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: '14px',
+          padding: '14px 18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          flexWrap: 'wrap'
+        }}
+      >
+        <div style={{ color: '#64748b', fontSize: '14px', fontWeight: 500 }}>
+          Hiển thị <strong style={{ color: '#334155' }}>{displayStart} - {displayEnd}</strong> trong số <strong style={{ color: '#334155' }}>{filteredUsers.length}</strong> người dùng
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+            style={{ width: '42px', height: '42px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', color: '#94a3b8', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontSize: '20px', lineHeight: 1 }}
+          >
+            «
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            style={{ width: '42px', height: '42px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', color: '#94a3b8', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontSize: '20px', lineHeight: 1 }}
+          >
+            ‹
+          </button>
+
+          <div style={{ minWidth: '98px', textAlign: 'center', color: '#334155', fontWeight: 700, fontSize: '16px' }}>
+            Trang {currentPage} / {totalPages}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            style={{ width: '42px', height: '42px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', color: '#94a3b8', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontSize: '20px', lineHeight: 1 }}
+          >
+            ›
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+            style={{ width: '42px', height: '42px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', color: '#94a3b8', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', fontSize: '20px', lineHeight: 1 }}
+          >
+            »
+          </button>
+        </div>
       </div>
     </div>
   );
