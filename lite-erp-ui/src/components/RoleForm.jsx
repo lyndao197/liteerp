@@ -760,7 +760,6 @@ export default function RoleForm() {
                   <div style={{ display: 'grid', gap: '12px' }}>
                     {DATA_PERMISSION_RECORDS.map(record => {
                       const configuredFields = getDataPermissionRows(record.key).filter(Boolean);
-                      const selectedCount = configuredFields.length > 0 ? configuredFields.length : record.fields.length;
                       const dataScope = (formData.dataScopeByRecord || defaultDataScopeByRecord)[record.key] || 'all';
                       const moduleExpanded = expandedDataModules[record.key] ?? true;
 
@@ -769,7 +768,6 @@ export default function RoleForm() {
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                             <div>
                               <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>{record.label}</div>
-                              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '3px' }}>{selectedCount}/{record.fields.length} cột đang view</div>
                             </div>
                             <button
                               type="button"
