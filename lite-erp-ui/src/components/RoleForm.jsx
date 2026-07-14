@@ -23,6 +23,7 @@ export default function RoleForm() {
   const [expandedGroups, setExpandedGroups] = useState({});
   const [expandedDataModules, setExpandedDataModules] = useState({});
   const [activePermissionTab, setActivePermissionTab] = useState('detailed');
+  const [dataPermissionRowsByRecord, setDataPermissionRowsByRecord] = useState({});
   const [submitError, setSubmitError] = useState('');
 
   const PERMISSION_GROUPS = [
@@ -222,6 +223,24 @@ export default function RoleForm() {
     [DATA_PERMISSION_RECORDS]
   );
 
+  const buildDataPermissionRowsByRecord = (dataPermissions = []) => {
+    const permissionSet = new Set(dataPermissions || []);
+
+    return DATA_PERMISSION_RECORDS.reduce((acc, record) => {
+      const selectedFields = record.fields.filter(fieldKey => permissionSet.has(`${record.key}.${fieldKey}`));
+      acc[record.key] = selectedFields.length === 0 || selectedFields.length === record.fields.length ? [] : selectedFields;
+      return acc;
+    }, {});
+  };
+
+  const flattenDataPermissionRowsByRecord = (rowsByRecord = {}) => {
+    return DATA_PERMISSION_RECORDS.flatMap(record =>
+      (rowsByRecord[record.key] || [])
+        .filter(Boolean)
+        .map(fieldKey => `${record.key}.${fieldKey}`)
+    );
+  };
+
   const INHERITABLE_ROLES = allRoles.filter(role => role.id !== formData.id);
 
   const NON_OWNER_PERMISSION_KEYS = [
@@ -254,16 +273,18 @@ export default function RoleForm() {
           inheritedRoleIds: role.inheritedRoleIds || [],
           inheritedByRoleIds
         });
+        setDataPermissionRowsByRecord(buildDataPermissionRowsByRecord(role.dataPermissions || []));
       }
     } else {
       setFormData(prev => ({
         ...prev,
         id: mockStore.getNextRoleId(),
-        dataPermissions: allDataPermissionKeys,
+        dataPermissions: [],
         dataScopeByRecord: defaultDataScopeByRecord,
         inheritedRoleIds: [],
         inheritedByRoleIds: []
       }));
+      setDataPermissionRowsByRecord(buildDataPermissionRowsByRecord([]));
     }
   }, [id, isEdit, allDataPermissionKeys, defaultDataScopeByRecord]);
 
@@ -285,10 +306,13 @@ export default function RoleForm() {
       return;
     }
 
+    const normalizedDataPermissions = flattenDataPermissionRowsByRecord(dataPermissionRowsByRecord);
+
     const dataToSave = {
       ...formData,
       name: normalizedName,
       description: String(formData.description || '').trim(),
+      dataPermissions: normalizedDataPermissions,
       inheritedRoleIds: selectedInheritedRoleIds,
       inheritedByRoleIds: selectedInheritedByRoleIds
     };
@@ -316,16 +340,36 @@ export default function RoleForm() {
 
   const getDataPermissionKey = (recordKey, fieldKey) => `${recordKey}.${fieldKey}`;
 
-  const hasDataPermission = (recordKey, fieldKey) =>
-    (formData.dataPermissions || []).includes(getDataPermissionKey(recordKey, fieldKey));
+  const getDataPermissionRows = (recordKey) => dataPermissionRowsByRecord[recordKey] || [];
 
-  const toggleDataPermission = (recordKey, fieldKey) => {
-    const permissionKey = getDataPermissionKey(recordKey, fieldKey);
-    const currentPermissions = formData.dataPermissions || [];
-    const dataPermissions = currentPermissions.includes(permissionKey)
-      ? currentPermissions.filter(key => key !== permissionKey)
-      : [...currentPermissions, permissionKey];
-    setFormData({ ...formData, dataPermissions });
+  const addDataPermissionRow = (recordKey) => {
+    setDataPermissionRowsByRecord(prev => ({
+      ...prev,
+      [recordKey]: [...(prev[recordKey] || []), '']
+    }));
+  };
+
+  const updateDataPermissionRow = (recordKey, index, fieldKey) => {
+    setDataPermissionRowsByRecord(prev => {
+      const nextRows = [...(prev[recordKey] || [])];
+      nextRows[index] = fieldKey;
+      return {
+        ...prev,
+        [recordKey]: nextRows
+      };
+    });
+  };
+
+  const removeDataPermissionRow = (recordKey, index) => {
+    setDataPermissionRowsByRecord(prev => ({
+      ...prev,
+      [recordKey]: (prev[recordKey] || []).filter((_, rowIndex) => rowIndex !== index)
+    }));
+  };
+
+  const isDataFieldSelectedElsewhere = (recordKey, index, fieldKey) => {
+    if (!fieldKey) return false;
+    return (dataPermissionRowsByRecord[recordKey] || []).some((rowFieldKey, rowIndex) => rowIndex !== index && rowFieldKey === fieldKey);
   };
 
   const setDataScopeForRecord = (recordKey, scope) => {
@@ -695,9 +739,28 @@ export default function RoleForm() {
 
               {activePermissionTab === 'data' && (
                 <div style={{ border: '1px solid #f1f5f9', borderRadius: '12px', padding: '16px', background: '#fff' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(280px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', background: '#f8fafc' }}>
+                      <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>Phạm vi bản ghi</div>
+                      <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.6' }}>
+                        Xác định vai trò được xem những bản ghi nào: chỉ bản ghi do mình tạo, hoặc toàn bộ bản ghi trong hệ thống.
+                      </div>
+                    </div>
+                    <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', background: '#f8fafc' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '6px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Phạm vi trường dữ liệu</div>
+                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Thêm dòng</div>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.6' }}>
+                        Cấu hình cột dữ liệu được phép hiển thị theo từng nhóm bản ghi, cho phép giới hạn theo vai trò: mỗi trường thông tin chỉ hiển thị với những vai trò được cấp quyền xem.
+                      </div>
+                    </div>
+                  </div>
+
                   <div style={{ display: 'grid', gap: '12px' }}>
                     {DATA_PERMISSION_RECORDS.map(record => {
-                      const selectedCount = record.fields.filter(fieldKey => hasDataPermission(record.key, fieldKey)).length;
+                      const configuredFields = getDataPermissionRows(record.key).filter(Boolean);
+                      const selectedCount = configuredFields.length > 0 ? configuredFields.length : record.fields.length;
                       const dataScope = (formData.dataScopeByRecord || defaultDataScopeByRecord)[record.key] || 'all';
                       const moduleExpanded = expandedDataModules[record.key] ?? true;
 
@@ -722,10 +785,7 @@ export default function RoleForm() {
                           {moduleExpanded && (
                             <>
                               <div style={{ padding: '12px 14px', borderBottom: '1px solid #f1f5f9' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>Phạm vi bản ghi</div>
-                                <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                                  Xác định vai trò được xem những bản ghi nào: chỉ bản ghi do mình tạo, hoặc toàn bộ bản ghi trong hệ thống.
-                                </div>
+                                <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>Phạm vi bản ghi</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(180px, max-content))', gap: '8px' }}>
                                   <label style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 8px', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '6px', alignItems: 'center', fontSize: '12px', color: '#334155', background: '#fff', cursor: 'pointer' }}>
                                     <input
@@ -749,31 +809,49 @@ export default function RoleForm() {
                               </div>
 
                               <div style={{ padding: '12px 14px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>Phạm vi trường dữ liệu</div>
-                                <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                                  Cấu hình cột dữ liệu được phép hiển thị theo từng nhóm bản ghi, cho phép giới hạn theo vai trò: mỗi trường thông tin chỉ hiển thị với những vai trò được cấp quyền xem.
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '6px' }}>
+                                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Phạm vi trường dữ liệu</div>
+                                  <button
+                                    type="button"
+                                    onClick={() => addDataPermissionRow(record.key)}
+                                    style={{ border: '1px solid #cbd5e1', background: '#fff', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                                  >
+                                    Thêm dòng
+                                  </button>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(220px, 1fr))', gap: '10px' }}>
-                                  {record.fields.map(fieldKey => {
-                                    return (
-                                      <label key={`${record.key}-${fieldKey}`} style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '8px', alignItems: 'start', border: '1px solid #f1f5f9', borderRadius: '10px', padding: '9px 10px', cursor: 'pointer' }}>
-                                        <input
-                                          type="checkbox"
-                                          checked={hasDataPermission(record.key, fieldKey)}
-                                          onChange={() => toggleDataPermission(record.key, fieldKey)}
-                                          style={{ marginTop: '2px' }}
-                                        />
-                                        <div>
-                                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>
-                                            {DATA_FIELD_CATALOG[fieldKey]?.label || getPermissionLabel(fieldKey)}
-                                          </div>
-                                          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
-                                            {DATA_FIELD_CATALOG[fieldKey]?.description || 'Field dữ liệu'}
-                                          </div>
-                                        </div>
-                                      </label>
-                                    );
-                                  })}
+                                <div style={{ display: 'grid', gap: '8px' }}>
+                                  {configuredFields.length === 0 && getDataPermissionRows(record.key).length === 0 && (
+                                    <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>
+                                      Đang áp dụng hiển thị tất cả trường dữ liệu. Nhấn “Thêm dòng” để chọn các trường cần cấu hình riêng.
+                                    </div>
+                                  )}
+                                  {getDataPermissionRows(record.key).map((fieldKey, index) => (
+                                    <div key={`${record.key}-field-row-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px' }}>
+                                      <select
+                                        className="select-modern"
+                                        value={fieldKey}
+                                        onChange={e => updateDataPermissionRow(record.key, index, e.target.value)}
+                                      >
+                                        <option value="">-- Chọn trường dữ liệu --</option>
+                                        {record.fields.map(optionFieldKey => (
+                                          <option
+                                            key={optionFieldKey}
+                                            value={optionFieldKey}
+                                            disabled={isDataFieldSelectedElsewhere(record.key, index, optionFieldKey)}
+                                          >
+                                            {DATA_FIELD_CATALOG[optionFieldKey]?.label || getPermissionLabel(optionFieldKey)}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <button
+                                        type="button"
+                                        onClick={() => removeDataPermissionRow(record.key, index)}
+                                        style={{ border: '1px solid #fecaca', background: '#fff1f2', color: '#dc2626', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
+                                      >
+                                        Xóa
+                                      </button>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
                             </>
