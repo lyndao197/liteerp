@@ -28,90 +28,87 @@ export default function RoleForm() {
 
   const PERMISSION_GROUPS = [
     {
-      name: 'Quản lý Lead & CHBH',
+      name: 'Quản lý tiếp xúc khách hàng',
+      description: 'To do list, kanban công việc và các thao tác theo đúng danh sách phân quyền.',
       keys: [
-        'lead_create',
-        'lead_edit',
-        'lead_search',
-        'lead_detail',
-        'lead_view_non_owner',
-        'lead_export',
-        'lead_delete',
-        'lead_mark_failed'
-      ]
-    },
-    {
-      name: 'Quản lý Khách hàng',
-      keys: [
-        'customer_create',
-        'customer_edit',
-        'customer_detail',
-        'customer_view_non_owner',
-        'customer_view',
-        'customer_export'
-      ]
-    },
-    {
-      name: 'To do list',
-      keys: [
+        'task_view',
+        'task_detail',
         'task_create',
         'task_edit',
         'task_delete',
-        'task_view',
-        'task_detail',
-        'task_view_non_owner',
         'task_export'
       ]
     },
     {
-      name: 'Quản lý mục tiêu',
+      name: 'Báo cáo',
+      description: 'Quyền tạo, xem và xuất báo cáo.',
       keys: [
+        'report_create',
+        'report_view',
+        'report_export'
+      ]
+    },
+    {
+      name: 'Quản lý mục tiêu doanh số',
+      description: 'Quyền với kế hoạch doanh thu và kết quả mục tiêu.',
+      keys: [
+        'goal_plan_view',
+        'goal_plan_detail',
         'goal_plan_create',
         'goal_plan_edit',
         'goal_plan_delete',
-        'goal_plan_view',
-        'goal_plan_detail',
-        'goal_plan_view_non_owner',
         'goal_plan_export',
         'goal_result_create',
         'goal_result_export'
       ]
     },
     {
-      name: 'Quản lý Hợp đồng',
+      name: 'Quản lý Lead & Cơ hội bán hàng',
+      description: 'Quyền lead theo đúng danh sách nghiệp vụ đã chốt.',
       keys: [
+        'lead_search',
+        'lead_detail',
+        'lead_create',
+        'lead_edit',
+        'lead_delete',
+        'lead_mark_failed',
+        'lead_export'
+      ]
+    },
+    {
+      name: 'Quản lý hồ sơ khách hàng',
+      description: 'Quản lý hồ sơ khách hàng và các thao tác tra cứu cơ bản.',
+      keys: [
+        'customer_view',
+        'customer_detail',
+        'customer_create',
+        'customer_edit',
+        'customer_export'
+      ]
+    },
+    {
+      name: 'Quản lý hợp đồng',
+      description: 'Quyền hợp đồng theo đúng danh sách nghiệp vụ đã chốt.',
+      keys: [
+        'contract_view',
+        'contract_detail',
         'contract_create',
-        'contract_delete_draft',
         'contract_edit',
+        'contract_delete_draft',
+        'contract_create_appendix',
         'contract_approve',
         'contract_confirm',
         'contract_cancel',
-        'contract_view',
-        'contract_detail',
-        'contract_view_non_owner',
-        'contract_create_appendix',
-        'contract_pdf_generate',
-        'contract_export',
         'contract_share',
         'contract_send_customer_confirmation',
-        'contract_sign'
+        'contract_sign',
+        'contract_pdf_generate',
+        'contract_export'
       ]
     },
     {
-      name: 'Nghiệm thu đầu ra',
-      keys: [
-        'acceptance_create',
-        'acceptance_edit',
-        'acceptance_view',
-        'acceptance_detail',
-        'acceptance_view_non_owner',
-        'acceptance_export',
-        'acceptance_template_detail',
-        'acceptance_report_edit'
-      ]
-    },
-    {
-      name: 'Thanh lý Hợp Đồng',
+      name: 'Thanh lý hợp đồng',
+      description: 'Quyền thao tác với biên bản thanh lý hợp đồng.',
       keys: [
         'liquidation_create',
         'liquidation_edit',
@@ -124,11 +121,18 @@ export default function RoleForm() {
       ]
     },
     {
-      name: 'Báo cáo',
+      name: 'Quản lý nghiệm thu',
+      description: 'Bao gồm tạo, cập nhật, xuất biên bản và các bước xử lý nghiệm thu.',
       keys: [
-        'report_create',
-        'report_view',
-        'report_export'
+        'acceptance_view',
+        'acceptance_detail',
+        'acceptance_create',
+        'acceptance_edit',
+        'acceptance_export',
+        'acceptance_template_detail',
+        'acceptance_report_edit',
+        'acceptance_invoice_request',
+        'acceptance_invoice_upload'
       ]
     }
   ];
@@ -243,15 +247,6 @@ export default function RoleForm() {
 
   const INHERITABLE_ROLES = allRoles.filter(role => role.id !== formData.id);
 
-  const NON_OWNER_PERMISSION_KEYS = [
-    'lead_view_non_owner',
-    'customer_view_non_owner',
-    'task_view_non_owner',
-    'goal_plan_view_non_owner',
-    'contract_view_non_owner',
-    'acceptance_view_non_owner'
-  ];
-
   useEffect(() => {
     if (isEdit) {
       const role = mockStore.getRole(id);
@@ -328,6 +323,26 @@ export default function RoleForm() {
       : [...formData.permissions, key];
 
     setFormData({ ...formData, permissions: newPerms });
+  };
+
+  const isGroupFullySelected = (groupKeys) => groupKeys.every(key => formData.permissions.includes(key));
+
+  const toggleGroupPermissions = (groupKeys, shouldSelectAll) => {
+    if (shouldSelectAll) {
+      const confirmed = window.confirm('Bạn có muốn cấp toàn bộ quyền trong nhóm này không?');
+      if (!confirmed) return;
+
+      setFormData({
+        ...formData,
+        permissions: Array.from(new Set([...(formData.permissions || []), ...groupKeys]))
+      });
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      permissions: (formData.permissions || []).filter(key => !groupKeys.includes(key))
+    });
   };
 
   const toggleGroup = (groupName) => {
@@ -435,74 +450,92 @@ export default function RoleForm() {
   const inheritedByRoles = allRoles.filter(role => selectedInheritedByRoleIds.includes(role.id));
 
   const permissionLabels = {
-    lead_create: 'Tạo lead',
-    lead_edit: 'Chỉnh sửa lead',
+    dashboard_view: 'Xem trang chủ cá nhân',
+    dashboard_view_team: 'Xem dashboard đơn vị/đội nhóm',
+    dashboard_view_kpi: 'Xem KPI và chỉ số tổng hợp',
+    dashboard_export: 'Xuất dữ liệu dashboard',
+
+    lead_create: 'Tạo lead (bao gồm Tạo bản sao LEAD)',
+    lead_edit: 'Chỉnh sửa lead (Chuyển trạng thái + update thông tin)',
     lead_search: 'Xem danh sách/Tìm kiếm/Lọc lead',
     lead_detail: 'Xem chi tiết lead',
     lead_export: 'Export danh sách lead',
     lead_delete: 'Xóa LEAD',
-    lead_mark_failed: 'Đánh dấu Lead thất bại',
-
-    customer_create: 'Tạo mới hồ sơ khách hàng',
-    customer_edit: 'Chỉnh sửa hồ sơ khách hàng',
-    customer_detail: 'Xem chi tiết hồ sơ khách hàng',
+    lead_mark_failed: 'Không thành công Lead',
+    task_create: 'Thêm mới công việc',
+    task_edit: 'Chỉnh sửa công việc (Edit thông tin + Chuyển trạng thái)',
+    opportunity_create: 'Tạo cơ hội bán hàng',
+    task_view: 'Xem danh sách công việc (Kanban + List/Tìm kiếm/Di chuyển kanban/Lọc)',
+    opportunity_delete: 'Xóa cơ hội',
+    opportunity_move_stage: 'Di chuyển trạng thái trên board',
     customer_view: 'Xem danh sách/Tìm kiếm',
     customer_export: 'Export danh sách khách hàng',
+    customer_delete: 'Xóa hồ sơ khách hàng',
 
+    contact_view: 'Xem danh sách liên hệ',
+    contact_detail: 'Xem chi tiết liên hệ',
+    contact_create: 'Tạo liên hệ',
+    contact_export: 'Xuất danh sách liên hệ',
     task_create: 'Thêm mới công việc',
     task_edit: 'Chỉnh sửa công việc',
-    task_delete: 'Xóa công việc',
-    task_view: 'Xem danh sách công việc',
-    task_detail: 'Xem chi tiết công việc',
-    task_export: 'Export danh sách công việc',
+    contract_create: 'Tạo hợp đồng (Lưu nháp/Gửi duyệt/Tạo bản sao/Phản hồi yêu cầu xem xét HĐ)',
+    task_update_status: 'Chuyển trạng thái công việc',
+    team_task_view: 'Xem bảng công việc đội nhóm',
+    team_task_detail: 'Xem chi tiết task đội nhóm',
 
     goal_plan_create: 'Thêm mới kế hoạch',
     goal_plan_edit: 'Chỉnh sửa kế hoạch',
     goal_plan_delete: 'Xóa kế hoạch',
     goal_plan_view: 'Xem danh sách/lọc/tìm kiếm kế hoạch',
-    goal_plan_detail: 'Xem chi tiết kế hoạch',
+    contract_pdf_generate: 'Gen PDF Hợp đồng (gắn watermark)',
     goal_plan_export: 'Export danh sách kế hoạch',
-    goal_result_create: 'Tạo kết quả',
-    goal_result_export: 'Export kết quả mục tiêu',
-
-    contract_create: 'Tạo hợp đồng + Tạo phụ lục',
+    goal_plan_approve: 'Phê duyệt kế hoạch',
+    goal_result_view: 'Xem danh sách kết quả doanh thu',
+    goal_result_detail: 'Xem chi tiết kết quả doanh thu',
+    contract_feedback_review: 'Phản hồi yêu cầu xem xét HĐ',
     contract_delete_draft: 'Xóa HĐ',
-    contract_edit: 'Chỉnh sửa hợp đồng',
+    acceptance_edit: 'Chỉnh sửa nghiệm thu (Bao gồm toàn bộ chức năng trong các bước nghiệm thu: Upload File Gửi KH/TRÌNH KÝ/HOÀN THÀNH/KÝ...)',
     contract_approve: 'Phê duyệt hợp đồng',
-    contract_confirm: 'Xác nhận Hợp đồng',
-    contract_cancel: 'Hủy hợp đồng',
-    contract_view: 'Xem danh sách/Tìm kiếm/Lọc HĐ',
+    contract_approve_draft_legal: 'Pháp chế duyệt bản thảo',
+    contract_approve_draft_manager: 'Quản lý duyệt bản thảo',
+    contract_approve_signed_legal: 'Pháp chế duyệt bản ký',
+    contract_approve_signed_manager: 'Quản lý duyệt bản ký',
     contract_detail: 'Xem chi tiết HĐ',
     contract_create_appendix: 'Tạo phụ lục HĐ',
-    contract_pdf_generate: 'Gen PDF Hợp đồng',
-    contract_export: 'Xuất danh sách Hợp đồng',
-    contract_share: 'Chia sẻ Hợp đồng',
-    contract_send_customer_confirmation: 'Gửi KH confirm Hợp đồng',
-    contract_sign: 'Trình ký Hợp đồng',
+    project_task_assign: 'Phân công task triển khai',
+    contract_kpi_view: 'Xem cấu hình KPI/SLA',
+    contract_kpi_edit: 'Chỉnh sửa cấu hình KPI/SLA',
 
-    lead_view_non_owner: 'Xem bản ghi Lead không phải owner',
-    customer_view_non_owner: 'Xem bản ghi Khách hàng không phải owner',
-    task_view_non_owner: 'Xem bản ghi Công việc không phải owner',
-    goal_plan_view_non_owner: 'Xem bản ghi Kế hoạch không phải owner',
-    contract_view_non_owner: 'Xem bản ghi Hợp đồng không phải owner',
-    acceptance_view_non_owner: 'Xem bản ghi Nghiệm thu không phải owner',
+    order_view: 'Xem danh sách đơn hàng',
+    order_detail: 'Xem chi tiết đơn hàng',
+    order_create: 'Tạo đơn hàng',
+    order_edit: 'Chỉnh sửa đơn hàng',
 
-    acceptance_create: 'Tạo nghiệm thu',
-    acceptance_edit: 'Chỉnh sửa nghiệm thu',
-    acceptance_view: 'Xem danh sách nghiệm thu',
-    acceptance_detail: 'Xem chi tiết nghiệm thu',
-    acceptance_export: 'Xuất biên bản nghiệm thu & biên bản xác nhận thanh toán',
-    acceptance_template_detail: 'Xem chi tiết mẫu biên bản',
-    acceptance_report_edit: 'Chỉnh sửa biên bản nghiệm thu',
-
-    liquidation_create: 'Tạo thanh lý',
-    liquidation_edit: 'Chỉnh sửa biên bản thanh lý',
-    liquidation_cancel: 'Hủy thanh lý',
-    liquidation_approve: 'Phê duyệt thanh lý',
-    liquidation_reject_approval: 'Từ chối phê duyệt thanh lý',
-    liquidation_generate_report: 'Gen biên bản thanh lý',
-    liquidation_sign: 'Trình ký thanh lý',
-    liquidation_export: 'Xuất BB thanh lý',
+    user_view: 'Xem danh sách người dùng',
+    user_detail: 'Xem chi tiết người dùng',
+    user_create: 'Tạo người dùng',
+    user_edit: 'Chỉnh sửa người dùng',
+    user_activate: 'Kích hoạt người dùng',
+    user_deactivate: 'Khóa người dùng',
+    user_export: 'Xuất danh sách người dùng',
+    role_view: 'Xem danh sách vai trò',
+    role_detail: 'Xem chi tiết vai trò',
+    role_create: 'Tạo vai trò',
+    role_edit: 'Chỉnh sửa vai trò',
+    role_activate: 'Kích hoạt vai trò',
+    role_deactivate: 'Ngừng áp dụng vai trò',
+    product_view: 'Xem danh sách sản phẩm/dịch vụ',
+    product_detail: 'Xem chi tiết sản phẩm/dịch vụ',
+    product_create: 'Tạo sản phẩm/dịch vụ',
+    product_edit: 'Chỉnh sửa sản phẩm/dịch vụ',
+    product_delete: 'Xóa sản phẩm/dịch vụ',
+    product_export: 'Xuất dữ liệu sản phẩm/dịch vụ',
+    config_file_view: 'Xem danh sách file cấu hình',
+    config_file_detail: 'Xem chi tiết file cấu hình',
+    config_file_create: 'Tạo file cấu hình',
+    config_file_edit: 'Chỉnh sửa file cấu hình',
+    config_file_delete: 'Xóa file cấu hình',
+    config_file_publish: 'Ban hành/kích hoạt file cấu hình',
 
     report_create: 'Tạo báo cáo',
     report_view: 'Xem báo cáo',
@@ -620,16 +653,39 @@ export default function RoleForm() {
                   <div style={{ border: '1px solid #f1f5f9', borderRadius: '8px', overflow: 'hidden' }}>
                     {PERMISSION_GROUPS.map((group, idx) => {
                       const expanded = expandedGroups[group.name] ?? true;
-                      const visibleGroupKeys = group.keys.filter(key => !NON_OWNER_PERMISSION_KEYS.includes(key));
+                      const allSelected = isGroupFullySelected(group.keys);
                       return (
                         <div key={group.name} style={{ borderBottom: idx === PERMISSION_GROUPS.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b', cursor: 'pointer' }} onClick={() => toggleGroup(group.name)}>
-                            <span>{group.name}</span>
-                            {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', background: '#f8fafc', padding: '10px 16px', fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                              <button
+                                type="button"
+                                onClick={() => toggleGroup(group.name)}
+                                aria-label={expanded ? `Thu hẹp ${group.name}` : `Mở rộng ${group.name}`}
+                                title={expanded ? `Thu hẹp ${group.name}` : `Mở rộng ${group.name}`}
+                                style={{ border: '1px solid #dbe4ef', background: '#fff', color: '#334155', borderRadius: '8px', padding: '4px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                              >
+                                {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                              </button>
+                              <div>
+                                <div>{group.name}</div>
+                                {group.description && (
+                                  <div style={{ fontSize: '11px', color: '#64748b', fontWeight: 500, marginTop: '2px' }}>{group.description}</div>
+                                )}
+                              </div>
+                            </div>
+                            <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                              <input
+                                type="checkbox"
+                                checked={allSelected}
+                                onChange={e => toggleGroupPermissions(group.keys, e.target.checked)}
+                              />
+                              Tất cả
+                            </label>
                           </div>
                           {expanded && (
-                            <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                              {visibleGroupKeys.map(key => {
+                            <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+                              {group.keys.map(key => {
                                 return (
                                   <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#475569' }}>
                                     <input

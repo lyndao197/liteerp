@@ -926,7 +926,46 @@ const INITIAL_DATA = {
       { _fid: 5, tenTruong: 'ghi_chu', tenHienThi: 'Ghi chú', stt: '5', trangThai: false }
     ], createdDate: '2026-03-01', createdBy: 'admin' }
   },
-  configFileIds: ['CFG-001', 'CFG-002', 'CFG-003', 'CFG-004', 'CFG-005']
+  configFileIds: ['CFG-001', 'CFG-002', 'CFG-003', 'CFG-004', 'CFG-005'],
+  emailConfig: {
+    enabled: true,
+    fromName: 'Viettel Customer Service',
+    fromEmail: 'noreply@viettel.com.vn',
+    replyTo: 'hotro@viettel.com.vn',
+    smtpHost: 'smtp.viettel.com.vn',
+    smtpPort: 587,
+    security: 'tls',
+    username: 'noreply@viettel.com.vn',
+    password: '',
+    autoScheduleEnabled: true,
+    sendTime: '08:30',
+    frequency: 'daily',
+    targetGroup: 'active-users',
+    template: 'Xin chao {{fullName}},\n\nHe thong gui thong bao tu dong den ban.\n\nTran trong.',
+    updatedAt: '2026-07-17 09:00'
+  },
+  emailTemplates: {
+    'EMT-001': {
+      id: 'EMT-001',
+      code: 'WELCOME_USER',
+      name: 'Chao mung user moi',
+      category: 'system',
+      subject: '[xERP] Chao mung {{fullName}} den voi he thong',
+      body: 'Xin chao {{fullName}},\n\nTai khoan {{username}} da duoc kich hoat. Vui long dang nhap tai {{loginUrl}} de bat dau su dung.\n\nTran trong.',
+      status: 'active',
+      updatedAt: '2026-07-17 09:00'
+    },
+    'EMT-002': {
+      id: 'EMT-002',
+      code: 'TASK_REMINDER',
+      name: 'Nhac viec qua han',
+      category: 'notification',
+      subject: '[xERP] Nhac viec: {{taskName}}',
+      body: 'Xin chao {{fullName}},\n\nCong viec {{taskName}} can duoc xu ly truoc {{dueDate}}.\nVui long truy cap {{taskUrl}} de cap nhat tien do.\n\nTran trong.',
+      status: 'active',
+      updatedAt: '2026-07-17 09:00'
+    }
+  }
 };
 
 const STORE_KEY = 'liteErpDataStore_v10';
@@ -1154,6 +1193,9 @@ export const mockStore = {
 
     if (!store.configFiles) store.configFiles = {};
     if (!store.configFileIds) store.configFileIds = [];
+    if (!store.emailConfig) store.emailConfig = INITIAL_DATA.emailConfig;
+    if (!store.emailTemplates) store.emailTemplates = {};
+    if (!store.emailTemplateIds) store.emailTemplateIds = [];
     if (store.users) {
       Object.keys(store.users).forEach(userId => {
         if (!Array.isArray(store.users[userId].customPermissions)) {
@@ -1189,6 +1231,13 @@ export const mockStore = {
     Object.keys(INITIAL_DATA.configFiles || {}).forEach(cfgId => {
       store.configFiles[cfgId] = INITIAL_DATA.configFiles[cfgId];
       if (!store.configFileIds.includes(cfgId)) store.configFileIds.push(cfgId);
+    });
+
+    Object.keys(INITIAL_DATA.emailTemplates || {}).forEach(templateId => {
+      if (!store.emailTemplates[templateId]) {
+        store.emailTemplates[templateId] = INITIAL_DATA.emailTemplates[templateId];
+      }
+      if (!store.emailTemplateIds.includes(templateId)) store.emailTemplateIds.push(templateId);
     });
 
     // Migration: sản phẩm cũ chưa có quy trình nghiệm thu → mặc định 2 bước
@@ -2185,6 +2234,59 @@ export const mockStore = {
       if (!Number.isNaN(n) && n > max) max = n;
     });
     return `CFG-${String(max + 1).padStart(3, '0')}`;
+  },
+
+  // --- EMAIL CONFIG METHODS ---
+  getEmailConfig: () => {
+    const store = mockStore.getStore();
+    return store.emailConfig || null;
+  },
+  saveEmailConfig: (data) => {
+    const store = mockStore.getStore();
+    store.emailConfig = {
+      ...store.emailConfig,
+      ...data,
+      updatedAt: new Date().toLocaleString('vi-VN')
+    };
+    mockStore.saveStore(store);
+    return store.emailConfig;
+  },
+
+  // --- EMAIL TEMPLATE METHODS ---
+  getAllEmailTemplates: () => {
+    const store = mockStore.getStore();
+    return (store.emailTemplateIds || []).map(id => store.emailTemplates[id]).filter(Boolean);
+  },
+  getEmailTemplate: (id) => {
+    const store = mockStore.getStore();
+    return store.emailTemplates[id] || null;
+  },
+  saveEmailTemplate: (id, data) => {
+    const store = mockStore.getStore();
+    if (!store.emailTemplates[id]) store.emailTemplateIds.unshift(id);
+    store.emailTemplates[id] = {
+      ...data,
+      id,
+      updatedAt: new Date().toLocaleString('vi-VN')
+    };
+    mockStore.saveStore(store);
+    return store.emailTemplates[id];
+  },
+  deleteEmailTemplate: (id) => {
+    const store = mockStore.getStore();
+    if (!store.emailTemplates[id]) return;
+    delete store.emailTemplates[id];
+    store.emailTemplateIds = (store.emailTemplateIds || []).filter(templateId => templateId !== id);
+    mockStore.saveStore(store);
+  },
+  getNextEmailTemplateId: () => {
+    const store = mockStore.getStore();
+    let max = 0;
+    (store.emailTemplateIds || []).forEach(id => {
+      const n = parseInt(String(id).split('-')[1], 10);
+      if (!Number.isNaN(n) && n > max) max = n;
+    });
+    return `EMT-${String(max + 1).padStart(3, '0')}`;
   },
 
   // --- PROJECT METHODS ---

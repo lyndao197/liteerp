@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save, User, Mail, Shield, Building2, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { ChevronLeft, Save, User, Mail, Shield, Building2, AlertCircle } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
 
 export default function UserForm() {
@@ -21,10 +21,8 @@ export default function UserForm() {
     leaveEndDate: '',
     leaveReason: '',
     isManager: false,
-    status: 'Active',
-    password: ''
+    status: 'Active'
   });
-  const [showPassword, setShowPassword] = useState(false);
 
   const roles = mockStore.getAllRoles();
   const allUsers = mockStore.getAllUsers();
@@ -48,7 +46,7 @@ export default function UserForm() {
   useEffect(() => {
     if (isEdit) {
       const user = mockStore.getUser(id);
-      if (user) setFormData({ ...user, username: user.email || '', password: '••••••••' });
+      if (user) setFormData({ ...user, username: user.email || '' });
     } else {
       setFormData(prev => ({ ...prev, id: mockStore.getNextUserId() }));
     }
@@ -191,44 +189,9 @@ export default function UserForm() {
 
             <div style={{ marginTop: '32px' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Lock size={18} color="#EE0033" /> Bảo mật & Phân quyền
+                <Shield size={18} color="#EE0033" /> Bảo mật & Phân quyền
               </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div className="form-group">
-                  <label>Mật khẩu <span style={{ color: '#EE0033' }}>*</span></label>
-                  <div style={{ position: 'relative' }}>
-                    <input 
-                      type={showPassword ? 'text' : 'password'} 
-                      className="input-modern" 
-                      style={{ paddingRight: '108px' }}
-                      value={formData.password} 
-                      onChange={e => setFormData({ ...formData, password: e.target.value })} 
-                      required={!isEdit}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(prev => !prev)}
-                      style={{
-                        position: 'absolute',
-                        right: '8px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        border: 'none',
-                        background: 'transparent',
-                        color: '#475569',
-                        padding: '8px 10px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '13px'
-                      }}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      {showPassword ? 'Ẩn' : 'Hiện'}
-                    </button>
-                  </div>
-                </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
                 <div className="form-group">
                   <label>Vai trò hệ thống <span style={{ color: '#EE0033' }}>*</span></label>
                   <div style={{ position: 'relative' }}>

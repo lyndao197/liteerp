@@ -19,6 +19,7 @@ import {
   Receipt,
   UserCog,
   BarChart,
+  Mail,
   ChevronDown,
   ChevronRight,
   ArrowDownToLine,
@@ -299,6 +300,10 @@ function Sidebar() {
           <div className={`nav-item ${location.pathname.includes('/config-file') ? 'active' : ''}`} onClick={() => navigate('/config-files')}>
             <FileSliders size={20} />
             <span>Cấu hình File</span>
+          </div>
+          <div className={`nav-item ${location.pathname.includes('/email-templates') || location.pathname.includes('/email-config') ? 'active' : ''}`} onClick={() => navigate('/email-templates')}>
+            <FileText size={20} />
+            <span>Quản lý Email</span>
           </div>
         </div>
 

@@ -44,22 +44,36 @@ import LoyaltyProgramList from './components/LoyaltyProgramList';
 import ProductList from './components/ProductList';
 import ConfigFileList from './components/ConfigFileList';
 import ConfigFileForm from './components/ConfigFileForm';
+import EmailConfig from './components/EmailForm';
+import EmailList from './components/EmailList';
 import DebtManagement from './components/DebtManagement';
 import ProjectList from './components/ProjectList';
 import ProjectTaskBoard from './components/ProjectTaskBoard';
 import InvoiceManagement from './components/InvoiceManagement';
 import ContractKpiConfig from './components/ContractKpiConfig';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ActivationResetPassword from './components/ActivationResetPassword';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-function App() {
+function AppRoutes() {
+  const location = useLocation();
+  const isAuthPage = ['/activate', '/reset-password'].includes(location.pathname);
+
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/activate" element={<ActivationResetPassword />} />
+        <Route path="/reset-password" element={<ActivationResetPassword />} />
+      </Routes>
+    );
+  }
+
   return (
-    <Router>
-      <div className="layout">
-        <Sidebar />
-        <div className="main-wrapper">
-          <Header />
-          <main className="main-content">
-            <Routes>
+    <div className="layout">
+      <Sidebar />
+      <div className="main-wrapper">
+        <Header />
+        <main className="main-content">
+          <Routes>
               <Route path="/" element={<OpportunityBoard />} />
               <Route path="/dashboard" element={<PersonalDashboard />} />
               <Route path="/lead/new" element={<LeadForm />} />
@@ -125,12 +139,23 @@ function App() {
               <Route path="/config-files" element={<ConfigFileList />} />
               <Route path="/config-file/new" element={<ConfigFileForm />} />
               <Route path="/config-file/edit/:id" element={<ConfigFileForm />} />
+              <Route path="/email-config" element={<EmailConfig />} />
+              <Route path="/email-templates" element={<EmailList />} />
               <Route path="/debt" element={<DebtManagement />} />
               <Route path="/invoices" element={<InvoiceManagement />} />
-            </Routes>
-          </main>
-        </div>
+              <Route path="/activate" element={<ActivationResetPassword />} />
+              <Route path="/reset-password" element={<ActivationResetPassword />} />
+          </Routes>
+        </main>
       </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppRoutes />
     </Router>
   );
 }
