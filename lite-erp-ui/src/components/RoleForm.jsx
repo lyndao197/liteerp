@@ -1,7 +1,240 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronDown, ChevronUp, Save, Shield, List, CheckCircle2, AlertCircle } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
+
+function DataFieldMultiSelect({ record, selectedFieldKeys = [], onChange, catalog }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const allFields = record.fields;
+  const isAllSelected = allFields.length > 0 && selectedFieldKeys.length === allFields.length;
+  const isNoneSelected = selectedFieldKeys.length === 0;
+
+  const handleToggleField = (fieldKey) => {
+    if (selectedFieldKeys.includes(fieldKey)) {
+      onChange(selectedFieldKeys.filter(k => k !== fieldKey));
+    } else {
+      onChange([...selectedFieldKeys, fieldKey]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    onChange([...allFields]);
+  };
+
+  const handleDeselectAll = () => {
+    onChange([]);
+  };
+
+  const filteredFields = allFields.filter(fieldKey => {
+    const label = catalog[fieldKey]?.label || fieldKey;
+    const desc = catalog[fieldKey]?.description || '';
+    const q = searchTerm.toLowerCase();
+    return label.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
+  });
+
+  return (
+    <div style={{ position: 'relative', width: '100%' }} ref={dropdownRef}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          border: '1px solid #cbd5e1',
+          borderRadius: '8px',
+          padding: '8px 12px',
+          background: '#ffffff',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'space-between',
+          minHeight: '42px',
+          gap: '8px'
+        }}
+      >
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', flex: 1, minWidth: 0 }}>
+          {isAllSelected ? (
+            <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600 }}>
+              Tất cả trường dữ liệu ({allFields.length}/{allFields.length})
+            </span>
+          ) : isNoneSelected ? (
+            <span style={{ fontSize: '13px', color: '#94a3b8', fontStyle: 'italic' }}>
+              Chưa chọn trường nào (Không hiển thị dữ liệu)
+            </span>
+          ) : (
+            <>
+              {selectedFieldKeys.map(fieldKey => (
+                <span
+                  key={fieldKey}
+                  style={{
+                    background: '#f1f5f9',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    fontSize: '12px',
+                    color: '#334155',
+                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  {catalog[fieldKey]?.label || fieldKey}
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleField(fieldKey);
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      marginLeft: '2px',
+                      fontSize: '12px'
+                    }}
+                    title="Bỏ chọn"
+                  >
+                    ✕
+                  </span>
+                </span>
+              ))}
+            </>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {!isAllSelected && !isNoneSelected && (
+            <span style={{ fontSize: '12px', color: '#64748b', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>
+              {selectedFieldKeys.length}/{allFields.length}
+            </span>
+          )}
+          {isOpen ? <ChevronUp size={16} color="#64748b" /> : <ChevronDown size={16} color="#64748b" />}
+        </div>
+      </div>
+
+      {isOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            right: 0,
+            background: '#ffffff',
+            border: '1px solid #cbd5e1',
+            borderRadius: '10px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            zIndex: 100,
+            padding: '10px',
+            maxHeight: '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>
+              Chọn trường ({selectedFieldKeys.length}/{allFields.length})
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={handleSelectAll}
+                style={{ background: 'none', border: 'none', color: '#EE0033', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+              >
+                Chọn tất cả
+              </button>
+              <span style={{ color: '#cbd5e1' }}>|</span>
+              <button
+                type="button"
+                onClick={handleDeselectAll}
+                style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+              >
+                Bỏ chọn tất cả
+              </button>
+            </div>
+          </div>
+
+          {allFields.length > 5 && (
+            <input
+              type="text"
+              placeholder="Tìm kiếm trường..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px',
+                padding: '6px 10px',
+                fontSize: '12px',
+                width: '100%',
+                outline: 'none'
+              }}
+            />
+          )}
+
+          <div style={{ overflowY: 'auto', maxHeight: '200px', minHeight: 0, paddingRight: '4px' }}>
+            {filteredFields.map(fieldKey => {
+              const isChecked = selectedFieldKeys.includes(fieldKey);
+              const fieldMeta = catalog[fieldKey];
+              return (
+                <label
+                  key={fieldKey}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    padding: '8px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    background: isChecked ? '#fef2f2' : 'transparent',
+                    transition: 'background 0.15s'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isChecked) e.currentTarget.style.background = '#f8fafc';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isChecked) e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => handleToggleField(fieldKey)}
+                    style={{ marginTop: '2px', accentColor: '#EE0033' }}
+                  />
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: isChecked ? '#EE0033' : '#1e293b' }}>
+                      {fieldMeta?.label || fieldKey}
+                    </div>
+                    {fieldMeta?.description && (
+                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '1px' }}>
+                        {fieldMeta.description}
+                      </div>
+                    )}
+                  </div>
+                </label>
+              );
+            })}
+            {filteredFields.length === 0 && (
+              <div style={{ padding: '12px', fontSize: '12px', color: '#94a3b8', textAlign: 'center' }}>
+                Không tìm thấy trường tương ứng
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function RoleForm() {
   const navigate = useNavigate();
@@ -229,10 +462,15 @@ export default function RoleForm() {
 
   const buildDataPermissionRowsByRecord = (dataPermissions = []) => {
     const permissionSet = new Set(dataPermissions || []);
+    const isDefaultAll = !dataPermissions || dataPermissions.length === 0;
 
     return DATA_PERMISSION_RECORDS.reduce((acc, record) => {
-      const selectedFields = record.fields.filter(fieldKey => permissionSet.has(`${record.key}.${fieldKey}`));
-      acc[record.key] = selectedFields.length === 0 || selectedFields.length === record.fields.length ? [] : selectedFields;
+      if (isDefaultAll) {
+        acc[record.key] = [...record.fields];
+      } else {
+        const selectedFields = record.fields.filter(fieldKey => permissionSet.has(`${record.key}.${fieldKey}`));
+        acc[record.key] = selectedFields;
+      }
       return acc;
     }, {});
   };
@@ -356,36 +594,6 @@ export default function RoleForm() {
   const getDataPermissionKey = (recordKey, fieldKey) => `${recordKey}.${fieldKey}`;
 
   const getDataPermissionRows = (recordKey) => dataPermissionRowsByRecord[recordKey] || [];
-
-  const addDataPermissionRow = (recordKey) => {
-    setDataPermissionRowsByRecord(prev => ({
-      ...prev,
-      [recordKey]: [...(prev[recordKey] || []), '']
-    }));
-  };
-
-  const updateDataPermissionRow = (recordKey, index, fieldKey) => {
-    setDataPermissionRowsByRecord(prev => {
-      const nextRows = [...(prev[recordKey] || [])];
-      nextRows[index] = fieldKey;
-      return {
-        ...prev,
-        [recordKey]: nextRows
-      };
-    });
-  };
-
-  const removeDataPermissionRow = (recordKey, index) => {
-    setDataPermissionRowsByRecord(prev => ({
-      ...prev,
-      [recordKey]: (prev[recordKey] || []).filter((_, rowIndex) => rowIndex !== index)
-    }));
-  };
-
-  const isDataFieldSelectedElsewhere = (recordKey, index, fieldKey) => {
-    if (!fieldKey) return false;
-    return (dataPermissionRowsByRecord[recordKey] || []).some((rowFieldKey, rowIndex) => rowIndex !== index && rowFieldKey === fieldKey);
-  };
 
   const setDataScopeForRecord = (recordKey, scope) => {
     setFormData({
@@ -805,7 +1013,7 @@ export default function RoleForm() {
                     <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px 14px', background: '#f8fafc' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '6px' }}>
                         <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Phạm vi trường dữ liệu</div>
-                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Thêm dòng</div>
+                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 600 }}>Dropdown chọn nhiều</div>
                       </div>
                       <div style={{ fontSize: '12px', color: '#64748b', lineHeight: '1.6' }}>
                         Cấu hình cột dữ liệu được phép hiển thị theo từng nhóm bản ghi, cho phép giới hạn theo vai trò: mỗi trường thông tin chỉ hiển thị với những vai trò được cấp quyền xem.
@@ -815,12 +1023,11 @@ export default function RoleForm() {
 
                   <div style={{ display: 'grid', gap: '12px' }}>
                     {DATA_PERMISSION_RECORDS.map(record => {
-                      const configuredFields = getDataPermissionRows(record.key).filter(Boolean);
                       const dataScope = (formData.dataScopeByRecord || defaultDataScopeByRecord)[record.key] || 'all';
                       const moduleExpanded = expandedDataModules[record.key] ?? true;
 
                       return (
-                        <div key={record.key} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+                        <div key={record.key} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', position: 'relative' }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 14px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
                             <div>
                               <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b' }}>{record.label}</div>
@@ -863,50 +1070,20 @@ export default function RoleForm() {
                               </div>
 
                               <div style={{ padding: '12px 14px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '6px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '8px' }}>
                                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569' }}>Phạm vi trường dữ liệu</div>
-                                  <button
-                                    type="button"
-                                    onClick={() => addDataPermissionRow(record.key)}
-                                    style={{ border: '1px solid #cbd5e1', background: '#fff', color: '#334155', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
-                                  >
-                                    Thêm dòng
-                                  </button>
                                 </div>
-                                <div style={{ display: 'grid', gap: '8px' }}>
-                                  {configuredFields.length === 0 && getDataPermissionRows(record.key).length === 0 && (
-                                    <div style={{ fontSize: '13px', color: '#94a3b8', padding: '10px 12px', border: '1px dashed #dbe4ef', borderRadius: '8px' }}>
-                                      Đang áp dụng hiển thị tất cả trường dữ liệu. Nhấn “Thêm dòng” để chọn các trường cần cấu hình riêng.
-                                    </div>
-                                  )}
-                                  {getDataPermissionRows(record.key).map((fieldKey, index) => (
-                                    <div key={`${record.key}-field-row-${index}`} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px' }}>
-                                      <select
-                                        className="select-modern"
-                                        value={fieldKey}
-                                        onChange={e => updateDataPermissionRow(record.key, index, e.target.value)}
-                                      >
-                                        <option value="">-- Chọn trường dữ liệu --</option>
-                                        {record.fields.map(optionFieldKey => (
-                                          <option
-                                            key={optionFieldKey}
-                                            value={optionFieldKey}
-                                            disabled={isDataFieldSelectedElsewhere(record.key, index, optionFieldKey)}
-                                          >
-                                            {DATA_FIELD_CATALOG[optionFieldKey]?.label || getPermissionLabel(optionFieldKey)}
-                                          </option>
-                                        ))}
-                                      </select>
-                                      <button
-                                        type="button"
-                                        onClick={() => removeDataPermissionRow(record.key, index)}
-                                        style={{ border: '1px solid #fecaca', background: '#fff1f2', color: '#dc2626', borderRadius: '8px', padding: '6px 10px', fontSize: '12px', cursor: 'pointer', fontWeight: 600 }}
-                                      >
-                                        Xóa
-                                      </button>
-                                    </div>
-                                  ))}
-                                </div>
+                                <DataFieldMultiSelect
+                                  record={record}
+                                  selectedFieldKeys={getDataPermissionRows(record.key)}
+                                  onChange={(nextSelected) => {
+                                    setDataPermissionRowsByRecord(prev => ({
+                                      ...prev,
+                                      [record.key]: nextSelected
+                                    }));
+                                  }}
+                                  catalog={DATA_FIELD_CATALOG}
+                                />
                               </div>
                             </>
                           )}
