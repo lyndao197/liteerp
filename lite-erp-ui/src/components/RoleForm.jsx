@@ -45,6 +45,96 @@ function DataFieldMultiSelect({ record, selectedFieldKeys = [], onChange, catalo
     return label.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
   });
 
+  const handleClearAll = (e) => {
+    e.stopPropagation();
+    onChange([]);
+  };
+
+  const renderSelectedValue = () => {
+    if (isNoneSelected) {
+      return (
+        <span style={{ fontSize: '13px', color: '#94a3b8' }}>
+          -- Chọn giá trị --
+        </span>
+      );
+    }
+
+    const maxVisible = 2;
+    const visibleKeys = selectedFieldKeys.slice(0, maxVisible);
+    const remainingCount = selectedFieldKeys.length - maxVisible;
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', overflow: 'hidden' }}>
+        {visibleKeys.map(fieldKey => {
+          const label = catalog[fieldKey]?.label || fieldKey;
+          return (
+            <span
+              key={fieldKey}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '16px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                color: '#334155',
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
+              }}
+            >
+              {label}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleField(fieldKey);
+                }}
+                style={{
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '50%',
+                  transition: 'all 0.15s'
+                }}
+                onMouseEnter={(e) => { e.target.style.color = '#dc2626'; e.target.style.background = '#fef2f2'; }}
+                onMouseLeave={(e) => { e.target.style.color = '#94a3b8'; e.target.style.background = 'transparent'; }}
+                title="Bỏ chọn"
+              >
+                ✕
+              </span>
+            </span>
+          );
+        })}
+
+        {/* Count Pill */}
+        {remainingCount > 0 && (
+          <span
+            style={{
+              background: '#e2e8f0',
+              color: '#475569',
+              borderRadius: '16px',
+              padding: '4px 8px',
+              fontSize: '12px',
+              fontWeight: 700,
+              flexShrink: 0
+            }}
+          >
+            +{remainingCount}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div style={{ position: 'relative', width: '100%' }} ref={dropdownRef}>
       <div
@@ -52,72 +142,44 @@ function DataFieldMultiSelect({ record, selectedFieldKeys = [], onChange, catalo
         style={{
           border: '1px solid #cbd5e1',
           borderRadius: '8px',
-          padding: '8px 12px',
-          background: '#ffffff',
+          padding: '6px 12px',
+          background: '#f8fafc',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          justify: 'space-between',
-          minHeight: '42px',
-          gap: '8px'
+          justifyContent: 'space-between',
+          minHeight: '40px',
+          gap: '8px',
+          boxSizing: 'border-box'
         }}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', flex: 1, minWidth: 0 }}>
-          {isAllSelected ? (
-            <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 600 }}>
-              Tất cả trường dữ liệu ({allFields.length}/{allFields.length})
-            </span>
-          ) : isNoneSelected ? (
-            <span style={{ fontSize: '13px', color: '#94a3b8', fontStyle: 'italic' }}>
-              Chưa chọn trường nào (Không hiển thị dữ liệu)
-            </span>
-          ) : (
-            <>
-              {selectedFieldKeys.map(fieldKey => (
-                <span
-                  key={fieldKey}
-                  style={{
-                    background: '#f1f5f9',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '6px',
-                    padding: '2px 8px',
-                    fontSize: '12px',
-                    color: '#334155',
-                    fontWeight: 600,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  {catalog[fieldKey]?.label || fieldKey}
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleToggleField(fieldKey);
-                    }}
-                    style={{
-                      cursor: 'pointer',
-                      color: '#94a3b8',
-                      fontWeight: 700,
-                      marginLeft: '2px',
-                      fontSize: '12px'
-                    }}
-                    title="Bỏ chọn"
-                  >
-                    ✕
-                  </span>
-                </span>
-              ))}
-            </>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
+          {renderSelectedValue()}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          {!isAllSelected && !isNoneSelected && (
-            <span style={{ fontSize: '12px', color: '#64748b', background: '#e2e8f0', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>
-              {selectedFieldKeys.length}/{allFields.length}
+          {selectedFieldKeys.length > 0 && (
+            <span
+              onClick={handleClearAll}
+              style={{
+                cursor: 'pointer',
+                color: '#94a3b8',
+                fontSize: '14px',
+                fontWeight: 600,
+                padding: '4px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'color 0.15s'
+              }}
+              onMouseEnter={(e) => e.target.style.color = '#475569'}
+              onMouseLeave={(e) => e.target.style.color = '#94a3b8'}
+              title="Xóa tất cả"
+            >
+              ✕
             </span>
           )}
+          <span style={{ color: '#cbd5e1', fontSize: '12px' }}>|</span>
           {isOpen ? <ChevronUp size={16} color="#64748b" /> : <ChevronDown size={16} color="#64748b" />}
         </div>
       </div>
@@ -659,8 +721,8 @@ export default function RoleForm() {
 
   const permissionLabels = {
     // Quản lý Lead & CHBH
-    lead_create: 'Tạo lead (bao gồm Tạo bản sao LEAD)',
-    lead_edit: 'Chỉnh sửa lead (Chuyển trạng thái + update thông tin)',
+    lead_create: 'Tạo lead',
+    lead_edit: 'Chỉnh sửa lead',
     lead_search: 'Xem danh sách/Tìm kiếm/Lọc lead',
     lead_detail: 'Xem chi tiết lead',
     lead_export: 'Export danh sách lead',
@@ -677,9 +739,9 @@ export default function RoleForm() {
 
     // To do list
     task_create: 'Thêm mới công việc',
-    task_edit: 'Chỉnh sửa công việc (Edit thông tin + Chuyển trạng thái)',
+    task_edit: 'Chỉnh sửa công việc',
     task_delete: 'Xóa công việc',
-    task_view: 'Xem danh sách công việc (Kanban + List/Tìm kiếm/Di chuyển kanban/Lọc)',
+    task_view: 'Xem danh sách công việc',
     task_detail: 'Xem chi tiết công việc',
     task_export: 'Export danh sách công việc',
 
@@ -694,16 +756,16 @@ export default function RoleForm() {
     goal_result_export: 'Export kết quả mục tiêu',
 
     // Quản lý Hợp Đồng
-    contract_create: 'Tạo hợp đồng (Lưu nháp/Gửi duyệt/Tạo bản sao/Phản hồi yêu cầu xem xét HĐ) + Tạo phụ lục',
-    contract_delete_draft: 'Xóa HĐ (TT dự thảo)',
+    contract_create: 'Tạo hợp đồng + Tạo phụ lục',
+    contract_delete_draft: 'Xóa HĐ',
     contract_edit: 'Chỉnh sửa hợp đồng',
-    contract_approve: 'Phê duyệt hợp đồng (Xem xét HĐ)',
+    contract_approve: 'Phê duyệt hợp đồng',
     contract_confirm: 'Xác nhận Hợp đồng',
     contract_cancel: 'Hủy hợp đồng',
     contract_view: 'Xem danh sách/Tìm kiếm/Lọc HĐ',
     contract_detail: 'Xem chi tiết HĐ',
     contract_create_appendix: 'Tạo phụ lục HĐ',
-    contract_pdf_generate: 'Gen PDF Hợp đồng (gắn watermark)',
+    contract_pdf_generate: 'Gen PDF Hợp đồng',
     contract_export: 'Xuất danh sách Hợp đồng',
     contract_share: 'Chia sẻ Hợp đồng',
     contract_send_customer_confirmation: 'Gửi KH confirm Hợp đồng',
@@ -711,7 +773,7 @@ export default function RoleForm() {
 
     // Nghiệm thu đầu ra
     acceptance_create: 'Tạo nghiệm thu',
-    acceptance_edit: 'Chỉnh sửa nghiệm thu (Bao gồm toàn bộ chức năng trong các bước nghiệm thu: Upload File Gửi KH/TRÌNH KÝ/HOÀN THÀNH/KÝ...)',
+    acceptance_edit: 'Chỉnh sửa nghiệm thu',
     acceptance_view: 'Xem danh sách nghiệm thu',
     acceptance_detail: 'Xem chi tiết nghiệm thu',
     acceptance_export: 'Xuất biên bản nghiệm thu & biên bản xác nhận thanh toán',
