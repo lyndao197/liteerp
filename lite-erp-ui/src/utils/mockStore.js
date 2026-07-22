@@ -1710,6 +1710,16 @@ export const mockStore = {
     store.goals[id] = goalData;
     mockStore.saveStore(store);
   },
+  deleteGoal: (id) => {
+    const store = mockStore.getStore();
+    if (store.goals && store.goals[id]) {
+      delete store.goals[id];
+    }
+    if (store.goalIds) {
+      store.goalIds = store.goalIds.filter(gId => gId !== id);
+    }
+    mockStore.saveStore(store);
+  },
   getNextGoalId: () => {
     const store = mockStore.getStore();
     const allIds = store.goalIds || [];
