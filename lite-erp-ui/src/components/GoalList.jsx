@@ -237,6 +237,59 @@ const GoalList = () => {
     };
   }, [goals]);
 
+  const unitSummaryData = useMemo(() => {
+    const UNITS = [
+      'TT VPTD', 'TT VTT', 'TT VTNet', 'TT VTS', 'TT VDS',
+      'TT VAM', 'TT VTAca', 'TT VAI', 'TT VHT', 'TT VTX',
+      'TT VIC', 'TT VSS', 'TT VSI', 'TT VATC', 'TT VTLimex',
+      'TT VTPost', 'TT VCC', 'TT XMCP', 'TT VMC'
+    ];
+
+    const basePlan = {
+      'TT VPTD': 1500, 'TT VTT': 2100, 'TT VTNet': 1800, 'TT VTS': 3200, 'TT VDS': 950,
+      'TT VAM': 450, 'TT VTAca': 300, 'TT VAI': 750, 'TT VHT': 1200, 'TT VTX': 600,
+      'TT VIC': 400, 'TT VSS': 500, 'TT VSI': 650, 'TT VATC': 350, 'TT VTLimex': 250,
+      'TT VTPost': 1400, 'TT VCC': 800, 'TT XMCP': 550, 'TT VMC': 380
+    };
+
+    const baseCount = {
+      'TT VPTD': 4, 'TT VTT': 4, 'TT VTNet': 4, 'TT VTS': 4, 'TT VDS': 3,
+      'TT VAM': 2, 'TT VTAca': 2, 'TT VAI': 3, 'TT VHT': 3, 'TT VTX': 2,
+      'TT VIC': 2, 'TT VSS': 3, 'TT VSI': 3, 'TT VATC': 2, 'TT VTLimex': 2,
+      'TT VTPost': 3, 'TT VCC': 3, 'TT XMCP': 2, 'TT VMC': 2
+    };
+
+    goals.forEach(goal => {
+      if (goal.existingRows && Array.isArray(goal.existingRows)) {
+        goal.existingRows.forEach(row => {
+          const unit = row.implementationUnit;
+          if (unit && basePlan[unit] !== undefined) {
+            const val = parseFloat(row.nam) || 0;
+            basePlan[unit] += val;
+            baseCount[unit] += 1;
+          }
+        });
+      }
+    });
+
+    return UNITS.map(unit => {
+      const totalPlan = basePlan[unit];
+      let status = 'Hiệu lực';
+      if (totalPlan > 2500) {
+        status = 'Hoàn thành';
+      } else if (totalPlan < 500) {
+        status = 'Chờ đánh giá';
+      }
+
+      return {
+        unitName: unit,
+        totalPlan,
+        kpiCount: baseCount[unit],
+        status
+      };
+    });
+  }, [goals]);
+
   const COLUMN_OPTIONS = [
     { key: 'id', label: 'ID mục tiêu' },
     { key: 'month', label: 'Tháng' },
@@ -452,6 +505,45 @@ const GoalList = () => {
           </div>
         </div>
       )}
+
+      {/* Summary Table: Revenue by Implementation Unit */}
+      <div style={{ marginTop: '40px' }}>
+        <div className="page-title-section" style={{ marginBottom: '12px' }}>
+          <h1>Tổng hợp mục tiêu doanh thu theo Đơn vị thực hiện</h1>
+          <p>Số liệu lũy kế kế hoạch từ các mục tiêu đã thiết lập trong hệ thống</p>
+        </div>
+
+        <div className="goal-table-container">
+          <table className="goal-table">
+            <thead>
+              <tr>
+                <th style={{ paddingLeft: '24px', width: '250px' }}>Đơn vị thực hiện</th>
+                <th className="cell-right" style={{ textAlign: 'right', paddingRight: '24px' }}>KH Doanh thu năm 2026 (Tỷ đồng)</th>
+                <th style={{ textAlign: 'center' }}>Số lượng mục tiêu đã gán</th>
+                <th style={{ textAlign: 'center', width: '180px' }}>Trạng thái mục tiêu</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unitSummaryData.map((item) => (
+                <tr key={item.unitName}>
+                  <td style={{ paddingLeft: '24px', fontWeight: 600, color: '#0f172a' }}>
+                    {item.unitName}
+                  </td>
+                  <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#2563eb' }}>
+                    {item.totalPlan.toLocaleString('vi-VN')}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    {item.kpiCount}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    {renderStatusBadge(item.status)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
