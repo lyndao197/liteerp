@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ArrowUpDown,
   Filter,
-  ArrowDownToLine
+  ArrowDownToLine,
+  Upload
 } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
 import './GoalForm.css';
@@ -28,6 +29,7 @@ const MONTH_KEYS = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10',
 const QUARTER_KEYS = ['q1', 'q2', 'q3', 'q4'];
 
 const EMPTY_ROW = {
+  implementationUnit: '',
   customerGroup: '',
   customerName: '',
   spdvGroup: '',
@@ -37,6 +39,44 @@ const EMPTY_ROW = {
   q1: 0, q2: 0, q3: 0, q4: 0,
   nam: 0
 };
+
+const IMPLEMENTATION_UNITS = [
+  'TT VPTD',
+  'TT VTT',
+  'TT VTNet',
+  'TT VTS',
+  'TT VDS',
+  'TT VAM',
+  'TT VTAca',
+  'TT VAI',
+  'TT VHT',
+  'TT VTX',
+  'TT VIC',
+  'TT VSS',
+  'TT VSI',
+  'TT VATC',
+  'TT VTLimex',
+  'TT VTPost',
+  'TT VCC',
+  'TT XMCP',
+  'TT VMC'
+];
+
+const DOCUMENT_TYPES = [
+  'Kế hoạch mục tiêu năm',
+  'Hợp đồng',
+  'Phụ lục hợp đồng',
+  'Biên bản nghiệm thu',
+  'Hóa đơn',
+  'Phiếu đặt hàng',
+  'Báo giá',
+  'Đề nghị mua hàng',
+  'Biên bản bàn giao',
+  'Tờ trình',
+  'Công văn',
+  'Tài liệu kỹ thuật',
+  'Khác'
+];
 
 const CUSTOMER_GROUPS = [
   'Khách hàng nội bộ - Tập đoàn trong nước',
@@ -48,17 +88,26 @@ const CUSTOMER_GROUPS = [
 const CUSTOMER_NAMES_MAP = {
   'Khách hàng nội bộ - Tập đoàn trong nước': [
     '0101111222 - Công ty A (Nội bộ)',
-    '0101111333 - Tổng công ty B (Nội bộ)'
+    '0101111333 - Tổng công ty B (Nội bộ)',
+    '0100109106 - Viettel Telecom (Nội bộ)',
+    '0108869738 - Viettel Solution (Nội bộ)',
+    '0106685762 - Viettel Post (Nội bộ)',
+    '0100109107 - Viettel Digital (Nội bộ)',
+    '0108988023 - Viettel HighTech (Nội bộ)',
+    '0108988099 - Viettel Networks (Nội bộ)'
   ],
   'Khách hàng nội bộ - Tập đoàn nước ngoài': [
     '0202222333 - Công ty C (Nội bộ FDI)',
-    '0202222444 - Công ty D (Nội bộ FDI)'
+    '0202222444 - Công ty D (Nội bộ FDI)',
+    '0102660144 - Viettel Global (Nội bộ nước ngoài)'
   ],
   'Khách hàng ngoài - Tập đoàn trong nước': [
     '0107654321 - Viettel (Tập đoàn Viettel)',
     '0109876543 - FPT (Tập đoàn FPT)',
     '0101112223 - Masan (Tập đoàn Masan)',
-    '0105556667 - Công ty E (Ngoài)'
+    '0105556667 - Công ty E (Ngoài)',
+    '0300588569 - Vinamilk (Công ty Cổ phần Sữa Việt Nam)',
+    '0100283873 - MB Bank (Ngân hàng TMCP Quân đội)'
   ],
   'Khách hàng ngoài - Tập đoàn nước ngoài': [
     '0101234567 - Hakuhodo (Hakuhodo Việt Nam)',
@@ -67,13 +116,49 @@ const CUSTOMER_NAMES_MAP = {
   ]
 };
 
-const SPDV_GROUPS = ['DV CC outsourcing', 'DV BPO', 'CSKH', 'Giải pháp'];
+const SPDV_GROUPS = [
+  'DV CC outsourcing',
+  'DV BPO',
+  'Upsell (Telesale, digital sale)',
+  'Loyalty, quà tặng',
+  'DV khác',
+  'Giải pháp'
+];
 
 const SPDV_NAMES_MAP = {
-  'DV CC outsourcing': ['SP001 - Dịch vụ FO', 'SP002 - Dịch vụ BO', 'SP003 - Dịch vụ IT Support'],
-  'DV BPO': ['SP002 - Dịch vụ BO', 'SP004 - Dịch vụ Data Entry', 'SP005 - Dịch vụ Call Center'],
-  'CSKH': ['SP006 - Dịch vụ CSKH 24/7', 'SP007 - Khảo sát khách hàng'],
-  'Giải pháp': ['SP008 - Giải pháp ERP', 'SP009 - Giải pháp HRM', 'SP010 - Giải pháp CRM']
+  'DV CC outsourcing': [
+    'PRD-001 - Dịch vụ FO',
+    'PRD-002 - Happy call',
+    'PRD-003 - Hỗ trợ kênh',
+    'PRD-004 - BO GQKN',
+    'PRD-005 - BO CSKH',
+    'PRD-006 - BO Antispam',
+    'PRD-007 - BO Reputa'
+  ],
+  'DV BPO': [
+    'PRD-008 - Chỉnh lý, số hóa tài liệu'
+  ],
+  'Upsell (Telesale, digital sale)': [
+    'PRD-009 - DV bán hàng telesale/Kênh TLS/Digital Sales',
+    'PRD-010 - Hoa hồng kênh CC'
+  ],
+  'Loyalty, quà tặng': [
+    'PRD-011 - Phòng chờ, đón tiễn',
+    'PRD-012 - Quà tặng'
+  ],
+  'DV khác': [
+    'PRD-013 - Bảo hành',
+    'PRD-014 - Đo kiểm',
+    'PRD-015 - Sự kiện',
+    'PRD-016 - Lễ tân',
+    'PRD-017 - CX'
+  ],
+  'Giải pháp': [
+    'PRD-018 - OmniX/QualityX',
+    'PRD-019 - CXBot/CallBOT',
+    'PRD-020 - KnowX Hub & AgentMate',
+    'PRD-021 - Camera AI'
+  ]
 };
 
 const GoalForm = () => {
@@ -123,6 +208,7 @@ const GoalForm = () => {
           setExistingRows([
             {
               ...EMPTY_ROW,
+              implementationUnit: goal.implementationUnit || '',
               customerGroup: goal.category || '',
               customerName: goal.name || '',
               spdvGroup: goal.subCategory || '',
@@ -151,7 +237,7 @@ const GoalForm = () => {
 
     for (let i = 0; i < existingRows.length; i++) {
       const r = existingRows[i];
-      if (!r.customerGroup || !r.customerName || !r.spdvGroup || !r.spdvName) {
+      if (!r.implementationUnit || !r.customerGroup || !r.customerName || !r.spdvGroup || !r.spdvName) {
         alert(`Dòng thứ ${i + 1} của Bảng chỉ tiêu doanh thu khách hàng hiện hữu chưa nhập đầy đủ thông tin bắt buộc.`);
         return false;
       }
@@ -453,16 +539,6 @@ const GoalForm = () => {
             <div className="card-box-inner">
               <div className="field-inline-row" style={{ display: 'flex', gap: '32px' }}>
                 <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <label className="field-label">Mã mục tiêu</label>
-                  <input
-                    type="text"
-                    className="month-input readonly-input"
-                    value={id || 'Sẽ tự động sinh'}
-                    disabled
-                    style={{ width: '150px', height: '36px', border: '1px solid #d9d9d9', borderRadius: '6px', textAlign: 'center', backgroundColor: '#f5f5f5', color: '#595959', cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <label className="field-label">
                     Năm Kế Hoạch <span className="req-star">*</span>
                   </label>
@@ -498,6 +574,15 @@ const GoalForm = () => {
                     <th rowSpan={2} style={{ width: '40px' }}></th>
                     <th rowSpan={2} style={{ minWidth: '150px' }}>
                       <div className="th-content">
+                        <span>Đơn vị thực hiện</span>
+                        <div className="th-icons">
+                          <ArrowUpDown size={12} />
+                          <Filter size={12} />
+                        </div>
+                      </div>
+                    </th>
+                    <th rowSpan={2} style={{ minWidth: '150px' }}>
+                      <div className="th-content">
                         <span>Nhóm khách hàng</span>
                         <div className="th-icons">
                           <ArrowUpDown size={12} />
@@ -507,7 +592,7 @@ const GoalForm = () => {
                     </th>
                     <th rowSpan={2} style={{ minWidth: '150px' }}>
                       <div className="th-content">
-                        <span>Tên khách hàng</span>
+                        <span>Khách hàng</span>
                         <div className="th-icons">
                           <ArrowUpDown size={12} />
                           <Filter size={12} />
@@ -525,7 +610,7 @@ const GoalForm = () => {
                     </th>
                     <th rowSpan={2} style={{ minWidth: '150px' }}>
                       <div className="th-content">
-                        <span>Tên SPDV</span>
+                        <span>Loại SPDV</span>
                         <div className="th-icons">
                           <ArrowUpDown size={12} />
                           <Filter size={12} />
@@ -557,6 +642,18 @@ const GoalForm = () => {
                           <button className="btn-icon-delete" type="button" onClick={() => removeExistingRow(rowIndex)}>
                             <Trash2 size={16} />
                           </button>
+                        </td>
+                        <td>
+                          <div className="select-wrapper table-select">
+                            <select
+                              value={row.implementationUnit || ''}
+                              onChange={(e) => updateExistingRow(rowIndex, 'implementationUnit', e.target.value)}
+                            >
+                              <option value="">-- Chọn giá trị --</option>
+                              {IMPLEMENTATION_UNITS.map((item) => <option key={item} value={item}>{item}</option>)}
+                            </select>
+                            <ChevronDown className="select-arrow" size={14} />
+                          </div>
                         </td>
                         <td>
                           <div className="select-wrapper table-select">
@@ -727,83 +824,142 @@ const GoalForm = () => {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minHeight: '100px',
+                  minHeight: '180px',
                   border: '1px dashed #cbd5e1',
                   borderRadius: '8px',
-                  background: '#fafafa',
+                  background: '#ffffff',
                   cursor: isReadOnlyForm ? 'not-allowed' : 'pointer',
-                  marginBottom: '16px',
-                  padding: '16px'
+                  marginBottom: '24px',
+                  padding: '24px'
                 }}
               >
-                <ArrowDownToLine size={24} color="#0f3a66" />
-                <div style={{ marginTop: '8px', fontSize: '14px', fontWeight: 600, color: '#1f2937' }}>Drag and drop or Browse your file</div>
-                <div style={{ marginTop: '4px', fontSize: '12px', color: '#64748b' }}>Tối đa 20MB mỗi file</div>
+                <div style={{ fontSize: '14px', color: '#4b5563', fontWeight: '400', marginBottom: '12px' }}>
+                  Drag and drop or Browse your file
+                </div>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 24px',
+                    border: '1px solid #ee2d24',
+                    borderRadius: '6px',
+                    color: '#ee2d24',
+                    fontWeight: '500',
+                    fontSize: '14px',
+                    background: '#ffffff',
+                    marginBottom: '12px',
+                    cursor: isReadOnlyForm ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <Upload size={16} color="#ee2d24" />
+                  Choose file
+                </div>
+                <div style={{ fontSize: '12px', color: '#9ca3af' }}>
+                  Type: xls, xlsx, csv. Max size: 20MB
+                </div>
               </label>
               <input id="goal-doc-upload" type="file" multiple style={{ display: 'none' }} onChange={handleAttachmentUpload} disabled={isReadOnlyForm} />
               
-              <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#ffffff' }}>
                 <table className="goal-data-table doc-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                  <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                  <thead style={{ background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
                     <tr>
-                      <th style={{ padding: '10px', textAlign: 'left', width: '50px' }}>No</th>
-                      <th style={{ padding: '10px', textAlign: 'left' }}>Tài liệu</th>
-                      <th style={{ padding: '10px', textAlign: 'left', width: '200px' }}>Loại chứng từ</th>
-                      <th style={{ padding: '10px', textAlign: 'left' }}>Nội dung tài liệu</th>
-                      <th style={{ padding: '10px', textAlign: 'left', width: '180px' }}>Thời điểm tải lên</th>
-                      <th style={{ padding: '10px', textAlign: 'center', width: '70px' }}>Action</th>
+                      <th style={{ padding: '12px 10px', width: '40px' }}></th>
+                      <th style={{ padding: '12px 10px', textAlign: 'left', width: '70px', fontWeight: '600', color: '#1f2937' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          No
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        </div>
+                      </th>
+                      <th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Tài liệu</th>
+                      <th style={{ padding: '12px 10px', textAlign: 'left', width: '220px', fontWeight: '600', color: '#1f2937' }}>Loại chứng từ</th>
+                      <th style={{ padding: '12px 10px', textAlign: 'left', fontWeight: '600', color: '#1f2937' }}>Nội dung tài liệu</th>
+                      <th style={{ padding: '12px 10px', textAlign: 'left', width: '180px', fontWeight: '600', color: '#1f2937' }}>Thời điểm tải lên</th>
                     </tr>
                   </thead>
                   <tbody>
                     {attachmentFiles.length === 0 ? (
                       <tr>
-                        <td colSpan="6" style={{ textAlign: 'center', color: '#94a3b8', padding: '20px 10px' }}>
+                        <td colSpan="6" style={{ textAlign: 'center', color: '#94a3b8', padding: '24px 10px' }}>
                           Chưa có tài liệu nào được tải lên
                         </td>
                       </tr>
                     ) : (
                       attachmentFiles.map((file, index) => (
                         <tr key={file.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '8px 10px' }}>{index + 1}</td>
-                          <td style={{ padding: '8px 10px', color: '#2563eb' }}>{file.name}</td>
-                          <td style={{ padding: '8px 10px' }}>
-                            <select
-                              className="form-control"
-                              style={{ width: '100%', padding: '6px', border: '1px solid #d9d9d9', borderRadius: '4px', background: '#ffffff', color: '#262626' }}
-                              value={file.type || 'Kế hoạch mục tiêu năm'}
-                              onChange={(e) => setAttachmentFiles((prev) => prev.map((f) => (f.id === file.id ? { ...f, type: e.target.value } : f)))}
-                              disabled={isReadOnlyForm}
-                            >
-                              <option value="Kế hoạch mục tiêu năm">Kế hoạch mục tiêu năm</option>
-                              <option value="Báo giá">Báo giá</option>
-                              <option value="Hợp đồng">Hợp đồng</option>
-                              <option value="Tài liệu kỹ thuật">Tài liệu kỹ thuật</option>
-                              <option value="Khác">Khác</option>
-                            </select>
-                          </td>
-                          <td style={{ padding: '8px 10px' }}>
-                            <input
-                              type="text"
-                              className="form-control"
-                              style={{ width: '100%', padding: '6px', border: '1px solid #d9d9d9', borderRadius: '4px', background: '#ffffff', color: '#262626' }}
-                              placeholder="Nhập nội dung tài liệu..."
-                              value={file.description || ''}
-                              onChange={(e) => setAttachmentFiles((prev) => prev.map((f) => (f.id === file.id ? { ...f, description: e.target.value } : f)))}
-                              disabled={isReadOnlyForm}
-                            />
-                          </td>
-                          <td style={{ padding: '8px 10px', color: '#64748b' }}>{file.uploadedAt || '-'}</td>
-                          <td style={{ padding: '8px 10px', textAlign: 'center' }}>
+                          <td style={{ padding: '10px', textAlign: 'center', width: '40px' }}>
                             <button
                               title="Xóa"
                               type="button"
-                              style={{ background: 'none', border: 'none', color: '#ef4444', cursor: isReadOnlyForm ? 'not-allowed' : 'pointer', padding: 0 }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#4b5563',
+                                cursor: isReadOnlyForm ? 'not-allowed' : 'pointer',
+                                padding: 0,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
                               onClick={() => setAttachmentFiles((prev) => prev.filter((f) => f.id !== file.id))}
                               disabled={isReadOnlyForm}
                             >
                               <Trash2 size={16} />
                             </button>
                           </td>
+                          <td style={{ padding: '10px', color: '#4b5563' }}>{index + 1}</td>
+                          <td style={{ padding: '10px', color: '#2563eb' }}>
+                            <span style={{ cursor: 'pointer', textDecoration: 'none' }}>
+                              {file.name}
+                            </span>
+                          </td>
+                          <td style={{ padding: '10px' }}>
+                            <div className="select-wrapper table-select" style={{ width: '100%' }}>
+                              <select
+                                className="form-control"
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 12px',
+                                  border: 'none',
+                                  borderRadius: '6px',
+                                  background: '#f3f4f6',
+                                  color: '#1f2937',
+                                  appearance: 'none',
+                                  paddingRight: '32px'
+                                }}
+                                value={file.type || 'Kế hoạch mục tiêu năm'}
+                                onChange={(e) => setAttachmentFiles((prev) => prev.map((f) => (f.id === file.id ? { ...f, type: e.target.value } : f)))}
+                                disabled={isReadOnlyForm}
+                              >
+                                {DOCUMENT_TYPES.map((type) => (
+                                  <option key={type} value={type}>
+                                    {type}
+                                  </option>
+                                ))}
+                              </select>
+                              <ChevronDown className="select-arrow" size={14} style={{ right: '12px' }} />
+                            </div>
+                          </td>
+                          <td style={{ padding: '10px' }}>
+                            <input
+                              type="text"
+                              className="form-control"
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: 'none',
+                                borderRadius: '6px',
+                                background: '#f3f4f6',
+                                color: '#1f2937'
+                              }}
+                              placeholder="Nhập nội dung"
+                              value={file.description || ''}
+                              onChange={(e) => setAttachmentFiles((prev) => prev.map((f) => (f.id === file.id ? { ...f, description: e.target.value } : f)))}
+                              disabled={isReadOnlyForm}
+                            />
+                          </td>
+                          <td style={{ padding: '10px', color: '#4b5563' }}>{file.uploadedAt || '-'}</td>
                         </tr>
                       ))
                     )}
