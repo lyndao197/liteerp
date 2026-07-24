@@ -184,12 +184,12 @@ const GoalResultList = () => {
 
   // Resizable column widths for frozen columns
   const [colWidths, setColWidths] = useState({
-    col1: 140,
-    col2: 160,
-    col3: 180,
-    col4: 140,
-    col5: 130,
-    col6: 80
+    col1: 120,
+    col2: 120,
+    col3: 130,
+    col4: 70,  // KH Mới
+    col5: 110, // Nhóm SPDV
+    col6: 110  // Tên SPDV
   });
 
   const leftOffsets = useMemo(() => {
@@ -1971,28 +1971,28 @@ const GoalResultList = () => {
             <thead>
               {/* Level 1: Time period grouping */}
               <tr>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-1 matrix-group-title" style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1, position: 'sticky' }}>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-1 matrix-group-title" style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1, position: 'sticky' }} title="Đơn vị thực hiện">
                   Đơn vị thực hiện
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col1', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-2 matrix-group-title" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2, position: 'sticky' }}>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-2 matrix-group-title" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2, position: 'sticky' }} title="Nhóm khách hàng">
                   Nhóm khách hàng
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col2', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-3 matrix-group-title" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3, position: 'sticky' }}>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-3 matrix-group-title" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3, position: 'sticky' }} title="Tên khách hàng">
                   Tên khách hàng
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col3', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-4 matrix-group-title" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4, position: 'sticky' }}>
-                  Nhóm SPDV
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-4 matrix-group-title cell-center" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4, position: 'sticky' }} title="KH Mới">
+                  KH Mới
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col4', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-5 matrix-group-title" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5, position: 'sticky' }}>
-                  Tên SPDV
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-5 matrix-group-title" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5, position: 'sticky' }} title="Nhóm SPDV">
+                  Nhóm SPDV
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col5', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-6 matrix-group-title cell-center" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6, position: 'sticky' }}>
-                  KH Mới
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-6 matrix-group-title" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6, position: 'sticky' }} title="Tên SPDV">
+                  Tên SPDV
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col6', e)} />
                 </th>
                 
@@ -2189,9 +2189,7 @@ const GoalResultList = () => {
                       )}
                       <td className="sticky-col-2" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2 }} title={row.customerGroup}>{row.customerGroup}</td>
                       <td className="sticky-col-3" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3 }} title={row.customerName}>{row.customerName}</td>
-                      <td className="sticky-col-4" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4 }} title={row.spdvGroup}>{row.spdvGroup}</td>
-                      <td className="sticky-col-5" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5 }} title={row.spdvName}>{row.spdvName}</td>
-                      <td className="sticky-col-6 cell-center" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6 }}>
+                      <td className="sticky-col-4 cell-center" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4 }}>
                         <input 
                           type="checkbox" 
                           className="custom-checkbox" 
@@ -2199,6 +2197,8 @@ const GoalResultList = () => {
                           disabled 
                         />
                       </td>
+                      <td className="sticky-col-5" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5 }} title={row.spdvGroup}>{row.spdvGroup}</td>
+                      <td className="sticky-col-6" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6 }} title={row.spdvName}>{row.spdvName}</td>
  
                       {/* Render Month columns */}
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {

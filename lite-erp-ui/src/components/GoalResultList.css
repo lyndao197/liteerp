@@ -228,8 +228,8 @@
   left: 0;
   z-index: 10;
   background: white;
-  min-width: 140px;
-  max-width: 140px;
+  min-width: 120px;
+  max-width: 120px;
   box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
 }
 
@@ -244,37 +244,17 @@
 
 .sticky-col-2 {
   position: sticky;
-  left: 140px;
+  left: 120px;
   z-index: 10;
   background: white;
-  min-width: 160px;
-  max-width: 160px;
+  min-width: 120px;
+  max-width: 120px;
   box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
 }
 
 .sticky-col-3 {
   position: sticky;
-  left: 300px;
-  z-index: 10;
-  background: white;
-  min-width: 180px;
-  max-width: 180px;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
-}
-
-.sticky-col-4 {
-  position: sticky;
-  left: 480px;
-  z-index: 10;
-  background: white;
-  min-width: 140px;
-  max-width: 140px;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
-}
-
-.sticky-col-5 {
-  position: sticky;
-  left: 620px;
+  left: 240px;
   z-index: 10;
   background: white;
   min-width: 130px;
@@ -282,13 +262,33 @@
   box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
 }
 
-.sticky-col-6 {
+.sticky-col-4 {
   position: sticky;
-  left: 750px;
+  left: 370px;
   z-index: 10;
   background: white;
-  min-width: 80px;
-  max-width: 80px;
+  min-width: 110px;
+  max-width: 110px;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.sticky-col-5 {
+  position: sticky;
+  left: 480px;
+  z-index: 10;
+  background: white;
+  min-width: 110px;
+  max-width: 110px;
+  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+}
+
+.sticky-col-6 {
+  position: sticky;
+  left: 590px;
+  z-index: 10;
+  background: white;
+  min-width: 70px;
+  max-width: 70px;
   box-shadow: 3px 0 5px -2px rgba(0, 0, 0, 0.15);
 }
 
@@ -1136,11 +1136,17 @@
 
 /* Resizable columns styling */
 .result-data-table td.sticky-col-1,
+.result-data-table th.sticky-col-1,
 .result-data-table td.sticky-col-2,
+.result-data-table th.sticky-col-2,
 .result-data-table td.sticky-col-3,
+.result-data-table th.sticky-col-3,
 .result-data-table td.sticky-col-4,
+.result-data-table th.sticky-col-4,
 .result-data-table td.sticky-col-5,
-.result-data-table td.sticky-col-6 {
+.result-data-table th.sticky-col-5,
+.result-data-table td.sticky-col-6,
+.result-data-table th.sticky-col-6 {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -1150,13 +1156,16 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 6px;
+  width: 8px;
   height: 100%;
   cursor: col-resize;
   z-index: 100;
   user-select: none;
+  border-right: 2px dashed transparent;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .col-resizer:hover {
-  background: rgba(59, 130, 246, 0.45);
+  border-right-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.12);
 }
