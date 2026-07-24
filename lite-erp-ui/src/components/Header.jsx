@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
-import { Bell, BriefcaseBusiness, Building2, Mail, Phone, Shield, Smartphone, X } from 'lucide-react';
+import { Bell, BriefcaseBusiness, Building2, Mail, Phone, Shield, Smartphone, X, Laptop } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { mockStore } from '../utils/mockStore';
 
@@ -23,29 +23,7 @@ function Header() {
     'Kế toán trưởng',
     'Giám đốc'
   ];
-  const TIMEZONE_OPTIONS = [
-    'GMT',
-    'GMT+0',
-    'GMT-0',
-    'Greenwich',
-    'Hongkong',
-    'Iceland',
-    'Án Độ Dương/Antananarivo',
-    'Án Độ Dương/Chagos',
-    'Án Độ Dương/Christmas',
-    'Châu Á/Hồ_Chí_Minh'
-  ];
-  const PRIVACY_OPTIONS = [
-    'Public by default',
-    'Private by default',
-    'Internal users only'
-  ];
-  const WORK_DAY_OPTIONS = [
-    'Không xác định',
-    'Office',
-    'Home',
-    'Other'
-  ];
+
   const menuRef = useRef(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
@@ -70,19 +48,7 @@ function Header() {
     signature: 'Administrator',
     attendancePin: ''
   });
-  const [calendarPrefs, setCalendarPrefs] = useState({
-    timezone: 'Châu Á/Hồ_Chí_Minh',
-    privacy: 'Public by default',
-    outOfOffice: 'None planned',
-    outOfOfficeMessage: '',
-    monday: 'Không xác định',
-    tuesday: 'Không xác định',
-    wednesday: 'Không xác định',
-    thursday: 'Không xác định',
-    friday: 'Không xác định',
-    saturday: 'Không xác định',
-    sunday: 'Không xác định'
-  });
+
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -164,9 +130,7 @@ function Header() {
     setPersonalInfo(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateCalendarPrefs = (field, value) => {
-    setCalendarPrefs(prev => ({ ...prev, [field]: value }));
-  };
+
 
   const savePersonalInfo = () => {
     if (!currentUser) return;
@@ -272,7 +236,6 @@ function Header() {
 
             <div className="prefs-tabs">
               <button type="button" className={`prefs-tab ${activePreferencesTab === 'personal' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('personal')}>Thông tin cơ bản</button>
-              <button type="button" className={`prefs-tab ${activePreferencesTab === 'calendar' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('calendar')}>Lịch</button>
               <button type="button" className={`prefs-tab ${activePreferencesTab === 'options' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('options')}>Tùy chọn</button>
               <button type="button" className={`prefs-tab ${activePreferencesTab === 'security' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('security')}>Bảo mật</button>
             </div>
@@ -393,111 +356,75 @@ function Header() {
                 </div>
               ) : null}
 
-              {activePreferencesTab === 'calendar' ? (
-                <div className="prefs-calendar-grid">
-                  <div className="prefs-calendar-col">
-                    <div className="prefs-calendar-row">
-                      <label>
-                        Múi giờ <span className="prefs-info-icon">?</span>
-                      </label>
-                      <select value={calendarPrefs.timezone} onChange={(e) => updateCalendarPrefs('timezone', e.target.value)}>
-                        {TIMEZONE_OPTIONS.map(timezone => (
-                          <option key={timezone} value={timezone}>{timezone}</option>
-                        ))}
-                      </select>
-                    </div>
 
-                    <div className="prefs-calendar-row">
-                      <label>Tính riêng tư</label>
-                      <select value={calendarPrefs.privacy} onChange={(e) => updateCalendarPrefs('privacy', e.target.value)}>
-                        {PRIVACY_OPTIONS.map(option => (
-                          <option key={option} value={option}>{option}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="prefs-calendar-row">
-                      <label>Out-of-office</label>
-                      <input type="text" value={calendarPrefs.outOfOffice} onChange={(e) => updateCalendarPrefs('outOfOffice', e.target.value)} />
-                    </div>
-
-                    <div className="prefs-calendar-message">
-                      <textarea
-                        rows={5}
-                        placeholder="Your out-of-office message..."
-                        value={calendarPrefs.outOfOfficeMessage}
-                        onChange={(e) => updateCalendarPrefs('outOfOfficeMessage', e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="prefs-calendar-col">
-                    <div className="prefs-week-grid">
-                      <div className="prefs-week-item">
-                        <label>Thứ 2</label>
-                        <select value={calendarPrefs.monday} onChange={(e) => updateCalendarPrefs('monday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Thứ 3</label>
-                        <select value={calendarPrefs.tuesday} onChange={(e) => updateCalendarPrefs('tuesday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Thứ 4</label>
-                        <select value={calendarPrefs.wednesday} onChange={(e) => updateCalendarPrefs('wednesday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Thứ 5</label>
-                        <select value={calendarPrefs.thursday} onChange={(e) => updateCalendarPrefs('thursday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Thứ 6</label>
-                        <select value={calendarPrefs.friday} onChange={(e) => updateCalendarPrefs('friday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Thứ 7</label>
-                        <select value={calendarPrefs.saturday} onChange={(e) => updateCalendarPrefs('saturday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="prefs-week-item">
-                        <label>Chủ nhật</label>
-                        <select value={calendarPrefs.sunday} onChange={(e) => updateCalendarPrefs('sunday', e.target.value)}>
-                          {WORK_DAY_OPTIONS.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
 
               {activePreferencesTab === 'security' ? (
-                <div className="prefs-placeholder">
-                  <h4>Cài đặt bảo mật</h4>
-                  <p>Quản lý mật khẩu, phiên đăng nhập và cấu hình xác thực hai lớp cho tài khoản.</p>
+                <div className="prefs-security-container">
+                  <div className="prefs-security-row">
+                    <div className="prefs-security-left">
+                      <h4>Thay đổi mật khẩu</h4>
+                      <p>Cập nhật nếu bị xâm phạm.</p>
+                    </div>
+                    <div className="prefs-security-right">
+                      <button type="button" className="btn-security-action">Thay đổi mật khẩu</button>
+                    </div>
+                  </div>
+
+                  <div className="prefs-security-row">
+                    <div className="prefs-security-left">
+                      <h4>Xác thực hai yếu tố</h4>
+                      <p>Recommended for extra security.</p>
+                    </div>
+                    <div className="prefs-security-right">
+                      <button type="button" className="btn-security-action">Bật 2FA</button>
+                    </div>
+                  </div>
+
+                  <div className="prefs-security-row">
+                    <div className="prefs-security-left">
+                      <h4>Khóa API</h4>
+                      <p>Connect external services.</p>
+                    </div>
+                    <div className="prefs-security-right">
+                      <button type="button" className="btn-security-action">Thêm khóa API</button>
+                    </div>
+                  </div>
+
+                  <div className="prefs-security-row">
+                    <div className="prefs-security-left">
+                      <h4>Khóa truy cập</h4>
+                      <p>Recommended for extra security.</p>
+                    </div>
+                    <div className="prefs-security-right">
+                      <button type="button" className="btn-security-action">Thêm khóa truy cập</button>
+                    </div>
+                  </div>
+
+                  <div className="prefs-security-row">
+                    <div className="prefs-security-left">
+                      <h4>Thiết bị</h4>
+                      <p>Kiểm tra xem chúng có phải của bạn không.</p>
+                    </div>
+                    <div className="prefs-security-right">
+                      <div className="device-card">
+                        <div className="device-icon-wrap">
+                          <Laptop size={32} />
+                        </div>
+                        <div className="device-info">
+                          <div className="device-header">
+                            <span className="device-name">Macos Chrome</span>
+                            <span className="status-dot-active"></span>
+                            <span className="device-time">1 phút trước</span>
+                          </div>
+                          <p className="device-details">116.96.47.125</p>
+                          <p className="device-details">Vietnam</p>
+                          <p className="device-details">Hanoi</p>
+                        </div>
+                        <button type="button" className="btn-device-logout">Đăng xuất</button>
+                      </div>
+                      <button type="button" className="btn-logout-all">Đăng xuất khỏi tất cả thiết bị</button>
+                    </div>
+                  </div>
                 </div>
               ) : null}
             </div>

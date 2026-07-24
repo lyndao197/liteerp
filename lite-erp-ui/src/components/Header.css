@@ -465,6 +465,156 @@
   cursor: pointer;
 }
 
+/* Security Preferences Tab */
+.prefs-security-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prefs-security-row {
+  display: flex;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 16px 0;
+  align-items: flex-start;
+}
+
+.prefs-security-row:last-child {
+  border-bottom: none;
+}
+
+.prefs-security-left {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.prefs-security-left h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.prefs-security-left p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.prefs-security-right {
+  flex-grow: 1;
+}
+
+.btn-security-action {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-security-action:hover {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.device-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 500px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+}
+
+.device-icon-wrap {
+  color: #475569;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-info {
+  flex-grow: 1;
+}
+
+.device-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.device-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.status-dot-active {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  display: inline-block;
+}
+
+.device-time {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.device-details {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.btn-device-logout {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-device-logout:hover {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.btn-logout-all {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-logout-all:hover {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+}
+
 @media (max-width: 900px) {
   .prefs-modal {
     width: min(720px, 100%);
@@ -512,5 +662,14 @@
 
   .prefs-calendar-message {
     padding-left: 0;
+  }
+
+  .prefs-security-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .prefs-security-left {
+    width: 100%;
   }
 }

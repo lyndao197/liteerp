@@ -2560,7 +2560,7 @@ const GoalResultList = () => {
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Đơn vị thực hiện</th>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
                       {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
@@ -2573,8 +2573,8 @@ const GoalResultList = () => {
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
@@ -2598,17 +2598,15 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
                               {/* Group 2 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
                               {/* Group 3 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => (
@@ -2805,7 +2803,7 @@ const GoalResultList = () => {
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '220px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm khách hàng</th>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
                       {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
@@ -2818,8 +2816,8 @@ const GoalResultList = () => {
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
@@ -2843,17 +2841,15 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
                               {/* Group 2 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
                               {/* Group 3 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => (
@@ -2999,7 +2995,7 @@ const GoalResultList = () => {
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm SPDV</th>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                        <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
                       {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
@@ -3012,8 +3008,8 @@ const GoalResultList = () => {
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
@@ -3037,17 +3033,15 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
                               {/* Group 2 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
                               {/* Group 3 */}
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => (
