@@ -2452,19 +2452,22 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
                             <React.Fragment key={`m_inds_${i}`}>
+                              {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
+                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
+                              {/* Group 2 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
+                              {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
@@ -2694,19 +2697,22 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
                             <React.Fragment key={`m_inds_${i}`}>
+                              {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
+                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
+                              {/* Group 2 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
+                              {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
@@ -2885,19 +2891,22 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
                             <React.Fragment key={`m_inds_${i}`}>
+                              {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
+                              <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>+/- so KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600', color: '#475569' }}>% HTKH</th>
+                              {/* Group 2 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
+                              {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                             </React.Fragment>
