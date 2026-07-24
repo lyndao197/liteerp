@@ -171,12 +171,54 @@ const GoalForm = () => {
   const [activeSideTab, setActiveSideTab] = useState('comment');
   const [commentInput, setCommentInput] = useState('');
   const [existingRows, setExistingRows] = useState([{ ...EMPTY_ROW }]);
+
+  const { unitSummaryInForm, formTotalCount, formTotalValue } = useMemo(() => {
+    const summaryMap = {};
+    existingRows.forEach(row => {
+      const unit = row.implementationUnit;
+      if (unit) {
+        if (!summaryMap[unit]) {
+          summaryMap[unit] = { unit, count: 0, total: 0 };
+        }
+        summaryMap[unit].count += 1;
+        summaryMap[unit].total += parseFloat(row.nam) || 0;
+      }
+    });
+
+    const summaryList = Object.values(summaryMap).sort((a, b) => b.total - a.total);
+    const totalCount = summaryList.reduce((sum, item) => sum + item.count, 0);
+    const totalValue = summaryList.reduce((sum, item) => sum + item.total, 0);
+
+    return {
+      unitSummaryInForm: summaryList,
+      formTotalCount: totalCount,
+      formTotalValue: totalValue
+    };
+  }, [existingRows]);
   const [newCustomerPlan, setNewCustomerPlan] = useState({
+    spdvGroup: '',
+    baseline: '0',
     t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
     t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
     q1: 0, q2: 0, q3: 0, q4: 0,
     nam: 0
   });
+
+  const [newCustomerCountPlan, setNewCustomerCountPlan] = useState({
+    t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+    t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+    q1: 0, q2: 0, q3: 0, q4: 0,
+    nam: 0
+  });
+
+  const [newContractCountPlan, setNewContractCountPlan] = useState({
+    t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+    t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+    q1: 0, q2: 0, q3: 0, q4: 0,
+    nam: 0
+  });
+
+
   const [attachmentFiles, setAttachmentFiles] = useState([]);
   const [historyLogs, setHistoryLogs] = useState([]);
   const [comments, setComments] = useState([]);
@@ -219,6 +261,12 @@ const GoalForm = () => {
         if (goal.newCustomerPlan) {
           setNewCustomerPlan(goal.newCustomerPlan);
         }
+        if (goal.newCustomerCountPlan) {
+          setNewCustomerCountPlan(goal.newCustomerCountPlan);
+        }
+        if (goal.newContractCountPlan) {
+          setNewContractCountPlan(goal.newContractCountPlan);
+        }
         if (goal.attachmentFiles) {
           setAttachmentFiles(goal.attachmentFiles);
         }
@@ -256,6 +304,22 @@ const GoalForm = () => {
       const val = parseFloat(newCustomerPlan[mKey]);
       if (isNaN(val) || val < 0) {
         alert(`Phần chỉ tiêu khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+        return false;
+      }
+    }
+
+    for (const mKey of MONTH_KEYS) {
+      const val = parseInt(newCustomerCountPlan[mKey], 10);
+      if (isNaN(val) || val < 0) {
+        alert(`Số lượng khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+        return false;
+      }
+    }
+
+    for (const mKey of MONTH_KEYS) {
+      const val = parseInt(newContractCountPlan[mKey], 10);
+      if (isNaN(val) || val < 0) {
+        alert(`Số lượng hợp đồng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
         return false;
       }
     }
@@ -307,6 +371,8 @@ const GoalForm = () => {
       statusLabel: 'Mới tạo',
       existingRows,
       newCustomerPlan,
+      newCustomerCountPlan,
+      newContractCountPlan,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -341,6 +407,8 @@ const GoalForm = () => {
       statusLabel: 'Hiệu lực',
       existingRows,
       newCustomerPlan,
+      newCustomerCountPlan,
+      newContractCountPlan,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -563,7 +631,7 @@ const GoalForm = () => {
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
             <div className="goal-card-header">
-              <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu</h3>
+              <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (VNĐ)</h3>
             </div>
 
 
@@ -751,48 +819,87 @@ const GoalForm = () => {
             </div>
           </section>
 
-          {/* Card 3: Chỉ tiêu doanh thu khách hàng mới */}
-          <section className="goal-card">
+          {/* Bảng tổng hợp kế hoạch theo Đơn vị thực hiện */}
+          <section className="goal-card" style={{ marginTop: '16px' }}>
             <div className="goal-card-header">
-              <h3>Chỉ tiêu doanh thu khách hàng mới</h3>
+              <h3>Bảng tổng hợp kế hoạch theo Đơn vị thực hiện</h3>
+            </div>
+            <div className="table-container" style={{ padding: '16px' }}>
+              {unitSummaryInForm.length > 0 ? (
+                <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc' }}>
+                      <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
+                      <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {unitSummaryInForm.map((item) => (
+                      <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
+                        <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                          {item.total.toLocaleString('vi-VN')}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                      <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
+                      <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                        {formTotalValue.toLocaleString('vi-VN')}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
+                  Chưa có đơn vị thực hiện nào được gán chỉ tiêu.
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Card 3: Chỉ tiêu số lượng khách hàng và hợp đồng mới */}
+          <section className="goal-card">
+            <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+              <h3>Chỉ tiêu số lượng khách hàng và hợp đồng mới</h3>
             </div>
 
+            {/* Unified grid table */}
             <div className="table-container scrollable-table-container">
-              <table className="goal-data-table month-table">
+              <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
                 <thead>
-                  <tr>
-                    <th colSpan={17} style={{ textAlign: 'center' }}>
-                      Kế hoạch doanh thu năm
-                    </th>
-                  </tr>
-                  <tr>
+                  <tr style={{ background: '#f8fafc' }}>
+                    <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
                     {Array.from({ length: 12 }, (_, i) => (
-                      <th key={`new_t${i+1}`} className="sub-th-month">T{i+1}</th>
+                      <th key={`head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
                     ))}
                     {Array.from({ length: 4 }, (_, i) => (
-                      <th key={`new_q${i+1}`} className="sub-th-quarter">Q{i+1}</th>
+                      <th key={`head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
                     ))}
-                    <th className="sub-th-year">Năm</th>
+                    <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    {MONTH_KEYS.map((mKey) => (
-                      <td key={`new_input_${mKey}`} className="td-month-input">
+                  {/* 2. Số lượng khách hàng mới (kế hoạch) */}
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '10px 16px', fontWeight: '600', color: '#0f172a', background: '#fafafa' }}>Số lượng khách hàng mới (kế hoạch)</td>
+                    {MONTH_KEYS.map((mKey, idx) => (
+                      <td key={`cust_m_${mKey}`} className="td-month-input">
                         <input
                           type="text"
-                          className="month-grid-input"
-                          value={newCustomerPlan[mKey]}
-                          onChange={(e) => updateNewCustomerPlan(mKey, e.target.value)}
+                          className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
+                          value={newCustomerCountPlan[mKey]}
+                          onChange={(e) => updateNewCustomerCountPlan(mKey, e.target.value)}
+                          disabled={isReadOnlyForm || isMonthDisabled(idx)}
                         />
                       </td>
                     ))}
                     {QUARTER_KEYS.map((qKey) => (
-                      <td key={`new_input_${qKey}`} className="td-quarter-input">
+                      <td key={`cust_q_${qKey}`} className="td-quarter-input">
                         <input
                           type="text"
                           className="month-grid-input readonly-input"
-                          value={newCustomerPlan[qKey]}
+                          value={newCustomerCountPlan[qKey]}
                           readOnly
                         />
                       </td>
@@ -801,7 +908,41 @@ const GoalForm = () => {
                       <input
                         type="text"
                         className="month-grid-input readonly-input"
-                        value={newCustomerPlan.nam}
+                        value={newCustomerCountPlan.nam}
+                        readOnly
+                      />
+                    </td>
+                  </tr>
+
+                  {/* 3. Số lượng hợp đồng mới (kế hoạch) */}
+                  <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
+                    <td style={{ padding: '10px 16px', fontWeight: '600', color: '#0f172a', background: '#fafafa' }}>Số lượng hợp đồng mới (kế hoạch)</td>
+                    {MONTH_KEYS.map((mKey, idx) => (
+                      <td key={`cnt_m_${mKey}`} className="td-month-input">
+                        <input
+                          type="text"
+                          className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
+                          value={newContractCountPlan[mKey]}
+                          onChange={(e) => updateNewContractCountPlan(mKey, e.target.value)}
+                          disabled={isReadOnlyForm || isMonthDisabled(idx)}
+                        />
+                      </td>
+                    ))}
+                    {QUARTER_KEYS.map((qKey) => (
+                      <td key={`cnt_q_${qKey}`} className="td-quarter-input">
+                        <input
+                          type="text"
+                          className="month-grid-input readonly-input"
+                          value={newContractCountPlan[qKey]}
+                          readOnly
+                        />
+                      </td>
+                    ))}
+                    <td className="td-year-input">
+                      <input
+                        type="text"
+                        className="month-grid-input readonly-input"
+                        value={newContractCountPlan.nam}
                         readOnly
                       />
                     </td>

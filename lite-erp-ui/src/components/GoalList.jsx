@@ -540,6 +540,20 @@ const GoalList = () => {
                   </td>
                 </tr>
               ))}
+              <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                <td style={{ paddingLeft: '24px', color: '#0f172a', fontWeight: '700' }}>
+                  Tổng cộng
+                </td>
+                <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#e32b4c' }}>
+                  {unitSummaryData.reduce((sum, item) => sum + item.totalPlan, 0).toLocaleString('vi-VN')}
+                </td>
+                <td style={{ textAlign: 'center', fontWeight: '700', color: '#0f172a' }}>
+                  {unitSummaryData.reduce((sum, item) => sum + item.kpiCount, 0)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  -
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
