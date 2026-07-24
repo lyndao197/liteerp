@@ -1768,6 +1768,68 @@ const GoalResultList = () => {
     );
   };
 
+  const renderProductionMonthCells = (kh, est, th, isClosed) => {
+    const diff = th - kh;
+    const delta = kh > 0 ? Math.round((diff / kh) * 100) : 0;
+    const diffText = diff > 0 ? `+${diff.toLocaleString('vi-VN')}` : diff.toLocaleString('vi-VN');
+    const diffColor = diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
+    const deltaText = delta > 0 ? `+${delta}%` : `${delta}%`;
+    const deltaColor = delta > 0 ? '#0284c7' : delta < 0 ? '#dc2626' : '#64748b';
+
+    return (
+      <React.Fragment key="prod_month">
+        <td className="cell-right">{kh > 0 ? kh.toLocaleString('vi-VN') : '0'}</td>
+        <td className="cell-right" style={{ color: est > 0 ? '#ea580c' : '#94a3b8', fontStyle: est > 0 ? 'normal' : 'italic' }}>
+          {est > 0 ? est.toLocaleString('vi-VN') : '--'}
+        </td>
+        <td className="cell-right" style={{ fontWeight: '600' }}>
+          {isClosed ? (
+            <>
+              {th > 0 ? th.toLocaleString('vi-VN') : '0'}
+              {est > 0 && th > 0 && (
+                <span style={{ display: 'block', fontSize: '9px', color: '#64748b', fontWeight: 'normal', marginTop: '2px' }}>
+                  Lệch: {Math.round(((th - est) / est) * 100)}%
+                </span>
+              )}
+            </>
+          ) : (
+            <span style={{ color: '#94a3b8', fontStyle: 'italic', fontWeight: 'normal' }}>--</span>
+          )}
+        </td>
+        <td className="cell-right" style={{ fontWeight: '600', color: diffColor }}>
+          {isClosed ? (th > 0 ? diffText : '--') : '--'}
+        </td>
+        <td className="cell-right" style={{ fontWeight: '600', color: deltaColor }}>
+          {isClosed ? (th > 0 ? deltaText : '--') : '--'}
+        </td>
+      </React.Fragment>
+    );
+  };
+
+  const renderProductionQuarterCells = (kh, th) => {
+    const diff = th - kh;
+    const delta = kh > 0 ? Math.round((diff / kh) * 100) : 0;
+    const diffText = diff > 0 ? `+${diff.toLocaleString('vi-VN')}` : diff.toLocaleString('vi-VN');
+    const diffColor = diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
+    const deltaText = delta > 0 ? `+${delta}%` : `${delta}%`;
+    const deltaColor = delta > 0 ? '#0284c7' : delta < 0 ? '#dc2626' : '#64748b';
+
+    return (
+      <React.Fragment key="prod_quarter">
+        <td className="cell-right">{kh > 0 ? kh.toLocaleString('vi-VN') : '0'}</td>
+        <td className="cell-right" style={{ fontWeight: '600' }}>
+          {th > 0 ? th.toLocaleString('vi-VN') : '--'}
+        </td>
+        <td className="cell-right" style={{ fontWeight: '600', color: diffColor }}>
+          {th > 0 ? diffText : '--'}
+        </td>
+        <td className="cell-right" style={{ fontWeight: '600', color: deltaColor }}>
+          {th > 0 ? deltaText : '--'}
+        </td>
+      </React.Fragment>
+    );
+  };
+
 
   return (
     <div className="goal-result-container">
@@ -1897,14 +1959,14 @@ const GoalResultList = () => {
                 
                 {/* Months */}
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 3} className="matrix-group-title cell-center">
+                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 5} className="matrix-group-title cell-center">
                     Tháng {m}
                   </th>
                 ))}
 
                 {/* Quarters */}
                 {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                  <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="matrix-group-title cell-center">
+                  <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 4} className="matrix-group-title cell-center">
                     Quý {q}
                   </th>
                 ))}
@@ -2026,19 +2088,23 @@ const GoalResultList = () => {
                 <>
                   {/* Level 2 (for Production): Indicators directly */}
                   <tr>
-                    {/* Months: KH, Ước, TH */}
+                    {/* Months: KH, Ước, TH, Tăng/Giảm, % Delta */}
                     {Array.from({ length: 12 }).map((_, i) => (
                       <React.Fragment key={`m${i}`}>
                         <th className="matrix-indicator-title cell-right">KH</th>
                         <th className="matrix-indicator-title cell-right" style={{ color: '#ea580c' }}>Ước TH</th>
                         <th className="matrix-indicator-title cell-right">TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#059669' }}>Tăng/Giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#0284c7' }}>% Delta</th>
                       </React.Fragment>
                     ))}
-                    {/* Quarters: KH, TH */}
+                    {/* Quarters: KH, TH, Tăng/Giảm, % Delta */}
                     {Array.from({ length: 4 }).map((_, i) => (
                       <React.Fragment key={`q${i}`}>
                         <th className="matrix-indicator-title cell-right">KH</th>
                         <th className="matrix-indicator-title cell-right">TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#059669' }}>Tăng/Giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#0284c7' }}>% Delta</th>
                       </React.Fragment>
                     ))}
                     {/* Year: KH, TH */}
@@ -2108,33 +2174,9 @@ const GoalResultList = () => {
 
                           const scaledKh = Math.round(val.kh * valScale);
                           const scaledTh = Math.round(val.th * valScale);
-                          const scaledEst = estVal ? Math.round(estVal * valScale) : null;
+                          const scaledEst = estVal ? Math.round(estVal * valScale) : 0;
 
-                          return (
-                            <React.Fragment key={periodKey}>
-                              {/* KH */}
-                              <td className="cell-right">{scaledKh.toLocaleString('vi-VN')}</td>
-                              {/* Ước TH */}
-                              <td className="cell-right" style={{ color: scaledEst ? '#ea580c' : '#94a3b8', fontStyle: scaledEst ? 'normal' : 'italic' }}>
-                                {scaledEst ? scaledEst.toLocaleString('vi-VN') : '--'}
-                              </td>
-                              {/* TH */}
-                              <td className="cell-right" style={{ fontWeight: '600' }}>
-                                {isClosed ? (
-                                  <>
-                                    {scaledTh > 0 ? scaledTh.toLocaleString('vi-VN') : '--'}
-                                    {scaledEst && scaledTh > 0 && (
-                                      <span style={{ display: 'block', fontSize: '9px', color: '#64748b', fontWeight: 'normal', marginTop: '2px' }}>
-                                        Lệch: {Math.round(((scaledTh - scaledEst) / scaledEst) * 100)}%
-                                      </span>
-                                    )}
-                                  </>
-                                ) : (
-                                  <span style={{ color: '#94a3b8', fontStyle: 'italic', fontWeight: 'normal' }}>--</span>
-                                )}
-                              </td>
-                            </React.Fragment>
-                          );
+                          return renderProductionMonthCells(scaledKh, scaledEst, scaledTh, isClosed);
                         }
                       })}
 
@@ -2149,14 +2191,7 @@ const GoalResultList = () => {
                           const scaledKh = Math.round(val.kh * valScale);
                           const scaledTh = Math.round(val.th * valScale);
 
-                          return (
-                            <React.Fragment key={periodKey}>
-                              <td className="cell-right">{scaledKh.toLocaleString('vi-VN')}</td>
-                              <td className="cell-right" style={{ fontWeight: '600' }}>
-                                {scaledTh > 0 ? scaledTh.toLocaleString('vi-VN') : '--'}
-                              </td>
-                            </React.Fragment>
-                          );
+                          return renderProductionQuarterCells(scaledKh, scaledTh);
                         }
                       })}
 
@@ -2205,7 +2240,7 @@ const GoalResultList = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? 236 : (activeTab === 'san_luong_nghiem_thu' ? 54 : 52)} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? 236 : (activeTab === 'san_luong_nghiem_thu' ? 86 : 52)} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                     Không tìm thấy dữ liệu kết quả doanh thu phù hợp
                   </td>
                 </tr>
@@ -2469,12 +2504,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }).map((_, i) => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
@@ -2500,17 +2539,7 @@ const GoalResultList = () => {
                             return renderSummaryPeriodCells(val, true, p);
                           } else {
                             const isClosed = officialMonths.includes(p);
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ color: val.est > 0 ? '#ea580c' : '#94a3b8', fontStyle: val.est > 0 ? 'normal' : 'italic' }}>
-                                  {val.est > 0 ? val.est.toLocaleString('vi-VN') : '--'}
-                                </td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {isClosed ? (val.th > 0 ? val.th.toLocaleString('vi-VN') : '0') : '--'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionMonthCells(val.kh, val.est || 0, val.th, isClosed);
                           }
                         })}
                         {/* Quarter values */}
@@ -2520,14 +2549,7 @@ const GoalResultList = () => {
                           if (activeTab === 'ket_qua_doanh_thu') {
                             return renderSummaryPeriodCells(val, false, p);
                           } else {
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {val.th > 0 ? val.th.toLocaleString('vi-VN') : '0'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionQuarterCells(val.kh, val.th);
                           }
                         })}
                         {/* Year values */}
@@ -2724,12 +2746,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }).map((_, i) => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
@@ -2755,17 +2781,7 @@ const GoalResultList = () => {
                             return renderSummaryPeriodCells(val, true, p);
                           } else {
                             const isClosed = officialMonths.includes(p);
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ color: val.est > 0 ? '#ea580c' : '#94a3b8', fontStyle: val.est > 0 ? 'normal' : 'italic' }}>
-                                  {val.est > 0 ? val.est.toLocaleString('vi-VN') : '--'}
-                                </td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {isClosed ? (val.th > 0 ? val.th.toLocaleString('vi-VN') : '0') : '--'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionMonthCells(val.kh, val.est || 0, val.th, isClosed);
                           }
                         })}
                         {/* Quarter values */}
@@ -2775,14 +2791,7 @@ const GoalResultList = () => {
                           if (activeTab === 'ket_qua_doanh_thu') {
                             return renderSummaryPeriodCells(val, false, p);
                           } else {
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {val.th > 0 ? val.th.toLocaleString('vi-VN') : '0'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionQuarterCells(val.kh, val.th);
                           }
                         })}
                         {/* Year values */}
@@ -2928,12 +2937,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }).map((_, i) => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
                         <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
@@ -2959,17 +2972,7 @@ const GoalResultList = () => {
                             return renderSummaryPeriodCells(val, true, p);
                           } else {
                             const isClosed = officialMonths.includes(p);
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ color: val.est > 0 ? '#ea580c' : '#94a3b8', fontStyle: val.est > 0 ? 'normal' : 'italic' }}>
-                                  {val.est > 0 ? val.est.toLocaleString('vi-VN') : '--'}
-                                </td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {isClosed ? (val.th > 0 ? val.th.toLocaleString('vi-VN') : '0') : '--'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionMonthCells(val.kh, val.est || 0, val.th, isClosed);
                           }
                         })}
                         {/* Quarter values */}
@@ -2979,14 +2982,7 @@ const GoalResultList = () => {
                           if (activeTab === 'ket_qua_doanh_thu') {
                             return renderSummaryPeriodCells(val, false, p);
                           } else {
-                            return (
-                              <React.Fragment key={p}>
-                                <td className="cell-right">{val.kh > 0 ? val.kh.toLocaleString('vi-VN') : '0'}</td>
-                                <td className="cell-right" style={{ fontWeight: '600' }}>
-                                  {val.th > 0 ? val.th.toLocaleString('vi-VN') : '0'}
-                                </td>
-                              </React.Fragment>
-                            );
+                            return renderProductionQuarterCells(val.kh, val.th);
                           }
                         })}
                         {/* Year values */}
