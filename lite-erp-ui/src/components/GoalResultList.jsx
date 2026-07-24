@@ -687,14 +687,18 @@ const GoalResultList = () => {
         }
 
         const thPrev = prevYear === yrCurrent ? currentData[prevPeriodKey].th : prevYearData[prevPeriodKey].th;
+        const estPrev = prevYear === yrCurrent ? currentData[prevPeriodKey].est : prevYearData[prevPeriodKey].est;
         const thYoY = prevYearData[pKey].th;
+        const estYoY = prevYearData[pKey].est;
 
         periodsResult[pKey] = {
           kh: cur.kh,
           th: cur.th,
           est: cur.est,
           thPrev,
-          thYoY
+          estPrev,
+          thYoY,
+          estYoY
         };
       });
 
@@ -1540,11 +1544,11 @@ const GoalResultList = () => {
     const prevValKey = `${row.id}_${prevYear}_${prevPeriodKey}`;
     const prevVal = dbValues[prevValKey] || { kh: 0, th: 0 };
     const scaledThPrev = Math.round(prevVal.th * valScale);
+    const prevEstVal = estimatesDb[prevValKey] || null;
+    const scaledEstPrev = prevEstVal ? Math.round(prevEstVal * valScale) : 0;
 
     const diffMoM = scaledTh - scaledThPrev;
     const deltaMoM = scaledThPrev > 0 ? Math.round((diffMoM / scaledThPrev) * 100) : 0;
-    const diffEstMoM = scaledEst - scaledThPrev;
-    const deltaEstMoM = scaledThPrev > 0 ? Math.round((diffEstMoM / scaledThPrev) * 100) : 0;
 
     // Group 3: YoY
     const yoyPeriodKey = periodKey;
@@ -1552,11 +1556,11 @@ const GoalResultList = () => {
     const yoyValKey = `${row.id}_${yoyYear}_${yoyPeriodKey}`;
     const yoyVal = dbValues[yoyValKey] || { kh: 0, th: 0 };
     const scaledThYoY = Math.round(yoyVal.th * valScale);
+    const yoyEstVal = estimatesDb[yoyValKey] || null;
+    const scaledEstYoY = yoyEstVal ? Math.round(yoyEstVal * valScale) : 0;
 
     const diffYoY = scaledTh - scaledThYoY;
     const deltaYoY = scaledThYoY > 0 ? Math.round((diffYoY / scaledThYoY) * 100) : 0;
-    const diffEstYoY = scaledEst - scaledThYoY;
-    const deltaEstYoY = scaledThYoY > 0 ? Math.round((diffEstYoY / scaledThYoY) * 100) : 0;
 
     return {
       kh: scaledKh,
@@ -1565,15 +1569,13 @@ const GoalResultList = () => {
       diffSoKh,
       htkhRate,
       thPrev: scaledThPrev,
+      estPrev: scaledEstPrev,
       diffMoM,
       deltaMoM,
-      diffEstMoM,
-      deltaEstMoM,
       thYoY: scaledThYoY,
+      estYoY: scaledEstYoY,
       diffYoY,
-      deltaYoY,
-      diffEstYoY,
-      deltaEstYoY
+      deltaYoY
     };
   };
 
@@ -1590,13 +1592,9 @@ const GoalResultList = () => {
 
     const diffMoMColor = comp.diffMoM > 0 ? '#059669' : comp.diffMoM < 0 ? '#dc2626' : '#64748b';
     const deltaMoMColor = comp.deltaMoM > 0 ? '#0284c7' : comp.deltaMoM < 0 ? '#dc2626' : '#64748b';
-    const diffEstMoMColor = comp.diffEstMoM > 0 ? '#059669' : comp.diffEstMoM < 0 ? '#dc2626' : '#64748b';
-    const deltaEstMoMColor = comp.deltaEstMoM > 0 ? '#0284c7' : comp.deltaEstMoM < 0 ? '#dc2626' : '#64748b';
 
     const diffYoYColor = comp.diffYoY > 0 ? '#059669' : comp.diffYoY < 0 ? '#dc2626' : '#64748b';
     const deltaYoYColor = comp.deltaYoY > 0 ? '#0284c7' : comp.deltaYoY < 0 ? '#dc2626' : '#64748b';
-    const diffEstYoYColor = comp.diffEstYoY > 0 ? '#059669' : comp.diffEstYoY < 0 ? '#dc2626' : '#64748b';
-    const deltaEstYoYColor = comp.deltaEstYoY > 0 ? '#0284c7' : comp.deltaEstYoY < 0 ? '#dc2626' : '#64748b';
 
     return (
       <React.Fragment key={periodKey}>
@@ -1618,6 +1616,11 @@ const GoalResultList = () => {
         </td>
 
         {/* Group 2 */}
+        {isMonth && (
+          <td className="cell-right" style={{ background: '#f9fbf9', color: comp.estPrev > 0 ? '#ea580c' : '#94a3b8', fontStyle: comp.estPrev > 0 ? 'normal' : 'italic' }}>
+            {comp.estPrev > 0 ? fmt(comp.estPrev) : '--'}
+          </td>
+        )}
         <td className="cell-right" style={{ background: '#f9fbf9', color: '#475569' }}>
           {comp.thPrev > 0 ? fmt(comp.thPrev) : '0'}
         </td>
@@ -1627,18 +1630,13 @@ const GoalResultList = () => {
         <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: deltaMoMColor }}>
           {isClosed ? getDeltaText(comp.deltaMoM) : '--'}
         </td>
-        {isMonth && (
-          <>
-            <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: diffEstMoMColor }}>
-              {getDiffText(comp.diffEstMoM)}
-            </td>
-            <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: deltaEstMoMColor }}>
-              {getDeltaText(comp.deltaEstMoM)}
-            </td>
-          </>
-        )}
 
         {/* Group 3 */}
+        {isMonth && (
+          <td className="cell-right" style={{ background: '#f8fafc', color: comp.estYoY > 0 ? '#ea580c' : '#94a3b8', fontStyle: comp.estYoY > 0 ? 'normal' : 'italic' }}>
+            {comp.estYoY > 0 ? fmt(comp.estYoY) : '--'}
+          </td>
+        )}
         <td className="cell-right" style={{ background: '#f8fafc', color: '#475569' }}>
           {comp.thYoY > 0 ? fmt(comp.thYoY) : '0'}
         </td>
@@ -1648,16 +1646,6 @@ const GoalResultList = () => {
         <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: deltaYoYColor }}>
           {isClosed ? getDeltaText(comp.deltaYoY) : '--'}
         </td>
-        {isMonth && (
-          <>
-            <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: diffEstYoYColor }}>
-              {getDiffText(comp.diffEstYoY)}
-            </td>
-            <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: deltaEstYoYColor }}>
-              {getDeltaText(comp.deltaEstYoY)}
-            </td>
-          </>
-        )}
       </React.Fragment>
     );
   };
@@ -1668,7 +1656,9 @@ const GoalResultList = () => {
     const est = val.est || 0;
     const th = val.th;
     const thPrev = val.thPrev;
+    const estPrev = val.estPrev || 0;
     const thYoY = val.thYoY;
+    const estYoY = val.estYoY || 0;
 
     // Group 1
     const diffSoKh = th - kh;
@@ -1677,14 +1667,10 @@ const GoalResultList = () => {
     // Group 2
     const diffMoM = th - thPrev;
     const deltaMoM = thPrev > 0 ? Math.round((diffMoM / thPrev) * 100) : 0;
-    const diffEstMoM = est - thPrev;
-    const deltaEstMoM = thPrev > 0 ? Math.round((diffEstMoM / thPrev) * 100) : 0;
 
     // Group 3
     const diffYoY = th - thYoY;
     const deltaYoY = thYoY > 0 ? Math.round((diffYoY / thYoY) * 100) : 0;
-    const diffEstYoY = est - thYoY;
-    const deltaEstYoY = thYoY > 0 ? Math.round((diffEstYoY / thYoY) * 100) : 0;
 
     // Format helpers
     const fmt = (v) => v.toLocaleString('vi-VN');
@@ -1696,13 +1682,9 @@ const GoalResultList = () => {
 
     const diffMoMColor = diffMoM > 0 ? '#059669' : diffMoM < 0 ? '#dc2626' : '#64748b';
     const deltaMoMColor = deltaMoM > 0 ? '#0284c7' : deltaMoM < 0 ? '#dc2626' : '#64748b';
-    const diffEstMoMColor = diffEstMoM > 0 ? '#059669' : diffEstMoM < 0 ? '#dc2626' : '#64748b';
-    const deltaEstMoMColor = deltaEstMoM > 0 ? '#0284c7' : deltaEstMoM < 0 ? '#dc2626' : '#64748b';
 
     const diffYoYColor = diffYoY > 0 ? '#059669' : diffYoY < 0 ? '#dc2626' : '#64748b';
     const deltaYoYColor = deltaYoY > 0 ? '#0284c7' : deltaYoY < 0 ? '#dc2626' : '#64748b';
-    const diffEstYoYColor = diffEstYoY > 0 ? '#059669' : diffEstYoY < 0 ? '#dc2626' : '#64748b';
-    const deltaEstYoYColor = deltaEstYoY > 0 ? '#0284c7' : deltaEstYoY < 0 ? '#dc2626' : '#64748b';
 
     return (
       <React.Fragment key={periodKey}>
@@ -1724,6 +1706,11 @@ const GoalResultList = () => {
         </td>
 
         {/* Group 2 */}
+        {isMonth && (
+          <td className="cell-right" style={{ background: '#f9fbf9', color: estPrev > 0 ? '#ea580c' : '#94a3b8', fontStyle: estPrev > 0 ? 'normal' : 'italic' }}>
+            {estPrev > 0 ? fmt(estPrev) : '--'}
+          </td>
+        )}
         <td className="cell-right" style={{ background: '#f9fbf9', color: '#475569' }}>
           {thPrev > 0 ? fmt(thPrev) : '0'}
         </td>
@@ -1733,18 +1720,13 @@ const GoalResultList = () => {
         <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: deltaMoMColor }}>
           {isClosed ? getDeltaText(deltaMoM) : '--'}
         </td>
-        {isMonth && (
-          <>
-            <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: diffEstMoMColor }}>
-              {getDiffText(diffEstMoM)}
-            </td>
-            <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: deltaEstMoMColor }}>
-              {getDeltaText(deltaEstMoM)}
-            </td>
-          </>
-        )}
 
         {/* Group 3 */}
+        {isMonth && (
+          <td className="cell-right" style={{ background: '#f8fafc', color: estYoY > 0 ? '#ea580c' : '#94a3b8', fontStyle: estYoY > 0 ? 'normal' : 'italic' }}>
+            {estYoY > 0 ? fmt(estYoY) : '--'}
+          </td>
+        )}
         <td className="cell-right" style={{ background: '#f8fafc', color: '#475569' }}>
           {thYoY > 0 ? fmt(thYoY) : '0'}
         </td>
@@ -1754,16 +1736,6 @@ const GoalResultList = () => {
         <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: deltaYoYColor }}>
           {isClosed ? getDeltaText(deltaYoY) : '--'}
         </td>
-        {isMonth && (
-          <>
-            <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: diffEstYoYColor }}>
-              {getDiffText(diffEstYoY)}
-            </td>
-            <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: deltaEstYoYColor }}>
-              {getDeltaText(deltaEstYoY)}
-            </td>
-          </>
-        )}
       </React.Fragment>
     );
   };
@@ -1959,7 +1931,7 @@ const GoalResultList = () => {
                 
                 {/* Months */}
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 15 : 5} className="matrix-group-title cell-center">
+                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 5} className="matrix-group-title cell-center">
                     Tháng {m}
                   </th>
                 ))}
@@ -1987,10 +1959,10 @@ const GoalResultList = () => {
                         <th colSpan={5} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
                           Thực hiện so với KH Tập đoàn
                         </th>
-                        <th colSpan={5} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                        <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
                           So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}
                         </th>
-                        <th colSpan={5} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                        <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
                           So Tháng {m} năm {parseInt(selectedYear, 10) - 1}
                         </th>
                       </React.Fragment>
@@ -2035,17 +2007,15 @@ const GoalResultList = () => {
                         <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>+/- so KH</th>
                         <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>% HTKH</th>
                         {/* Group 2 */}
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#ea580c' }}>+/- Ước</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#ea580c' }}>% d.Ước</th>
                         {/* Group 3 */}
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#ea580c' }}>+/- Ước</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#ea580c' }}>% d.Ước</th>
                       </React.Fragment>
                     ))}
                     {/* Quarters indicators */}
@@ -2240,7 +2210,7 @@ const GoalResultList = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? 236 : (activeTab === 'san_luong_nghiem_thu' ? 86 : 52)} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? 212 : (activeTab === 'san_luong_nghiem_thu' ? 86 : 52)} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                     Không tìm thấy dữ liệu kết quả doanh thu phù hợp
                   </td>
                 </tr>
