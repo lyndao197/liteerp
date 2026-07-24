@@ -2433,21 +2433,21 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So T{m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So T{m} năm trước</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Q{q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Q{q} năm trước</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
@@ -2675,21 +2675,21 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So T{m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So T{m} năm trước</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Q{q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Q{q} năm trước</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
@@ -2866,21 +2866,21 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So T{m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
-                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So T{m} năm trước</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Q{q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
-                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Q{q} năm trước</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
+                              <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>KH Tập đoàn</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Năm trước</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
                         <tr>
                           {Array.from({ length: 12 }).map((_, i) => (
