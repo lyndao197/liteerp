@@ -913,9 +913,37 @@ const GoalResultList = () => {
       }
     });
 
+    const cumCust = {};
+    const cumCont = {};
+    
+    let activeCumCust = 0;
+    let activeCumCont = 0;
+    
+    for (let i = 1; i <= 12; i++) {
+      activeCumCust += sumCust[`m${i}`];
+      activeCumCont += sumCont[`m${i}`];
+      cumCust[`m${i}`] = activeCumCust;
+      cumCont[`m${i}`] = activeCumCont;
+    }
+    
+    cumCust.q1 = cumCust.m3;
+    cumCust.q2 = cumCust.m6;
+    cumCust.q3 = cumCust.m9;
+    cumCust.q4 = cumCust.m12;
+    
+    cumCont.q1 = cumCont.m3;
+    cumCont.q2 = cumCont.m6;
+    cumCont.q3 = cumCont.m9;
+    cumCont.q4 = cumCont.m12;
+    
+    cumCust.nam = cumCust.m12;
+    cumCont.nam = cumCont.m12;
+
     return {
       newCustomerCount: sumCust,
-      newContractCount: sumCont
+      newContractCount: sumCont,
+      cumCustomerCount: cumCust,
+      cumContractCount: cumCont
     };
   }, [selectedYear]);
 
@@ -2434,6 +2462,78 @@ const GoalResultList = () => {
                           className="month-grid-input readonly-input cell-center" 
                           style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
                           value={newCountsSummary.newContractCount.nam} 
+                          readOnly 
+                        />
+                      </td>
+                    </tr>
+                    
+                    {/* Row 3: Số lượng khách hàng lũy kế */}
+                    <tr style={{ background: '#f8fafc' }}>
+                      <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                        <td key={`cum_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                            value={newCountsSummary.cumCustomerCount[`m${m}`]} 
+                            readOnly 
+                          />
+                        </td>
+                      ))}
+                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                        <td key={`cum_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                            value={newCountsSummary.cumCustomerCount[`q${q}`]} 
+                            readOnly 
+                          />
+                        </td>
+                      ))}
+                      <td className="cell-center" style={{ padding: '6px' }}>
+                        <input 
+                          type="text" 
+                          className="month-grid-input readonly-input cell-center" 
+                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                          value={newCountsSummary.cumCustomerCount.nam} 
+                          readOnly 
+                        />
+                      </td>
+                    </tr>
+                    
+                    {/* Row 4: Số lượng hợp đồng lũy kế */}
+                    <tr style={{ background: '#f8fafc' }}>
+                      <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                        <td key={`cum_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                            value={newCountsSummary.cumContractCount[`m${m}`]} 
+                            readOnly 
+                          />
+                        </td>
+                      ))}
+                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                        <td key={`cum_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                            value={newCountsSummary.cumContractCount[`q${q}`]} 
+                            readOnly 
+                          />
+                        </td>
+                      ))}
+                      <td className="cell-center" style={{ padding: '6px' }}>
+                        <input 
+                          type="text" 
+                          className="month-grid-input readonly-input cell-center" 
+                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                          value={newCountsSummary.cumContractCount.nam} 
                           readOnly 
                         />
                       </td>
