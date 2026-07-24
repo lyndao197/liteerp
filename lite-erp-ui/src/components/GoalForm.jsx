@@ -41,25 +41,25 @@ const EMPTY_ROW = {
 };
 
 const IMPLEMENTATION_UNITS = [
-  'TT VPTD',
-  'TT VTT',
-  'TT VTNet',
-  'TT VTS',
-  'TT VDS',
-  'TT VAM',
-  'TT VTAca',
-  'TT VAI',
-  'TT VHT',
-  'TT VTX',
-  'TT VIC',
-  'TT VSS',
-  'TT VSI',
-  'TT VATC',
-  'TT VTLimex',
-  'TT VTPost',
-  'TT VCC',
-  'TT XMCP',
-  'TT VMC'
+  'Phòng Kinh Doanh',
+  'Phòng CNKT',
+  'Phòng Kỹ Thuật',
+  'Phòng Công Nghệ',
+  'Phòng Kế Hoạch',
+  'Phòng Dự Án',
+  'Phòng Giải Pháp',
+  'Phòng Dịch Vụ',
+  'Phòng Vận Hành',
+  'Phòng Khai Thác',
+  'Phòng Truyền Thông',
+  'Phòng Tài Chính',
+  'Phòng Hành Chính',
+  'Phòng Nhân Sự',
+  'Phòng An Toàn',
+  'Phòng Đối Ngoại',
+  'Phòng Hợp Tác',
+  'Phòng Nghiên Cứu',
+  'Phòng Đào Tạo'
 ];
 
 const DOCUMENT_TYPES = [

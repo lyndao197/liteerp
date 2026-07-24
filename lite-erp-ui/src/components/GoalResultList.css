@@ -1133,3 +1133,30 @@
   font-weight: 600;
   font-size: 11px;
 }
+
+/* Resizable columns styling */
+.result-data-table td.sticky-col-1,
+.result-data-table td.sticky-col-2,
+.result-data-table td.sticky-col-3,
+.result-data-table td.sticky-col-4,
+.result-data-table td.sticky-col-5,
+.result-data-table td.sticky-col-6 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 100;
+  user-select: none;
+}
+
+.col-resizer:hover {
+  background: rgba(59, 130, 246, 0.45);
+}

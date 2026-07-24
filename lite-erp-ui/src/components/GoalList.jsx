@@ -239,24 +239,24 @@ const GoalList = () => {
 
   const unitSummaryData = useMemo(() => {
     const UNITS = [
-      'TT VPTD', 'TT VTT', 'TT VTNet', 'TT VTS', 'TT VDS',
-      'TT VAM', 'TT VTAca', 'TT VAI', 'TT VHT', 'TT VTX',
-      'TT VIC', 'TT VSS', 'TT VSI', 'TT VATC', 'TT VTLimex',
-      'TT VTPost', 'TT VCC', 'TT XMCP', 'TT VMC'
+      'Phòng Kinh Doanh', 'Phòng CNKT', 'Phòng Kỹ Thuật', 'Phòng Công Nghệ', 'Phòng Kế Hoạch',
+      'Phòng Dự Án', 'Phòng Giải Pháp', 'Phòng Dịch Vụ', 'Phòng Vận Hành', 'Phòng Khai Thác',
+      'Phòng Truyền Thông', 'Phòng Tài Chính', 'Phòng Hành Chính', 'Phòng Nhân Sự', 'Phòng An Toàn',
+      'Phòng Đối Ngoại', 'Phòng Hợp Tác', 'Phòng Nghiên Cứu', 'Phòng Đào Tạo'
     ];
 
     const basePlan = {
-      'TT VPTD': 1500, 'TT VTT': 2100, 'TT VTNet': 1800, 'TT VTS': 3200, 'TT VDS': 950,
-      'TT VAM': 450, 'TT VTAca': 300, 'TT VAI': 750, 'TT VHT': 1200, 'TT VTX': 600,
-      'TT VIC': 400, 'TT VSS': 500, 'TT VSI': 650, 'TT VATC': 350, 'TT VTLimex': 250,
-      'TT VTPost': 1400, 'TT VCC': 800, 'TT XMCP': 550, 'TT VMC': 380
+      'Phòng Kinh Doanh': 1500, 'Phòng CNKT': 2100, 'Phòng Kỹ Thuật': 1800, 'Phòng Công Nghệ': 3200, 'Phòng Kế Hoạch': 950,
+      'Phòng Dự Án': 450, 'Phòng Giải Pháp': 300, 'Phòng Dịch Vụ': 750, 'Phòng Vận Hành': 1200, 'Phòng Khai Thác': 600,
+      'Phòng Truyền Thông': 400, 'Phòng Tài Chính': 500, 'Phòng Hành Chính': 650, 'Phòng Nhân Sự': 350, 'Phòng An Toàn': 250,
+      'Phòng Đối Ngoại': 1400, 'Phòng Hợp Tác': 800, 'Phòng Nghiên Cứu': 550, 'Phòng Đào Tạo': 380
     };
 
     const baseCount = {
-      'TT VPTD': 4, 'TT VTT': 4, 'TT VTNet': 4, 'TT VTS': 4, 'TT VDS': 3,
-      'TT VAM': 2, 'TT VTAca': 2, 'TT VAI': 3, 'TT VHT': 3, 'TT VTX': 2,
-      'TT VIC': 2, 'TT VSS': 3, 'TT VSI': 3, 'TT VATC': 2, 'TT VTLimex': 2,
-      'TT VTPost': 3, 'TT VCC': 3, 'TT XMCP': 2, 'TT VMC': 2
+      'Phòng Kinh Doanh': 4, 'Phòng CNKT': 4, 'Phòng Kỹ Thuật': 4, 'Phòng Công Nghệ': 4, 'Phòng Kế Hoạch': 3,
+      'Phòng Dự Án': 2, 'Phòng Giải Pháp': 2, 'Phòng Dịch Vụ': 3, 'Phòng Vận Hành': 3, 'Phòng Khai Thác': 2,
+      'Phòng Truyền Thông': 2, 'Phòng Tài Chính': 3, 'Phòng Hành Chính': 3, 'Phòng Nhân Sự': 2, 'Phòng An Toàn': 2,
+      'Phòng Đối Ngoại': 3, 'Phòng Hợp Tác': 3, 'Phòng Nghiên Cứu': 2, 'Phòng Đào Tạo': 2
     };
 
     goals.forEach(goal => {

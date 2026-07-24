@@ -66,52 +66,52 @@ const generateMatrixValue = (rowId, year, periodKey) => {
 };
 
 const UNITS = [
-  'TT VPTD',
-  'TT VTT',
-  'TT VTNet',
-  'TT VTS',
-  'TT VDS',
-  'TT VAM',
-  'TT VTAca',
-  'TT VAI',
-  'TT VHT',
-  'TT VTX',
-  'TT VIC',
-  'TT VSS',
-  'TT VSI',
-  'TT VATC',
-  'TT VTLimex',
-  'TT VTPost',
-  'TT VCC',
-  'TT XMCP',
-  'TT VMC'
+  'Phòng Kinh Doanh',
+  'Phòng CNKT',
+  'Phòng Kỹ Thuật',
+  'Phòng Công Nghệ',
+  'Phòng Kế Hoạch',
+  'Phòng Dự Án',
+  'Phòng Giải Pháp',
+  'Phòng Dịch Vụ',
+  'Phòng Vận Hành',
+  'Phòng Khai Thác',
+  'Phòng Truyền Thông',
+  'Phòng Tài Chính',
+  'Phòng Hành Chính',
+  'Phòng Nhân Sự',
+  'Phòng An Toàn',
+  'Phòng Đối Ngoại',
+  'Phòng Hợp Tác',
+  'Phòng Nghiên Cứu',
+  'Phòng Đào Tạo'
 ];
 
 // Combinations of unit, customer, product to build rows
 const MATRIX_ROWS_BASE = [
-  // TT VPTD
-  { id: 'R-1', unit: 'TT VPTD', customerId: 'C-01', spdvId: 'S-01' },
-  { id: 'R-2', unit: 'TT VPTD', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-3', unit: 'TT VPTD', customerId: 'C-05', spdvId: 'S-03' },
-  { id: 'R-4', unit: 'TT VPTD', customerId: 'C-10', spdvId: 'S-04' },
+  // Phòng Kinh Doanh
+  { id: 'R-1', unit: 'Phòng Kinh Doanh', customerId: 'C-01', spdvId: 'S-01' },
+  { id: 'R-2', unit: 'Phòng Kinh Doanh', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-3', unit: 'Phòng Kinh Doanh', customerId: 'C-05', spdvId: 'S-03' },
+  { id: 'R-4', unit: 'Phòng Kinh Doanh', customerId: 'C-10', spdvId: 'S-04' },
   
-  // TT VTT
-  { id: 'R-5', unit: 'TT VTT', customerId: 'C-01', spdvId: 'S-02' },
-  { id: 'R-6', unit: 'TT VTT', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-7', unit: 'TT VTT', customerId: 'C-05', spdvId: 'S-03' },
-  { id: 'R-8', unit: 'TT VTT', customerId: 'C-10', spdvId: 'S-05' },
+  // Phòng CNKT
+  { id: 'R-5', unit: 'Phòng CNKT', customerId: 'C-01', spdvId: 'S-02' },
+  { id: 'R-6', unit: 'Phòng CNKT', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-7', unit: 'Phòng CNKT', customerId: 'C-05', spdvId: 'S-03' },
+  { id: 'R-8', unit: 'Phòng CNKT', customerId: 'C-10', spdvId: 'S-05' },
 
-  // TT VTNet
-  { id: 'R-9', unit: 'TT VTNet', customerId: 'C-01', spdvId: 'S-01' },
-  { id: 'R-10', unit: 'TT VTNet', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-11', unit: 'TT VTNet', customerId: 'C-05', spdvId: 'S-06' },
-  { id: 'R-12', unit: 'TT VTNet', customerId: 'C-10', spdvId: 'S-08' },
+  // Phòng Kỹ Thuật
+  { id: 'R-9', unit: 'Phòng Kỹ Thuật', customerId: 'C-01', spdvId: 'S-01' },
+  { id: 'R-10', unit: 'Phòng Kỹ Thuật', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-11', unit: 'Phòng Kỹ Thuật', customerId: 'C-05', spdvId: 'S-06' },
+  { id: 'R-12', unit: 'Phòng Kỹ Thuật', customerId: 'C-10', spdvId: 'S-08' },
 
-  // TT VTS
-  { id: 'R-13', unit: 'TT VTS', customerId: 'C-01', spdvId: 'S-02' },
-  { id: 'R-14', unit: 'TT VTS', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-15', unit: 'TT VTS', customerId: 'C-05', spdvId: 'S-07' },
-  { id: 'R-16', unit: 'TT VTS', customerId: 'C-10', spdvId: 'S-04' }
+  // Phòng Công Nghệ
+  { id: 'R-13', unit: 'Phòng Công Nghệ', customerId: 'C-01', spdvId: 'S-02' },
+  { id: 'R-14', unit: 'Phòng Công Nghệ', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-15', unit: 'Phòng Công Nghệ', customerId: 'C-05', spdvId: 'S-07' },
+  { id: 'R-16', unit: 'Phòng Công Nghệ', customerId: 'C-10', spdvId: 'S-04' }
 ];
 
 const CUSTOMER_GROUPS_LIST = [
@@ -181,6 +181,55 @@ const GoalResultList = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // Resizable column widths for frozen columns
+  const [colWidths, setColWidths] = useState({
+    col1: 140,
+    col2: 160,
+    col3: 180,
+    col4: 140,
+    col5: 130,
+    col6: 80
+  });
+
+  const leftOffsets = useMemo(() => {
+    const c1 = colWidths.col1;
+    const c2 = colWidths.col2;
+    const c3 = colWidths.col3;
+    const c4 = colWidths.col4;
+    const c5 = colWidths.col5;
+    return {
+      col1: 0,
+      col2: c1,
+      col3: c1 + c2,
+      col4: c1 + c2 + c3,
+      col5: c1 + c2 + c3 + c4,
+      col6: c1 + c2 + c3 + c4 + c5
+    };
+  }, [colWidths]);
+
+  const handleResizeStart = (colKey, e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = colWidths[colKey];
+
+    const handleMouseMove = (moveEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const newWidth = Math.max(50, startWidth + deltaX);
+      setColWidths(prev => ({
+        ...prev,
+        [colKey]: newWidth
+      }));
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   // Timeline History state
   const [historyLogs, setHistoryLogs] = useState([
@@ -1922,12 +1971,30 @@ const GoalResultList = () => {
             <thead>
               {/* Level 1: Time period grouping */}
               <tr>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-1 matrix-group-title">Đơn vị thực hiện</th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-2 matrix-group-title">Nhóm khách hàng</th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-3 matrix-group-title">Tên khách hàng</th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-4 matrix-group-title">Nhóm SPDV</th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-5 matrix-group-title">Tên SPDV</th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-6 matrix-group-title cell-center">KH Mới</th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-1 matrix-group-title" style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1, position: 'sticky' }}>
+                  Đơn vị thực hiện
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col1', e)} />
+                </th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-2 matrix-group-title" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2, position: 'sticky' }}>
+                  Nhóm khách hàng
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col2', e)} />
+                </th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-3 matrix-group-title" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3, position: 'sticky' }}>
+                  Tên khách hàng
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col3', e)} />
+                </th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-4 matrix-group-title" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4, position: 'sticky' }}>
+                  Nhóm SPDV
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col4', e)} />
+                </th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-5 matrix-group-title" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5, position: 'sticky' }}>
+                  Tên SPDV
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col5', e)} />
+                </th>
+                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-6 matrix-group-title cell-center" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6, position: 'sticky' }}>
+                  KH Mới
+                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col6', e)} />
+                </th>
                 
                 {/* Months */}
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
@@ -2114,15 +2181,17 @@ const GoalResultList = () => {
                         <td 
                           className="sticky-col-1 unit-master-cell" 
                           rowSpan={unitSpanCount}
+                          style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1 }}
+                          title={row.implementationUnit}
                         >
                           {row.implementationUnit}
                         </td>
                       )}
-                      <td className="sticky-col-2">{row.customerGroup}</td>
-                      <td className="sticky-col-3">{row.customerName}</td>
-                      <td className="sticky-col-4">{row.spdvGroup}</td>
-                      <td className="sticky-col-5">{row.spdvName}</td>
-                      <td className="sticky-col-6 cell-center">
+                      <td className="sticky-col-2" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2 }} title={row.customerGroup}>{row.customerGroup}</td>
+                      <td className="sticky-col-3" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3 }} title={row.customerName}>{row.customerName}</td>
+                      <td className="sticky-col-4" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4 }} title={row.spdvGroup}>{row.spdvGroup}</td>
+                      <td className="sticky-col-5" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5 }} title={row.spdvName}>{row.spdvName}</td>
+                      <td className="sticky-col-6 cell-center" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6 }}>
                         <input 
                           type="checkbox" 
                           className="custom-checkbox" 
