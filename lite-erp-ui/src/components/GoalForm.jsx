@@ -269,6 +269,7 @@ const GoalForm = () => {
   const [serviceQualityPlan, setServiceQualityPlan] = useState(() => DEFAULT_SERVICE_QUALITY_PLAN);
 
   const [showImportModal, setShowImportModal] = useState(false);
+  const [importDataType, setImportDataType] = useState('existing_cust'); // existing_cust, new_cust_rev, new_cust_count, service_quality
   const [importStep, setImportStep] = useState(1);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isTesting, setIsTesting] = useState(false);
@@ -306,67 +307,71 @@ const GoalForm = () => {
   };
 
   const handleImportToDatabase = () => {
-    const mockExisting = [
-      {
-        id: `row-${Date.now()}-1`,
-        implementationUnit: 'Phòng Dự Án',
-        customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
-        customerName: 'Tổng Công ty Giải pháp Doanh nghiệp Viettel',
+    if (importDataType === 'existing_cust') {
+      const mockExisting = [
+        {
+          id: `row-${Date.now()}-1`,
+          implementationUnit: 'Phòng Dự Án',
+          customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+          customerName: 'Tổng Công ty Giải pháp Doanh nghiệp Viettel',
+          spdvGroup: 'Giải pháp, Platform',
+          spdvName: 'OmniX CRM',
+          t1: '150000000', t2: '150000000', t3: '150000000', t4: '150000000', t5: '150000000', t6: '150000000',
+          t7: '150000000', t8: '150000000', t9: '150000000', t10: '150000000', t11: '150000000', t12: '150000000',
+          q1: 450000000, q2: 450000000, q3: 450000000, q4: 450000000,
+          nam: 1800000000
+        },
+        {
+          id: `row-${Date.now()}-2`,
+          implementationUnit: 'Phòng Kinh Doanh',
+          customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+          customerName: 'Công ty Cổ phần Sữa Việt Nam',
+          spdvGroup: 'DV CC outsourcing',
+          spdvName: 'Dịch vụ Tổng đài',
+          t1: '80000000', t2: '80000000', t3: '80000000', t4: '120000000', t5: '120000000', t6: '120000000',
+          t7: '100000000', t8: '100000000', t9: '100000000', t10: '100000000', t11: '100000000', t12: '100000000',
+          q1: 240000000, q2: 360000000, q3: 300000000, q4: 300000000,
+          nam: 1200000000
+        }
+      ];
+      setExistingRows(mockExisting);
+      alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu doanh thu khách hàng hiện hữu từ file Excel!');
+    } else if (importDataType === 'new_cust_rev') {
+      setNewCustomerPlan({
         spdvGroup: 'Giải pháp, Platform',
-        spdvName: 'OmniX CRM',
-        t1: '150000000', t2: '150000000', t3: '150000000', t4: '150000000', t5: '150000000', t6: '150000000',
-        t7: '150000000', t8: '150000000', t9: '150000000', t10: '150000000', t11: '150000000', t12: '150000000',
-        q1: 450000000, q2: 450000000, q3: 450000000, q4: 450000000,
-        nam: 1800000000
-      },
-      {
-        id: `row-${Date.now()}-2`,
-        implementationUnit: 'Phòng Kinh Doanh',
-        customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
-        customerName: 'Công ty Cổ phần Sữa Việt Nam',
-        spdvGroup: 'DV CC outsourcing',
-        spdvName: 'Dịch vụ Tổng đài',
-        t1: '80000000', t2: '80000000', t3: '80000000', t4: '120000000', t5: '120000000', t6: '120000000',
-        t7: '100000000', t8: '100000000', t9: '100000000', t10: '100000000', t11: '100000000', t12: '100000000',
-        q1: 240000000, q2: 360000000, q3: 300000000, q4: 300000000,
-        nam: 1200000000
-      }
-    ];
-    setExistingRows(mockExisting);
-
-    setNewCustomerPlan({
-      spdvGroup: 'Giải pháp, Platform',
-      baseline: '0',
-      t1: '50000000', t2: '60000000', t3: '70000000', t4: '80000000', t5: '90000000', t6: '100000000',
-      t7: '110000000', t8: '120000000', t9: '130000000', t10: '140000000', t11: '150000000', t12: '160000000',
-      q1: 180000000, q2: 270000000, q3: 360000000, q4: 450000000,
-      nam: 1260000000
-    });
-
-    setNewCustomerCountPlan({
-      t1: '2', t2: '3', t3: '2', t4: '4', t5: '3', t6: '3',
-      t7: '2', t8: '4', t9: '3', t10: '5', t11: '3', t12: '4',
-      q1: 7, q2: 10, q3: 9, q4: 12,
-      nam: 38
-    });
-    setNewContractCountPlan({
-      t1: '4', t2: '5', t3: '3', t4: '6', t5: '5', t6: '4',
-      t7: '5', t8: '6', t9: '4', t10: '7', t11: '5', t12: '6',
-      q1: 12, q2: 15, q3: 15, q4: 18,
-      nam: 60
-    });
-
-    const mockSQ = { ...serviceQualityPlan };
-    Object.keys(mockSQ).forEach(id => {
-      mockSQ[id] = {
-        ...mockSQ[id],
-        m1: '98.5', m2: '98.0', m3: '98.5', m4: '99.0', m5: '98.7', m6: '98.5',
-        m7: '99.0', m8: '98.8', m9: '98.5', m10: '99.0', m11: '98.5', m12: '99.2'
-      };
-    });
-    setServiceQualityPlan(mockSQ);
-
-    alert('Đã nhập thành công toàn bộ số liệu kế hoạch từ file Excel!');
+        baseline: '0',
+        t1: '50000000', t2: '60000000', t3: '70000000', t4: '80000000', t5: '90000000', t6: '100000000',
+        t7: '110000000', t8: '120000000', t9: '130000000', t10: '140000000', t11: '150000000', t12: '160000000',
+        q1: 180000000, q2: 270000000, q3: 360000000, q4: 450000000,
+        nam: 1260000000
+      });
+      alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu doanh thu khách hàng mới từ file Excel!');
+    } else if (importDataType === 'new_cust_count') {
+      setNewCustomerCountPlan({
+        t1: '2', t2: '3', t3: '2', t4: '4', t5: '3', t6: '3',
+        t7: '2', t8: '4', t9: '3', t10: '5', t11: '3', t12: '4',
+        q1: 7, q2: 10, q3: 9, q4: 12,
+        nam: 38
+      });
+      setNewContractCountPlan({
+        t1: '4', t2: '5', t3: '3', t4: '6', t5: '5', t6: '4',
+        t7: '5', t8: '6', t9: '4', t10: '7', t11: '5', t12: '6',
+        q1: 12, q2: 15, q3: 15, q4: 18,
+        nam: 60
+      });
+      alert('Đã nhập thành công số liệu kế hoạch số lượng khách hàng và hợp đồng mới từ file Excel!');
+    } else if (importDataType === 'service_quality') {
+      const mockSQ = { ...serviceQualityPlan };
+      Object.keys(mockSQ).forEach(id => {
+        mockSQ[id] = {
+          ...mockSQ[id],
+          m1: '98.5', m2: '98.0', m3: '98.5', m4: '99.0', m5: '98.7', m6: '98.5',
+          m7: '99.0', m8: '98.8', m9: '98.5', m10: '99.0', m11: '98.5', m12: '99.2'
+        };
+      });
+      setServiceQualityPlan(mockSQ);
+      alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu chất lượng dịch vụ từ file Excel!');
+    }
     handleCloseImportModal();
   };
 
@@ -876,10 +881,6 @@ const GoalForm = () => {
           <button className="btn-cancel" type="button" onClick={() => navigate('/goals')}>
             Hủy
           </button>
-          <button className="btn-excel-action" type="button" onClick={() => setShowImportModal(true)} disabled={isReadOnlyForm} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 18px', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
-            <Upload size={16} />
-            Nhập Excel
-          </button>
           <button className="btn-save" type="button" onClick={saveDraft} disabled={isReadOnlyForm}>
             <Save size={16} />
             Lưu
@@ -940,8 +941,21 @@ const GoalForm = () => {
 
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
-            <div className="goal-card-header">
+            <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (VNĐ)</h3>
+              <button 
+                className="btn-excel-action" 
+                type="button"
+                onClick={() => {
+                  setImportDataType('existing_cust');
+                  setShowImportModal(true);
+                }}
+                disabled={isReadOnlyForm}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                <Upload size={14} />
+                Nhập Excel
+              </button>
             </div>
 
 
@@ -1136,8 +1150,21 @@ const GoalForm = () => {
           {/* Card 2.5: Chỉ tiêu doanh thu khách hàng mới */}
           {planType !== 'Kế hoạch nội bộ' && (
             <section className="goal-card" style={{ marginTop: '16px' }}>
-              <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+               <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3>Chỉ tiêu doanh thu khách hàng mới (VNĐ)</h3>
+                <button 
+                  className="btn-excel-action" 
+                  type="button"
+                  onClick={() => {
+                    setImportDataType('new_cust_rev');
+                    setShowImportModal(true);
+                  }}
+                  disabled={isReadOnlyForm}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  <Upload size={14} />
+                  Nhập Excel
+                </button>
               </div>
 
               <div className="table-container scrollable-table-container">
@@ -1237,8 +1264,21 @@ const GoalForm = () => {
           {/* Card 3: Chỉ tiêu số lượng khách hàng và hợp đồng mới */}
           {planType !== 'Kế hoạch nội bộ' && (
             <section className="goal-card">
-              <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+               <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3>Chỉ tiêu số lượng khách hàng và hợp đồng mới</h3>
+                <button 
+                  className="btn-excel-action" 
+                  type="button"
+                  onClick={() => {
+                    setImportDataType('new_cust_count');
+                    setShowImportModal(true);
+                  }}
+                  disabled={isReadOnlyForm}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  <Upload size={14} />
+                  Nhập Excel
+                </button>
               </div>
 
               {/* Unified grid table */}
@@ -1332,8 +1372,21 @@ const GoalForm = () => {
           {/* Card 3.5: Chỉ tiêu chất lượng dịch vụ */}
           {planType !== 'Kế hoạch nội bộ' && (
             <section className="goal-card" style={{ marginTop: '16px' }}>
-              <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+               <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3>Chỉ tiêu chất lượng dịch vụ</h3>
+                <button 
+                  className="btn-excel-action" 
+                  type="button"
+                  onClick={() => {
+                    setImportDataType('service_quality');
+                    setShowImportModal(true);
+                  }}
+                  disabled={isReadOnlyForm}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  <Upload size={14} />
+                  Nhập Excel
+                </button>
               </div>
 
               <div className="table-container scrollable-table-container">
@@ -1677,7 +1730,15 @@ const GoalForm = () => {
         <div className="modal-overlay">
           <div className="modal-content" style={{ width: '600px' }}>
             <div className="modal-header">
-              <h3>Nhập Excel Kế hoạch KPI doanh số</h3>
+              <h3>
+                {importDataType === 'existing_cust' 
+                  ? 'Nhập Excel Kế hoạch doanh thu khách hàng hiện hữu' 
+                  : importDataType === 'new_cust_rev'
+                  ? 'Nhập Excel Kế hoạch doanh thu khách hàng mới'
+                  : importDataType === 'new_cust_count'
+                  ? 'Nhập Excel Kế hoạch số lượng khách hàng & hợp đồng mới'
+                  : 'Nhập Excel Kế hoạch chất lượng dịch vụ'}
+              </h3>
               <button className="btn-close-modal" type="button" onClick={handleCloseImportModal}>
                 <X size={18} />
               </button>
@@ -1703,7 +1764,14 @@ const GoalForm = () => {
               {importStep === 1 && (
                 <div className="import-wizard-container">
                   <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#1e40af', marginBottom: '8px' }}>
-                    💡 <strong>Quy tắc nạp Kế hoạch:</strong> File Excel kế hoạch cần có các cột tương ứng với đơn vị thực hiện, nhóm khách hàng, tên khách hàng và kế hoạch chi tiết từ tháng 1 đến tháng 12.
+                    💡 <strong>Quy tắc nạp Kế hoạch:</strong>
+                    {importDataType === 'existing_cust' 
+                      ? ' File Excel kế hoạch cần có các cột tương ứng với đơn vị thực hiện, nhóm khách hàng, tên khách hàng và kế hoạch chi tiết từ tháng 1 đến tháng 12.'
+                      : importDataType === 'new_cust_rev'
+                      ? ' File Excel kế hoạch cần chứa chỉ tiêu kế hoạch doanh thu của nhóm khách hàng mới trong năm tài khóa.'
+                      : importDataType === 'new_cust_count'
+                      ? ' File Excel kế hoạch cần chứa chỉ tiêu số lượng khách hàng mới và số lượng hợp đồng mới cho từng tháng.'
+                      : ' File Excel kế hoạch cần chứa chỉ tiêu tỉ lệ kết nối và chỉ tiêu tỉ lệ hài lòng của khách hàng.'}
                   </div>
 
                   {!uploadedFile ? (
