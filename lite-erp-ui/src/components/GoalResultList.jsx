@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Search, 
   Filter, 
@@ -151,7 +152,10 @@ const PERIOD_OPTIONS = [
 const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => (2023 + i).toString());
 
 const GoalResultList = () => {
-  const [activeTab, setActiveTab] = useState('san_luong_nghiem_thu'); // 'ket_qua_doanh_thu' or 'san_luong_nghiem_thu'
+  const [activeTab, setActiveTab] = useState('ket_qua_doanh_thu');
+  const [activePlanTab, setActivePlanTab] = useState('Kế hoạch tập đoàn');
+  
+  const planCompareText = `Thực hiện so với ${activePlanTab === 'Kế hoạch tập đoàn' ? 'KH Tập đoàn' : 'KH Nội bộ'}`;
   
   // Database state to support dynamic excel imports
   const [dbValues, setDbValues] = useState({});
@@ -182,6 +186,28 @@ const GoalResultList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam === 'doanh_thu_noi_bo') {
+      setActiveTab('ket_qua_doanh_thu');
+      setActivePlanTab('Kế hoạch nội bộ');
+    } else if (tabParam === 'san_luong_tap_doan') {
+      setActiveTab('san_luong_nghiem_thu');
+      setActivePlanTab('Kế hoạch tập đoàn');
+    } else if (tabParam === 'san_luong_noi_bo') {
+      setActiveTab('san_luong_nghiem_thu');
+      setActivePlanTab('Kế hoạch nội bộ');
+    } else {
+      // default: doanh_thu_tap_doan
+      setActiveTab('ket_qua_doanh_thu');
+      setActivePlanTab('Kế hoạch tập đoàn');
+    }
+    setCurrentPage(1);
+  }, [location.search]);
+
   // Resizable column widths for frozen columns
   const [colWidths, setColWidths] = useState({
     col1: 120,
@@ -193,7 +219,8 @@ const GoalResultList = () => {
   });
 
   const leftOffsets = useMemo(() => {
-    const c1 = colWidths.col1;
+    const hideUnitColumn = activePlanTab === 'Kế hoạch tập đoàn' || activeTab === 'san_luong_nghiem_thu';
+    const c1 = hideUnitColumn ? 0 : colWidths.col1;
     const c2 = colWidths.col2;
     const c3 = colWidths.col3;
     const c4 = colWidths.col4;
@@ -206,7 +233,7 @@ const GoalResultList = () => {
       col5: c1 + c2 + c3 + c4,
       col6: c1 + c2 + c3 + c4 + c5
     };
-  }, [colWidths]);
+  }, [colWidths, activePlanTab, activeTab]);
 
   const handleResizeStart = (colKey, e) => {
     e.preventDefault();
@@ -528,6 +555,13 @@ const GoalResultList = () => {
   const filteredAndSortedData = useMemo(() => {
     let result = [...computedRows];
 
+    // Filter by Plan Type Tab
+    if (activePlanTab === 'Kế hoạch tập đoàn') {
+      result = result.filter(item => !item.customerGroup.toLowerCase().includes('nội bộ'));
+    } else if (activePlanTab === 'Kế hoạch nội bộ') {
+      result = result.filter(item => item.customerGroup.toLowerCase().includes('nội bộ'));
+    }
+
     // Search input: instant search (MST, name, unit)
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
@@ -572,7 +606,42 @@ const GoalResultList = () => {
     }
 
     return result;
-  }, [computedRows, searchTerm, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter, sortField, sortDirection]);
+  }, [computedRows, activePlanTab, searchTerm, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter, sortField, sortDirection]);
+
+  // Data for KPI cards row - does NOT filter by Plan Type Tab (user request: keep statistics panel intact)
+  const kpiData = useMemo(() => {
+    let result = [...computedRows];
+
+    // Search input: instant search (MST, MST, unit)
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      result = result.filter(item => 
+        item.customerName.toLowerCase().includes(lower) || 
+        item.implementationUnit.toLowerCase().includes(lower) || 
+        item.spdvName.toLowerCase().includes(lower) ||
+        item.customerGroup.toLowerCase().includes(lower)
+      );
+    }
+
+    // Advanced Multi-choice filters
+    if (selectedGroups.length > 0) {
+      result = result.filter(item => selectedGroups.includes(item.customerGroup));
+    }
+    if (selectedCustomers.length > 0) {
+      result = result.filter(item => selectedCustomers.includes(item.customerName));
+    }
+    if (selectedSPDVGroups.length > 0) {
+      result = result.filter(item => selectedSPDVGroups.includes(item.spdvGroup));
+    }
+    if (selectedSPDVs.length > 0) {
+      result = result.filter(item => selectedSPDVs.includes(item.spdvName));
+    }
+    if (isNewCustomerFilter) {
+      result = result.filter(item => item.isNewCustomer === true);
+    }
+
+    return result;
+  }, [computedRows, searchTerm, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter]);
 
   // Summary Metrics calculations
   const summaryStats = useMemo(() => {
@@ -580,13 +649,13 @@ const GoalResultList = () => {
     let externalSum = 0;
     let internationalSum = 0;
 
-    filteredAndSortedData.forEach(item => {
+    kpiData.forEach(item => {
       // Internal = internal in-country + internal international
-      const isInternal = item.customerGroup.includes('nội bộ');
+      const isInternal = item.customerGroup.toLowerCase().includes('nội bộ');
       // External = external in-country + external international
-      const isExternal = item.customerGroup.includes('ngoài');
+      const isExternal = item.customerGroup.toLowerCase().includes('ngoài');
       // International = internal international + external international
-      const isInternational = item.customerGroup.includes('nước ngoài');
+      const isInternational = item.customerGroup.toLowerCase().includes('nước ngoài');
 
       if (isInternal) {
         internalSum += item.th;
@@ -602,16 +671,7 @@ const GoalResultList = () => {
     const totalSum = internalSum + externalSum;
 
     // Apply scale down if it is Revenue Tab vs Production Tab (for cosmetic realism in UI)
-    // Actually the user requirements say:
-    // Tab "Kết quả doanh thu": Doanh thu KH nội bộ, Doanh thu KH ngoài tập đoàn, Doanh thu KH quốc tế, Tổng doanh thu
-    // Tab "Sản lượng nghiệm thu": Sản lượng KH nội bộ, Sản lượng KH ngoài Tập đoàn, Sản lượng KH quốc tế, Tổng Sản lượng
-    // Formulas:
-    // Doanh thu/Sản lượng KH nội bộ = in-country + international internal
-    // Doanh thu/Sản lượng KH ngoài Tập đoàn = in-country + international external
-    // Doanh thu/Sản lượng KH quốc tế = internal international + external international
-    // Tổng = internal + external
     const formatStat = (val) => {
-      // Display in thousands to look like screenshot if tab is revenue, or display normal
       return activeTab === 'ket_qua_doanh_thu' ? Math.round(val * 1.5).toLocaleString('vi-VN') : val.toLocaleString('vi-VN');
     };
 
@@ -621,7 +681,7 @@ const GoalResultList = () => {
       international: formatStat(internationalSum),
       total: formatStat(totalSum)
     };
-  }, [filteredAndSortedData, activeTab]);
+  }, [kpiData, activeTab]);
 
   // --- 2. BIỂU MẪU DOANH THU NỘI BỘ TỔNG HỢP ---
   const summaryCalculations = useMemo(() => {
@@ -1817,63 +1877,47 @@ const GoalResultList = () => {
     );
   };
 
-  const renderProductionMonthCells = (kh, est, th, isClosed) => {
-    const diff = th - kh;
-    const delta = kh > 0 ? Math.round((diff / kh) * 100) : 0;
-    const diffText = diff > 0 ? `+${diff.toLocaleString('vi-VN')}` : diff.toLocaleString('vi-VN');
-    const diffColor = diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
-    const deltaText = delta > 0 ? `+${delta}%` : `${delta}%`;
-    const deltaColor = delta > 0 ? '#0284c7' : delta < 0 ? '#dc2626' : '#64748b';
+  const renderProductionPeriodCells = (row, periodKey, valScale, isMonth = false) => {
+    const comp = getRowPeriodComparison(row, periodKey, valScale);
+    const isClosed = isMonth ? officialMonths.includes(periodKey) : true;
+
+    const fmt = (val) => val.toLocaleString('vi-VN');
+    const getDiffText = (val) => val > 0 ? `+${fmt(val)}` : fmt(val);
+    const getDeltaText = (val) => val > 0 ? `+${val}%` : `${val}%`;
+
+    const diffMoMColor = comp.diffMoM > 0 ? '#059669' : comp.diffMoM < 0 ? '#dc2626' : '#64748b';
+    const deltaMoMColor = comp.deltaMoM > 0 ? '#0284c7' : comp.deltaMoM < 0 ? '#dc2626' : '#64748b';
+
+    const diffYoYColor = comp.diffYoY > 0 ? '#059669' : comp.diffYoY < 0 ? '#dc2626' : '#64748b';
+    const deltaYoYColor = comp.deltaYoY > 0 ? '#0284c7' : comp.deltaYoY < 0 ? '#dc2626' : '#64748b';
 
     return (
-      <React.Fragment key="prod_month">
-        <td className="cell-right">{kh > 0 ? kh.toLocaleString('vi-VN') : '0'}</td>
-        <td className="cell-right" style={{ color: est > 0 ? '#ea580c' : '#94a3b8', fontStyle: est > 0 ? 'normal' : 'italic' }}>
-          {est > 0 ? est.toLocaleString('vi-VN') : '--'}
-        </td>
+      <React.Fragment key={periodKey}>
+        {/* Group 1: Thực hiện so với kế hoạch Tập đoàn */}
         <td className="cell-right" style={{ fontWeight: '600' }}>
-          {isClosed ? (
-            <>
-              {th > 0 ? th.toLocaleString('vi-VN') : '0'}
-              {est > 0 && th > 0 && (
-                <span style={{ display: 'block', fontSize: '9px', color: '#64748b', fontWeight: 'normal', marginTop: '2px' }}>
-                  Lệch: {Math.round(((th - est) / est) * 100)}%
-                </span>
-              )}
-            </>
-          ) : (
-            <span style={{ color: '#94a3b8', fontStyle: 'italic', fontWeight: 'normal' }}>--</span>
-          )}
+          {isClosed ? (comp.th > 0 ? fmt(comp.th) : '0') : '--'}
         </td>
-        <td className="cell-right" style={{ fontWeight: '600', color: diffColor }}>
-          {isClosed ? (th > 0 ? diffText : '--') : '--'}
-        </td>
-        <td className="cell-right" style={{ fontWeight: '600', color: deltaColor }}>
-          {isClosed ? (th > 0 ? deltaText : '--') : '--'}
-        </td>
-      </React.Fragment>
-    );
-  };
 
-  const renderProductionQuarterCells = (kh, th) => {
-    const diff = th - kh;
-    const delta = kh > 0 ? Math.round((diff / kh) * 100) : 0;
-    const diffText = diff > 0 ? `+${diff.toLocaleString('vi-VN')}` : diff.toLocaleString('vi-VN');
-    const diffColor = diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
-    const deltaText = delta > 0 ? `+${delta}%` : `${delta}%`;
-    const deltaColor = delta > 0 ? '#0284c7' : delta < 0 ? '#dc2626' : '#64748b';
+        {/* Group 2: So Tháng trước / Quý trước */}
+        <td className="cell-right" style={{ background: '#f9fbf9', color: '#475569' }}>
+          {comp.thPrev > 0 ? fmt(comp.thPrev) : '0'}
+        </td>
+        <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: diffMoMColor }}>
+          {isClosed ? getDiffText(comp.diffMoM) : '--'}
+        </td>
+        <td className="cell-right" style={{ background: '#f9fbf9', fontWeight: '600', color: deltaMoMColor }}>
+          {isClosed ? getDeltaText(comp.deltaMoM) : '--'}
+        </td>
 
-    return (
-      <React.Fragment key="prod_quarter">
-        <td className="cell-right">{kh > 0 ? kh.toLocaleString('vi-VN') : '0'}</td>
-        <td className="cell-right" style={{ fontWeight: '600' }}>
-          {th > 0 ? th.toLocaleString('vi-VN') : '--'}
+        {/* Group 3: So cùng kỳ năm trước */}
+        <td className="cell-right" style={{ background: '#f8fafc', color: '#475569' }}>
+          {comp.thYoY > 0 ? fmt(comp.thYoY) : '0'}
         </td>
-        <td className="cell-right" style={{ fontWeight: '600', color: diffColor }}>
-          {th > 0 ? diffText : '--'}
+        <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: diffYoYColor }}>
+          {isClosed ? getDiffText(comp.diffYoY) : '--'}
         </td>
-        <td className="cell-right" style={{ fontWeight: '600', color: deltaColor }}>
-          {th > 0 ? deltaText : '--'}
+        <td className="cell-right" style={{ background: '#f8fafc', fontWeight: '600', color: deltaYoYColor }}>
+          {isClosed ? getDeltaText(comp.deltaYoY) : '--'}
         </td>
       </React.Fragment>
     );
@@ -1884,31 +1928,16 @@ const GoalResultList = () => {
     <div className="goal-result-container">
       {/* Header */}
       <div className="page-title-section">
-        <h1>Kết quả doanh thu</h1>
-        <p>QUẢN LÝ CHI TIẾT CƠ HỘI VÀ KHÁCH HÀNG TIỀM NĂNG</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <h1 style={{ margin: 0 }}>{activeTab === 'ket_qua_doanh_thu' ? 'Kết quả doanh thu' : 'Sản lượng nghiệm thu'}</h1>
+          <span className="badge-plan-type" style={{ padding: '4px 12px', background: '#fef2f2', color: '#EE0033', borderRadius: '16px', fontSize: '13px', fontWeight: '700', border: '1px solid #fee2e2' }}>
+            {activePlanTab === 'Kế hoạch nội bộ' ? 'Nội bộ' : 'Tập đoàn'}
+          </span>
+        </div>
+        <p style={{ marginTop: '8px' }}>QUẢN LÝ CHI TIẾT CƠ HỘI VÀ KHÁCH HÀNG TIỀM NĂNG</p>
       </div>
 
-      {/* Tabs */}
-      <div className="tabs-container">
-        <div 
-          className={`tab-item ${activeTab === 'ket_qua_doanh_thu' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('ket_qua_doanh_thu');
-            setCurrentPage(1);
-          }}
-        >
-          Kết quả doanh thu
-        </div>
-        <div 
-          className={`tab-item ${activeTab === 'san_luong_nghiem_thu' ? 'active' : ''}`}
-          onClick={() => {
-            setActiveTab('san_luong_nghiem_thu');
-            setCurrentPage(1);
-          }}
-        >
-          Sản lượng nghiệm thu
-        </div>
-      </div>
+
 
       {/* KPI Cards */}
       <div className="kpi-cards-grid">
@@ -1999,47 +2028,49 @@ const GoalResultList = () => {
             <thead>
               {/* Level 1: Time period grouping */}
               <tr>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-1 matrix-group-title" style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1, position: 'sticky' }} title="Đơn vị thực hiện">
-                  Đơn vị thực hiện
-                  <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col1', e)} />
-                </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-2 matrix-group-title" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2, position: 'sticky' }} title="Nhóm khách hàng">
+                {activePlanTab !== 'Kế hoạch tập đoàn' && activeTab !== 'san_luong_nghiem_thu' && (
+                  <th rowSpan={3} className="sticky-col-1 matrix-group-title" style={{ left: leftOffsets.col1, width: colWidths.col1, minWidth: colWidths.col1, maxWidth: colWidths.col1, position: 'sticky' }} title="Đơn vị thực hiện">
+                    Đơn vị thực hiện
+                    <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col1', e)} />
+                  </th>
+                )}
+                <th rowSpan={3} className="sticky-col-2 matrix-group-title" style={{ left: leftOffsets.col2, width: colWidths.col2, minWidth: colWidths.col2, maxWidth: colWidths.col2, position: 'sticky' }} title="Nhóm khách hàng">
                   Nhóm khách hàng
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col2', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-3 matrix-group-title" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3, position: 'sticky' }} title="Tên khách hàng">
+                <th rowSpan={3} className="sticky-col-3 matrix-group-title" style={{ left: leftOffsets.col3, width: colWidths.col3, minWidth: colWidths.col3, maxWidth: colWidths.col3, position: 'sticky' }} title="Tên khách hàng">
                   Tên khách hàng
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col3', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-4 matrix-group-title cell-center" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4, position: 'sticky' }} title="KH Mới">
+                <th rowSpan={3} className="sticky-col-4 matrix-group-title cell-center" style={{ left: leftOffsets.col4, width: colWidths.col4, minWidth: colWidths.col4, maxWidth: colWidths.col4, position: 'sticky' }} title="KH Mới">
                   KH Mới
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col4', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-5 matrix-group-title" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5, position: 'sticky' }} title="Nhóm SPDV">
+                <th rowSpan={3} className="sticky-col-5 matrix-group-title" style={{ left: leftOffsets.col5, width: colWidths.col5, minWidth: colWidths.col5, maxWidth: colWidths.col5, position: 'sticky' }} title="Nhóm SPDV">
                   Nhóm SPDV
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col5', e)} />
                 </th>
-                <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} className="sticky-col-6 matrix-group-title" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6, position: 'sticky' }} title="Tên SPDV">
+                <th rowSpan={3} className="sticky-col-6 matrix-group-title" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6, position: 'sticky' }} title="Tên SPDV">
                   Tên SPDV
                   <div className="col-resizer" onMouseDown={(e) => handleResizeStart('col6', e)} />
                 </th>
                 
                 {/* Months */}
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 5} className="matrix-group-title cell-center">
+                  <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 7} className="matrix-group-title cell-center">
                     Tháng {m}
                   </th>
                 ))}
 
                 {/* Quarters */}
                 {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                  <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 4} className="matrix-group-title cell-center">
+                  <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 7} className="matrix-group-title cell-center">
                     Quý {q}
                   </th>
                 ))}
 
                 {/* Year */}
-                <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="matrix-group-title cell-center">
+                <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 7} className="matrix-group-title cell-center">
                   Cả năm
                 </th>
               </tr>
@@ -2052,7 +2083,7 @@ const GoalResultList = () => {
                     {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                       <React.Fragment key={`m_g_${m}`}>
                         <th colSpan={5} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
-                          Thực hiện so với KH Tập đoàn
+                          {planCompareText}
                         </th>
                         <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
                           So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}
@@ -2066,7 +2097,7 @@ const GoalResultList = () => {
                     {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                       <React.Fragment key={`q_g_${q}`}>
                         <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
-                          Thực hiện so với KH Tập đoàn
+                          {planCompareText}
                         </th>
                         <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
                           So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}
@@ -2079,7 +2110,7 @@ const GoalResultList = () => {
                     {/* Year groups */}
                     <React.Fragment key="y_g">
                       <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
-                        Thực hiện so với KH Tập đoàn
+                        {planCompareText}
                       </th>
                       <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
                         So Cả năm {parseInt(selectedYear, 10) - 1}
@@ -2151,36 +2182,86 @@ const GoalResultList = () => {
                 </>
               ) : (
                 <>
-                  {/* Level 2 (for Production): Indicators directly */}
+                  {/* Level 2 (for Production): Column Groups */}
                   <tr>
-                    {/* Months: KH, Ước, TH, Tăng/Giảm, % Delta */}
+                    {/* Months groups */}
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                      <React.Fragment key={`m_g_${m}`}>
+                        <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
+                          {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                          So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                          So Tháng {m} năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                      </React.Fragment>
+                    ))}
+                    {/* Quarters groups */}
+                    {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                      <React.Fragment key={`q_g_${q}`}>
+                        <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
+                          {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                          So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                          So Quý {q} năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                      </React.Fragment>
+                    ))}
+                    {/* Year groups */}
+                    <React.Fragment key="y_g">
+                      <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
+                        {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
+                      </th>
+                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                        So Cả năm {parseInt(selectedYear, 10) - 1}
+                      </th>
+                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                        So Cả năm {parseInt(selectedYear, 10) - 1}
+                      </th>
+                    </React.Fragment>
+                  </tr>
+
+                  {/* Level 3 (for Production): Specific Indicators */}
+                  <tr>
+                    {/* Months indicators */}
                     {Array.from({ length: 12 }).map((_, i) => (
-                      <React.Fragment key={`m${i}`}>
-                        <th className="matrix-indicator-title cell-right">KH</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#ea580c' }}>Ước TH</th>
+                      <React.Fragment key={`m_ind_${i}`}>
                         <th className="matrix-indicator-title cell-right">TH</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#059669' }}>Tăng/Giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#0284c7' }}>% Delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                       </React.Fragment>
                     ))}
-                    {/* Quarters: KH, TH, Tăng/Giảm, % Delta */}
+                    {/* Quarters indicators */}
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <React.Fragment key={`q${i}`}>
-                        <th className="matrix-indicator-title cell-right">KH</th>
+                      <React.Fragment key={`q_ind_${i}`}>
                         <th className="matrix-indicator-title cell-right">TH</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#059669' }}>Tăng/Giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#0284c7' }}>% Delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                       </React.Fragment>
                     ))}
-                    {/* Year: KH, TH */}
-                    <th className="matrix-indicator-title cell-right">KH</th>
-                    <th className="matrix-indicator-title cell-right">TH</th>
-                    {activeTab === 'san_luong_nghiem_thu' && (
-                      <>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#059669' }}>Tăng/Giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ color: '#0284c7' }}>% Delta</th>
-                      </>
-                    )}
+                    {/* Year indicators */}
+                    <React.Fragment key="y_ind">
+                      <th className="matrix-indicator-title cell-right">TH</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                    </React.Fragment>
                   </tr>
                 </>
               )}
@@ -2205,7 +2286,7 @@ const GoalResultList = () => {
   
                   return (
                     <tr key={row.id}>
-                      {isFirstUnit && (
+                      {activePlanTab !== 'Kế hoạch tập đoàn' && activeTab !== 'san_luong_nghiem_thu' && isFirstUnit && (
                         <td 
                           className="sticky-col-1 unit-master-cell" 
                           rowSpan={unitSpanCount}
@@ -2234,16 +2315,7 @@ const GoalResultList = () => {
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, true);
                         } else {
-                          const valKey = `${row.id}_${selectedYear}_${periodKey}`;
-                          const val = dbValues[valKey] || { kh: 0, th: 0 };
-                          const estVal = estimatesDb[valKey] || null;
-                          const isClosed = officialMonths.includes(periodKey);
-
-                          const scaledKh = Math.round(val.kh * valScale);
-                          const scaledTh = Math.round(val.th * valScale);
-                          const scaledEst = estVal ? Math.round(estVal * valScale) : 0;
-
-                          return renderProductionMonthCells(scaledKh, scaledEst, scaledTh, isClosed);
+                          return renderProductionPeriodCells(row, periodKey, valScale, true);
                         }
                       })}
 
@@ -2253,12 +2325,7 @@ const GoalResultList = () => {
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, false);
                         } else {
-                          const valKey = `${row.id}_${selectedYear}_${periodKey}`;
-                          const val = dbValues[valKey] || { kh: 0, th: 0 };
-                          const scaledKh = Math.round(val.kh * valScale);
-                          const scaledTh = Math.round(val.th * valScale);
-
-                          return renderProductionQuarterCells(scaledKh, scaledTh);
+                          return renderProductionPeriodCells(row, periodKey, valScale, false);
                         }
                       })}
 
@@ -2268,38 +2335,7 @@ const GoalResultList = () => {
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, false);
                         } else {
-                          const valKey = `${row.id}_${selectedYear}_y`;
-                          const val = dbValues[valKey] || { kh: 0, th: 0 };
-                          const scaledKh = Math.round(val.kh * valScale);
-                          const scaledTh = Math.round(val.th * valScale);
-
-                          const diff = scaledTh - scaledKh;
-                          const delta = scaledKh > 0 ? Math.round((diff / scaledKh) * 100) : 0;
-
-                          const diffText = diff > 0 ? `+${diff.toLocaleString('vi-VN')}` : diff.toLocaleString('vi-VN');
-                          const diffColor = diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
-
-                          const deltaText = delta > 0 ? `+${delta}%` : `${delta}%`;
-                          const deltaColor = delta > 0 ? '#0284c7' : delta < 0 ? '#dc2626' : '#64748b';
-
-                          return (
-                            <React.Fragment key={periodKey}>
-                              <td className="cell-right">{scaledKh.toLocaleString('vi-VN')}</td>
-                              <td className="cell-right" style={{ fontWeight: '600' }}>
-                                {scaledTh > 0 ? scaledTh.toLocaleString('vi-VN') : '--'}
-                              </td>
-                              {activeTab === 'san_luong_nghiem_thu' && (
-                                <>
-                                  <td className="cell-right" style={{ fontWeight: '600', color: diffColor }}>
-                                    {scaledTh > 0 ? diffText : '--'}
-                                  </td>
-                                  <td className="cell-right" style={{ fontWeight: '600', color: deltaColor }}>
-                                    {scaledTh > 0 ? deltaText : '--'}
-                                  </td>
-                                </>
-                              )}
-                            </React.Fragment>
-                          );
+                          return renderProductionPeriodCells(row, periodKey, valScale, false);
                         }
                       })()}
                     </tr>
@@ -2307,7 +2343,7 @@ const GoalResultList = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? 212 : (activeTab === 'san_luong_nghiem_thu' ? 86 : 52)} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                  <td colSpan={activeTab === 'ket_qua_doanh_thu' ? (activePlanTab === 'Kế hoạch tập đoàn' ? 211 : 212) : 124} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                     Không tìm thấy dữ liệu kết quả doanh thu phù hợp
                   </td>
                 </tr>
@@ -2364,188 +2400,192 @@ const GoalResultList = () => {
       {/* 4 collapsible summary tables - visible on both tabs */}
       {(activeTab === 'ket_qua_doanh_thu' || activeTab === 'san_luong_nghiem_thu') && (
         <div className="summary-sections-wrapper">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: '0', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'Biểu mẫu doanh thu nội bộ tổng hợp' : 'Biểu mẫu sản lượng nội bộ tổng hợp'}
-            </h2>
-            <p style={{ margin: '0', fontSize: '13px', color: '#64748b' }}>
-              Hệ thống tự động tổng hợp từ bảng chi tiết ở trên
-            </p>
-          </div>
+          {activeTab === 'ket_qua_doanh_thu' && activePlanTab === 'Kế hoạch nội bộ' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: '0', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
+                Biểu mẫu doanh thu nội bộ tổng hợp
+              </h2>
+            </div>
+          )}
 
           {/* Section: KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI */}
-          <div className="summary-card">
-            <div className="summary-card-header" onClick={() => setCollapsedNewCounts(!collapsedNewCounts)}>
-              <h3>KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI</h3>
-              <div className="summary-card-header-right">
-                <span>{collapsedNewCounts ? 'Mở rộng' : 'Thu gọn'}</span>
-                <ChevronDown size={16} style={{ transform: collapsedNewCounts ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
+          {activeTab === 'ket_qua_doanh_thu' && activePlanTab !== 'Kế hoạch nội bộ' && (
+            <div className="summary-card">
+              <div className="summary-card-header" onClick={() => setCollapsedNewCounts(!collapsedNewCounts)}>
+                <h3>KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI</h3>
+                <div className="summary-card-header-right">
+                  <span>{collapsedNewCounts ? 'Mở rộng' : 'Thu gọn'}</span>
+                  <ChevronDown size={16} style={{ transform: collapsedNewCounts ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
+                </div>
               </div>
+              {!collapsedNewCounts && (
+                <div className="table-scroll-container">
+                  <table className="summary-table">
+                    <thead>
+                      <tr>
+                        <th style={{ minWidth: '220px', textAlign: 'left' }}>Chỉ tiêu</th>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <th key={`new_head_m_${m}`} className="cell-center">T{m}</th>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <th key={`new_head_q_${q}`} className="cell-center">Q{q}</th>
+                        ))}
+                        <th className="cell-center">Năm</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <td key={`new_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
+                              value={newCountsSummary.newCustomerCount[`m${m}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <td key={`new_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
+                              value={newCountsSummary.newCustomerCount[`q${q}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        <td className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
+                            value={newCountsSummary.newCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <td key={`new_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
+                              value={newCountsSummary.newContractCount[`m${m}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <td key={`new_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
+                              value={newCountsSummary.newContractCount[`q${q}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        <td className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
+                            value={newCountsSummary.newContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                      </tr>
+                      
+                      {/* Row 3: Số lượng khách hàng lũy kế */}
+                      <tr style={{ background: '#f8fafc' }}>
+                        <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <td key={`cum_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                              value={newCountsSummary.cumCustomerCount[`m${m}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <td key={`cum_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                              value={newCountsSummary.cumCustomerCount[`q${q}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        <td className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                            value={newCountsSummary.cumCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                      </tr>
+                      
+                      {/* Row 4: Số lượng hợp đồng lũy kế */}
+                      <tr style={{ background: '#f8fafc' }}>
+                        <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <td key={`cum_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                              value={newCountsSummary.cumContractCount[`m${m}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <td key={`cum_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
+                            <input 
+                              type="text" 
+                              className="month-grid-input readonly-input cell-center" 
+                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
+                              value={newCountsSummary.cumContractCount[`q${q}`]} 
+                              readOnly 
+                            />
+                          </td>
+                        ))}
+                        <td className="cell-center" style={{ padding: '6px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                            value={newCountsSummary.cumContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-            {!collapsedNewCounts && (
-              <div className="table-scroll-container">
-                <table className="summary-table">
-                  <thead>
-                    <tr>
-                      <th style={{ minWidth: '220px', textAlign: 'left' }}>Chỉ tiêu</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <th key={`new_head_m_${m}`} className="cell-center">T{m}</th>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                        <th key={`new_head_q_${q}`} className="cell-center">Q{q}</th>
-                      ))}
-                      <th className="cell-center">Năm</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <td key={`new_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                            value={newCountsSummary.newCustomerCount[`m${m}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                        <td key={`new_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                            value={newCountsSummary.newCustomerCount[`q${q}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      <td className="cell-center" style={{ padding: '6px' }}>
-                        <input 
-                          type="text" 
-                          className="month-grid-input readonly-input cell-center" 
-                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
-                          value={newCountsSummary.newCustomerCount.nam} 
-                          readOnly 
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <td key={`new_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                            value={newCountsSummary.newContractCount[`m${m}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                        <td key={`new_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                            value={newCountsSummary.newContractCount[`q${q}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      <td className="cell-center" style={{ padding: '6px' }}>
-                        <input 
-                          type="text" 
-                          className="month-grid-input readonly-input cell-center" 
-                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
-                          value={newCountsSummary.newContractCount.nam} 
-                          readOnly 
-                        />
-                      </td>
-                    </tr>
-                    
-                    {/* Row 3: Số lượng khách hàng lũy kế */}
-                    <tr style={{ background: '#f8fafc' }}>
-                      <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <td key={`cum_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                            value={newCountsSummary.cumCustomerCount[`m${m}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                        <td key={`cum_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                            value={newCountsSummary.cumCustomerCount[`q${q}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      <td className="cell-center" style={{ padding: '6px' }}>
-                        <input 
-                          type="text" 
-                          className="month-grid-input readonly-input cell-center" 
-                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
-                          value={newCountsSummary.cumCustomerCount.nam} 
-                          readOnly 
-                        />
-                      </td>
-                    </tr>
-                    
-                    {/* Row 4: Số lượng hợp đồng lũy kế */}
-                    <tr style={{ background: '#f8fafc' }}>
-                      <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                        <td key={`cum_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                            value={newCountsSummary.cumContractCount[`m${m}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                        <td key={`cum_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                          <input 
-                            type="text" 
-                            className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                            value={newCountsSummary.cumContractCount[`q${q}`]} 
-                            readOnly 
-                          />
-                        </td>
-                      ))}
-                      <td className="cell-center" style={{ padding: '6px' }}>
-                        <input 
-                          type="text" 
-                          className="month-grid-input readonly-input cell-center" 
-                          style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
-                          value={newCountsSummary.cumContractCount.nam} 
-                          readOnly 
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+          )}
 
-          {/* Table 2.1: Theo đơn vị thực hiện */}
-          <div className="summary-card">
+          {/* Table 2.1 to 2.5 are visible only for Kế hoạch nội bộ of Doanh thu */}
+          {activeTab === 'ket_qua_doanh_thu' && activePlanTab === 'Kế hoạch nội bộ' && (
+            <>
+              {/* Table 2.1: Theo đơn vị thực hiện */}
+              <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable1(!collapsedTable1)}>
               <h3>2.1 Biểu tổng hợp kết quả theo đơn vị thực hiện</h3>
               <div className="summary-card-header-right">
@@ -2572,19 +2612,19 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
@@ -2815,19 +2855,19 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
@@ -3007,19 +3047,19 @@ const GoalResultList = () => {
                         <tr>
                           {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
-                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
-                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                              <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>Thực hiện so với KH Tập đoàn</th>
+                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                           <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
                         </tr>
@@ -3221,6 +3261,8 @@ const GoalResultList = () => {
               </div>
             )}
           </div>
+        </>
+      )}
         </div>
       )}
 

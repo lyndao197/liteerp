@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Plus, 
   LayoutGrid, 
@@ -33,9 +33,21 @@ const STATUS_ORDER = ['Mới', 'Đang thực hiện', 'Chờ đánh giá', 'Hoà
 
 const GoalList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [goals, setGoals] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activePlanTypeTab, setActivePlanTypeTab] = useState('Kế hoạch tập đoàn');
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const type = params.get('type');
+    if (type === 'internal') {
+      setActivePlanTypeTab('Kế hoạch nội bộ');
+    } else {
+      setActivePlanTypeTab('Kế hoạch tập đoàn');
+    }
+  }, [location.search]);
   
   // SORT & FILTER STATE
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
@@ -66,6 +78,19 @@ const GoalList = () => {
   useEffect(() => {
     setGoals(mockStore.getAllGoals());
   }, []);
+
+  const getGoalPlanType = (g) => {
+    if (g.planType) return g.planType;
+    if (g.subCategory === 'Nội bộ') return 'Kế hoạch nội bộ';
+    if (g.existingRows && g.existingRows.some(row => row.customerGroup && row.customerGroup.includes('nội bộ'))) {
+      return 'Kế hoạch nội bộ';
+    }
+    return 'Kế hoạch tập đoàn';
+  };
+
+  const filteredGoalsByTab = useMemo(() => {
+    return goals.filter(g => getGoalPlanType(g) === activePlanTypeTab);
+  }, [goals, activePlanTypeTab]);
 
   const handleNextStatus = (e, id, currentStatus) => {
     if(e) e.stopPropagation();
@@ -139,7 +164,7 @@ const GoalList = () => {
   };
 
   const processedGoals = useMemo(() => {
-    let result = goals.map(g => ({
+    let result = filteredGoalsByTab.map(g => ({
       ...g,
       month: g.startDate ? g.startDate.split('-').slice(1, 2).concat(g.startDate.split('-').slice(0, 1)).join('/') : ''
     }));
@@ -180,7 +205,7 @@ const GoalList = () => {
     }
 
     return result;
-  }, [goals, searchTerm, filters, sortConfig, advancedQuery]);
+  }, [filteredGoalsByTab, searchTerm, filters, sortConfig, advancedQuery]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -231,11 +256,11 @@ const GoalList = () => {
 
   const stats = useMemo(() => {
     return {
-      new: goals.filter(g => (g.approvalStatus || 'Mới') === 'Mới').length,
-      done: goals.filter(g => g.approvalStatus === 'Hoàn thành').length,
-      waiting: goals.filter(g => g.approvalStatus === 'Chờ đánh giá').length
+      new: filteredGoalsByTab.filter(g => (g.approvalStatus || 'Mới') === 'Mới').length,
+      done: filteredGoalsByTab.filter(g => g.approvalStatus === 'Hoàn thành').length,
+      waiting: filteredGoalsByTab.filter(g => g.approvalStatus === 'Chờ đánh giá').length
     };
-  }, [goals]);
+  }, [filteredGoalsByTab]);
 
   const unitSummaryData = useMemo(() => {
     const UNITS = [
@@ -259,7 +284,7 @@ const GoalList = () => {
       'Phòng Đối Ngoại': 3, 'Phòng Hợp Tác': 3, 'Phòng Nghiên Cứu': 2, 'Phòng Đào Tạo': 2
     };
 
-    goals.forEach(goal => {
+    filteredGoalsByTab.forEach(goal => {
       if (goal.existingRows && Array.isArray(goal.existingRows)) {
         goal.existingRows.forEach(row => {
           const unit = row.implementationUnit;
@@ -288,7 +313,7 @@ const GoalList = () => {
         status
       };
     });
-  }, [goals]);
+  }, [filteredGoalsByTab]);
 
   const COLUMN_OPTIONS = [
     { key: 'id', label: 'ID mục tiêu' },
@@ -351,9 +376,16 @@ const GoalList = () => {
   return (
     <div className="goal-list-container" onClick={() => setActiveFilterCol(null)}>
       <div className="page-title-section">
-        <h1>Quản lý mục tiêu</h1>
-        <p>Hiện có {stats.new} mục tiêu mới cần được triển khai và {stats.waiting} mục tiêu chờ phê duyệt.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <h1 style={{ margin: 0 }}>Quản lý mục tiêu</h1>
+          <span className="badge-plan-type" style={{ padding: '4px 12px', background: '#fef2f2', color: '#EE0033', borderRadius: '16px', fontSize: '13px', fontWeight: '700', border: '1px solid #fee2e2' }}>
+            {activePlanTypeTab === 'Kế hoạch nội bộ' ? 'Nội bộ' : 'Tập đoàn'}
+          </span>
+        </div>
+        <p style={{ marginTop: '8px' }}>Hiện có {stats.new} mục tiêu mới cần được triển khai và {stats.waiting} mục tiêu chờ phê duyệt.</p>
       </div>
+
+
 
       <div className="metrics-cards-container">
         <div className="metric-card">
@@ -409,7 +441,7 @@ const GoalList = () => {
               <Trash2 size={18} /> Xóa
             </button>
           )}
-          <button className="btn-outline-brand" onClick={() => navigate('/goal/new')}><Plus size={18} /> Thêm mục tiêu</button>
+          <button className="btn-outline-brand" onClick={() => navigate(`/goal/new?type=${activePlanTypeTab === 'Kế hoạch nội bộ' ? 'internal' : 'group'}`)}><Plus size={18} /> Thêm mục tiêu</button>
           <button className="btn-outline-brand" onClick={() => document.getElementById('import-input').click()}><Upload size={18} /> Nhập</button>
           <input type="file" id="import-input" style={{display: 'none'}} accept=".xlsx, .xls" onChange={handleImport} />
           <button className="btn-outline-brand" onClick={handleExport}>
@@ -507,57 +539,59 @@ const GoalList = () => {
       )}
 
       {/* Summary Table: Revenue by Implementation Unit */}
-      <div style={{ marginTop: '40px' }}>
-        <div className="page-title-section" style={{ marginBottom: '12px' }}>
-          <h1>Tổng hợp mục tiêu doanh thu theo Đơn vị thực hiện</h1>
-          <p>Số liệu lũy kế kế hoạch từ các mục tiêu đã thiết lập trong hệ thống</p>
-        </div>
+      {activePlanTypeTab !== 'Kế hoạch tập đoàn' && (
+        <div style={{ marginTop: '40px' }}>
+          <div className="page-title-section" style={{ marginBottom: '12px' }}>
+            <h1>Tổng hợp mục tiêu doanh thu theo Đơn vị thực hiện</h1>
+            <p>Số liệu lũy kế kế hoạch từ các mục tiêu đã thiết lập trong hệ thống</p>
+          </div>
 
-        <div className="goal-table-container">
-          <table className="goal-table">
-            <thead>
-              <tr>
-                <th style={{ paddingLeft: '24px', width: '250px' }}>Đơn vị thực hiện</th>
-                <th className="cell-right" style={{ textAlign: 'right', paddingRight: '24px' }}>KH Doanh thu năm 2026 (Tỷ đồng)</th>
-                <th style={{ textAlign: 'center' }}>Số lượng mục tiêu đã gán</th>
-                <th style={{ textAlign: 'center', width: '180px' }}>Trạng thái mục tiêu</th>
-              </tr>
-            </thead>
-            <tbody>
-              {unitSummaryData.map((item) => (
-                <tr key={item.unitName}>
-                  <td style={{ paddingLeft: '24px', fontWeight: 600, color: '#0f172a' }}>
-                    {item.unitName}
+          <div className="goal-table-container">
+            <table className="goal-table">
+              <thead>
+                <tr>
+                  <th style={{ paddingLeft: '24px', width: '250px' }}>Đơn vị thực hiện</th>
+                  <th className="cell-right" style={{ textAlign: 'right', paddingRight: '24px' }}>KH Doanh thu năm 2026 (Tỷ đồng)</th>
+                  <th style={{ textAlign: 'center' }}>Số lượng mục tiêu đã gán</th>
+                  <th style={{ textAlign: 'center', width: '180px' }}>Trạng thái mục tiêu</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unitSummaryData.map((item) => (
+                  <tr key={item.unitName}>
+                    <td style={{ paddingLeft: '24px', fontWeight: 600, color: '#0f172a' }}>
+                      {item.unitName}
+                    </td>
+                    <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#2563eb' }}>
+                      {item.totalPlan.toLocaleString('vi-VN')}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {item.kpiCount}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {renderStatusBadge(item.status)}
+                    </td>
+                  </tr>
+                ))}
+                <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                  <td style={{ paddingLeft: '24px', color: '#0f172a', fontWeight: '700' }}>
+                    Tổng cộng
                   </td>
-                  <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#2563eb' }}>
-                    {item.totalPlan.toLocaleString('vi-VN')}
+                  <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#e32b4c' }}>
+                    {unitSummaryData.reduce((sum, item) => sum + item.totalPlan, 0).toLocaleString('vi-VN')}
+                  </td>
+                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#0f172a' }}>
+                    {unitSummaryData.reduce((sum, item) => sum + item.kpiCount, 0)}
                   </td>
                   <td style={{ textAlign: 'center' }}>
-                    {item.kpiCount}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    {renderStatusBadge(item.status)}
+                    -
                   </td>
                 </tr>
-              ))}
-              <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
-                <td style={{ paddingLeft: '24px', color: '#0f172a', fontWeight: '700' }}>
-                  Tổng cộng
-                </td>
-                <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: 700, color: '#e32b4c' }}>
-                  {unitSummaryData.reduce((sum, item) => sum + item.totalPlan, 0).toLocaleString('vi-VN')}
-                </td>
-                <td style={{ textAlign: 'center', fontWeight: '700', color: '#0f172a' }}>
-                  {unitSummaryData.reduce((sum, item) => sum + item.kpiCount, 0)}
-                </td>
-                <td style={{ textAlign: 'center' }}>
-                  -
-                </td>
-              </tr>
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

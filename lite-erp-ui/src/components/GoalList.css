@@ -585,3 +585,40 @@
   justify-content: center;
   gap: 8px;
 }
+
+/* Tab Bar */
+.tabs-container {
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.tab-item {
+  padding: 12px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-item:hover {
+  color: #0f172a;
+}
+
+.tab-item.active {
+  color: #e03;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e03;
+  border-radius: 2px;
+}

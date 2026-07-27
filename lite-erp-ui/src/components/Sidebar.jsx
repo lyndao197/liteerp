@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { mockStore } from '../utils/mockStore';
 import {
   LayoutDashboard,
   Target,
@@ -34,7 +35,33 @@ function Sidebar() {
   const location = useLocation();
   const [billingOpen, setBillingOpen] = useState(location.pathname.includes('/billing'));
   const [contractsOpen, setContractsOpen] = useState(location.pathname.includes('/contracts'));
-  const [goalsOpen, setGoalsOpen] = useState(location.pathname.includes('/goals'));
+  const [goalsOpen, setGoalsOpen] = useState(location.pathname.startsWith('/goals') || location.pathname.startsWith('/goal'));
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/goal') || location.pathname.startsWith('/goals')) {
+      setGoalsOpen(true);
+    }
+  }, [location.pathname]);
+
+  // Extract dynamic active plan type when editing/creating a goal
+  let editingGoalPlanType = null;
+  if (location.pathname.startsWith('/goal/')) {
+    const parts = location.pathname.split('/');
+    const id = parts[parts.length - 1]; // last part is id or 'new'
+    if (id === 'new') {
+      const params = new URLSearchParams(location.search);
+      const type = params.get('type');
+      editingGoalPlanType = type === 'internal' ? 'Kế hoạch nội bộ' : 'Kế hoạch tập đoàn';
+    } else if (id) {
+      const goal = mockStore.getGoal(id);
+      if (goal) {
+        editingGoalPlanType = goal.planType || (goal.subCategory === 'Nội bộ' ? 'Kế hoạch nội bộ' : 'Kế hoạch tập đoàn');
+      }
+    }
+  }
+
+  const isGroupPlanActive = (location.pathname === '/goals' && (location.search.includes('type=group') || !location.search.includes('type='))) || (location.pathname.startsWith('/goal/') && editingGoalPlanType === 'Kế hoạch tập đoàn');
+  const isInternalPlanActive = (location.pathname === '/goals' && location.search.includes('type=internal')) || (location.pathname.startsWith('/goal/') && editingGoalPlanType === 'Kế hoạch nội bộ');
 
   return (
     <aside className="sidebar">
@@ -74,7 +101,7 @@ function Sidebar() {
           </div>
           {/* Goals - Collapsible */}
           <div
-            className={`nav-item ${location.pathname.includes('/goals') ? 'active' : ''}`}
+            className={`nav-item ${location.pathname.startsWith('/goals') || location.pathname.startsWith('/goal') ? 'active' : ''}`}
             onClick={() => setGoalsOpen(o => !o)}
             style={{ justifyContent: 'space-between' }}
           >
@@ -86,22 +113,63 @@ function Sidebar() {
             {goalsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
           {goalsOpen && (
-            <div style={{ paddingLeft: '16px' }}>
-              <div
-                className={`nav-item ${location.pathname === '/goals' || location.pathname.includes('/goal/') ? 'active' : ''}`}
-                onClick={() => navigate('/goals')}
-                style={{ fontSize: '13px' }}
-              >
-                <FileText size={16} />
-                <span>Kế hoạch doanh thu</span>
+            <div style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {/* Group 1: Kế hoạch doanh số */}
+              <div style={{ padding: '6px 24px 2px 24px', fontSize: '10px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Kế hoạch doanh số
               </div>
               <div
-                className={`nav-item ${location.pathname === '/goals/results' ? 'active' : ''}`}
-                onClick={() => navigate('/goals/results')}
-                style={{ fontSize: '13px' }}
+                className={`nav-item ${isGroupPlanActive ? 'active' : ''}`}
+                onClick={() => navigate('/goals?type=group')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
               >
-                <BarChart2 size={16} />
-                <span>Kết quả doanh thu</span>
+                <FileText size={14} />
+                <span>Kế hoạch tập đoàn</span>
+              </div>
+              <div
+                className={`nav-item ${isInternalPlanActive ? 'active' : ''}`}
+                onClick={() => navigate('/goals?type=internal')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
+              >
+                <FileText size={14} />
+                <span>Kế hoạch nội bộ</span>
+              </div>
+
+              {/* Group 2: Kết quả thực hiện */}
+              <div style={{ padding: '10px 24px 2px 24px', fontSize: '10px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Kết quả thực hiện
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' && (location.search.includes('tab=doanh_thu_tap_doan') || !location.search.includes('tab=')) ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results?tab=doanh_thu_tap_doan')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
+              >
+                <BarChart2 size={14} />
+                <span>Doanh thu Tập đoàn</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=doanh_thu_noi_bo') ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results?tab=doanh_thu_noi_bo')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
+              >
+                <BarChart2 size={14} />
+                <span>Doanh thu Nội bộ</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=san_luong_tap_doan') ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results?tab=san_luong_tap_doan')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
+              >
+                <Layers size={14} />
+                <span>Sản lượng Tập đoàn</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=san_luong_noi_bo') ? 'active' : ''}`}
+                onClick={() => navigate('/goals/results?tab=san_luong_noi_bo')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 24px' }}
+              >
+                <Layers size={14} />
+                <span>Sản lượng Nội bộ</span>
               </div>
             </div>
           )}

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   Save,
@@ -165,8 +165,22 @@ const GoalForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const location = useLocation();
 
   const [planYear, setPlanYear] = useState('2026');
+  const [planType, setPlanType] = useState('Kế hoạch tập đoàn');
+
+  useEffect(() => {
+    if (!isEdit) {
+      const params = new URLSearchParams(location.search);
+      const type = params.get('type');
+      if (type === 'internal') {
+        setPlanType('Kế hoạch nội bộ');
+      } else {
+        setPlanType('Kế hoạch tập đoàn');
+      }
+    }
+  }, [location.search, isEdit]);
   const [statusLabel, setStatusLabel] = useState('Mới tạo');
   const [activeSideTab, setActiveSideTab] = useState('comment');
   const [commentInput, setCommentInput] = useState('');
@@ -244,6 +258,15 @@ const GoalForm = () => {
       if (goal) {
         setPlanYear(goal.planYear || '2026');
         setStatusLabel(goal.statusLabel || 'Mới tạo');
+        
+        let defaultType = 'Kế hoạch tập đoàn';
+        if (goal.subCategory === 'Nội bộ') {
+          defaultType = 'Kế hoạch nội bộ';
+        } else if (goal.existingRows && goal.existingRows.some(row => row.customerGroup && row.customerGroup.includes('nội bộ'))) {
+          defaultType = 'Kế hoạch nội bộ';
+        }
+        setPlanType(goal.planType || defaultType);
+
         if (goal.existingRows && goal.existingRows.length > 0) {
           setExistingRows(goal.existingRows);
         } else {
@@ -285,7 +308,8 @@ const GoalForm = () => {
 
     for (let i = 0; i < existingRows.length; i++) {
       const r = existingRows[i];
-      if (!r.implementationUnit || !r.customerGroup || !r.customerName || !r.spdvGroup || !r.spdvName) {
+      const isUnitRequired = planType !== 'Kế hoạch tập đoàn';
+      if ((isUnitRequired && !r.implementationUnit) || !r.customerGroup || !r.customerName || !r.spdvGroup || !r.spdvName) {
         alert(`Dòng thứ ${i + 1} của Bảng chỉ tiêu doanh thu khách hàng hiện hữu chưa nhập đầy đủ thông tin bắt buộc.`);
         return false;
       }
@@ -308,19 +332,21 @@ const GoalForm = () => {
       }
     }
 
-    for (const mKey of MONTH_KEYS) {
-      const val = parseInt(newCustomerCountPlan[mKey], 10);
-      if (isNaN(val) || val < 0) {
-        alert(`Số lượng khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
-        return false;
+    if (planType !== 'Kế hoạch nội bộ') {
+      for (const mKey of MONTH_KEYS) {
+        const val = parseInt(newCustomerCountPlan[mKey], 10);
+        if (isNaN(val) || val < 0) {
+          alert(`Số lượng khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+          return false;
+        }
       }
-    }
 
-    for (const mKey of MONTH_KEYS) {
-      const val = parseInt(newContractCountPlan[mKey], 10);
-      if (isNaN(val) || val < 0) {
-        alert(`Số lượng hợp đồng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
-        return false;
+      for (const mKey of MONTH_KEYS) {
+        const val = parseInt(newContractCountPlan[mKey], 10);
+        if (isNaN(val) || val < 0) {
+          alert(`Số lượng hợp đồng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+          return false;
+        }
       }
     }
 
@@ -368,6 +394,7 @@ const GoalForm = () => {
     mockStore.saveGoal(saveId, {
       id: saveId,
       planYear,
+      planType,
       statusLabel: 'Mới tạo',
       existingRows,
       newCustomerPlan,
@@ -404,6 +431,7 @@ const GoalForm = () => {
     mockStore.saveGoal(saveId, {
       id: saveId,
       planYear,
+      planType,
       statusLabel: 'Hiệu lực',
       existingRows,
       newCustomerPlan,
@@ -624,6 +652,19 @@ const GoalForm = () => {
                     <ChevronDown className="select-arrow" size={16} />
                   </div>
                 </div>
+
+                <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label className="field-label">
+                    Loại Kế Hoạch <span className="req-star">*</span>
+                  </label>
+                  <div className="select-wrapper">
+                    <select value={planType} onChange={(e) => setPlanType(e.target.value)} disabled={isReadOnlyForm}>
+                      <option value="Kế hoạch tập đoàn">Kế hoạch tập đoàn</option>
+                      <option value="Kế hoạch nội bộ">Kế hoạch nội bộ</option>
+                    </select>
+                    <ChevronDown className="select-arrow" size={16} />
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -640,15 +681,17 @@ const GoalForm = () => {
                 <thead>
                   <tr>
                     <th rowSpan={2} style={{ width: '40px' }}></th>
-                    <th rowSpan={2} style={{ minWidth: '150px' }}>
-                      <div className="th-content">
-                        <span>Đơn vị thực hiện</span>
-                        <div className="th-icons">
-                          <ArrowUpDown size={12} />
-                          <Filter size={12} />
+                    {planType !== 'Kế hoạch tập đoàn' && (
+                      <th rowSpan={2} style={{ minWidth: '150px' }}>
+                        <div className="th-content">
+                          <span>Đơn vị thực hiện</span>
+                          <div className="th-icons">
+                            <ArrowUpDown size={12} />
+                            <Filter size={12} />
+                          </div>
                         </div>
-                      </div>
-                    </th>
+                      </th>
+                    )}
                     <th rowSpan={2} style={{ minWidth: '150px' }}>
                       <div className="th-content">
                         <span>Nhóm khách hàng</span>
@@ -711,18 +754,20 @@ const GoalForm = () => {
                             <Trash2 size={16} />
                           </button>
                         </td>
-                        <td>
-                          <div className="select-wrapper table-select">
-                            <select
-                              value={row.implementationUnit || ''}
-                              onChange={(e) => updateExistingRow(rowIndex, 'implementationUnit', e.target.value)}
-                            >
-                              <option value="">-- Chọn giá trị --</option>
-                              {IMPLEMENTATION_UNITS.map((item) => <option key={item} value={item}>{item}</option>)}
-                            </select>
-                            <ChevronDown className="select-arrow" size={14} />
-                          </div>
-                        </td>
+                        {planType !== 'Kế hoạch tập đoàn' && (
+                          <td>
+                            <div className="select-wrapper table-select">
+                              <select
+                                value={row.implementationUnit || ''}
+                                onChange={(e) => updateExistingRow(rowIndex, 'implementationUnit', e.target.value)}
+                              >
+                                <option value="">-- Chọn giá trị --</option>
+                                {IMPLEMENTATION_UNITS.map((item) => <option key={item} value={item}>{item}</option>)}
+                              </select>
+                              <ChevronDown className="select-arrow" size={14} />
+                            </div>
+                          </td>
+                        )}
                         <td>
                           <div className="select-wrapper table-select">
                             <select
@@ -820,137 +865,141 @@ const GoalForm = () => {
           </section>
 
           {/* Bảng tổng hợp kế hoạch theo Đơn vị thực hiện */}
-          <section className="goal-card" style={{ marginTop: '16px' }}>
-            <div className="goal-card-header">
-              <h3>Bảng tổng hợp kế hoạch theo Đơn vị thực hiện</h3>
-            </div>
-            <div className="table-container" style={{ padding: '16px' }}>
-              {unitSummaryInForm.length > 0 ? (
-                <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          {planType !== 'Kế hoạch tập đoàn' && (
+            <section className="goal-card" style={{ marginTop: '16px' }}>
+              <div className="goal-card-header">
+                <h3>Bảng tổng hợp kế hoạch theo Đơn vị thực hiện</h3>
+              </div>
+              <div className="table-container" style={{ padding: '16px' }}>
+                {unitSummaryInForm.length > 0 ? (
+                  <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc' }}>
+                        <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
+                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {unitSummaryInForm.map((item) => (
+                        <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
+                          <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                            {item.total.toLocaleString('vi-VN')}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                        <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
+                        <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                          {formTotalValue.toLocaleString('vi-VN')}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
+                    Chưa có đơn vị thực hiện nào được gán chỉ tiêu.
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Card 3: Chỉ tiêu số lượng khách hàng và hợp đồng mới */}
+          {planType !== 'Kế hoạch nội bộ' && (
+            <section className="goal-card">
+              <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+                <h3>Chỉ tiêu số lượng khách hàng và hợp đồng mới</h3>
+              </div>
+
+              {/* Unified grid table */}
+              <div className="table-container scrollable-table-container">
+                <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
                   <thead>
                     <tr style={{ background: '#f8fafc' }}>
-                      <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
-                      <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                      <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <th key={`head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
+                      ))}
+                      {Array.from({ length: 4 }, (_, i) => (
+                        <th key={`head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
+                      ))}
+                      <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {unitSummaryInForm.map((item) => (
-                      <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
-                        <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
-                          {item.total.toLocaleString('vi-VN')}
+                    {/* 2. Số lượng khách hàng mới (kế hoạch) */}
+                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '10px 16px', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px' }}>Số lượng khách hàng mới (kế hoạch)</td>
+                      {MONTH_KEYS.map((mKey, idx) => (
+                        <td key={`cust_m_${mKey}`} className="td-month-input">
+                          <input
+                            type="text"
+                            className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
+                            value={newCustomerCountPlan[mKey]}
+                            onChange={(e) => updateNewCustomerCountPlan(mKey, e.target.value)}
+                            disabled={isReadOnlyForm || isMonthDisabled(idx)}
+                          />
                         </td>
-                      </tr>
-                    ))}
-                    <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
-                      <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
-                      <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
-                        {formTotalValue.toLocaleString('vi-VN')}
+                      ))}
+                      {QUARTER_KEYS.map((qKey) => (
+                        <td key={`cust_q_${qKey}`} className="td-quarter-input">
+                          <input
+                            type="text"
+                            className="month-grid-input readonly-input"
+                            value={newCustomerCountPlan[qKey]}
+                            readOnly
+                          />
+                        </td>
+                      ))}
+                      <td className="td-year-input">
+                        <input
+                          type="text"
+                          className="month-grid-input readonly-input"
+                          value={newCustomerCountPlan.nam}
+                          readOnly
+                        />
+                      </td>
+                    </tr>
+
+                    {/* 3. Số lượng hợp đồng mới (kế hoạch) */}
+                    <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
+                      <td style={{ padding: '10px 16px', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px' }}>Số lượng hợp đồng mới (kế hoạch)</td>
+                      {MONTH_KEYS.map((mKey, idx) => (
+                        <td key={`cnt_m_${mKey}`} className="td-month-input">
+                          <input
+                            type="text"
+                            className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
+                            value={newContractCountPlan[mKey]}
+                            onChange={(e) => updateNewContractCountPlan(mKey, e.target.value)}
+                            disabled={isReadOnlyForm || isMonthDisabled(idx)}
+                          />
+                        </td>
+                      ))}
+                      {QUARTER_KEYS.map((qKey) => (
+                        <td key={`cnt_q_${qKey}`} className="td-quarter-input">
+                          <input
+                            type="text"
+                            className="month-grid-input readonly-input"
+                            value={newContractCountPlan[qKey]}
+                            readOnly
+                          />
+                        </td>
+                      ))}
+                      <td className="td-year-input">
+                        <input
+                          type="text"
+                          className="month-grid-input readonly-input"
+                          value={newContractCountPlan.nam}
+                          readOnly
+                        />
                       </td>
                     </tr>
                   </tbody>
                 </table>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
-                  Chưa có đơn vị thực hiện nào được gán chỉ tiêu.
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Card 3: Chỉ tiêu số lượng khách hàng và hợp đồng mới */}
-          <section className="goal-card">
-            <div className="goal-card-header" style={{ marginBottom: '16px' }}>
-              <h3>Chỉ tiêu số lượng khách hàng và hợp đồng mới</h3>
-            </div>
-
-            {/* Unified grid table */}
-            <div className="table-container scrollable-table-container">
-              <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
-                <thead>
-                  <tr style={{ background: '#f8fafc' }}>
-                    <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
-                    {Array.from({ length: 12 }, (_, i) => (
-                      <th key={`head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
-                    ))}
-                    {Array.from({ length: 4 }, (_, i) => (
-                      <th key={`head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
-                    ))}
-                    <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* 2. Số lượng khách hàng mới (kế hoạch) */}
-                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px 16px', fontWeight: '600', color: '#0f172a', background: '#fafafa' }}>Số lượng khách hàng mới (kế hoạch)</td>
-                    {MONTH_KEYS.map((mKey, idx) => (
-                      <td key={`cust_m_${mKey}`} className="td-month-input">
-                        <input
-                          type="text"
-                          className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
-                          value={newCustomerCountPlan[mKey]}
-                          onChange={(e) => updateNewCustomerCountPlan(mKey, e.target.value)}
-                          disabled={isReadOnlyForm || isMonthDisabled(idx)}
-                        />
-                      </td>
-                    ))}
-                    {QUARTER_KEYS.map((qKey) => (
-                      <td key={`cust_q_${qKey}`} className="td-quarter-input">
-                        <input
-                          type="text"
-                          className="month-grid-input readonly-input"
-                          value={newCustomerCountPlan[qKey]}
-                          readOnly
-                        />
-                      </td>
-                    ))}
-                    <td className="td-year-input">
-                      <input
-                        type="text"
-                        className="month-grid-input readonly-input"
-                        value={newCustomerCountPlan.nam}
-                        readOnly
-                      />
-                    </td>
-                  </tr>
-
-                  {/* 3. Số lượng hợp đồng mới (kế hoạch) */}
-                  <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
-                    <td style={{ padding: '10px 16px', fontWeight: '600', color: '#0f172a', background: '#fafafa' }}>Số lượng hợp đồng mới (kế hoạch)</td>
-                    {MONTH_KEYS.map((mKey, idx) => (
-                      <td key={`cnt_m_${mKey}`} className="td-month-input">
-                        <input
-                          type="text"
-                          className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
-                          value={newContractCountPlan[mKey]}
-                          onChange={(e) => updateNewContractCountPlan(mKey, e.target.value)}
-                          disabled={isReadOnlyForm || isMonthDisabled(idx)}
-                        />
-                      </td>
-                    ))}
-                    {QUARTER_KEYS.map((qKey) => (
-                      <td key={`cnt_q_${qKey}`} className="td-quarter-input">
-                        <input
-                          type="text"
-                          className="month-grid-input readonly-input"
-                          value={newContractCountPlan[qKey]}
-                          readOnly
-                        />
-                      </td>
-                    ))}
-                    <td className="td-year-input">
-                      <input
-                        type="text"
-                        className="month-grid-input readonly-input"
-                        value={newContractCountPlan.nam}
-                        readOnly
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+              </div>
+            </section>
+          )}
 
           {/* Card 4: Khối tài liệu */}
           <section className="goal-card" style={{ marginTop: '16px' }}>
