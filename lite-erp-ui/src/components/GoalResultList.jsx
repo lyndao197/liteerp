@@ -1943,27 +1943,47 @@ const GoalResultList = () => {
       <div className="kpi-cards-grid">
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu KH nội bộ' : 'Sản lượng KH nội bộ'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NỘI BỘ' : 'SẢN LƯỢNG KH NỘI BỘ'}
           </span>
-          <span className="kpi-card-value">{summaryStats.internal}</span>
+          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+            <span className="kpi-card-value">{summaryStats.internal}</span>
+            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '140px' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
+            </span>
+          </div>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu KH ngoài tập đoàn' : 'Sản lượng KH ngoài Tập đoàn'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG KH NGOÀI TẬP ĐOÀN'}
           </span>
-          <span className="kpi-card-value">{summaryStats.external}</span>
+          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+            <span className="kpi-card-value">{summaryStats.external}</span>
+            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '160px' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU TỪ NỘI BỘ (NGOÀI VTT)' : 'SẢN LƯỢNG TỪ NỘI BỘ (NGOÀI VTT)'}
+            </span>
+          </div>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu KH quốc tế' : 'Sản lượng KH quốc tế'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH QUỐC TẾ' : 'SẢN LƯỢNG KH QUỐC TẾ'}
           </span>
-          <span className="kpi-card-value">{summaryStats.international}</span>
+          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+            <span className="kpi-card-value">{summaryStats.international}</span>
+            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '180px' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU TỪ KHÁCH HÀNG NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG TỪ KHÁCH HÀNG NGOÀI TẬP ĐOÀN'}
+            </span>
+          </div>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng Sản lượng'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'TỔNG DOANH THU' : 'TỔNG SẢN LƯỢNG'}
           </span>
-          <span className="kpi-card-value">{summaryStats.total}</span>
+          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
+            <span className="kpi-card-value">{summaryStats.total}</span>
+            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3' }}>
+              TỔNG ALL
+            </span>
+          </div>
         </div>
       </div>
 
