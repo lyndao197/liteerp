@@ -12,7 +12,11 @@ import {
   ArrowUpDown,
   Filter,
   ArrowDownToLine,
-  Upload
+  Upload,
+  CheckCircle2,
+  AlertTriangle,
+  FileText,
+  X
 } from 'lucide-react';
 import { mockStore } from '../utils/mockStore';
 import './GoalForm.css';
@@ -263,6 +267,108 @@ const GoalForm = () => {
 
 
   const [serviceQualityPlan, setServiceQualityPlan] = useState(() => DEFAULT_SERVICE_QUALITY_PLAN);
+
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importStep, setImportStep] = useState(1);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isTesting, setIsTesting] = useState(false);
+  const [validationResult, setValidationResult] = useState(null);
+
+  const handleCloseImportModal = () => {
+    setShowImportModal(false);
+    setImportStep(1);
+    setUploadedFile(null);
+    setValidationResult(null);
+  };
+
+  const handleSimulateUpload = (type) => {
+    if (type === 'valid') {
+      setUploadedFile({
+        name: 'Kehoach_kpi_2026.xlsx',
+        size: '22.8 KB',
+        rowsCount: 15,
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers: ['Đơn vị thực hiện', 'Nhóm khách hàng', 'Tên khách hàng', 'Nhóm SPDV', 'Tên SPDV', 'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12']
+      });
+    }
+  };
+
+  const handleTestImport = () => {
+    setIsTesting(true);
+    setTimeout(() => {
+      setIsTesting(false);
+      setValidationResult({
+        status: 'success',
+        msg: 'Kiểm thử Excel thành công: Toàn bộ 15 dòng dữ liệu kế hoạch hợp lệ và khớp với danh mục hệ thống.'
+      });
+      setImportStep(3);
+    }, 1500);
+  };
+
+  const handleImportToDatabase = () => {
+    const mockExisting = [
+      {
+        id: `row-${Date.now()}-1`,
+        implementationUnit: 'Phòng Dự Án',
+        customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+        customerName: 'Tổng Công ty Giải pháp Doanh nghiệp Viettel',
+        spdvGroup: 'Giải pháp, Platform',
+        spdvName: 'OmniX CRM',
+        t1: '150000000', t2: '150000000', t3: '150000000', t4: '150000000', t5: '150000000', t6: '150000000',
+        t7: '150000000', t8: '150000000', t9: '150000000', t10: '150000000', t11: '150000000', t12: '150000000',
+        q1: 450000000, q2: 450000000, q3: 450000000, q4: 450000000,
+        nam: 1800000000
+      },
+      {
+        id: `row-${Date.now()}-2`,
+        implementationUnit: 'Phòng Kinh Doanh',
+        customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+        customerName: 'Công ty Cổ phần Sữa Việt Nam',
+        spdvGroup: 'DV CC outsourcing',
+        spdvName: 'Dịch vụ Tổng đài',
+        t1: '80000000', t2: '80000000', t3: '80000000', t4: '120000000', t5: '120000000', t6: '120000000',
+        t7: '100000000', t8: '100000000', t9: '100000000', t10: '100000000', t11: '100000000', t12: '100000000',
+        q1: 240000000, q2: 360000000, q3: 300000000, q4: 300000000,
+        nam: 1200000000
+      }
+    ];
+    setExistingRows(mockExisting);
+
+    setNewCustomerPlan({
+      spdvGroup: 'Giải pháp, Platform',
+      baseline: '0',
+      t1: '50000000', t2: '60000000', t3: '70000000', t4: '80000000', t5: '90000000', t6: '100000000',
+      t7: '110000000', t8: '120000000', t9: '130000000', t10: '140000000', t11: '150000000', t12: '160000000',
+      q1: 180000000, q2: 270000000, q3: 360000000, q4: 450000000,
+      nam: 1260000000
+    });
+
+    setNewCustomerCountPlan({
+      t1: '2', t2: '3', t3: '2', t4: '4', t5: '3', t6: '3',
+      t7: '2', t8: '4', t9: '3', t10: '5', t11: '3', t12: '4',
+      q1: 7, q2: 10, q3: 9, q4: 12,
+      nam: 38
+    });
+    setNewContractCountPlan({
+      t1: '4', t2: '5', t3: '3', t4: '6', t5: '5', t6: '4',
+      t7: '5', t8: '6', t9: '4', t10: '7', t11: '5', t12: '6',
+      q1: 12, q2: 15, q3: 15, q4: 18,
+      nam: 60
+    });
+
+    const mockSQ = { ...serviceQualityPlan };
+    Object.keys(mockSQ).forEach(id => {
+      mockSQ[id] = {
+        ...mockSQ[id],
+        m1: '98.5', m2: '98.0', m3: '98.5', m4: '99.0', m5: '98.7', m6: '98.5',
+        m7: '99.0', m8: '98.8', m9: '98.5', m10: '99.0', m11: '98.5', m12: '99.2'
+      };
+    });
+    setServiceQualityPlan(mockSQ);
+
+    alert('Đã nhập thành công toàn bộ số liệu kế hoạch từ file Excel!');
+    handleCloseImportModal();
+  };
 
   const computedServiceQualityPlan = useMemo(() => {
     const data = JSON.parse(JSON.stringify(serviceQualityPlan));
@@ -769,6 +875,10 @@ const GoalForm = () => {
           )}
           <button className="btn-cancel" type="button" onClick={() => navigate('/goals')}>
             Hủy
+          </button>
+          <button className="btn-excel-action" type="button" onClick={() => setShowImportModal(true)} disabled={isReadOnlyForm} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 18px', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+            <Upload size={16} />
+            Nhập Excel
           </button>
           <button className="btn-save" type="button" onClick={saveDraft} disabled={isReadOnlyForm}>
             <Save size={16} />
@@ -1561,6 +1671,184 @@ const GoalForm = () => {
           </section>
         </aside>
       </div>
+      </div>
+
+      {/* MODAL: IMPORT EXCEL WIZARD */}
+      {showImportModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ width: '600px' }}>
+            <div className="modal-header">
+              <h3>Nhập Excel Kế hoạch KPI doanh số</h3>
+              <button className="btn-close-modal" type="button" onClick={handleCloseImportModal}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body">
+              {/* Wizard progress node */}
+              <div className="wizard-steps">
+                <div className={`wizard-step-node ${importStep === 1 ? 'active' : ''} ${importStep > 1 ? 'completed' : ''}`}>
+                  <div className="step-circle">1</div>
+                  <span className="step-label">Upload File</span>
+                </div>
+                <div className={`wizard-step-node ${importStep === 2 ? 'active' : ''} ${importStep > 2 ? 'completed' : ''}`}>
+                  <div className="step-circle">2</div>
+                  <span className="step-label">Mapping cột</span>
+                </div>
+                <div className={`wizard-step-node ${importStep === 3 ? 'active' : ''}`}>
+                  <div className="step-circle">3</div>
+                  <span className="step-label">Chạy thử & Lưu</span>
+                </div>
+              </div>
+
+              {/* STEP 1: UPLOAD FILE */}
+              {importStep === 1 && (
+                <div className="import-wizard-container">
+                  <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#1e40af', marginBottom: '8px' }}>
+                    💡 <strong>Quy tắc nạp Kế hoạch:</strong> File Excel kế hoạch cần có các cột tương ứng với đơn vị thực hiện, nhóm khách hàng, tên khách hàng và kế hoạch chi tiết từ tháng 1 đến tháng 12.
+                  </div>
+
+                  {!uploadedFile ? (
+                    <div className="upload-dropzone" onClick={() => handleSimulateUpload('valid')}>
+                      <div className="upload-icon-wrapper">
+                        <Upload size={32} />
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <strong>Nhấp để chọn file Excel kế hoạch tải lên</strong>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>Hỗ trợ định dạng .xlsx, .xls (Tối đa 10MB)</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="uploaded-file-card">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <FileText size={24} style={{ color: '#10b981' }} />
+                        <div>
+                          <strong>{uploadedFile.name}</strong>
+                          <div style={{ fontSize: '11px', color: '#64748b' }}>{uploadedFile.size} • {uploadedFile.rowsCount} dòng dữ liệu</div>
+                        </div>
+                      </div>
+                      <button className="btn-cancel" type="button" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => setUploadedFile(null)}>
+                        Xóa
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STEP 2: FIELD MAPPING */}
+              {importStep === 2 && (
+                <div className="import-wizard-container">
+                  <span style={{ fontSize: '13px', color: '#475569' }}>
+                    Ánh xạ (Map) các cột từ file Excel tải lên với các trường tương ứng của hệ thống:
+                  </span>
+                  <table className="mapping-table">
+                    <thead>
+                      <tr>
+                        <th>Trường hệ thống</th>
+                        <th>Cột trong File Excel</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>Đơn vị thực hiện</strong></td>
+                        <td><select className="mapping-select" defaultValue="Đơn vị thực hiện"><option>Đơn vị thực hiện</option></select></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Nhóm khách hàng</strong></td>
+                        <td><select className="mapping-select" defaultValue="Nhóm khách hàng"><option>Nhóm khách hàng</option></select></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Tên khách hàng</strong></td>
+                        <td><select className="mapping-select" defaultValue="Tên khách hàng"><option>Tên khách hàng</option></select></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Nhóm sản phẩm dịch vụ</strong></td>
+                        <td><select className="mapping-select" defaultValue="Nhóm SPDV"><option>Nhóm SPDV</option></select></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Giá trị kế hoạch</strong></td>
+                        <td><select className="mapping-select" defaultValue="Kế hoạch năm (Tổng)"><option>Kế hoạch năm (Tổng)</option></select></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* STEP 3: RUN TEST & SAVE */}
+              {importStep === 3 && (
+                <div className="import-wizard-container">
+                  {isTesting ? (
+                    <div className="excel-loader-overlay">
+                      <div className="spinner-icon"></div>
+                      <div>
+                        <strong>Đang chạy thử nghiệm dữ liệu Excel...</strong>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748b' }}>Đang thực hiện quy tắc mapping trường và kiểm tra mã danh mục.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {validationResult && (
+                        <div className="test-result-wrapper test-result-success" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <CheckCircle2 size={20} />
+                          <div>
+                            <strong>Chạy thử thành công!</strong>
+                            <p style={{ margin: '4px 0 0 0', fontSize: '12px' }}>{validationResult.msg}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {validationResult && (
+                        <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px' }}>
+                          <span style={{ fontWeight: '700', color: '#0f172a' }}>Thông tin dữ liệu chuẩn bị nạp:</span>
+                          <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <li>Tệp tin: <strong>{uploadedFile.name}</strong></li>
+                            <li>Số lượng dòng nạp: <strong>{uploadedFile.rowsCount} dòng</strong></li>
+                            <li>Trạng thái kiểm tra: <strong>Hợp lệ 100%</strong></li>
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <div className="modal-footer">
+              <button className="btn-cancel" type="button" onClick={handleCloseImportModal}>
+                Hủy bỏ
+              </button>
+              {importStep === 1 && (
+                <button 
+                  className="btn-submit" 
+                  type="button"
+                  disabled={!uploadedFile} 
+                  onClick={() => setImportStep(2)}
+                >
+                  Tiếp tục →
+                </button>
+              )}
+              {importStep === 2 && (
+                <button 
+                  className="btn-submit" 
+                  type="button"
+                  onClick={handleTestImport}
+                >
+                  Kiểm tra dữ liệu →
+                </button>
+              )}
+              {importStep === 3 && (
+                <button 
+                  className="btn-submit" 
+                  type="button"
+                  disabled={isTesting}
+                  onClick={handleImportToDatabase}
+                >
+                  Nạp dữ liệu vào form
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
