@@ -2430,7 +2430,7 @@ const GoalResultList = () => {
             }}
           >
             <Upload size={16} />
-            Import TH chính thức
+            Import TH
           </button>
 
           <button className="btn-excel-action" onClick={handleExportData}>
@@ -2845,7 +2845,6 @@ const GoalResultList = () => {
                     <Upload size={14} />
                     Import Số lượng KH/HĐ
                   </button>
-                  <span>{collapsedNewCounts ? 'Mở rộng' : 'Thu gọn'}</span>
                   <ChevronDown size={16} style={{ transform: collapsedNewCounts ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
                 </div>
               </div>
@@ -3274,7 +3273,6 @@ const GoalResultList = () => {
                     <Upload size={14} />
                     Import Chất lượng dịch vụ
                   </button>
-                  <span>{collapsedServiceQuality ? 'Mở rộng' : 'Thu gọn'}</span>
                   <ChevronDown size={16} style={{ transform: collapsedServiceQuality ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
                 </div>
               </div>
@@ -3473,7 +3471,6 @@ const GoalResultList = () => {
             <div className="summary-card-header" onClick={() => setCollapsedTable1(!collapsedTable1)}>
               <h3>2.1 Biểu tổng hợp kết quả theo đơn vị thực hiện</h3>
               <div className="summary-card-header-right">
-                <span>{collapsedTable1 ? 'Mở rộng' : 'Thu gọn'}</span>
                 <ChevronDown size={16} style={{ transform: collapsedTable1 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
             </div>
@@ -3665,7 +3662,6 @@ const GoalResultList = () => {
             <div className="summary-card-header" onClick={() => setCollapsedTable1_2(!collapsedTable1_2)}>
               <h3>2.2 Số lượng hoàn thành kế hoạch</h3>
               <div className="summary-card-header-right">
-                <span>{collapsedTable1_2 ? 'Mở rộng' : 'Thu gọn'}</span>
                 <ChevronDown size={16} style={{ transform: collapsedTable1_2 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
             </div>
@@ -3716,7 +3712,6 @@ const GoalResultList = () => {
             <div className="summary-card-header" onClick={() => setCollapsedTable2(!collapsedTable2)}>
               <h3>2.3 Tổng hợp kết quả thực hiện theo nhóm khách hàng</h3>
               <div className="summary-card-header-right">
-                <span>{collapsedTable2 ? 'Mở rộng' : 'Thu gọn'}</span>
                 <ChevronDown size={16} style={{ transform: collapsedTable2 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
             </div>
@@ -3908,7 +3903,6 @@ const GoalResultList = () => {
             <div className="summary-card-header" onClick={() => setCollapsedTable3(!collapsedTable3)}>
               <h3>2.4 Tổng hợp kết quả thực hiện theo nhóm SPDV</h3>
               <div className="summary-card-header-right">
-                <span>{collapsedTable3 ? 'Mở rộng' : 'Thu gọn'}</span>
                 <ChevronDown size={16} style={{ transform: collapsedTable3 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
             </div>
@@ -4100,7 +4094,6 @@ const GoalResultList = () => {
             <div className="summary-card-header" onClick={() => setCollapsedTable4(!collapsedTable4)}>
               <h3>2.5 Tỉ lệ nhóm SPDV hoàn thành kế hoạch</h3>
               <div className="summary-card-header-right">
-                <span>{collapsedTable4 ? 'Mở rộng' : 'Thu gọn'}</span>
                 <ChevronDown size={16} style={{ transform: collapsedTable4 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
             </div>
