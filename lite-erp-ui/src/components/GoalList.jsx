@@ -610,7 +610,7 @@ const GoalList = () => {
       )}
 
       {/* Summary Table: Quality of Service for Group Plan */}
-      {activePlanTypeTab === 'Kế hoạch tập đoàn' && (
+      {(activePlanTypeTab === 'Kế hoạch tập đoàn' || activePlanTypeTab === 'Kế hoạch nội bộ') && (
         <div style={{ marginTop: '40px', marginBottom: '24px' }}>
           <div className="page-title-section" style={{ marginBottom: '12px' }}>
             <h1>Tổng hợp mục tiêu Chất lượng dịch vụ</h1>
