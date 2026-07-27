@@ -991,6 +991,9 @@ const GoalResultList = () => {
     let internalSum = 0;
     let externalSum = 0;
     let internationalSum = 0;
+    let globalSum = 0;
+    let newServiceSum = 0;
+    const newServicesList = ['AI Chatbot', 'Loyalty App', 'Smart City Solution'];
 
     kpiData.forEach(item => {
       // Internal = internal in-country + internal international
@@ -999,6 +1002,9 @@ const GoalResultList = () => {
       const isExternal = item.customerGroup.toLowerCase().includes('ngoài');
       // International = internal international + external international
       const isInternational = item.customerGroup.toLowerCase().includes('nước ngoài');
+      
+      const isGlobal = item.customerName.toLowerCase().includes('global') || item.customerGroup.toLowerCase().includes('nước ngoài');
+      const isNewService = newServicesList.includes(item.spdvName);
 
       if (isInternal) {
         internalSum += item.th;
@@ -1008,6 +1014,12 @@ const GoalResultList = () => {
       }
       if (isInternational) {
         internationalSum += item.th;
+      }
+      if (isGlobal) {
+        globalSum += item.th;
+      }
+      if (isNewService) {
+        newServiceSum += item.th;
       }
     });
 
@@ -1022,6 +1034,8 @@ const GoalResultList = () => {
       internal: formatStat(internalSum),
       external: formatStat(externalSum),
       international: formatStat(internationalSum),
+      global: formatStat(globalSum),
+      newService: formatStat(newServiceSum),
       total: formatStat(totalSum)
     };
   }, [kpiData, activeTab]);
@@ -2301,6 +2315,18 @@ const GoalResultList = () => {
             {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ khách hàng ngoài tập đoàn' : 'Sản lượng từ khách hàng ngoài tập đoàn'}
           </span>
           <span className="kpi-card-value">{summaryStats.international}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu Global' : 'Sản lượng Global'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.global}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu DV mới' : 'Sản lượng DV mới'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.newService}</span>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
