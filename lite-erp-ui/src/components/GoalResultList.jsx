@@ -212,6 +212,90 @@ const GoalResultList = () => {
     setCurrentPage(1);
   }, [location.search]);
 
+  // Actual values state for the "KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI" table
+  const [actualCounts, setActualCounts] = useState(() => {
+    const newCust = {
+      m1: '30', m2: '32', m3: '35', m4: '38', m5: '40', m6: '37',
+      m7: '36', m8: '35', m9: '37', m10: '39', m11: '34', m12: '38'
+    };
+    const newCont = {
+      m1: '50', m2: '45', m3: '32', m4: '58', m5: '40', m6: '35',
+      m7: '50', m8: '46', m9: '28', m10: '52', m11: '45', m12: '33'
+    };
+    return { newCustomerCount: newCust, newContractCount: newCont };
+  });
+
+  const handleActualCountChange = (type, monthKey, value) => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    setActualCounts(prev => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [monthKey]: cleanValue
+      }
+    }));
+  };
+
+  const computedActualSummary = useMemo(() => {
+    const actCust = { ...actualCounts.newCustomerCount };
+    const actCont = { ...actualCounts.newContractCount };
+
+    // Calculate quarters
+    for (let q = 1; q <= 4; q++) {
+      const mStart = (q - 1) * 3 + 1;
+      actCust[`q${q}`] = String(
+        (parseInt(actCust[`m${mStart}`], 10) || 0) +
+        (parseInt(actCust[`m${mStart + 1}`], 10) || 0) +
+        (parseInt(actCust[`m${mStart + 2}`], 10) || 0)
+      );
+      actCont[`q${q}`] = String(
+        (parseInt(actCont[`m${mStart}`], 10) || 0) +
+        (parseInt(actCont[`m${mStart + 1}`], 10) || 0) +
+        (parseInt(actCont[`m${mStart + 2}`], 10) || 0)
+      );
+    }
+
+    // Calculate year
+    actCust.nam = String(
+      Array.from({ length: 12 }, (_, i) => parseInt(actCust[`m${i + 1}`], 10) || 0).reduce((a, b) => a + b, 0)
+    );
+    actCont.nam = String(
+      Array.from({ length: 12 }, (_, i) => parseInt(actCont[`m${i + 1}`], 10) || 0).reduce((a, b) => a + b, 0)
+    );
+
+    // Calculate cumulative
+    const cumCust = {};
+    const cumCont = {};
+    let runningCust = 0;
+    let runningCont = 0;
+    for (let i = 1; i <= 12; i++) {
+      runningCust += parseInt(actCust[`m${i}`], 10) || 0;
+      runningCont += parseInt(actCont[`m${i}`], 10) || 0;
+      cumCust[`m${i}`] = runningCust;
+      cumCont[`m${i}`] = runningCont;
+    }
+
+    cumCust.q1 = cumCust.m3;
+    cumCust.q2 = cumCust.m6;
+    cumCust.q3 = cumCust.m9;
+    cumCust.q4 = cumCust.m12;
+
+    cumCont.q1 = cumCont.m3;
+    cumCont.q2 = cumCont.m6;
+    cumCont.q3 = cumCont.m9;
+    cumCont.q4 = cumCont.m12;
+
+    cumCust.nam = cumCust.m12;
+    cumCont.nam = cumCont.m12;
+
+    return {
+      newCustomerCount: actCust,
+      newContractCount: actCont,
+      cumCustomerCount: cumCust,
+      cumContractCount: cumCont
+    };
+  }, [actualCounts]);
+
   // Resizable column widths for frozen columns
   const [colWidths, setColWidths] = useState({
     col1: 120,
@@ -2427,81 +2511,154 @@ const GoalResultList = () => {
                   <table className="summary-table">
                     <thead>
                       <tr>
-                        <th style={{ minWidth: '220px', textAlign: 'left' }}>Chỉ tiêu</th>
+                        <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>Chỉ tiêu</th>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <th key={`new_head_m_${m}`} className="cell-center">T{m}</th>
+                          <th key={`new_head_m_${m}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <th key={`new_head_q_${q}`} className="cell-center">Q{q}</th>
+                          <th key={`new_head_q_${q}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        <th className="cell-center">Năm</th>
+                        <th colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                      </tr>
+                      <tr>
+                        {Array.from({ length: 17 }, (_, i) => i).map(idx => (
+                          <React.Fragment key={`sub_cols_${idx}`}>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
+                          </React.Fragment>
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
+                      {/* Row 1: Số lượng khách hàng mới (kế hoạch) */}
                       <tr>
                         <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <td key={`new_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                              value={newCountsSummary.newCustomerCount[`m${m}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`new_cust_m_${m}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b' }} 
+                                value={newCountsSummary.newCustomerCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: 'white', border: '1px solid #3b82f6', borderRadius: '4px', fontSize: '12px', color: '#2563eb', fontWeight: '600' }} 
+                                value={actualCounts.newCustomerCount[`m${m}`]} 
+                                onChange={(e) => handleActualCountChange('newCustomerCount', `m${m}`, e.target.value)} 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <td key={`new_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                              value={newCountsSummary.newCustomerCount[`q${q}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`new_cust_q_${q}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b' }} 
+                                value={newCountsSummary.newCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
+                                value={computedActualSummary.newCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
-                        <td className="cell-center" style={{ padding: '6px' }}>
+                        <td className="cell-center" style={{ padding: '4px' }}>
                           <input 
                             type="text" 
                             className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
                             value={newCountsSummary.newCustomerCount.nam} 
                             readOnly 
                           />
                         </td>
-                      </tr>
-                      <tr>
-                        <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <td key={`new_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                              value={newCountsSummary.newContractCount[`m${m}`]} 
-                              readOnly 
-                            />
-                          </td>
-                        ))}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <td key={`new_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px' }} 
-                              value={newCountsSummary.newContractCount[`q${q}`]} 
-                              readOnly 
-                            />
-                          </td>
-                        ))}
-                        <td className="cell-center" style={{ padding: '6px' }}>
+                        <td className="cell-center" style={{ padding: '4px' }}>
                           <input 
                             type="text" 
                             className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontWeight: 'bold' }} 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
+                            value={computedActualSummary.newCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                      </tr>
+
+                      {/* Row 2: Số lượng hợp đồng mới (kế hoạch) */}
+                      <tr>
+                        <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <React.Fragment key={`new_cont_m_${m}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b' }} 
+                                value={newCountsSummary.newContractCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: 'white', border: '1px solid #3b82f6', borderRadius: '4px', fontSize: '12px', color: '#2563eb', fontWeight: '600' }} 
+                                value={actualCounts.newContractCount[`m${m}`]} 
+                                onChange={(e) => handleActualCountChange('newContractCount', `m${m}`, e.target.value)} 
+                              />
+                            </td>
+                          </React.Fragment>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <React.Fragment key={`new_cont_q_${q}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b' }} 
+                                value={newCountsSummary.newContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
+                                value={computedActualSummary.newContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
+                        ))}
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
                             value={newCountsSummary.newContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
+                            value={computedActualSummary.newContractCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2511,33 +2668,64 @@ const GoalResultList = () => {
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <td key={`cum_cust_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                              value={newCountsSummary.cumCustomerCount[`m${m}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`cum_cust_m_${m}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
+                                value={newCountsSummary.cumCustomerCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
+                                value={computedActualSummary.cumCustomerCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <td key={`cum_cust_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                              value={newCountsSummary.cumCustomerCount[`q${q}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`cum_cust_q_${q}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
+                                value={newCountsSummary.cumCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
+                                value={computedActualSummary.cumCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
-                        <td className="cell-center" style={{ padding: '6px' }}>
+                        <td className="cell-center" style={{ padding: '4px' }}>
                           <input 
                             type="text" 
                             className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#cbd5e1', border: '1px solid #94a3b8', borderRadius: '4px', fontWeight: 'bold', color: '#334155', fontSize: '12px' }} 
                             value={newCountsSummary.cumCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#0284c7', border: '1px solid #0369a1', borderRadius: '4px', fontWeight: 'bold', color: 'white', fontSize: '12px' }} 
+                            value={computedActualSummary.cumCustomerCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2547,33 +2735,64 @@ const GoalResultList = () => {
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <td key={`cum_cont_m_${m}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                              value={newCountsSummary.cumContractCount[`m${m}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`cum_cont_m_${m}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
+                                value={newCountsSummary.cumContractCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
+                                value={computedActualSummary.cumContractCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <td key={`cum_cont_q_${q}`} className="cell-center" style={{ padding: '6px' }}>
-                            <input 
-                              type="text" 
-                              className="month-grid-input readonly-input cell-center" 
-                              style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#0f172a' }} 
-                              value={newCountsSummary.cumContractCount[`q${q}`]} 
-                              readOnly 
-                            />
-                          </td>
+                          <React.Fragment key={`cum_cont_q_${q}`}>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
+                                value={newCountsSummary.cumContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
+                                value={computedActualSummary.cumContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                          </React.Fragment>
                         ))}
-                        <td className="cell-center" style={{ padding: '6px' }}>
+                        <td className="cell-center" style={{ padding: '4px' }}>
                           <input 
                             type="text" 
                             className="month-grid-input readonly-input cell-center" 
-                            style={{ width: '60px', height: '30px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: 'bold', color: '#0f172a' }} 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#cbd5e1', border: '1px solid #94a3b8', borderRadius: '4px', fontWeight: 'bold', color: '#334155', fontSize: '12px' }} 
                             value={newCountsSummary.cumContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#0284c7', border: '1px solid #0369a1', borderRadius: '4px', fontWeight: 'bold', color: 'white', fontSize: '12px' }} 
+                            value={computedActualSummary.cumContractCount.nam} 
                             readOnly 
                           />
                         </td>
