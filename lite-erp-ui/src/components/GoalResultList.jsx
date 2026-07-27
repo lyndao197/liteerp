@@ -402,20 +402,115 @@ const GoalResultList = () => {
   const [collapsedNewCounts, setCollapsedNewCounts] = useState(false);
   const [collapsedServiceQuality, setCollapsedServiceQuality] = useState(false);
 
-  const serviceQualityData = useMemo(() => [
-    { name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', plan: '98%', actual: '97.5%', level: 1 },
-    { name: 'TLKN kênh Di động Vip/Svip', plan: '99%', actual: '98.8%', level: 2 },
-    { name: 'TLKN kênh Di động thường/Hotline/CDS', plan: '98%', actual: '97.9%', level: 2 },
-    { name: 'TLKN kênh SME', plan: '97%', actual: '96.5%', level: 2 },
-    { name: 'TLKN kênh CĐBR và truyền hình', plan: '98%', actual: '97.4%', level: 2 },
-    { name: 'TLKN kênh 1789N1', plan: '98%', actual: '98.2%', level: 2 },
-    { name: 'TLKN kênh Videocall', plan: '95%', actual: '94.3%', level: 2 },
-    { name: 'TLKN kênh 1789N2', plan: '97%', actual: '96.8%', level: 2 },
-    { name: 'Tỷ lệ hài lòng của khách hàng', plan: '95%', actual: '94.2%', level: 1 },
-    { name: 'Kênh FO', plan: '95%', actual: '94.8%', level: 2 },
-    { name: 'Kênh BO', plan: '94%', actual: '93.7%', level: 2 },
-    { name: 'Callbot Inbound', plan: '92%', actual: '91.6%', level: 2 }
+  const serviceQualityRows = useMemo(() => [
+    { id: 0, name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 1 },
+    { id: 1, name: 'TLKN kênh Di động Vip/Svip', level: 2 },
+    { id: 2, name: 'TLKN kênh Di động thường/Hotline/CDS', level: 2 },
+    { id: 3, name: 'TLKN kênh SME', level: 2 },
+    { id: 4, name: 'TLKN kênh CĐBR và truyền hình', level: 2 },
+    { id: 5, name: 'TLKN kênh 1789N1', level: 2 },
+    { id: 6, name: 'TLKN kênh Videocall', level: 2 },
+    { id: 7, name: 'TLKN kênh 1789N2', level: 2 },
+    { id: 8, name: 'Tỷ lệ hài lòng của khách hàng', level: 1 },
+    { id: 9, name: 'Kênh FO', level: 2 },
+    { id: 10, name: 'Kênh BO', level: 2 },
+    { id: 11, name: 'Callbot Inbound', level: 2 }
   ], []);
+
+  const [serviceQualityValues, setServiceQualityValues] = useState(() => {
+    const initialValues = {};
+    const baseIndicators = [
+      { id: 1, basePlan: 99, baseAct: 98.8 },
+      { id: 2, basePlan: 98, baseAct: 97.9 },
+      { id: 3, basePlan: 97, baseAct: 96.5 },
+      { id: 4, basePlan: 98, baseAct: 97.4 },
+      { id: 5, basePlan: 98, baseAct: 98.2 },
+      { id: 6, basePlan: 95, baseAct: 94.3 },
+      { id: 7, basePlan: 97, baseAct: 96.8 },
+      { id: 9, basePlan: 95, baseAct: 94.8 },
+      { id: 10, basePlan: 94, baseAct: 93.7 },
+      { id: 11, basePlan: 92, baseAct: 91.6 }
+    ];
+
+    baseIndicators.forEach(({ id, basePlan, baseAct }) => {
+      initialValues[id] = { plan: {}, actual: {} };
+      for (let m = 1; m <= 12; m++) {
+        const variancePlan = ((m * 3) % 5 - 2) * 0.2;
+        const varianceAct = ((m * 7) % 7 - 3) * 0.3;
+        initialValues[id].plan[`m${m}`] = (basePlan + variancePlan).toFixed(1);
+        initialValues[id].actual[`m${m}`] = (baseAct + varianceAct).toFixed(1);
+      }
+    });
+
+    return initialValues;
+  });
+
+  const handleServiceQualityChange = (id, monthKey, value) => {
+    const cleanValue = value.replace(/[^0-9.]/g, '');
+    setServiceQualityValues(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        actual: {
+          ...prev[id].actual,
+          [monthKey]: cleanValue
+        }
+      }
+    }));
+  };
+
+  const computedServiceQuality = useMemo(() => {
+    const data = JSON.parse(JSON.stringify(serviceQualityValues));
+    const baseIds = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11];
+    
+    baseIds.forEach(id => {
+      if (!data[id]) return;
+      const plan = data[id].plan || {};
+      const actual = data[id].actual || {};
+      
+      // Calculate quarters
+      for (let q = 1; q <= 4; q++) {
+        const mStart = (q - 1) * 3 + 1;
+        const qPlanAvg = (
+          parseFloat(plan[`m${mStart}`] || 0) +
+          parseFloat(plan[`m${mStart + 1}`] || 0) +
+          parseFloat(plan[`m${mStart + 2}`] || 0)
+        ) / 3;
+        const qActAvg = (
+          parseFloat(actual[`m${mStart}`] || 0) +
+          parseFloat(actual[`m${mStart + 1}`] || 0) +
+          parseFloat(actual[`m${mStart + 2}`] || 0)
+        ) / 3;
+        plan[`q${q}`] = qPlanAvg.toFixed(1);
+        actual[`q${q}`] = qActAvg.toFixed(1);
+      }
+      
+      // Calculate year
+      const yPlanAvg = Array.from({ length: 12 }, (_, i) => parseFloat(plan[`m${i + 1}`] || 0)).reduce((a, b) => a + b, 0) / 12;
+      const yActAvg = Array.from({ length: 12 }, (_, i) => parseFloat(actual[`m${i + 1}`] || 0)).reduce((a, b) => a + b, 0) / 12;
+      plan.nam = yPlanAvg.toFixed(1);
+      actual.nam = yActAvg.toFixed(1);
+    });
+
+    const calculateParent = (parentId, childrenIds) => {
+      data[parentId] = { plan: {}, actual: {} };
+      const periods = [
+        'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
+        'q1', 'q2', 'q3', 'q4', 'nam'
+      ];
+      periods.forEach(p => {
+        const pPlanAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(data[cid]?.plan?.[p] || 0), 0) / childrenIds.length;
+        const pActAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(data[cid]?.actual?.[p] || 0), 0) / childrenIds.length;
+        data[parentId].plan[p] = pPlanAvg.toFixed(1);
+        data[parentId].actual[p] = pActAvg.toFixed(1);
+      });
+    };
+
+    calculateParent(0, [1, 2, 3, 4, 5, 6, 7]);
+    calculateParent(8, [9, 10, 11]);
+
+    return data;
+  }, [serviceQualityValues]);
 
   // Initialize DB Values
   useEffect(() => {
@@ -2832,39 +2927,136 @@ const GoalResultList = () => {
               </div>
               {!collapsedServiceQuality && (
                 <div className="table-scroll-container">
-                  <table className="summary-table" style={{ width: '100%' }}>
+                  <table className="summary-table">
                     <thead>
                       <tr>
-                        <th style={{ textAlign: 'left', paddingLeft: '24px' }}>CHẤT LƯỢNG DỊCH VỤ</th>
-                        <th style={{ width: '200px', textAlign: 'center' }}>Kế hoạch</th>
-                        <th style={{ width: '200px', textAlign: 'center' }}>Thực hiện</th>
+                        <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>CHẤT LƯỢNG DỊCH VỤ</th>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          <th key={`sq_head_m_${m}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                        ))}
+                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          <th key={`sq_head_q_${q}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
+                        ))}
+                        <th colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                      </tr>
+                      <tr>
+                        {Array.from({ length: 17 }, (_, i) => i).map(idx => (
+                          <React.Fragment key={`sq_sub_cols_${idx}`}>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
+                          </React.Fragment>
+                        ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {serviceQualityData.map((item, idx) => {
+                      {serviceQualityRows.map((row, idx) => {
+                        const isParent = row.level === 1;
                         let paddingLeft = '24px';
-                        let fontWeight = 'normal';
-                        let color = '#0f172a';
+                        let fontWeight = isParent ? '700' : 'normal';
+                        let color = isParent ? '#0f172a' : '#475569';
+                        let background = isParent ? '#f8fafc' : 'transparent';
 
-                        if (item.level === 1) {
-                          paddingLeft = '24px';
-                          fontWeight = '700';
-                          color = '#0f172a';
-                        } else if (item.level === 2) {
+                        if (row.level === 2) {
                           paddingLeft = '44px';
-                          color = '#475569';
                         }
 
+                        const itemValues = computedServiceQuality[row.id] || { plan: {}, actual: {} };
+
                         return (
-                          <tr key={idx} style={{ background: item.level === 1 ? '#f8fafc' : 'transparent' }}>
-                            <td style={{ paddingLeft, fontWeight, color, padding: '12px 24px' }}>
-                              {item.name}
+                          <tr key={idx} style={{ background }}>
+                            <td className="summary-col-label" style={{ paddingLeft, fontWeight, color }}>
+                              {row.name}
                             </td>
-                            <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color: item.level === 1 ? '#0f172a' : '#475569' }}>
-                              {item.plan}
+                            {/* Months 1-12 */}
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                              const planVal = itemValues.plan[`m${m}`] ? `${itemValues.plan[`m${m}`]}%` : '--';
+                              const actVal = itemValues.actual[`m${m}`] || '';
+                              
+                              return (
+                                <React.Fragment key={`sq_cell_m_${row.id}_${m}`}>
+                                  {/* KH (readOnly) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input readonly-input cell-center" 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
+                                      value={planVal} 
+                                      readOnly 
+                                    />
+                                  </td>
+                                  {/* TH (editable if child, readOnly if parent) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input cell-center" 
+                                      style={{ 
+                                        width: '42px', 
+                                        height: '28px', 
+                                        margin: '0 auto', 
+                                        textAlign: 'center', 
+                                        background: isParent ? '#e0f2fe' : 'white', 
+                                        border: isParent ? '1px solid #bae6fd' : '1px solid #3b82f6', 
+                                        borderRadius: '4px', 
+                                        fontSize: '11px', 
+                                        color: isParent ? '#0369a1' : '#2563eb', 
+                                        fontWeight: '600' 
+                                      }} 
+                                      value={isParent ? (actVal ? `${actVal}%` : '--') : actVal}
+                                      onChange={(e) => !isParent && handleServiceQualityChange(row.id, `m${m}`, e.target.value)} 
+                                      readOnly={isParent}
+                                    />
+                                  </td>
+                                </React.Fragment>
+                              );
+                            })}
+                            {/* Quarters 1-4 */}
+                            {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                              const planVal = itemValues.plan[`q${q}`] ? `${itemValues.plan[`q${q}`]}%` : '--';
+                              const actVal = itemValues.actual[`q${q}`] ? `${itemValues.actual[`q${q}`]}%` : '--';
+                              
+                              return (
+                                <React.Fragment key={`sq_cell_q_${row.id}_${q}`}>
+                                  {/* KH (readOnly) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input readonly-input cell-center" 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
+                                      value={planVal} 
+                                      readOnly 
+                                    />
+                                  </td>
+                                  {/* TH (readOnly calculated) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input readonly-input cell-center" 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '11px', color: '#1e40af', fontWeight: 'bold' }} 
+                                      value={actVal} 
+                                      readOnly 
+                                    />
+                                  </td>
+                                </React.Fragment>
+                              );
+                            })}
+                            {/* Year */}
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#cbd5e1' : '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '11px', color: isParent ? '#334155' : '#64748b', fontWeight: 'bold' }} 
+                                value={itemValues.plan.nam ? `${itemValues.plan.nam}%` : '--'} 
+                                readOnly 
+                              />
                             </td>
-                            <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color: item.level === 1 ? '#0f172a' : '#475569' }}>
-                              {item.actual}
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#0284c7' : '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: isParent ? 'white' : '#1e40af', fontWeight: 'bold' }} 
+                                value={itemValues.actual.nam ? `${itemValues.actual.nam}%` : '--'} 
+                                readOnly 
+                              />
                             </td>
                           </tr>
                         );
