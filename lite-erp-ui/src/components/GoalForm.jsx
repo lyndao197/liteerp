@@ -1158,6 +1158,7 @@ const GoalForm = () => {
                 </table>
               </div>
             </section>
+          )}
           {/* Card 3.5: Chỉ tiêu chất lượng dịch vụ */}
           {planType !== 'Kế hoạch nội bộ' && (
             <section className="goal-card" style={{ marginTop: '16px' }}>
