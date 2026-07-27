@@ -296,6 +296,90 @@ const GoalResultList = () => {
     };
   }, [actualCounts]);
 
+  // Estimated values state for the "KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI" table
+  const [estimatedCounts, setEstimatedCounts] = useState(() => {
+    const estCust = {
+      m1: '28', m2: '31', m3: '33', m4: '36', m5: '38', m6: '35',
+      m7: '34', m8: '33', m9: '35', m10: '37', m11: '32', m12: '36'
+    };
+    const estCont = {
+      m1: '48', m2: '42', m3: '30', m4: '55', m5: '38', m6: '33',
+      m7: '47', m8: '43', m9: '26', m10: '49', m11: '42', m12: '30'
+    };
+    return { newCustomerCount: estCust, newContractCount: estCont };
+  });
+
+  const handleEstimatedCountChange = (type, monthKey, value) => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    setEstimatedCounts(prev => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [monthKey]: cleanValue
+      }
+    }));
+  };
+
+  const computedEstimatedSummary = useMemo(() => {
+    const estCust = { ...estimatedCounts.newCustomerCount };
+    const estCont = { ...estimatedCounts.newContractCount };
+
+    // Calculate quarters
+    for (let q = 1; q <= 4; q++) {
+      const mStart = (q - 1) * 3 + 1;
+      estCust[`q${q}`] = String(
+        (parseInt(estCust[`m${mStart}`], 10) || 0) +
+        (parseInt(estCust[`m${mStart + 1}`], 10) || 0) +
+        (parseInt(estCust[`m${mStart + 2}`], 10) || 0)
+      );
+      estCont[`q${q}`] = String(
+        (parseInt(estCont[`m${mStart}`], 10) || 0) +
+        (parseInt(estCont[`m${mStart + 1}`], 10) || 0) +
+        (parseInt(estCont[`m${mStart + 2}`], 10) || 0)
+      );
+    }
+
+    // Calculate year
+    estCust.nam = String(
+      Array.from({ length: 12 }, (_, i) => parseInt(estCust[`m${i + 1}`], 10) || 0).reduce((a, b) => a + b, 0)
+    );
+    estCont.nam = String(
+      Array.from({ length: 12 }, (_, i) => parseInt(estCont[`m${i + 1}`], 10) || 0).reduce((a, b) => a + b, 0)
+    );
+
+    // Calculate cumulative
+    const cumCust = {};
+    const cumCont = {};
+    let runningCust = 0;
+    let runningCont = 0;
+    for (let i = 1; i <= 12; i++) {
+      runningCust += parseInt(estCust[`m${i}`], 10) || 0;
+      runningCont += parseInt(estCont[`m${i}`], 10) || 0;
+      cumCust[`m${i}`] = runningCust;
+      cumCont[`m${i}`] = runningCont;
+    }
+
+    cumCust.q1 = cumCust.m3;
+    cumCust.q2 = cumCust.m6;
+    cumCust.q3 = cumCust.m9;
+    cumCust.q4 = cumCust.m12;
+
+    cumCont.q1 = cumCont.m3;
+    cumCont.q2 = cumCont.m6;
+    cumCont.q3 = cumCont.m9;
+    cumCont.q4 = cumCont.m12;
+
+    cumCust.nam = cumCust.m12;
+    cumCont.nam = cumCont.m12;
+
+    return {
+      newCustomerCount: estCust,
+      newContractCount: estCont,
+      cumCustomerCount: cumCust,
+      cumContractCount: cumCont
+    };
+  }, [estimatedCounts]);
+
   // Resizable column widths for frozen columns
   const [colWidths, setColWidths] = useState({
     col1: 120,
@@ -445,6 +529,32 @@ const GoalResultList = () => {
     return initialValues;
   });
 
+  const [serviceQualityEstimatedValues, setServiceQualityEstimatedValues] = useState(() => {
+    const initialValues = {};
+    const baseIndicators = [
+      { id: 1, baseEst: 98.6 },
+      { id: 2, baseEst: 97.7 },
+      { id: 3, baseEst: 96.3 },
+      { id: 4, baseEst: 97.2 },
+      { id: 5, baseEst: 98.0 },
+      { id: 6, baseEst: 94.1 },
+      { id: 7, baseEst: 96.5 },
+      { id: 9, baseEst: 94.5 },
+      { id: 10, baseEst: 93.5 },
+      { id: 11, baseEst: 91.3 }
+    ];
+
+    baseIndicators.forEach(({ id, baseEst }) => {
+      initialValues[id] = { estimate: {} };
+      for (let m = 1; m <= 12; m++) {
+        const varianceEst = ((m * 9) % 7 - 3) * 0.25;
+        initialValues[id].estimate[`m${m}`] = (baseEst + varianceEst).toFixed(1);
+      }
+    });
+
+    return initialValues;
+  });
+
   const handleServiceQualityChange = (id, monthKey, value) => {
     const cleanValue = value.replace(/[^0-9.]/g, '');
     setServiceQualityValues(prev => ({
@@ -459,14 +569,38 @@ const GoalResultList = () => {
     }));
   };
 
+  const handleServiceQualityEstimatedChange = (id, monthKey, value) => {
+    const cleanValue = value.replace(/[^0-9.]/g, '');
+    setServiceQualityEstimatedValues(prev => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        estimate: {
+          ...prev[id].estimate,
+          [monthKey]: cleanValue
+        }
+      }
+    }));
+  };
+
   const computedServiceQuality = useMemo(() => {
     const data = JSON.parse(JSON.stringify(serviceQualityValues));
+    const estData = JSON.parse(JSON.stringify(serviceQualityEstimatedValues));
     const baseIds = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11];
     
+    const combined = {};
     baseIds.forEach(id => {
-      if (!data[id]) return;
-      const plan = data[id].plan || {};
-      const actual = data[id].actual || {};
+      combined[id] = {
+        plan: (data[id] && data[id].plan) ? { ...data[id].plan } : {},
+        estimate: (estData[id] && estData[id].estimate) ? { ...estData[id].estimate } : {},
+        actual: (data[id] && data[id].actual) ? { ...data[id].actual } : {}
+      };
+    });
+
+    baseIds.forEach(id => {
+      const plan = combined[id].plan;
+      const estimate = combined[id].estimate;
+      const actual = combined[id].actual;
       
       // Calculate quarters
       for (let q = 1; q <= 4; q++) {
@@ -476,41 +610,51 @@ const GoalResultList = () => {
           parseFloat(plan[`m${mStart + 1}`] || 0) +
           parseFloat(plan[`m${mStart + 2}`] || 0)
         ) / 3;
+        const qEstAvg = (
+          parseFloat(estimate[`m${mStart}`] || 0) +
+          parseFloat(estimate[`m${mStart + 1}`] || 0) +
+          parseFloat(estimate[`m${mStart + 2}`] || 0)
+        ) / 3;
         const qActAvg = (
           parseFloat(actual[`m${mStart}`] || 0) +
           parseFloat(actual[`m${mStart + 1}`] || 0) +
           parseFloat(actual[`m${mStart + 2}`] || 0)
         ) / 3;
         plan[`q${q}`] = qPlanAvg.toFixed(1);
+        estimate[`q${q}`] = qEstAvg.toFixed(1);
         actual[`q${q}`] = qActAvg.toFixed(1);
       }
       
       // Calculate year
       const yPlanAvg = Array.from({ length: 12 }, (_, i) => parseFloat(plan[`m${i + 1}`] || 0)).reduce((a, b) => a + b, 0) / 12;
+      const yEstAvg = Array.from({ length: 12 }, (_, i) => parseFloat(estimate[`m${i + 1}`] || 0)).reduce((a, b) => a + b, 0) / 12;
       const yActAvg = Array.from({ length: 12 }, (_, i) => parseFloat(actual[`m${i + 1}`] || 0)).reduce((a, b) => a + b, 0) / 12;
       plan.nam = yPlanAvg.toFixed(1);
+      estimate.nam = yEstAvg.toFixed(1);
       actual.nam = yActAvg.toFixed(1);
     });
 
     const calculateParent = (parentId, childrenIds) => {
-      data[parentId] = { plan: {}, actual: {} };
+      combined[parentId] = { plan: {}, estimate: {}, actual: {} };
       const periods = [
         'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
         'q1', 'q2', 'q3', 'q4', 'nam'
       ];
       periods.forEach(p => {
-        const pPlanAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(data[cid]?.plan?.[p] || 0), 0) / childrenIds.length;
-        const pActAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(data[cid]?.actual?.[p] || 0), 0) / childrenIds.length;
-        data[parentId].plan[p] = pPlanAvg.toFixed(1);
-        data[parentId].actual[p] = pActAvg.toFixed(1);
+        const pPlanAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(combined[cid]?.plan?.[p] || 0), 0) / childrenIds.length;
+        const pEstAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(combined[cid]?.estimate?.[p] || 0), 0) / childrenIds.length;
+        const pActAvg = childrenIds.reduce((sum, cid) => sum + parseFloat(combined[cid]?.actual?.[p] || 0), 0) / childrenIds.length;
+        combined[parentId].plan[p] = pPlanAvg.toFixed(1);
+        combined[parentId].estimate[p] = pEstAvg.toFixed(1);
+        combined[parentId].actual[p] = pActAvg.toFixed(1);
       });
     };
 
     calculateParent(0, [1, 2, 3, 4, 5, 6, 7]);
     calculateParent(8, [9, 10, 11]);
 
-    return data;
-  }, [serviceQualityValues]);
+    return combined;
+  }, [serviceQualityValues, serviceQualityEstimatedValues]);
 
   // Initialize DB Values
   useEffect(() => {
@@ -2624,17 +2768,18 @@ const GoalResultList = () => {
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>Chỉ tiêu</th>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <th key={`new_head_m_${m}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                          <th key={`new_head_m_${m}`} colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <th key={`new_head_q_${q}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
+                          <th key={`new_head_q_${q}`} colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        <th colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                        <th colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
                       </tr>
                       <tr>
                         {Array.from({ length: 17 }, (_, i) => i).map(idx => (
                           <React.Fragment key={`sub_cols_${idx}`}>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#ea580c', fontWeight: '700', padding: '4px 2px', background: '#fffbeb' }}>Ước TH</th>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
                           </React.Fragment>
                         ))}
@@ -2653,6 +2798,15 @@ const GoalResultList = () => {
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b' }} 
                                 value={newCountsSummary.newCustomerCount[`m${m}`]} 
                                 readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '4px', fontSize: '12px', color: '#ea580c', fontWeight: '600' }} 
+                                value={estimatedCounts.newCustomerCount[`m${m}`]} 
+                                onChange={(e) => handleEstimatedCountChange('newCustomerCount', `m${m}`, e.target.value)} 
                               />
                             </td>
                             <td className="cell-center" style={{ padding: '4px' }}>
@@ -2681,6 +2835,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '12px', color: '#d97706', fontWeight: 'bold' }} 
+                                value={computedEstimatedSummary.newCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
                                 value={computedActualSummary.newCustomerCount[`q${q}`]} 
                                 readOnly 
@@ -2694,6 +2857,15 @@ const GoalResultList = () => {
                             className="month-grid-input readonly-input cell-center" 
                             style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
                             value={newCountsSummary.newCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '12px', color: '#d97706', fontWeight: 'bold' }} 
+                            value={computedEstimatedSummary.newCustomerCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2726,6 +2898,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #f59e0b', borderRadius: '4px', fontSize: '12px', color: '#ea580c', fontWeight: '600' }} 
+                                value={estimatedCounts.newContractCount[`m${m}`]} 
+                                onChange={(e) => handleEstimatedCountChange('newContractCount', `m${m}`, e.target.value)} 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: 'white', border: '1px solid #3b82f6', borderRadius: '4px', fontSize: '12px', color: '#2563eb', fontWeight: '600' }} 
                                 value={actualCounts.newContractCount[`m${m}`]} 
                                 onChange={(e) => handleActualCountChange('newContractCount', `m${m}`, e.target.value)} 
@@ -2748,6 +2929,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '12px', color: '#d97706', fontWeight: 'bold' }} 
+                                value={computedEstimatedSummary.newContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }} 
                                 value={computedActualSummary.newContractCount[`q${q}`]} 
                                 readOnly 
@@ -2761,6 +2951,15 @@ const GoalResultList = () => {
                             className="month-grid-input readonly-input cell-center" 
                             style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
                             value={newCountsSummary.newContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '12px', color: '#d97706', fontWeight: 'bold' }} 
+                            value={computedEstimatedSummary.newContractCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2793,6 +2992,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontWeight: '600', color: '#d97706', fontSize: '12px' }} 
+                                value={computedEstimatedSummary.cumCustomerCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
                                 value={computedActualSummary.cumCustomerCount[`m${m}`]} 
                                 readOnly 
@@ -2815,6 +3023,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontWeight: '600', color: '#d97706', fontSize: '12px' }} 
+                                value={computedEstimatedSummary.cumCustomerCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
                                 value={computedActualSummary.cumCustomerCount[`q${q}`]} 
                                 readOnly 
@@ -2828,6 +3045,15 @@ const GoalResultList = () => {
                             className="month-grid-input readonly-input cell-center" 
                             style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#cbd5e1', border: '1px solid #94a3b8', borderRadius: '4px', fontWeight: 'bold', color: '#334155', fontSize: '12px' }} 
                             value={newCountsSummary.cumCustomerCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#d97706', border: '1px solid #b45309', borderRadius: '4px', fontWeight: 'bold', color: 'white', fontSize: '12px' }} 
+                            value={computedEstimatedSummary.cumCustomerCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2860,6 +3086,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontWeight: '600', color: '#d97706', fontSize: '12px' }} 
+                                value={computedEstimatedSummary.cumContractCount[`m${m}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
                                 value={computedActualSummary.cumContractCount[`m${m}`]} 
                                 readOnly 
@@ -2882,6 +3117,15 @@ const GoalResultList = () => {
                               <input 
                                 type="text" 
                                 className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontWeight: '600', color: '#d97706', fontSize: '12px' }} 
+                                value={computedEstimatedSummary.cumContractCount[`q${q}`]} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#e0f2fe', border: '1px solid #bae6fd', borderRadius: '4px', fontWeight: '600', color: '#0369a1', fontSize: '12px' }} 
                                 value={computedActualSummary.cumContractCount[`q${q}`]} 
                                 readOnly 
@@ -2895,6 +3139,15 @@ const GoalResultList = () => {
                             className="month-grid-input readonly-input cell-center" 
                             style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#cbd5e1', border: '1px solid #94a3b8', borderRadius: '4px', fontWeight: 'bold', color: '#334155', fontSize: '12px' }} 
                             value={newCountsSummary.cumContractCount.nam} 
+                            readOnly 
+                          />
+                        </td>
+                        <td className="cell-center" style={{ padding: '4px' }}>
+                          <input 
+                            type="text" 
+                            className="month-grid-input readonly-input cell-center" 
+                            style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#d97706', border: '1px solid #b45309', borderRadius: '4px', fontWeight: 'bold', color: 'white', fontSize: '12px' }} 
+                            value={computedEstimatedSummary.cumContractCount.nam} 
                             readOnly 
                           />
                         </td>
@@ -2932,17 +3185,18 @@ const GoalResultList = () => {
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>CHẤT LƯỢNG DỊCH VỤ</th>
                         {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                          <th key={`sq_head_m_${m}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
+                          <th key={`sq_head_m_${m}`} colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
                         {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
-                          <th key={`sq_head_q_${q}`} colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
+                          <th key={`sq_head_q_${q}`} colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        <th colSpan={2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                        <th colSpan={3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
                       </tr>
                       <tr>
                         {Array.from({ length: 17 }, (_, i) => i).map(idx => (
                           <React.Fragment key={`sq_sub_cols_${idx}`}>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
+                            <th className="cell-center" style={{ fontSize: '10px', color: '#ea580c', fontWeight: '700', padding: '4px 2px', background: '#fffbeb' }}>Ước TH</th>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
                           </React.Fragment>
                         ))}
@@ -2960,7 +3214,7 @@ const GoalResultList = () => {
                           paddingLeft = '44px';
                         }
 
-                        const itemValues = computedServiceQuality[row.id] || { plan: {}, actual: {} };
+                        const itemValues = computedServiceQuality[row.id] || { plan: {}, estimate: {}, actual: {} };
 
                         return (
                           <tr key={idx} style={{ background }}>
@@ -2970,6 +3224,7 @@ const GoalResultList = () => {
                             {/* Months 1-12 */}
                             {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
                               const planVal = itemValues.plan[`m${m}`] ? `${itemValues.plan[`m${m}`]}%` : '--';
+                              const estVal = itemValues.estimate[`m${m}`] || '';
                               const actVal = itemValues.actual[`m${m}`] || '';
                               
                               return (
@@ -2982,6 +3237,28 @@ const GoalResultList = () => {
                                       style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
                                       value={planVal} 
                                       readOnly 
+                                    />
+                                  </td>
+                                  {/* Ước TH (editable if child, readOnly if parent) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input cell-center" 
+                                      style={{ 
+                                        width: '42px', 
+                                        height: '28px', 
+                                        margin: '0 auto', 
+                                        textAlign: 'center', 
+                                        background: isParent ? '#fffbeb' : 'white', 
+                                        border: isParent ? '1px solid #fde68a' : '1px solid #f59e0b', 
+                                        borderRadius: '4px', 
+                                        fontSize: '11px', 
+                                        color: isParent ? '#d97706' : '#ea580c', 
+                                        fontWeight: '600' 
+                                      }} 
+                                      value={isParent ? (estVal ? `${estVal}%` : '--') : estVal}
+                                      onChange={(e) => !isParent && handleServiceQualityEstimatedChange(row.id, `m${m}`, e.target.value)} 
+                                      readOnly={isParent}
                                     />
                                   </td>
                                   {/* TH (editable if child, readOnly if parent) */}
@@ -3012,6 +3289,7 @@ const GoalResultList = () => {
                             {/* Quarters 1-4 */}
                             {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
                               const planVal = itemValues.plan[`q${q}`] ? `${itemValues.plan[`q${q}`]}%` : '--';
+                              const estVal = itemValues.estimate[`q${q}`] ? `${itemValues.estimate[`q${q}`]}%` : '--';
                               const actVal = itemValues.actual[`q${q}`] ? `${itemValues.actual[`q${q}`]}%` : '--';
                               
                               return (
@@ -3023,6 +3301,16 @@ const GoalResultList = () => {
                                       className="month-grid-input readonly-input cell-center" 
                                       style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
                                       value={planVal} 
+                                      readOnly 
+                                    />
+                                  </td>
+                                  {/* Ước TH (readOnly calculated) */}
+                                  <td className="cell-center" style={{ padding: '4px' }}>
+                                    <input 
+                                      type="text" 
+                                      className="month-grid-input readonly-input cell-center" 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '11px', color: '#d97706', fontWeight: 'bold' }} 
+                                      value={estVal} 
                                       readOnly 
                                     />
                                   </td>
@@ -3046,6 +3334,15 @@ const GoalResultList = () => {
                                 className="month-grid-input readonly-input cell-center" 
                                 style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#cbd5e1' : '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '11px', color: isParent ? '#334155' : '#64748b', fontWeight: 'bold' }} 
                                 value={itemValues.plan.nam ? `${itemValues.plan.nam}%` : '--'} 
+                                readOnly 
+                              />
+                            </td>
+                            <td className="cell-center" style={{ padding: '4px' }}>
+                              <input 
+                                type="text" 
+                                className="month-grid-input readonly-input cell-center" 
+                                style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#d97706' : '#fffbeb', border: '1px solid #b45309', borderRadius: '4px', fontSize: '11px', color: isParent ? 'white' : '#d97706', fontWeight: 'bold' }} 
+                                value={itemValues.estimate.nam ? `${itemValues.estimate.nam}%` : '--'} 
                                 readOnly 
                               />
                             </td>
