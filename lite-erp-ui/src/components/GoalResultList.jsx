@@ -2357,7 +2357,7 @@ const GoalResultList = () => {
             Import TH chính thức
           </button>
 
-          <button className="btn-excel-action" onClick={() => setShowExportModal(true)}>
+          <button className="btn-excel-action" onClick={handleExportData}>
             <Download size={16} />
             Xuất Excel
           </button>
@@ -4498,60 +4498,7 @@ const GoalResultList = () => {
         </div>
       )}
 
-      {/* MODAL: EXPORT EXCEL PARAMETERS */}
-      {showExportModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Xuất Excel Báo cáo Kết quả</h3>
-              <button className="btn-close-modal" onClick={() => setShowExportModal(false)}>
-                <X size={18} />
-              </button>
-            </div>
-            <div className="modal-body">
-              <p style={{ fontSize: '13.5px', margin: '0 0 16px 0', color: '#475569' }}>
-                Hệ thống sẽ thực hiện kết xuất dữ liệu kết quả doanh thu dựa trên các điều kiện lọc hiện tại.
-              </p>
 
-              <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label style={{ fontWeight: '700', fontSize: '13.5px', color: '#0f172a', display: 'block', marginBottom: '8px' }}>
-                  Chọn mẫu báo cáo kết xuất:
-                </label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#334155' }}>
-                    <input 
-                      type="radio" 
-                      name="export-template" 
-                      value="detail" 
-                      checked={exportTemplate === 'detail'} 
-                      onChange={() => setExportTemplate('detail')} 
-                    />
-                    <span>Báo cáo chi tiết Ma trận thực hiện (Matrix Grid)</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: '#334155' }}>
-                    <input 
-                      type="radio" 
-                      name="export-template" 
-                      value="summary" 
-                      checked={exportTemplate === 'summary'} 
-                      onChange={() => setExportTemplate('summary')} 
-                    />
-                    <span>Báo cáo tổng hợp doanh thu nội bộ (Internal Revenue Summary)</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button className="btn-cancel" onClick={() => setShowExportModal(false)}>
-                Hủy
-              </button>
-              <button className="btn-apply" onClick={handleExportData}>
-                Bắt đầu xuất Excel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
 
 
