@@ -28,6 +28,35 @@ const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => (2024 + i).toString())
 const MONTH_KEYS = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'];
 const QUARTER_KEYS = ['q1', 'q2', 'q3', 'q4'];
 
+const serviceQualityRows = [
+  { id: '1', name: 'CHẤT LƯỢNG DỊCH VỤ', level: 1 },
+  { id: '1.1', name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 2 },
+  { id: '1.1.1', name: 'TLKN kênh Di động Vip/Svip', level: 3 },
+  { id: '1.1.2', name: 'TLKN kênh Di động thường/Hotline/CDS', level: 3 },
+  { id: '1.1.3', name: 'TLKN kênh SME', level: 3 },
+  { id: '1.1.4', name: 'TLKN kênh CĐBR và truyền hình', level: 3 },
+  { id: '1.1.5', name: 'TLKN kênh 1789N1', level: 3 },
+  { id: '1.1.6', name: 'TLKN kênh Videocall', level: 3 },
+  { id: '1.1.7', name: 'TLKN kênh 1789N2', level: 3 },
+  { id: '1.2', name: 'Tỷ lệ hài lòng của khách hàng', level: 2 },
+  { id: '1.2.1', name: 'Kênh FO', level: 3 },
+  { id: '1.2.2', name: 'Kênh BO', level: 3 },
+  { id: '1.2.3', name: 'Callbot Inbound', level: 3 }
+];
+
+const DEFAULT_SERVICE_QUALITY_PLAN = {
+  '1.1.1': { m1: '99.2', m2: '98.8', m3: '99.4', m4: '99.0', m5: '98.6', m6: '99.2', m7: '99.0', m8: '98.8', m9: '99.2', m10: '99.4', m11: '99.0', m12: '99.2' },
+  '1.1.2': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  '1.1.3': { m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
+  '1.1.4': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  '1.1.5': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  '1.1.6': { m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
+  '1.1.7': { m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
+  '1.2.1': { m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
+  '1.2.2': { m1: '94.2', m2: '93.8', m3: '94.4', m4: '94.0', m5: '93.6', m6: '94.2', m7: '94.0', m8: '93.8', m9: '94.2', m10: '94.4', m11: '94.0', m12: '94.2' },
+  '1.2.3': { m1: '92.2', m2: '91.8', m3: '92.4', m4: '92.0', m5: '91.6', m6: '92.2', m7: '92.0', m8: '91.8', m9: '92.2', m10: '92.4', m11: '92.0', m12: '92.2' }
+};
+
 const EMPTY_ROW = {
   implementationUnit: '',
   customerGroup: '',
@@ -233,6 +262,53 @@ const GoalForm = () => {
   });
 
 
+  const [serviceQualityPlan, setServiceQualityPlan] = useState(() => DEFAULT_SERVICE_QUALITY_PLAN);
+
+  const computedServiceQualityPlan = useMemo(() => {
+    const data = JSON.parse(JSON.stringify(serviceQualityPlan));
+    const childIds = ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7', '1.2.1', '1.2.2', '1.2.3'];
+    
+    childIds.forEach(id => {
+      const row = data[id] || {};
+      const q1Arr = [parseFloat(row.m1), parseFloat(row.m2), parseFloat(row.m3)].filter(v => !isNaN(v));
+      row.q1 = q1Arr.length > 0 ? (q1Arr.reduce((s, v) => s + v, 0) / q1Arr.length).toFixed(1) : '';
+      
+      const q2Arr = [parseFloat(row.m4), parseFloat(row.m5), parseFloat(row.m6)].filter(v => !isNaN(v));
+      row.q2 = q2Arr.length > 0 ? (q2Arr.reduce((s, v) => s + v, 0) / q2Arr.length).toFixed(1) : '';
+      
+      const q3Arr = [parseFloat(row.m7), parseFloat(row.m8), parseFloat(row.m9)].filter(v => !isNaN(v));
+      row.q3 = q3Arr.length > 0 ? (q3Arr.reduce((s, v) => s + v, 0) / q3Arr.length).toFixed(1) : '';
+      
+      const q4Arr = [parseFloat(row.m10), parseFloat(row.m11), parseFloat(row.m12)].filter(v => !isNaN(v));
+      row.q4 = q4Arr.length > 0 ? (q4Arr.reduce((s, v) => s + v, 0) / q4Arr.length).toFixed(1) : '';
+      
+      const yearArr = Array.from({ length: 12 }, (_, i) => parseFloat(row[`m${i + 1}`])).filter(v => !isNaN(v));
+      row.nam = yearArr.length > 0 ? (yearArr.reduce((s, v) => s + v, 0) / yearArr.length).toFixed(1) : '';
+    });
+
+    const calculateParent = (parentId, childrenIds) => {
+      data[parentId] = {};
+      for (let m = 1; m <= 12; m++) {
+        const mKey = `m${m}`;
+        const vals = childrenIds.map(cid => parseFloat(data[cid]?.[mKey])).filter(v => !isNaN(v));
+        data[parentId][mKey] = vals.length > 0 ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : '';
+      }
+      for (let q = 1; q <= 4; q++) {
+        const qKey = `q${q}`;
+        const vals = childrenIds.map(cid => parseFloat(data[cid]?.[qKey])).filter(v => !isNaN(v));
+        data[parentId][qKey] = vals.length > 0 ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : '';
+      }
+      const yearVals = childrenIds.map(cid => parseFloat(data[cid]?.nam)).filter(v => !isNaN(v));
+      data[parentId].nam = yearVals.length > 0 ? (yearVals.reduce((s, v) => s + v, 0) / yearVals.length).toFixed(1) : '';
+    };
+
+    calculateParent('1.1', ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7']);
+    calculateParent('1.2', ['1.2.1', '1.2.2', '1.2.3']);
+    calculateParent('1', ['1.1', '1.2']);
+
+    return data;
+  }, [serviceQualityPlan]);
+
   const [attachmentFiles, setAttachmentFiles] = useState([]);
   const [historyLogs, setHistoryLogs] = useState([]);
   const [comments, setComments] = useState([]);
@@ -289,6 +365,11 @@ const GoalForm = () => {
         }
         if (goal.newContractCountPlan) {
           setNewContractCountPlan(goal.newContractCountPlan);
+        }
+        if (goal.serviceQualityPlan) {
+          setServiceQualityPlan(goal.serviceQualityPlan);
+        } else {
+          setServiceQualityPlan(DEFAULT_SERVICE_QUALITY_PLAN);
         }
         if (goal.attachmentFiles) {
           setAttachmentFiles(goal.attachmentFiles);
@@ -348,6 +429,21 @@ const GoalForm = () => {
           return false;
         }
       }
+
+      const childIds = ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7', '1.2.1', '1.2.2', '1.2.3'];
+      for (const cid of childIds) {
+        const row = serviceQualityPlan[cid] || {};
+        for (let m = 1; m <= 12; m++) {
+          const valStr = row[`m${m}`];
+          if (valStr) {
+            const val = parseFloat(valStr);
+            if (isNaN(val) || val < 0 || val > 100) {
+              alert(`Chỉ tiêu chất lượng dịch vụ nhập sai định dạng phần trăm (phải từ 0 đến 100).`);
+              return false;
+            }
+          }
+        }
+      }
     }
 
     // BR 2: Check trùng giữa các bản ghi và trong cùng 1 bản ghi
@@ -400,6 +496,7 @@ const GoalForm = () => {
       newCustomerPlan,
       newCustomerCountPlan,
       newContractCountPlan,
+      serviceQualityPlan,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -437,6 +534,7 @@ const GoalForm = () => {
       newCustomerPlan,
       newCustomerCountPlan,
       newContractCountPlan,
+      serviceQualityPlan,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -549,6 +647,67 @@ const GoalForm = () => {
 
       return updated;
     });
+  };
+  const updateNewCustomerCountPlan = (key, value) => {
+    setNewCustomerCountPlan(prev => {
+      const updated = { ...prev, [key]: value };
+      const getVal = (val) => parseInt(val, 10) || 0;
+      const t1 = key === 't1' ? getVal(value) : getVal(prev.t1);
+      const t2 = key === 't2' ? getVal(value) : getVal(prev.t2);
+      const t3 = key === 't3' ? getVal(value) : getVal(prev.t3);
+      const t4 = key === 't4' ? getVal(value) : getVal(prev.t4);
+      const t5 = key === 't5' ? getVal(value) : getVal(prev.t5);
+      const t6 = key === 't6' ? getVal(value) : getVal(prev.t6);
+      const t7 = key === 't7' ? getVal(value) : getVal(prev.t7);
+      const t8 = key === 't8' ? getVal(value) : getVal(prev.t8);
+      const t9 = key === 't9' ? getVal(value) : getVal(prev.t9);
+      const t10 = key === 't10' ? getVal(value) : getVal(prev.t10);
+      const t11 = key === 't11' ? getVal(value) : getVal(prev.t11);
+      const t12 = key === 't12' ? getVal(value) : getVal(prev.t12);
+
+      updated.q1 = t1 + t2 + t3;
+      updated.q2 = t4 + t5 + t6;
+      updated.q3 = t7 + t8 + t9;
+      updated.q4 = t10 + t11 + t12;
+      updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
+      return updated;
+    });
+  };
+
+  const updateNewContractCountPlan = (key, value) => {
+    setNewContractCountPlan(prev => {
+      const updated = { ...prev, [key]: value };
+      const getVal = (val) => parseInt(val, 10) || 0;
+      const t1 = key === 't1' ? getVal(value) : getVal(prev.t1);
+      const t2 = key === 't2' ? getVal(value) : getVal(prev.t2);
+      const t3 = key === 't3' ? getVal(value) : getVal(prev.t3);
+      const t4 = key === 't4' ? getVal(value) : getVal(prev.t4);
+      const t5 = key === 't5' ? getVal(value) : getVal(prev.t5);
+      const t6 = key === 't6' ? getVal(value) : getVal(prev.t6);
+      const t7 = key === 't7' ? getVal(value) : getVal(prev.t7);
+      const t8 = key === 't8' ? getVal(value) : getVal(prev.t8);
+      const t9 = key === 't9' ? getVal(value) : getVal(prev.t9);
+      const t10 = key === 't10' ? getVal(value) : getVal(prev.t10);
+      const t11 = key === 't11' ? getVal(value) : getVal(prev.t11);
+      const t12 = key === 't12' ? getVal(value) : getVal(prev.t12);
+
+      updated.q1 = t1 + t2 + t3;
+      updated.q2 = t4 + t5 + t6;
+      updated.q3 = t7 + t8 + t9;
+      updated.q4 = t10 + t11 + t12;
+      updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
+      return updated;
+    });
+  };
+
+  const handleServiceQualityPlanChange = (rowId, monthKey, val) => {
+    setServiceQualityPlan(prev => ({
+      ...prev,
+      [rowId]: {
+        ...(prev[rowId] || {}),
+        [monthKey]: val
+      }
+    }));
   };
 
   const handleAttachmentUpload = (e) => {
@@ -995,6 +1154,112 @@ const GoalForm = () => {
                         />
                       </td>
                     </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          {/* Card 3.5: Chỉ tiêu chất lượng dịch vụ */}
+          {planType !== 'Kế hoạch nội bộ' && (
+            <section className="goal-card" style={{ marginTop: '16px' }}>
+              <div className="goal-card-header" style={{ marginBottom: '16px' }}>
+                <h3>Chỉ tiêu chất lượng dịch vụ</h3>
+              </div>
+
+              <div className="table-container scrollable-table-container">
+                <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc' }}>
+                      <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>CHẤT LƯỢNG DỊCH VỤ</th>
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <th key={`sq_head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
+                      ))}
+                      {Array.from({ length: 4 }, (_, i) => (
+                        <th key={`sq_head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
+                      ))}
+                      <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {serviceQualityRows.map((row, idx) => {
+                      const isParent = row.level === 1 || row.level === 2;
+                      let paddingLeft = '16px';
+                      let fontWeight = 'normal';
+                      let color = '#334155';
+                      let background = '#ffffff';
+
+                      if (row.level === 1) {
+                        paddingLeft = '16px';
+                        fontWeight = '800';
+                        color = '#1e3a8a';
+                        background = '#f8fafc';
+                      } else if (row.level === 2) {
+                        paddingLeft = '32px';
+                        fontWeight = '700';
+                        color = '#0f172a';
+                        background = '#fafafa';
+                      } else if (row.level === 3) {
+                        paddingLeft = '48px';
+                        color = '#475569';
+                      }
+
+                      const itemValues = computedServiceQualityPlan[row.id] || {};
+
+                      return (
+                        <tr key={idx} style={{ background, borderBottom: '1px solid #e2e8f0' }}>
+                          <td style={{ padding: '10px 16px', paddingLeft, fontWeight, color, fontSize: '13px' }}>
+                            {row.name}
+                          </td>
+                          {/* Months */}
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m, mIdx) => {
+                            const val = itemValues[`m${m}`] || '';
+                            const displayVal = val ? `${val}%` : '';
+                            return (
+                              <td key={`sq_cell_m_${row.id}_${m}`} className="td-month-input">
+                                {isParent ? (
+                                  <input
+                                    type="text"
+                                    className="month-grid-input readonly-input"
+                                    value={displayVal || '--'}
+                                    readOnly
+                                  />
+                                ) : (
+                                  <input
+                                    type="text"
+                                    className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(mIdx)) ? 'readonly-input' : ''}`}
+                                    value={val}
+                                    onChange={(e) => handleServiceQualityPlanChange(row.id, `m${m}`, e.target.value)}
+                                    disabled={isReadOnlyForm || isMonthDisabled(mIdx)}
+                                  />
+                                )}
+                              </td>
+                            );
+                          })}
+                          {/* Quarters */}
+                          {Array.from({ length: 4 }, (_, i) => i + 1).map((q) => {
+                            const val = itemValues[`q${q}`] || '';
+                            return (
+                              <td key={`sq_cell_q_${row.id}_${q}`} className="td-quarter-input">
+                                <input
+                                  type="text"
+                                  className="month-grid-input readonly-input"
+                                  value={val ? `${val}%` : '--'}
+                                  readOnly
+                                />
+                              </td>
+                            );
+                          })}
+                          {/* Year */}
+                          <td className="td-year-input">
+                            <input
+                              type="text"
+                              className="month-grid-input readonly-input"
+                              value={itemValues.nam ? `${itemValues.nam}%` : '--'}
+                              readOnly
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
