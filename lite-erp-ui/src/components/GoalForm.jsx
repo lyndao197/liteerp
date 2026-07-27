@@ -951,7 +951,7 @@ const GoalForm = () => {
                   setShowImportModal(true);
                 }}
                 disabled={isReadOnlyForm}
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
               >
                 <Upload size={14} />
                 Nhập Excel
@@ -1160,7 +1160,7 @@ const GoalForm = () => {
                     setShowImportModal(true);
                   }}
                   disabled={isReadOnlyForm}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
                 >
                   <Upload size={14} />
                   Nhập Excel
@@ -1274,7 +1274,7 @@ const GoalForm = () => {
                     setShowImportModal(true);
                   }}
                   disabled={isReadOnlyForm}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
                 >
                   <Upload size={14} />
                   Nhập Excel
@@ -1382,7 +1382,7 @@ const GoalForm = () => {
                     setShowImportModal(true);
                   }}
                   disabled={isReadOnlyForm}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
                 >
                   <Upload size={14} />
                   Nhập Excel

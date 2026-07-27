@@ -2840,7 +2840,7 @@ const GoalResultList = () => {
                       setImportDataType('cust_count');
                       setShowImportModal(true);
                     }}
-                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#3b82f6', color: 'white', border: 'none' }}
+                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#ffffff', color: '#ee0033', border: '1px solid #ee0033', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
                     <Upload size={14} />
                     Import Số lượng KH/HĐ
@@ -3269,7 +3269,7 @@ const GoalResultList = () => {
                       setImportDataType('service_quality');
                       setShowImportModal(true);
                     }}
-                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#3b82f6', color: 'white', border: 'none' }}
+                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#ffffff', color: '#ee0033', border: '1px solid #ee0033', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
                     <Upload size={14} />
                     Import Chất lượng dịch vụ
