@@ -17,7 +17,11 @@ import {
   HelpCircle,
   RefreshCw,
   Edit3,
-  CheckCircle
+  CheckCircle,
+  Users,
+  Building2,
+  Globe,
+  BarChart2
 } from 'lucide-react';
 import './GoalResultList.css';
 import { mockStore } from '../utils/mockStore';
@@ -1941,47 +1945,62 @@ const GoalResultList = () => {
 
       {/* KPI Cards */}
       <div className="kpi-cards-grid">
-        <div className="kpi-card">
-          <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NỘI BỘ' : 'SẢN LƯỢNG KH NỘI BỘ'}
-          </span>
-          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-            <span className="kpi-card-value">{summaryStats.internal}</span>
-            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '140px' }}>
+        {/* Card 1 */}
+        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
+          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+            <Users size={24} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
               {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
             </span>
-          </div>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG KH NGOÀI TẬP ĐOÀN'}
-          </span>
-          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-            <span className="kpi-card-value">{summaryStats.external}</span>
-            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '160px' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU TỪ NỘI BỘ (NGOÀI VTT)' : 'SẢN LƯỢNG TỪ NỘI BỘ (NGOÀI VTT)'}
+            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+              {summaryStats.internal}
             </span>
           </div>
         </div>
-        <div className="kpi-card">
-          <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH QUỐC TẾ' : 'SẢN LƯỢNG KH QUỐC TẾ'}
-          </span>
-          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-            <span className="kpi-card-value">{summaryStats.international}</span>
-            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3', maxWidth: '180px' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU TỪ KHÁCH HÀNG NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG TỪ KHÁCH HÀNG NGOÀI TẬP ĐOÀN'}
+
+        {/* Card 2 */}
+        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
+          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+            <Building2 size={24} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ nội bộ (ngoài VTT)' : 'Sản lượng từ nội bộ (ngoài VTT)'}
+            </span>
+            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+              {summaryStats.external}
             </span>
           </div>
         </div>
-        <div className="kpi-card">
-          <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'TỔNG DOANH THU' : 'TỔNG SẢN LƯỢNG'}
-          </span>
-          <div className="kpi-card-body" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-            <span className="kpi-card-value">{summaryStats.total}</span>
-            <span className="kpi-card-sublabel" style={{ fontSize: '11px', fontWeight: '700', color: '#1e293b', lineHeight: '1.3' }}>
-              TỔNG ALL
+
+        {/* Card 3 */}
+        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
+          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+            <Globe size={24} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ khách hàng ngoài tập đoàn' : 'Sản lượng từ khách hàng ngoài tập đoàn'}
+            </span>
+            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+              {summaryStats.international}
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4 */}
+        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
+          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+            <BarChart2 size={24} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+              {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
+            </span>
+            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+              {summaryStats.total}
             </span>
           </div>
         </div>
