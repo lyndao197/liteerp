@@ -2816,6 +2816,7 @@ const GoalResultList = () => {
                     </tbody>
                   </table>
                 </div>
+              )}
             </div>
           )}
 
