@@ -400,6 +400,22 @@ const GoalResultList = () => {
   const [collapsedTable3, setCollapsedTable3] = useState(false);
   const [collapsedTable4, setCollapsedTable4] = useState(false);
   const [collapsedNewCounts, setCollapsedNewCounts] = useState(false);
+  const [collapsedServiceQuality, setCollapsedServiceQuality] = useState(false);
+
+  const serviceQualityData = useMemo(() => [
+    { name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', plan: '98%', actual: '97.5%', level: 1 },
+    { name: 'TLKN kênh Di động Vip/Svip', plan: '99%', actual: '98.8%', level: 2 },
+    { name: 'TLKN kênh Di động thường/Hotline/CDS', plan: '98%', actual: '97.9%', level: 2 },
+    { name: 'TLKN kênh SME', plan: '97%', actual: '96.5%', level: 2 },
+    { name: 'TLKN kênh CĐBR và truyền hình', plan: '98%', actual: '97.4%', level: 2 },
+    { name: 'TLKN kênh 1789N1', plan: '98%', actual: '98.2%', level: 2 },
+    { name: 'TLKN kênh Videocall', plan: '95%', actual: '94.3%', level: 2 },
+    { name: 'TLKN kênh 1789N2', plan: '97%', actual: '96.8%', level: 2 },
+    { name: 'Tỷ lệ hài lòng của khách hàng', plan: '95%', actual: '94.2%', level: 1 },
+    { name: 'Kênh FO', plan: '95%', actual: '94.8%', level: 2 },
+    { name: 'Kênh BO', plan: '94%', actual: '93.7%', level: 2 },
+    { name: 'Callbot Inbound', plan: '92%', actual: '91.6%', level: 2 }
+  ], []);
 
   // Initialize DB Values
   useEffect(() => {
@@ -2797,6 +2813,61 @@ const GoalResultList = () => {
                           />
                         </td>
                       </tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+          )}
+
+          {/* Section: CHẤT LƯỢNG DỊCH VỤ */}
+          {activeTab === 'ket_qua_doanh_thu' && activePlanTab !== 'Kế hoạch nội bộ' && (
+            <div className="summary-card" style={{ marginTop: '20px' }}>
+              <div className="summary-card-header" onClick={() => setCollapsedServiceQuality(!collapsedServiceQuality)}>
+                <h3>CHẤT LƯỢNG DỊCH VỤ</h3>
+                <div className="summary-card-header-right">
+                  <span>{collapsedServiceQuality ? 'Mở rộng' : 'Thu gọn'}</span>
+                  <ChevronDown size={16} style={{ transform: collapsedServiceQuality ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
+                </div>
+              </div>
+              {!collapsedServiceQuality && (
+                <div className="table-scroll-container">
+                  <table className="summary-table" style={{ width: '100%' }}>
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: 'left', paddingLeft: '24px' }}>CHẤT LƯỢNG DỊCH VỤ</th>
+                        <th style={{ width: '200px', textAlign: 'center' }}>Kế hoạch</th>
+                        <th style={{ width: '200px', textAlign: 'center' }}>Thực hiện</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {serviceQualityData.map((item, idx) => {
+                        let paddingLeft = '24px';
+                        let fontWeight = 'normal';
+                        let color = '#0f172a';
+
+                        if (item.level === 1) {
+                          paddingLeft = '24px';
+                          fontWeight = '700';
+                          color = '#0f172a';
+                        } else if (item.level === 2) {
+                          paddingLeft = '44px';
+                          color = '#475569';
+                        }
+
+                        return (
+                          <tr key={idx} style={{ background: item.level === 1 ? '#f8fafc' : 'transparent' }}>
+                            <td style={{ paddingLeft, fontWeight, color, padding: '12px 24px' }}>
+                              {item.name}
+                            </td>
+                            <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color: item.level === 1 ? '#0f172a' : '#475569' }}>
+                              {item.plan}
+                            </td>
+                            <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color: item.level === 1 ? '#0f172a' : '#475569' }}>
+                              {item.actual}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
