@@ -126,6 +126,7 @@ function Sidebar() {
                 <FileText size={14} />
                 <span>Kế hoạch tập đoàn</span>
               </div>
+              {/* Hide internal sub-menu from UI but keep code intact
               <div
                 className={`nav-item ${isInternalPlanActive ? 'active' : ''}`}
                 onClick={() => navigate('/goals?type=internal')}
@@ -134,6 +135,7 @@ function Sidebar() {
                 <FileText size={14} />
                 <span>Kế hoạch nội bộ</span>
               </div>
+              */}
 
               {/* Group 2: Kết quả thực hiện */}
               <div style={{ padding: '10px 24px 2px 24px', fontSize: '10px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -147,6 +149,7 @@ function Sidebar() {
                 <BarChart2 size={14} />
                 <span>Doanh thu Tập đoàn</span>
               </div>
+              {/* Hide internal sub-menu from UI but keep code intact
               <div
                 className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=doanh_thu_noi_bo') ? 'active' : ''}`}
                 onClick={() => navigate('/goals/results?tab=doanh_thu_noi_bo')}
@@ -155,6 +158,7 @@ function Sidebar() {
                 <BarChart2 size={14} />
                 <span>Doanh thu Nội bộ</span>
               </div>
+              */}
               <div
                 className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=san_luong_tap_doan') ? 'active' : ''}`}
                 onClick={() => navigate('/goals/results?tab=san_luong_tap_doan')}
@@ -163,6 +167,7 @@ function Sidebar() {
                 <Layers size={14} />
                 <span>Sản lượng Tập đoàn</span>
               </div>
+              {/* Hide internal sub-menu from UI but keep code intact
               <div
                 className={`nav-item ${location.pathname === '/goals/results' && location.search.includes('tab=san_luong_noi_bo') ? 'active' : ''}`}
                 onClick={() => navigate('/goals/results?tab=san_luong_noi_bo')}
@@ -171,6 +176,7 @@ function Sidebar() {
                 <Layers size={14} />
                 <span>Sản lượng Nội bộ</span>
               </div>
+              */}
             </div>
           )}
         </div>
