@@ -904,6 +904,29 @@ const GoalForm = () => {
 
             <div className="card-box-inner">
               <div className="field-inline-row" style={{ display: 'flex', gap: '32px' }}>
+                {isEdit && (
+                  <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <label className="field-label">
+                      ID Mục Tiêu
+                    </label>
+                    <input 
+                      type="text" 
+                      value={id} 
+                      readOnly 
+                      disabled
+                      style={{ 
+                        border: '1px solid #cbd5e1', 
+                        borderRadius: '6px', 
+                        padding: '6px 12px', 
+                        fontSize: '13px', 
+                        background: '#f1f5f9', 
+                        color: '#64748b', 
+                        width: '120px', 
+                        fontWeight: '500' 
+                      }} 
+                    />
+                  </div>
+                )}
                 <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <label className="field-label">
                     Năm Kế Hoạch <span className="req-star">*</span>
@@ -922,40 +945,14 @@ const GoalForm = () => {
                     <ChevronDown className="select-arrow" size={16} />
                   </div>
                 </div>
-
-                <div className="form-group-inline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <label className="field-label">
-                    Loại Kế Hoạch <span className="req-star">*</span>
-                  </label>
-                  <div className="select-wrapper">
-                    <select value={planType} onChange={(e) => setPlanType(e.target.value)} disabled={isReadOnlyForm}>
-                      <option value="Kế hoạch tập đoàn">Kế hoạch tập đoàn</option>
-                      <option value="Kế hoạch nội bộ">Kế hoạch nội bộ</option>
-                    </select>
-                    <ChevronDown className="select-arrow" size={16} />
-                  </div>
-                </div>
               </div>
             </div>
           </section>
 
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
-            <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="goal-card-header">
               <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (VNĐ)</h3>
-              <button 
-                className="btn-excel-action" 
-                type="button"
-                onClick={() => {
-                  setImportDataType('existing_cust');
-                  setShowImportModal(true);
-                }}
-                disabled={isReadOnlyForm}
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
-              >
-                <Upload size={14} />
-                Nhập Excel
-              </button>
             </div>
 
 
