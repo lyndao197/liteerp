@@ -1671,7 +1671,6 @@ const GoalForm = () => {
           </section>
         </aside>
       </div>
-      </div>
 
       {/* MODAL: IMPORT EXCEL WIZARD */}
       {showImportModal && (
