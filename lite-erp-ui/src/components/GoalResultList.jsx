@@ -1481,7 +1481,13 @@ const GoalResultList = () => {
       ? 'Revenue Performance.xlsx' 
       : 'Accepted Volume Performance.xlsx';
 
-    const targetValHeader = importDataType === 'estimate' ? 'Số ước thực hiện (Ước TH)' : 'Số thực hiện (TH)';
+    const targetValHeader = importDataType === 'estimate' 
+      ? 'Số ước thực hiện (Ước TH)' 
+      : importDataType === 'cust_count'
+      ? 'Số lượng KH & HĐ mới'
+      : importDataType === 'service_quality'
+      ? 'Tỷ lệ chất lượng dịch vụ (%)'
+      : 'Số thực hiện (TH)';
 
     let fileObj = null;
     if (type === 'valid') {
@@ -1617,6 +1623,16 @@ const GoalResultList = () => {
       // Selected period for import
       const impYearNum = parseInt(importYear, 10);
       const impMonthNum = parseInt(importPeriod.substring(1), 10); // m1 -> 1, m5 -> 5
+
+      if (importDataType === 'cust_count' || importDataType === 'service_quality') {
+        setValidationResult({
+          status: 'success',
+          msg: `Kiểm tra thành công: [${uploadedFile.rowsCount}/${uploadedFile.rowsCount}] dòng hợp lệ. Sẵn sàng nạp dữ liệu.`,
+          parsedRows: []
+        });
+        setImportStep(3);
+        return;
+      }
 
       if (importDataType === 'estimate') {
         // Business Rule for Estimate:
@@ -1820,6 +1836,40 @@ const GoalResultList = () => {
         setHistoryLogs(prev => [newLog, ...prev]);
 
         alert(`Đã nạp thành công số ước thực hiện cho kỳ KPI ${importPeriod.toUpperCase()}/${importYear}!`);
+      } else if (importDataType === 'cust_count') {
+        // Add to timeline history
+        const newLog = {
+          id: `h-${Date.now()}`,
+          user: 'thomnguyen_os',
+          avatarClass: 'avatar-purple',
+          avatarInitial: 'T',
+          time: 'vừa xong',
+          type: 'file',
+          fileName: uploadedFile.name,
+          details: [
+            `Cập nhật số liệu Số lượng KH & HĐ mới kỳ ${importPeriod.toUpperCase()}/${importYear} thành công.`,
+            `Số lượng bản ghi nạp vào CSDL: ${uploadedFile.rowsCount} dòng.`,
+          ]
+        };
+        setHistoryLogs(prev => [newLog, ...prev]);
+        alert(`Đã nạp thành công số liệu Số lượng KH & HĐ mới cho kỳ KPI ${importPeriod.toUpperCase()}/${importYear}!`);
+      } else if (importDataType === 'service_quality') {
+        // Add to timeline history
+        const newLog = {
+          id: `h-${Date.now()}`,
+          user: 'thomnguyen_os',
+          avatarClass: 'avatar-purple',
+          avatarInitial: 'T',
+          time: 'vừa xong',
+          type: 'file',
+          fileName: uploadedFile.name,
+          details: [
+            `Cập nhật số liệu Chỉ tiêu Chất lượng dịch vụ kỳ ${importPeriod.toUpperCase()}/${importYear} thành công.`,
+            `Số lượng bản ghi nạp vào CSDL: ${uploadedFile.rowsCount} dòng.`,
+          ]
+        };
+        setHistoryLogs(prev => [newLog, ...prev]);
+        alert(`Đã nạp thành công số liệu Chất lượng dịch vụ cho kỳ KPI ${importPeriod.toUpperCase()}/${importYear}!`);
       } else {
         // Apply imported values to dbValues
         const updated = { ...dbValues };
@@ -2782,7 +2832,19 @@ const GoalResultList = () => {
             <div className="summary-card">
               <div className="summary-card-header" onClick={() => setCollapsedNewCounts(!collapsedNewCounts)}>
                 <h3>KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI</h3>
-                <div className="summary-card-header-right">
+                <div className="summary-card-header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button 
+                    className="btn-excel-action" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setImportDataType('cust_count');
+                      setShowImportModal(true);
+                    }}
+                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#3b82f6', color: 'white', border: 'none' }}
+                  >
+                    <Upload size={14} />
+                    Import Số lượng KH/HĐ
+                  </button>
                   <span>{collapsedNewCounts ? 'Mở rộng' : 'Thu gọn'}</span>
                   <ChevronDown size={16} style={{ transform: collapsedNewCounts ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
                 </div>
@@ -3199,7 +3261,19 @@ const GoalResultList = () => {
             <div className="summary-card" style={{ marginTop: '20px' }}>
               <div className="summary-card-header" onClick={() => setCollapsedServiceQuality(!collapsedServiceQuality)}>
                 <h3>CHẤT LƯỢNG DỊCH VỤ</h3>
-                <div className="summary-card-header-right">
+                <div className="summary-card-header-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <button 
+                    className="btn-excel-action" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setImportDataType('service_quality');
+                      setShowImportModal(true);
+                    }}
+                    style={{ height: '32px', padding: '0 12px', fontSize: '12px', background: '#3b82f6', color: 'white', border: 'none' }}
+                  >
+                    <Upload size={14} />
+                    Import Chất lượng dịch vụ
+                  </button>
                   <span>{collapsedServiceQuality ? 'Mở rộng' : 'Thu gọn'}</span>
                   <ChevronDown size={16} style={{ transform: collapsedServiceQuality ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
                 </div>
@@ -4232,7 +4306,15 @@ const GoalResultList = () => {
         <div className="modal-overlay">
           <div className="modal-content" style={{ width: '600px' }}>
             <div className="modal-header">
-              <h3>{importDataType === 'estimate' ? 'Nhập Excel Ước thực hiện (Ước TH)' : `Nhập Excel Kết quả TH - ${activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu' : 'Sản lượng'}`}</h3>
+              <h3>
+                {importDataType === 'estimate' 
+                  ? 'Nhập Excel Ước thực hiện (Ước TH)' 
+                  : importDataType === 'cust_count'
+                  ? 'Nhập Excel Số lượng KH & HĐ mới'
+                  : importDataType === 'service_quality'
+                  ? 'Nhập Excel Chỉ tiêu Chất lượng dịch vụ'
+                  : `Nhập Excel Kết quả TH - ${activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu' : 'Sản lượng'}`}
+              </h3>
               <button className="btn-close-modal" onClick={handleCloseImportModal}>
                 <X size={18} />
               </button>
@@ -4289,6 +4371,14 @@ const GoalResultList = () => {
                   {importDataType === 'estimate' ? (
                     <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#b45309', marginBottom: '8px' }}>
                       💡 <strong>Quy tắc Ước TH:</strong> Chỉ được phép nạp số ước thực hiện cho kỳ hiện tại trong khung thời gian từ <strong>ngày 22 đến ngày 25 hàng tháng</strong>. Giá trị nhập từng dòng phải lớn hơn 1.
+                    </div>
+                  ) : importDataType === 'cust_count' ? (
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#1e40af', marginBottom: '8px' }}>
+                      💡 <strong>Quy tắc Số lượng KH & HĐ mới:</strong> Nạp file Excel cập nhật chỉ tiêu số lượng khách hàng và hợp đồng mới cho các tháng đã chọn.
+                    </div>
+                  ) : importDataType === 'service_quality' ? (
+                    <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#1e40af', marginBottom: '8px' }}>
+                      💡 <strong>Quy tắc Chất lượng dịch vụ:</strong> Nạp file Excel cập nhật tỷ lệ kết nối thành công và tỷ lệ hài lòng của khách hàng.
                     </div>
                   ) : (
                     <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '10px 14px', borderRadius: '6px', fontSize: '12px', color: '#166534', marginBottom: '8px' }}>
@@ -4414,7 +4504,7 @@ const GoalResultList = () => {
                         </td>
                       </tr>
                       <tr>
-                        <td><strong>{importDataType === 'estimate' ? 'Số ước thực hiện (Ước TH)' : 'Số thực hiện (TH)'}</strong></td>
+                        <td><strong>{importDataType === 'estimate' ? 'Số ước thực hiện (Ước TH)' : importDataType === 'cust_count' ? 'Số lượng KH & HĐ mới' : importDataType === 'service_quality' ? 'Tỷ lệ chất lượng dịch vụ (%)' : 'Số thực hiện (TH)'}</strong></td>
                         <td>
                           <select className="mapping-select" value={columnMapping.th} onChange={(e) => setColumnMapping({...columnMapping, th: e.target.value})}>
                             <option value="">-- Bỏ qua / Không map --</option>
@@ -4469,9 +4559,9 @@ const GoalResultList = () => {
                           <span style={{ fontWeight: '700', color: '#0f172a' }}>Dữ liệu chuẩn bị nạp (Simulated):</span>
                           <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             <li>Cập nhật kỳ: <strong>{importPeriod.toUpperCase()}/{importYear}</strong></li>
-                            <li>Loại dữ liệu: <strong>{importDataType === 'estimate' ? 'Số Ước thực hiện (Ước TH)' : 'Số thực hiện chính thức (TH)'}</strong></li>
+                            <li>Loại dữ liệu: <strong>{importDataType === 'estimate' ? 'Số Ước thực hiện (Ước TH)' : importDataType === 'cust_count' ? 'Số lượng KH & HĐ mới' : importDataType === 'service_quality' ? 'Tỷ lệ chất lượng dịch vụ' : 'Số thực hiện chính thức (TH)'}</strong></li>
                             <li>Số lượng dòng nạp: <strong>{uploadedFile.rowsCount} dòng</strong></li>
-                            <li>Tổng số liệu tích lũy nạp vào: <strong>{importDataType === 'estimate' ? '9.500' : '9.423'}</strong></li>
+                            <li>Tổng số liệu tích lũy nạp vào: <strong>{importDataType === 'estimate' ? '9.500' : importDataType === 'cust_count' ? '120' : importDataType === 'service_quality' ? '95.5%' : '9.423'}</strong></li>
                           </ul>
 
                           {/* Simulation option for database failure */}
