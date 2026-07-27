@@ -1947,25 +1947,25 @@ const GoalResultList = () => {
       <div className="kpi-cards-grid">
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NỘI BỘ' : 'SẢN LƯỢNG KH NỘI BỘ'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
           </span>
           <span className="kpi-card-value">{summaryStats.internal}</span>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG KH NGOÀI TẬP ĐOÀN'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ nội bộ (ngoài VTT)' : 'Sản lượng từ nội bộ (ngoài VTT)'}
           </span>
           <span className="kpi-card-value">{summaryStats.external}</span>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH QUỐC TẾ' : 'SẢN LƯỢNG KH QUỐC TẾ'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ khách hàng ngoài tập đoàn' : 'Sản lượng từ khách hàng ngoài tập đoàn'}
           </span>
           <span className="kpi-card-value">{summaryStats.international}</span>
         </div>
         <div className="kpi-card">
           <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'TỔNG DOANH THU' : 'TỔNG SẢN LƯỢNG'}
+            {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
           </span>
           <span className="kpi-card-value">{summaryStats.total}</span>
         </div>
