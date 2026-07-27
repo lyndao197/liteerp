@@ -373,6 +373,22 @@ const GoalList = () => {
     );
   };
 
+  const serviceQualityData = useMemo(() => [
+    { name: 'CHẤT LƯỢNG DỊCH VỤ', unit: '%', target: '95.5%', level: 1 },
+    { name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', unit: '%', target: '94.8%', level: 2 },
+    { name: 'TLKN kênh Di động Vip/Svip', unit: '%', target: '98.5%', level: 3 },
+    { name: 'TLKN kênh Di động thường/Hotline/CDS', unit: '%', target: '95.0%', level: 3 },
+    { name: 'TLKN kênh SME', unit: '%', target: '94.2%', level: 3 },
+    { name: 'TLKN kênh CĐBR và truyền hình', unit: '%', target: '93.8%', level: 3 },
+    { name: 'TLKN kênh 1789N1', unit: '%', target: '94.5%', level: 3 },
+    { name: 'TLKN kênh Videocall', unit: '%', target: '92.0%', level: 3 },
+    { name: 'TLKN kênh 1789N2', unit: '%', target: '93.5%', level: 3 },
+    { name: 'Tỷ lệ hài lòng của khách hàng', unit: '%', target: '96.5%', level: 2 },
+    { name: 'Kênh FO', unit: '%', target: '97.0%', level: 3 },
+    { name: 'Kênh BO', unit: '%', target: '96.2%', level: 3 },
+    { name: 'Callbot Inbound', unit: '%', target: '95.5%', level: 3 }
+  ], []);
+
   return (
     <div className="goal-list-container" onClick={() => setActiveFilterCol(null)}>
       <div className="page-title-section">
@@ -587,6 +603,64 @@ const GoalList = () => {
                     -
                   </td>
                 </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Summary Table: Quality of Service for Group Plan */}
+      {activePlanTypeTab === 'Kế hoạch tập đoàn' && (
+        <div style={{ marginTop: '40px', marginBottom: '24px' }}>
+          <div className="page-title-section" style={{ marginBottom: '12px' }}>
+            <h1>Tổng hợp mục tiêu Chất lượng dịch vụ</h1>
+            <p>Các chỉ tiêu chất lượng dịch vụ kế hoạch năm 2026</p>
+          </div>
+
+          <div className="goal-table-container">
+            <table className="goal-table">
+              <thead>
+                <tr>
+                  <th style={{ paddingLeft: '24px' }}>Chỉ tiêu</th>
+                  <th style={{ width: '150px', textAlign: 'center' }}>Đơn vị tính</th>
+                  <th className="cell-right" style={{ textAlign: 'right', paddingRight: '24px', width: '250px' }}>Kế hoạch năm 2026</th>
+                </tr>
+              </thead>
+              <tbody>
+                {serviceQualityData.map((item, idx) => {
+                  let paddingLeft = '24px';
+                  let fontWeight = 'normal';
+                  let color = '#0f172a';
+                  let background = 'transparent';
+
+                  if (item.level === 1) {
+                    paddingLeft = '24px';
+                    fontWeight = '800';
+                    color = '#1e3a8a'; // dark blue
+                    background = '#f8fafc'; // very light gray
+                  } else if (item.level === 2) {
+                    paddingLeft = '44px';
+                    fontWeight = '700';
+                    color = '#0f172a';
+                  } else if (item.level === 3) {
+                    paddingLeft = '64px';
+                    color = '#475569'; // slate-600
+                  }
+
+                  return (
+                    <tr key={idx} style={{ background }}>
+                      <td style={{ paddingLeft, fontWeight, color }}>
+                        {item.name}
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color }}>
+                        {item.unit}
+                      </td>
+                      <td style={{ textAlign: 'right', paddingRight: '24px', fontWeight: item.level === 1 ? '800' : '700', color: item.level === 1 ? '#e32b4c' : '#2563eb' }}>
+                        {item.target}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
