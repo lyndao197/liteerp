@@ -1945,64 +1945,29 @@ const GoalResultList = () => {
 
       {/* KPI Cards */}
       <div className="kpi-cards-grid">
-        {/* Card 1 */}
-        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
-          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-            <Users size={24} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
-            </span>
-            <span className="kpi-card-value">
-              {summaryStats.internal}
-            </span>
-          </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NỘI BỘ' : 'SẢN LƯỢNG KH NỘI BỘ'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.internal}</span>
         </div>
-
-        {/* Card 2 */}
-        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
-          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-            <Building2 size={24} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ nội bộ (ngoài VTT)' : 'Sản lượng từ nội bộ (ngoài VTT)'}
-            </span>
-            <span className="kpi-card-value">
-              {summaryStats.external}
-            </span>
-          </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH NGOÀI TẬP ĐOÀN' : 'SẢN LƯỢNG KH NGOÀI TẬP ĐOÀN'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.external}</span>
         </div>
-
-        {/* Card 3 */}
-        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
-          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-            <Globe size={24} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ khách hàng ngoài tập đoàn' : 'Sản lượng từ khách hàng ngoài tập đoàn'}
-            </span>
-            <span className="kpi-card-value">
-              {summaryStats.international}
-            </span>
-          </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'DOANH THU KH QUỐC TẾ' : 'SẢN LƯỢNG KH QUỐC TẾ'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.international}</span>
         </div>
-
-        {/* Card 4 */}
-        <div className="kpi-card" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px', padding: '24px' }}>
-          <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-            <BarChart2 size={24} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
-              {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
-            </span>
-            <span className="kpi-card-value">
-              {summaryStats.total}
-            </span>
-          </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'TỔNG DOANH THU' : 'TỔNG SẢN LƯỢNG'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.total}</span>
         </div>
       </div>
 
