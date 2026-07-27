@@ -1950,11 +1950,11 @@ const GoalResultList = () => {
           <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
             <Users size={24} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
               {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
             </span>
-            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+            <span className="kpi-card-value">
               {summaryStats.internal}
             </span>
           </div>
@@ -1965,11 +1965,11 @@ const GoalResultList = () => {
           <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
             <Building2 size={24} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
               {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ nội bộ (ngoài VTT)' : 'Sản lượng từ nội bộ (ngoài VTT)'}
             </span>
-            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+            <span className="kpi-card-value">
               {summaryStats.external}
             </span>
           </div>
@@ -1980,11 +1980,11 @@ const GoalResultList = () => {
           <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
             <Globe size={24} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
               {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu từ khách hàng ngoài tập đoàn' : 'Sản lượng từ khách hàng ngoài tập đoàn'}
             </span>
-            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+            <span className="kpi-card-value">
               {summaryStats.international}
             </span>
           </div>
@@ -1995,11 +1995,11 @@ const GoalResultList = () => {
           <div style={{ width: '48px', height: '48px', minWidth: '48px', background: '#eff6ff', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
             <BarChart2 size={24} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#2563eb', lineHeight: '1.4' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span className="kpi-card-label" style={{ textTransform: 'none', fontSize: '13px', fontWeight: '600', color: '#64748b', letterSpacing: 'normal', lineHeight: '1.4' }}>
               {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
             </span>
-            <span style={{ fontSize: '32px', fontWeight: '800', color: '#2563eb', lineHeight: '1' }}>
+            <span className="kpi-card-value">
               {summaryStats.total}
             </span>
           </div>
