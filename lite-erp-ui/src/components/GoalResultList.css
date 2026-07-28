@@ -74,20 +74,25 @@
 /* KPI Cards Section */
 .kpi-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
 }
 
 .kpi-card {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 20px 24px;
+  padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.kpi-card:first-child {
+  border-left: 4px solid #ee0033;
 }
 
 .kpi-card:hover {
@@ -96,18 +101,23 @@
 }
 
 .kpi-card-label {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  line-height: 1.3;
 }
 
 .kpi-card-value {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 800;
   color: #0f172a;
-  line-height: 1;
+  line-height: 1.2;
+  margin-top: 4px;
 }
 
 /* Actions Section */

@@ -3195,7 +3195,7 @@ const GoalResultList = () => {
                     <tbody>
                       {/* Row 1: Số lượng khách hàng mới (kế hoạch) */}
                       <tr>
-                        <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
+                        <td className="summary-col-label">Số lượng khách hàng mới</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newCustomerCount[`m${m}`];
                           const estVal = estimatedCounts.newCustomerCount[`m${m}`];
@@ -3366,7 +3366,7 @@ const GoalResultList = () => {
 
                       {/* Row 2: Số lượng hợp đồng mới (kế hoạch) */}
                       <tr>
-                        <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
+                        <td className="summary-col-label">Số lượng hợp đồng mới</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newContractCount[`m${m}`];
                           const estVal = estimatedCounts.newContractCount[`m${m}`];
@@ -3958,6 +3958,17 @@ const GoalResultList = () => {
                             </td>
                             {/* Months 1-12 */}
                             {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
+                              if (isParent) {
+                                return (
+                                  <React.Fragment key={`sq_cell_m_${row.id}_${m}`}>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                  </React.Fragment>
+                                );
+                              }
                               const planValRaw = itemValues.plan[`m${m}`];
                               const estVal = itemValues.estimate[`m${m}`] || '';
                               const actVal = itemValues.actual[`m${m}`] || '';
@@ -3971,7 +3982,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: 'normal' }} 
                                       value={planVal} 
                                       readOnly 
                                     />
@@ -3986,16 +3997,15 @@ const GoalResultList = () => {
                                         height: '28px', 
                                         margin: '0 auto', 
                                         textAlign: 'center', 
-                                        background: isParent ? '#fffbeb' : 'white', 
-                                        border: isParent ? '1px solid #fde68a' : '1px solid #f59e0b', 
+                                        background: 'white', 
+                                        border: '1px solid #f59e0b', 
                                         borderRadius: '4px', 
                                         fontSize: '11px', 
-                                        color: isParent ? '#d97706' : '#ea580c', 
+                                        color: '#ea580c', 
                                         fontWeight: '600' 
                                       }} 
-                                      value={isParent ? (estVal ? `${estVal}%` : '--') : estVal}
-                                      onChange={(e) => !isParent && handleServiceQualityEstimatedChange(row.id, `m${m}`, e.target.value)} 
-                                      readOnly={isParent}
+                                      value={estVal}
+                                      onChange={(e) => handleServiceQualityEstimatedChange(row.id, `m${m}`, e.target.value)} 
                                     />
                                   </td>
                                   {/* TH (editable if child, readOnly if parent) */}
@@ -4008,16 +4018,15 @@ const GoalResultList = () => {
                                         height: '28px', 
                                         margin: '0 auto', 
                                         textAlign: 'center', 
-                                        background: isParent ? '#e0f2fe' : 'white', 
-                                        border: isParent ? '1px solid #bae6fd' : '1px solid #3b82f6', 
+                                        background: 'white', 
+                                        border: '1px solid #3b82f6', 
                                         borderRadius: '4px', 
                                         fontSize: '11px', 
-                                        color: isParent ? '#0369a1' : '#2563eb', 
+                                        color: '#2563eb', 
                                         fontWeight: '600' 
                                       }} 
-                                      value={isParent ? (actVal ? `${actVal}%` : '--') : actVal}
-                                      onChange={(e) => !isParent && handleServiceQualityChange(row.id, `m${m}`, e.target.value)} 
-                                      readOnly={isParent}
+                                      value={actVal}
+                                      onChange={(e) => handleServiceQualityChange(row.id, `m${m}`, e.target.value)} 
                                     />
                                   </td>
                                   {/* +/- so với KH (readOnly) */}
@@ -4025,7 +4034,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: '600' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: '600' }} 
                                       value={comp.diff} 
                                       readOnly 
                                     />
@@ -4035,7 +4044,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: '700' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: '700' }} 
                                       value={comp.percent} 
                                       readOnly 
                                     />
@@ -4045,6 +4054,17 @@ const GoalResultList = () => {
                             })}
                             {/* Quarters 1-4 */}
                             {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
+                              if (isParent) {
+                                return (
+                                  <React.Fragment key={`sq_cell_q_${row.id}_${q}`}>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                  </React.Fragment>
+                                );
+                              }
                               const planValRaw = itemValues.plan[`q${q}`];
                               const estValRaw = itemValues.estimate[`q${q}`];
                               const actValRaw = itemValues.actual[`q${q}`];
@@ -4060,7 +4080,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#f1f5f9' : '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: isParent ? '700' : 'normal' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: 'normal' }} 
                                       value={planVal} 
                                       readOnly 
                                     />
@@ -4070,7 +4090,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '11px', color: '#d97706', fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#ea580c', fontWeight: '600' }} 
                                       value={estVal} 
                                       readOnly 
                                     />
@@ -4080,27 +4100,27 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '11px', color: '#1e40af', fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: '#2563eb', fontWeight: '600' }} 
                                       value={actVal} 
                                       readOnly 
                                     />
                                   </td>
-                                  {/* +/- so với KH (readOnly) */}
+                                  {/* +/- (readOnly) */}
                                   <td className="cell-center" style={{ padding: '4px' }}>
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: '600' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: '600' }} 
                                       value={comp.diff} 
                                       readOnly 
                                     />
                                   </td>
-                                  {/* % HTKH (readOnly) */}
+                                  {/* % (readOnly) */}
                                   <td className="cell-center" style={{ padding: '4px' }}>
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: '700' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: '700' }} 
                                       value={comp.percent} 
                                       readOnly 
                                     />
@@ -4110,7 +4130,18 @@ const GoalResultList = () => {
                             })}
                             {/* Year */}
                             {(() => {
-                          if (!selectedPeriods.includes('y')) return null;
+                              if (!selectedPeriods.includes('y')) return null;
+                              if (isParent) {
+                                return (
+                                  <>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                    <td className="cell-center" style={{ padding: '4px' }}></td>
+                                  </>
+                                );
+                              }
                               const planValRaw = itemValues.plan.nam;
                               const estValRaw = itemValues.estimate.nam;
                               const actValRaw = itemValues.actual.nam;
@@ -4121,7 +4152,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#cbd5e1' : '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '11px', color: isParent ? '#334155' : '#64748b', fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '4px', fontSize: '11px', color: '#64748b', fontWeight: 'bold' }} 
                                       value={planValRaw ? `${planValRaw}%` : '--'} 
                                       readOnly 
                                     />
@@ -4130,7 +4161,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#d97706' : '#fffbeb', border: '1px solid #b45309', borderRadius: '4px', fontSize: '11px', color: isParent ? 'white' : '#d97706', fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#fffbeb', border: '1px solid #b45309', borderRadius: '4px', fontSize: '11px', color: '#d97706', fontWeight: 'bold' }} 
                                       value={estValRaw ? `${estValRaw}%` : '--'} 
                                       readOnly 
                                     />
@@ -4139,7 +4170,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#0284c7' : '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: isParent ? 'white' : '#1e40af', fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: '#1e40af', fontWeight: 'bold' }} 
                                       value={actValRaw ? `${actValRaw}%` : '--'} 
                                       readOnly 
                                     />
@@ -4148,7 +4179,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#0284c7' : '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: comp.diffColor, fontWeight: 'bold' }} 
                                       value={comp.diff} 
                                       readOnly 
                                     />
@@ -4157,7 +4188,7 @@ const GoalResultList = () => {
                                     <input 
                                       type="text" 
                                       className="month-grid-input readonly-input cell-center" 
-                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: isParent ? '#0284c7' : '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: 'bold' }} 
+                                      style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #0369a1', borderRadius: '4px', fontSize: '11px', color: comp.pctColor, fontWeight: 'bold' }} 
                                       value={comp.percent} 
                                       readOnly 
                                     />
