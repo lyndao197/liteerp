@@ -1418,7 +1418,9 @@ const GoalResultList = () => {
     };
   }, [selectedYear]);
 
-  const allPeriodsKeys = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12', 'q1', 'q2', 'q3', 'q4', 'y'];
+  const allPeriodsKeys = useMemo(() => {
+    return [selectedPeriod];
+  }, [selectedPeriod]);
   
   const getPeriodLabel = (pKey) => {
     if (pKey.startsWith('m')) {
@@ -2477,30 +2479,17 @@ const GoalResultList = () => {
             Lọc nâng cao
           </button>
 
-          {/* Import Ước TH button with hover message/tooltip */}
-          <button 
-            className={`btn-excel-action ${estimateWindowTooltip ? 'btn-disabled' : ''}`}
-            onClick={() => {
-              if (estimateWindowTooltip) return;
-              setImportDataType('estimate');
-              setShowImportModal(true);
-            }}
-            title={estimateWindowTooltip}
-            style={estimateWindowTooltip ? { opacity: 0.6, cursor: 'not-allowed', background: '#e2e8f0', color: '#94a3b8', border: '1px solid #cbd5e1' } : {}}
-          >
-            <Upload size={16} />
-            Nhập Ước TH
-          </button>
-          
+          {/* Unified Import Excel button */}
           <button 
             className="btn-excel-action" 
             onClick={() => {
-              setImportDataType('th');
+              setImportDataType('estimate');
+              setImportStep(1);
               setShowImportModal(true);
             }}
           >
             <Upload size={16} />
-            Nhập TH
+            Nhập Excel
           </button>
 
           <button className="btn-excel-action" onClick={handleExportData}>
@@ -2924,13 +2913,13 @@ const GoalResultList = () => {
                     <thead>
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>Chỉ tiêu</th>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                           <th key={`new_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                           <th key={`new_head_q_${q}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                        {(selectedPeriod === 'y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
                       </tr>
                       <tr>
                         {Array.from({ length: 17 }, (_, i) => i).map(idx => (
@@ -2948,7 +2937,7 @@ const GoalResultList = () => {
                       {/* Row 1: Số lượng khách hàng mới (kế hoạch) */}
                       <tr>
                         <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const khVal = newCountsSummary.newCustomerCount[`m${m}`];
                           const estVal = estimatedCounts.newCustomerCount[`m${m}`];
                           const actVal = actualCounts.newCustomerCount[`m${m}`];
@@ -3003,7 +2992,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const khVal = newCountsSummary.newCustomerCount[`q${q}`];
                           const estVal = computedEstimatedSummary.newCustomerCount[`q${q}`];
                           const actVal = computedActualSummary.newCustomerCount[`q${q}`];
@@ -3059,6 +3048,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const khVal = newCountsSummary.newCustomerCount.nam;
                           const estVal = computedEstimatedSummary.newCustomerCount.nam;
                           const actVal = computedActualSummary.newCustomerCount.nam;
@@ -3118,7 +3108,7 @@ const GoalResultList = () => {
                       {/* Row 2: Số lượng hợp đồng mới (kế hoạch) */}
                       <tr>
                         <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const khVal = newCountsSummary.newContractCount[`m${m}`];
                           const estVal = estimatedCounts.newContractCount[`m${m}`];
                           const actVal = actualCounts.newContractCount[`m${m}`];
@@ -3173,7 +3163,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const khVal = newCountsSummary.newContractCount[`q${q}`];
                           const estVal = computedEstimatedSummary.newContractCount[`q${q}`];
                           const actVal = computedActualSummary.newContractCount[`q${q}`];
@@ -3229,6 +3219,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const khVal = newCountsSummary.newContractCount.nam;
                           const estVal = computedEstimatedSummary.newContractCount.nam;
                           const actVal = computedActualSummary.newContractCount.nam;
@@ -3288,7 +3279,7 @@ const GoalResultList = () => {
                       {/* Row 3: Số lượng khách hàng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const khVal = newCountsSummary.cumCustomerCount[`m${m}`];
                           const estVal = computedEstimatedSummary.cumCustomerCount[`m${m}`];
                           const actVal = computedActualSummary.cumCustomerCount[`m${m}`];
@@ -3343,7 +3334,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const khVal = newCountsSummary.cumCustomerCount[`q${q}`];
                           const estVal = computedEstimatedSummary.cumCustomerCount[`q${q}`];
                           const actVal = computedActualSummary.cumCustomerCount[`q${q}`];
@@ -3399,6 +3390,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const khVal = newCountsSummary.cumCustomerCount.nam;
                           const estVal = computedEstimatedSummary.cumCustomerCount.nam;
                           const actVal = computedActualSummary.cumCustomerCount.nam;
@@ -3458,7 +3450,7 @@ const GoalResultList = () => {
                       {/* Row 4: Số lượng hợp đồng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const khVal = newCountsSummary.cumContractCount[`m${m}`];
                           const estVal = computedEstimatedSummary.cumContractCount[`m${m}`];
                           const actVal = computedActualSummary.cumContractCount[`m${m}`];
@@ -3513,7 +3505,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const khVal = newCountsSummary.cumContractCount[`q${q}`];
                           const estVal = computedEstimatedSummary.cumContractCount[`q${q}`];
                           const actVal = computedActualSummary.cumContractCount[`q${q}`];
@@ -3569,6 +3561,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const khVal = newCountsSummary.cumContractCount.nam;
                           const estVal = computedEstimatedSummary.cumContractCount.nam;
                           const actVal = computedActualSummary.cumContractCount.nam;
@@ -3658,24 +3651,31 @@ const GoalResultList = () => {
                     <thead>
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>CHẤT LƯỢNG DỊCH VỤ</th>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                           <th key={`sq_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                           <th key={`sq_head_q_${q}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
+                        {(selectedPeriod === 'y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
                       </tr>
                       <tr>
-                        {Array.from({ length: 17 }, (_, i) => i).map(idx => (
-                          <React.Fragment key={`sq_sub_cols_${idx}`}>
-                            <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
-                            <th className="cell-center" style={{ fontSize: '10px', color: '#ea580c', fontWeight: '700', padding: '4px 2px', background: '#fffbeb' }}>Ước TH</th>
-                            <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
-                            <th className="cell-center" style={{ fontSize: '10px', color: '#475569', fontWeight: '700', padding: '4px 2px', background: '#f1f5f9' }}>+/- so KH</th>
-                            <th className="cell-center" style={{ fontSize: '10px', color: '#475569', fontWeight: '700', padding: '4px 2px', background: '#f1f5f9' }}>% HTKH</th>
-                          </React.Fragment>
-                        ))}
+{Array.from({ length: 17 }, (_, i) => i).filter(idx => {
+                          if (idx < 12) return selectedPeriod === 'm' + (idx + 1);
+                          if (idx < 16) return selectedPeriod === 'q' + (idx - 12 + 1);
+                          return selectedPeriod === 'y';
+                        }).map(idx => {
+                          const isMonth = idx < 12;
+                          return (
+                            <React.Fragment key={`sq_sub_cols_${idx}`}>
+                              <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
+                              <th className="cell-center" style={{ fontSize: '10px', color: '#ea580c', fontWeight: '700', padding: '4px 2px', background: '#fffbeb' }}>Ước TH</th>
+                              <th className="cell-center" style={{ fontSize: '10px', color: '#2563eb', fontWeight: '700', padding: '4px 2px', background: '#eff6ff' }}>TH</th>
+                              <th className="cell-center" style={{ fontSize: '10px', color: '#475569', fontWeight: '700', padding: '4px 2px', background: '#f1f5f9' }}>+/- so KH</th>
+                              <th className="cell-center" style={{ fontSize: '10px', color: '#475569', fontWeight: '700', padding: '4px 2px', background: '#f1f5f9' }}>% HTKH</th>
+                            </React.Fragment>
+                          );
+                        })}
                       </tr>
                     </thead>
                     <tbody>
@@ -3698,7 +3698,7 @@ const GoalResultList = () => {
                               {row.name}
                             </td>
                             {/* Months 1-12 */}
-                            {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                            {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                               const planValRaw = itemValues.plan[`m${m}`];
                               const estVal = itemValues.estimate[`m${m}`] || '';
                               const actVal = itemValues.actual[`m${m}`] || '';
@@ -3785,7 +3785,7 @@ const GoalResultList = () => {
                               );
                             })}
                             {/* Quarters 1-4 */}
-                            {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                            {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                               const planValRaw = itemValues.plan[`q${q}`];
                               const estValRaw = itemValues.estimate[`q${q}`];
                               const actValRaw = itemValues.actual[`q${q}`];
@@ -3851,6 +3851,7 @@ const GoalResultList = () => {
                             })}
                             {/* Year */}
                             {(() => {
+                          if (selectedPeriod !== 'y') return null;
                               const planValRaw = itemValues.plan.nam;
                               const estValRaw = itemValues.estimate.nam;
                               const actValRaw = itemValues.actual.nam;
@@ -3932,37 +3933,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Đơn vị thực hiện</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>
+                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -3982,7 +3981,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -3996,23 +3995,25 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-                          <React.Fragment key="y_inds">
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
-                          </React.Fragment>
+{(selectedPeriod === 'y') && (
+                            <React.Fragment key="y_inds">
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                            </React.Fragment>
+                          )}
                         </tr>
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4021,7 +4022,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4029,12 +4030,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
-                        {activeTab === 'san_luong_nghiem_thu' && (
+{(selectedPeriod === 'y') && (
                           <>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            {activeTab === 'san_luong_nghiem_thu' && (
+                              <>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                              </>
+                            )}
                           </>
                         )}
                       </tr>
@@ -4045,7 +4050,7 @@ const GoalResultList = () => {
                       <tr key={ud.unitName}>
                         <td className="summary-col-label">{ud.unitName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const p = `m${m}`;
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4056,7 +4061,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const p = `q${q}`;
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4067,6 +4072,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const p = 'y';
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4173,37 +4179,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '220px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm khách hàng</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>
+                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -4223,7 +4227,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4237,23 +4241,25 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-                          <React.Fragment key="y_inds">
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
-                          </React.Fragment>
+{(selectedPeriod === 'y') && (
+                            <React.Fragment key="y_inds">
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                            </React.Fragment>
+                          )}
                         </tr>
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4262,7 +4268,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4270,12 +4276,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
-                        {activeTab === 'san_luong_nghiem_thu' && (
+{(selectedPeriod === 'y') && (
                           <>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            {activeTab === 'san_luong_nghiem_thu' && (
+                              <>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                              </>
+                            )}
                           </>
                         )}
                       </tr>
@@ -4286,7 +4296,7 @@ const GoalResultList = () => {
                       <tr key={cgd.groupName}>
                         <td className="summary-col-label">{cgd.groupName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const p = `m${m}`;
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4297,7 +4307,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const p = `q${q}`;
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4308,6 +4318,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const p = 'y';
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4364,37 +4375,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm SPDV</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>
+                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
-                          <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th>
+                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -4414,7 +4423,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4428,23 +4437,25 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-                          <React.Fragment key="y_inds">
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
-                            <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
-                          </React.Fragment>
+{(selectedPeriod === 'y') && (
+                            <React.Fragment key="y_inds">
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>%</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>+/-</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
+                            </React.Fragment>
+                          )}
                         </tr>
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4453,7 +4464,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4461,12 +4472,16 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
-                        <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
-                        {activeTab === 'san_luong_nghiem_thu' && (
+{(selectedPeriod === 'y') && (
                           <>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
-                            <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
+                            <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
+                            {activeTab === 'san_luong_nghiem_thu' && (
+                              <>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>Tăng/Giảm</th>
+                                <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
+                              </>
+                            )}
                           </>
                         )}
                       </tr>
@@ -4477,7 +4492,7 @@ const GoalResultList = () => {
                       <tr key={sgd.spgName}>
                         <td className="summary-col-label">{sgd.spgName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
                           const p = `m${m}`;
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4488,7 +4503,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
                           const p = `q${q}`;
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4499,6 +4514,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
+                          if (selectedPeriod !== 'y') return null;
                           const p = 'y';
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4657,6 +4673,56 @@ const GoalResultList = () => {
             </div>
             <div className="modal-body">
               <div className="form-group">
+                <label>Kỳ báo cáo</label>
+                <select 
+                  value={selectedPeriod} 
+                  onChange={(e) => {
+                    setSelectedPeriod(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <optgroup label="Tháng">
+                    <option value="m1">Tháng 1</option>
+                    <option value="m2">Tháng 2</option>
+                    <option value="m3">Tháng 3</option>
+                    <option value="m4">Tháng 4</option>
+                    <option value="m5">Tháng 5</option>
+                    <option value="m6">Tháng 6</option>
+                    <option value="m7">Tháng 7</option>
+                    <option value="m8">Tháng 8</option>
+                    <option value="m9">Tháng 9</option>
+                    <option value="m10">Tháng 10</option>
+                    <option value="m11">Tháng 11</option>
+                    <option value="m12">Tháng 12</option>
+                  </optgroup>
+                  <optgroup label="Quý">
+                    <option value="q1">Quý 1</option>
+                    <option value="q2">Quý 2</option>
+                    <option value="q3">Quý 3</option>
+                    <option value="q4">Quý 4</option>
+                  </optgroup>
+                  <optgroup label="Cả năm">
+                    <option value="y">Cả năm</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Năm báo cáo</label>
+                <select 
+                  value={selectedYear} 
+                  onChange={(e) => {
+                    setSelectedYear(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                >
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label>Nhóm khách hàng (Multi-select)</label>
                 <div className="multi-select-box">
                   {CUSTOMER_GROUPS_LIST.map(g => (
@@ -4784,7 +4850,19 @@ const GoalResultList = () => {
               {/* STEP 1: UPLOAD FILE */}
               {importStep === 1 && (
                 <div className="import-wizard-container">
-                  <div className="date-selector-row">
+                  <div className="date-selector-row" style={{ gridTemplateColumns: (importDataType === 'estimate' || importDataType === 'th') ? '1fr 1fr 1fr' : '1fr 1fr' }}>
+                    {(importDataType === 'estimate' || importDataType === 'th') && (
+                      <div className="form-group">
+                        <label>Loại dữ liệu nhập</label>
+                        <select 
+                          value={importDataType} 
+                          onChange={(e) => setImportDataType(e.target.value)}
+                        >
+                          <option value="estimate">Ước thực hiện (Ước TH)</option>
+                          <option value="th">Thực tế (TH)</option>
+                        </select>
+                      </div>
+                    )}
                     <div className="form-group">
                       <label>Kỳ KPI cần cập nhật</label>
                       <select value={importPeriod} onChange={(e) => setImportPeriod(e.target.value)}>
@@ -4831,15 +4909,27 @@ const GoalResultList = () => {
                     </div>
                   )}
 
-                  <div className="upload-dropzone" onClick={() => handleSimulateUpload('valid')}>
-                    <div className="upload-icon-wrapper">
-                      <Upload size={28} />
+                  {importDataType === 'estimate' && estimateWindowTooltip ? (
+                    <div className="upload-dropzone" style={{ opacity: 0.6, cursor: 'not-allowed', background: '#f1f5f9', borderColor: '#cbd5e1' }} onClick={() => alert(estimateWindowTooltip)}>
+                      <div className="upload-icon-wrapper" style={{ background: '#e2e8f0', color: '#94a3b8' }}>
+                        <Upload size={28} />
+                      </div>
+                      <div>
+                        <strong style={{ color: '#64748b' }}>Không thể nhập Ước thực hiện tại thời điểm này</strong>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#94a3b8' }}>{estimateWindowTooltip}</p>
+                      </div>
                     </div>
-                    <div>
-                      <strong>Nhấp để chọn file Excel từ thiết bị của bạn</strong>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>Định dạng hỗ trợ: .xls, .xlsx (Tối đa 10.000 bản ghi)</p>
+                  ) : (
+                    <div className="upload-dropzone" onClick={() => handleSimulateUpload('valid')}>
+                      <div className="upload-icon-wrapper">
+                        <Upload size={28} />
+                      </div>
+                      <div>
+                        <strong>Nhấp để chọn file Excel từ thiết bị của bạn</strong>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>Định dạng hỗ trợ: .xls, .xlsx (Tối đa 10.000 bản ghi)</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Sandbox helper for developers to simulate other validation rules */}
                   <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
