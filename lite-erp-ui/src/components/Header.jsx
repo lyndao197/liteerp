@@ -42,12 +42,7 @@ function Header() {
     leaveEndDate: '',
     leaveReason: ''
   }));
-  const [preferences, setPreferences] = useState({
-    language: 'Vietnamese / Tiếng Việt',
-    notifyChannel: 'email',
-    signature: 'Administrator',
-    attendancePin: ''
-  });
+
 
 
   useEffect(() => {
@@ -122,9 +117,7 @@ function Header() {
     setIsPreferencesOpen(false);
   };
 
-  const updatePreference = (field, value) => {
-    setPreferences(prev => ({ ...prev, [field]: value }));
-  };
+
 
   const updatePersonalInfo = (field, value) => {
     setPersonalInfo(prev => ({ ...prev, [field]: value }));
@@ -236,7 +229,6 @@ function Header() {
 
             <div className="prefs-tabs">
               <button type="button" className={`prefs-tab ${activePreferencesTab === 'personal' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('personal')}>Thông tin cơ bản</button>
-              <button type="button" className={`prefs-tab ${activePreferencesTab === 'options' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('options')}>Tùy chọn</button>
               <button type="button" className={`prefs-tab ${activePreferencesTab === 'security' ? 'active' : ''}`} onClick={() => setActivePreferencesTab('security')}>Bảo mật</button>
             </div>
 
@@ -327,34 +319,7 @@ function Header() {
                 </div>
               ) : null}
 
-              {activePreferencesTab === 'options' ? (
-                <div className="prefs-grid">
-                  <div className="prefs-col">
-                    <label>Ngôn ngữ</label>
-                    <input type="text" value={preferences.language} onChange={(e) => updatePreference('language', e.target.value)} />
 
-                    <label>Chữ ký Email</label>
-                    <textarea rows={5} value={preferences.signature} onChange={(e) => updatePreference('signature', e.target.value)} />
-                  </div>
-
-                  <div className="prefs-col">
-                    <label>Thông báo</label>
-                    <div className="prefs-radio-row">
-                      <label>
-                        <input type="radio" name="notifyChannel" checked={preferences.notifyChannel === 'email'} onChange={() => updatePreference('notifyChannel', 'email')} />
-                        By Emails
-                      </label>
-                      <label>
-                        <input type="radio" name="notifyChannel" checked={preferences.notifyChannel === 'odoo'} onChange={() => updatePreference('notifyChannel', 'odoo')} />
-                        Trong Odoo
-                      </label>
-                    </div>
-
-                    <label>Attendance PIN</label>
-                    <input type="text" value={preferences.attendancePin} onChange={(e) => updatePreference('attendancePin', e.target.value)} />
-                  </div>
-                </div>
-              ) : null}
 
 
 
@@ -380,15 +345,7 @@ function Header() {
                     </div>
                   </div>
 
-                  <div className="prefs-security-row">
-                    <div className="prefs-security-left">
-                      <h4>Khóa API</h4>
-                      <p>Connect external services.</p>
-                    </div>
-                    <div className="prefs-security-right">
-                      <button type="button" className="btn-security-action">Thêm khóa API</button>
-                    </div>
-                  </div>
+
 
                   <div className="prefs-security-row">
                     <div className="prefs-security-left">
