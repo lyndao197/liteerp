@@ -117,10 +117,6 @@ const GoalList = () => {
     setSelectedIds(newSelected);
   };
 
-  const handleImport = () => {
-    alert('Chức năng Import đang được chuẩn bị. Vui lòng chọn file Excel/CSV để tải dữ liệu vào hệ thống.');
-  };
-
   const toggleColumn = (key) => {
     setVisibleColumns(prev => 
         prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
@@ -458,8 +454,6 @@ const GoalList = () => {
             </button>
           )}
           <button className="btn-outline-brand" onClick={() => navigate(`/goal/new?type=${activePlanTypeTab === 'Kế hoạch nội bộ' ? 'internal' : 'group'}`)}><Plus size={18} /> Thêm mục tiêu</button>
-          <button className="btn-outline-brand" onClick={() => document.getElementById('import-input').click()}><Upload size={18} /> Nhập</button>
-          <input type="file" id="import-input" style={{display: 'none'}} accept=".xlsx, .xls" onChange={handleImport} />
           <button className="btn-outline-brand" onClick={handleExport}>
             <Download size={18} /> Xuất Excel
           </button>

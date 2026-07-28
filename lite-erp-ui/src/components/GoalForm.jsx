@@ -951,8 +951,21 @@ const GoalForm = () => {
 
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
-            <div className="goal-card-header">
+            <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (VNĐ)</h3>
+              <button 
+                className="btn-excel-action" 
+                type="button"
+                onClick={() => {
+                  setImportDataType('existing_cust');
+                  setShowImportModal(true);
+                }}
+                disabled={isReadOnlyForm}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                <Upload size={14} />
+                Nhập Excel
+              </button>
             </div>
 
 
