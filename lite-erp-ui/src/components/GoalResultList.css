@@ -1169,3 +1169,42 @@
   border-right-color: #3b82f6;
   background-color: rgba(59, 130, 246, 0.12);
 }
+
+/* Custom Advanced Filter Styles */
+.advanced-filter-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advanced-filter-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.advanced-filter-row label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0;
+}
+
+.advanced-filter-row select,
+.advanced-filter-row .custom-select-trigger {
+  background: #f1f5f9 !important;
+  border: none !important;
+  padding: 10px 14px !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  color: #334155 !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+.advanced-filter-row select {
+  cursor: pointer;
+}
+

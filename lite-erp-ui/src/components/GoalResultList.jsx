@@ -215,7 +215,11 @@ const GoalResultList = () => {
   const [selectedSPDVGroups, setSelectedSPDVGroups] = useState([]);
   const [selectedSPDVs, setSelectedSPDVs] = useState([]);
   const [isNewCustomerFilter, setIsNewCustomerFilter] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState('m6'); // Default Month 6
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'groups', 'customers', 'spdvGroups', 'spdvs', 'periods' or null
+  const [selectedPeriods, setSelectedPeriods] = useState(['m6']); // Default Month 6
+  const selectedPeriod = useMemo(() => {
+    return selectedPeriods[0] || 'm6';
+  }, [selectedPeriods]);
   const [selectedYear, setSelectedYear] = useState('2026'); // Default Year 2026
 
   // Instant Search
@@ -742,7 +746,7 @@ const GoalResultList = () => {
   const systemDay = systemDateObj.getDate();
 
   const isCurrentMonthSelected = useMemo(() => {
-    return selectedYear === String(systemYear) && selectedPeriod === `m${systemMonth}`;
+    return selectedYear === String(systemYear) && selectedPeriods.includes(`m${systemMonth}`);
   }, [selectedYear, selectedPeriod, systemYear, systemMonth]);
 
   const isEstimateWindowActive = useMemo(() => {
@@ -1489,7 +1493,7 @@ const GoalResultList = () => {
     setSelectedSPDVs([]);
     setIsNewCustomerFilter(false);
     setSearchTerm('');
-    setSelectedPeriod('m6');
+    setSelectedPeriods(['m6']);
     setSelectedYear('2026');
     setCurrentPage(1);
   };
@@ -2386,6 +2390,246 @@ const GoalResultList = () => {
     );
   };
 
+  const renderCustomMultiSelect = (type, labelText, itemsList, selectedItems, onToggleItem, selectAllFunc, deselectAllFunc) => {
+    return (
+      <div className="advanced-filter-row">
+        <label>{labelText}</label>
+        <div className="custom-select-wrapper" style={{ position: 'relative', width: '100%' }}>
+          <div 
+            className="custom-select-trigger"
+            onClick={() => setActiveDropdown(activeDropdown === type ? null : type)}
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              background: '#f1f5f9', 
+              padding: '10px 14px', 
+              borderRadius: '6px', 
+              cursor: 'pointer', 
+              fontSize: '14px', 
+              color: '#334155',
+              height: '40px',
+              boxSizing: 'border-box'
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '90%' }}>
+              {selectedItems.length === 0 ? '-- Chọn giá trị --' : selectedItems.join(', ')}
+            </span>
+            <ChevronDown size={16} style={{ color: '#64748b' }} />
+          </div>
+          {activeDropdown === type && (
+            <div 
+              className="custom-select-options-box"
+              style={{ 
+                position: 'absolute', 
+                top: '44px', 
+                left: 0, 
+                right: 0, 
+                background: '#ffffff', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '6px', 
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', 
+                zIndex: 1001, 
+                maxHeight: '200px', 
+                overflowY: 'auto',
+                padding: '6px 0'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', gap: '8px', padding: '6px 12px', fontSize: '11px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                <span 
+                  style={{ color: '#ee0033', cursor: 'pointer', fontWeight: '600' }}
+                  onClick={() => { selectAllFunc(); setCurrentPage(1); }}
+                >
+                  Chọn tất cả
+                </span>
+                <span style={{ color: '#cbd5e1' }}>|</span>
+                <span 
+                  style={{ color: '#64748b', cursor: 'pointer', fontWeight: '600' }}
+                  onClick={() => { deselectAllFunc(); setCurrentPage(1); }}
+                >
+                  Bỏ chọn tất cả
+                </span>
+              </div>
+              {itemsList.map(item => {
+                const isSelected = selectedItems.includes(item);
+                return (
+                  <label 
+                    key={item} 
+                    className="multi-select-option"
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      padding: '8px 12px', 
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      color: '#334155'
+                    }}
+                  >
+                    <input 
+                      type="checkbox" 
+                      checked={isSelected}
+                      onChange={() => { onToggleItem(item); setCurrentPage(1); }}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <span>{item}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderPeriodMultiSelect = () => {
+    let periodText = '-- Chọn giá trị --';
+    if (selectedPeriods.length > 0) {
+      const labels = selectedPeriods.map(p => {
+        if (p.startsWith('m')) return `T${p.substring(1)}`;
+        if (p.startsWith('q')) return `Q${p.substring(1)}`;
+        return 'Năm';
+      });
+      periodText = labels.join(', ');
+    }
+
+    return (
+      <div className="advanced-filter-row">
+        <label>Kỳ Doanh Thu</label>
+        <div className="custom-select-wrapper" style={{ position: 'relative', width: '100%' }}>
+          <div 
+            className="custom-select-trigger"
+            onClick={() => setActiveDropdown(activeDropdown === 'periods' ? null : 'periods')}
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              background: '#f1f5f9', 
+              padding: '10px 14px', 
+              borderRadius: '6px', 
+              cursor: 'pointer', 
+              fontSize: '14px', 
+              color: '#334155',
+              height: '40px',
+              boxSizing: 'border-box'
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '90%' }}>
+              {periodText}
+            </span>
+            <ChevronDown size={16} style={{ color: '#64748b' }} />
+          </div>
+          {activeDropdown === 'periods' && (
+            <div 
+              className="custom-select-options-box"
+              style={{ 
+                position: 'absolute', 
+                top: '44px', 
+                left: 0, 
+                right: 0, 
+                background: '#ffffff', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '6px', 
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', 
+                zIndex: 1001, 
+                maxHeight: '200px', 
+                overflowY: 'auto',
+                padding: '6px 0'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', gap: '8px', padding: '6px 12px', fontSize: '11px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                <span 
+                  style={{ color: '#ee0033', cursor: 'pointer', fontWeight: '600' }}
+                  onClick={() => {
+                    const allPeriods = [
+                      ...Array.from({ length: 12 }, (_, i) => `m${i + 1}`),
+                      ...Array.from({ length: 4 }, (_, i) => `q${i + 1}`),
+                      'y'
+                    ];
+                    setSelectedPeriods(allPeriods);
+                    setCurrentPage(1);
+                  }}
+                >
+                  Chọn tất cả
+                </span>
+                <span style={{ color: '#cbd5e1' }}>|</span>
+                <span 
+                  style={{ color: '#64748b', cursor: 'pointer', fontWeight: '600' }}
+                  onClick={() => {
+                    setSelectedPeriods(['m6']);
+                    setCurrentPage(1);
+                  }}
+                >
+                  Bỏ chọn tất cả
+                </span>
+              </div>
+
+              <div className="multi-select-group-label" style={{ fontWeight: 'bold', fontSize: '11px', padding: '4px 8px', color: '#64748b', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>Tháng</div>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                <label key={`m${m}`} className="multi-select-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', cursor: 'pointer', fontSize: '13px', color: '#334155' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedPeriods.includes(`m${m}`)}
+                    onChange={() => {
+                      const val = `m${m}`;
+                      setSelectedPeriods(prev => 
+                        prev.includes(val) 
+                          ? (prev.length > 1 ? prev.filter(p => p !== val) : prev) 
+                          : [...prev, val]
+                      );
+                      setCurrentPage(1);
+                    }}
+                  />
+                  <span>Tháng {m}</span>
+                </label>
+              ))}
+
+              <div className="multi-select-group-label" style={{ fontWeight: 'bold', fontSize: '11px', padding: '4px 8px', color: '#64748b', background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Quý</div>
+              {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                <label key={`q${q}`} className="multi-select-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', cursor: 'pointer', fontSize: '13px', color: '#334155' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedPeriods.includes(`q${q}`)}
+                    onChange={() => {
+                      const val = `q${q}`;
+                      setSelectedPeriods(prev => 
+                        prev.includes(val) 
+                          ? (prev.length > 1 ? prev.filter(p => p !== val) : prev) 
+                          : [...prev, val]
+                      );
+                      setCurrentPage(1);
+                    }}
+                  />
+                  <span>Quý {q}</span>
+                </label>
+              ))}
+
+              <div className="multi-select-group-label" style={{ fontWeight: 'bold', fontSize: '11px', padding: '4px 8px', color: '#64748b', background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Năm</div>
+              <label className="multi-select-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', cursor: 'pointer', fontSize: '13px', color: '#334155' }}>
+                <input 
+                  type="checkbox" 
+                  checked={selectedPeriods.includes('y')}
+                  onChange={() => {
+                    const val = 'y';
+                    setSelectedPeriods(prev => 
+                      prev.includes(val) 
+                        ? (prev.length > 1 ? prev.filter(p => p !== val) : prev) 
+                        : [...prev, val]
+                    );
+                    setCurrentPage(1);
+                  }}
+                />
+                <span>Cả năm</span>
+              </label>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="goal-result-container">
@@ -2422,6 +2666,12 @@ const GoalResultList = () => {
       <div className="kpi-cards-grid">
         <div className="kpi-card">
           <span className="kpi-card-label">
+            {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
+          </span>
+          <span className="kpi-card-value">{summaryStats.total}</span>
+        </div>
+        <div className="kpi-card">
+          <span className="kpi-card-label">
             {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu khách hàng VTT' : 'Sản lượng khách hàng VTT'}
           </span>
           <span className="kpi-card-value">{summaryStats.internal}</span>
@@ -2449,12 +2699,6 @@ const GoalResultList = () => {
             {activeTab === 'ket_qua_doanh_thu' ? 'Doanh thu DV mới' : 'Sản lượng DV mới'}
           </span>
           <span className="kpi-card-value">{summaryStats.newService}</span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-card-label">
-            {activeTab === 'ket_qua_doanh_thu' ? 'Tổng doanh thu' : 'Tổng sản lượng'}
-          </span>
-          <span className="kpi-card-value">{summaryStats.total}</span>
         </div>
       </div>
 
@@ -2534,23 +2778,25 @@ const GoalResultList = () => {
                 </th>
                 
                 {/* Months */}
-                {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                   <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 7} className="matrix-group-title cell-center">
                     Tháng {m}
                   </th>
                 ))}
 
                 {/* Quarters */}
-                {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                   <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 7} className="matrix-group-title cell-center">
                     Quý {q}
                   </th>
                 ))}
 
                 {/* Year */}
-                <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 7} className="matrix-group-title cell-center">
-                  Cả năm
-                </th>
+                {selectedPeriods.includes('y') && (
+                  <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 7} className="matrix-group-title cell-center">
+                    Cả năm
+                  </th>
+                )}
               </tr>
               {/* Level 2 & 3 */}
               {activeTab === 'ket_qua_doanh_thu' ? (
@@ -2558,7 +2804,7 @@ const GoalResultList = () => {
                   {/* Level 2 (for Revenue): Column Groups */}
                   <tr>
                     {/* Months groups */}
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                    {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                       <React.Fragment key={`m_g_${m}`}>
                         <th colSpan={5} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
                           {planCompareText}
@@ -2572,7 +2818,7 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Quarters groups */}
-                    {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                    {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                       <React.Fragment key={`q_g_${q}`}>
                         <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
                           {planCompareText}
@@ -2586,23 +2832,25 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Year groups */}
-                    <React.Fragment key="y_g">
-                      <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
-                        {planCompareText}
-                      </th>
-                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
-                        So Cả năm {parseInt(selectedYear, 10) - 1}
-                      </th>
-                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
-                        So Cả năm {parseInt(selectedYear, 10) - 1}
-                      </th>
-                    </React.Fragment>
+                    {selectedPeriods.includes('y') && (
+                      <React.Fragment key="y_g">
+                        <th colSpan={4} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
+                          {planCompareText}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                          So Cả năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                          So Cả năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                      </React.Fragment>
+                    )}
                   </tr>
 
                   {/* Level 3 (for Revenue): Specific Indicators */}
                   <tr>
                     {/* Months indicators */}
-                    {Array.from({ length: 12 }).map((_, i) => (
+                    {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                       <React.Fragment key={`m_ind_${i}`}>
                         {/* Group 1 */}
                         <th className="matrix-indicator-title cell-right">KH</th>
@@ -2623,7 +2871,7 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Quarters indicators */}
-                    {Array.from({ length: 4 }).map((_, i) => (
+                    {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                       <React.Fragment key={`q_ind_${i}`}>
                         {/* Group 1 */}
                         <th className="matrix-indicator-title cell-right">KH</th>
@@ -2641,21 +2889,23 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Year indicators */}
-                    <React.Fragment key="y_ind">
-                      {/* Group 1 */}
-                      <th className="matrix-indicator-title cell-right">KH</th>
-                      <th className="matrix-indicator-title cell-right">TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>+/- so KH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>% HTKH</th>
-                      {/* Group 2 */}
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                      {/* Group 3 */}
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                    </React.Fragment>
+                    {selectedPeriods.includes('y') && (
+                      <React.Fragment key="y_ind">
+                        {/* Group 1 */}
+                        <th className="matrix-indicator-title cell-right">KH</th>
+                        <th className="matrix-indicator-title cell-right">TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>+/- so KH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ color: '#475569' }}>% HTKH</th>
+                        {/* Group 2 */}
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        {/* Group 3 */}
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                      </React.Fragment>
+                    )}
                   </tr>
                 </>
               ) : (
@@ -2663,7 +2913,7 @@ const GoalResultList = () => {
                   {/* Level 2 (for Production): Column Groups */}
                   <tr>
                     {/* Months groups */}
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                    {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                       <React.Fragment key={`m_g_${m}`}>
                         <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
                           {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
@@ -2677,7 +2927,7 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Quarters groups */}
-                    {Array.from({ length: 4 }, (_, i) => i + 1).map(q => (
+                    {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                       <React.Fragment key={`q_g_${q}`}>
                         <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
                           {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
@@ -2691,23 +2941,25 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Year groups */}
-                    <React.Fragment key="y_g">
-                      <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
-                        {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
-                      </th>
-                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
-                        So Cả năm {parseInt(selectedYear, 10) - 1}
-                      </th>
-                      <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
-                        So Cả năm {parseInt(selectedYear, 10) - 1}
-                      </th>
-                    </React.Fragment>
+                    {selectedPeriods.includes('y') && (
+                      <React.Fragment key="y_g">
+                        <th colSpan={1} className="matrix-indicator-title cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>
+                          {activePlanTab === 'Kế hoạch nội bộ' ? 'Thực hiện so với kế hoạch Nội bộ' : 'Thực hiện so với kế hoạch Tập đoàn'}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>
+                          So Cả năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                        <th colSpan={3} className="matrix-indicator-title cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>
+                          So Cả năm {parseInt(selectedYear, 10) - 1}
+                        </th>
+                      </React.Fragment>
+                    )}
                   </tr>
 
                   {/* Level 3 (for Production): Specific Indicators */}
                   <tr>
                     {/* Months indicators */}
-                    {Array.from({ length: 12 }).map((_, i) => (
+                    {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                       <React.Fragment key={`m_ind_${i}`}>
                         <th className="matrix-indicator-title cell-right">TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
@@ -2719,7 +2971,7 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Quarters indicators */}
-                    {Array.from({ length: 4 }).map((_, i) => (
+                    {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                       <React.Fragment key={`q_ind_${i}`}>
                         <th className="matrix-indicator-title cell-right">TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
@@ -2731,15 +2983,17 @@ const GoalResultList = () => {
                       </React.Fragment>
                     ))}
                     {/* Year indicators */}
-                    <React.Fragment key="y_ind">
-                      <th className="matrix-indicator-title cell-right">TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                      <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
-                    </React.Fragment>
+                    {selectedPeriods.includes('y') && (
+                      <React.Fragment key="y_ind">
+                        <th className="matrix-indicator-title cell-right">TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                      </React.Fragment>
+                    )}
                   </tr>
                 </>
               )}
@@ -2788,7 +3042,7 @@ const GoalResultList = () => {
                       <td className="sticky-col-6" style={{ left: leftOffsets.col6, width: colWidths.col6, minWidth: colWidths.col6, maxWidth: colWidths.col6 }} title={row.spdvName}>{row.spdvName}</td>
  
                       {/* Render Month columns */}
-                      {Array.from({ length: 12 }, (_, i) => i + 1).map(m => {
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                         const periodKey = `m${m}`;
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, true);
@@ -2798,7 +3052,7 @@ const GoalResultList = () => {
                       })}
 
                       {/* Render Quarter columns */}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).map(q => {
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                         const periodKey = `q${q}`;
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, false);
@@ -2809,6 +3063,7 @@ const GoalResultList = () => {
 
                       {/* Render Year columns */}
                       {(() => {
+                        if (!selectedPeriods.includes('y')) return null;
                         const periodKey = 'y';
                         if (activeTab === 'ket_qua_doanh_thu') {
                           return renderPeriodCompCells(row, periodKey, valScale, false);
@@ -2913,16 +3168,20 @@ const GoalResultList = () => {
                     <thead>
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>Chỉ tiêu</th>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                           <th key={`new_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                           <th key={`new_head_q_${q}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        {(selectedPeriod === 'y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
+                        {selectedPeriods.includes('y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
                       </tr>
                       <tr>
-                        {Array.from({ length: 17 }, (_, i) => i).map(idx => (
+                        {Array.from({ length: 17 }, (_, i) => i).filter(idx => {
+                          if (idx < 12) return selectedPeriods.includes('m' + (idx + 1));
+                          if (idx < 16) return selectedPeriods.includes('q' + (idx - 12 + 1));
+                          return selectedPeriods.includes('y');
+                        }).map(idx => (
                           <React.Fragment key={`sub_cols_${idx}`}>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#64748b', fontWeight: '700', padding: '4px 2px', background: '#f8fafc' }}>KH</th>
                             <th className="cell-center" style={{ fontSize: '10px', color: '#ea580c', fontWeight: '700', padding: '4px 2px', background: '#fffbeb' }}>Ước TH</th>
@@ -2937,7 +3196,7 @@ const GoalResultList = () => {
                       {/* Row 1: Số lượng khách hàng mới (kế hoạch) */}
                       <tr>
                         <td className="summary-col-label">Số lượng khách hàng mới (kế hoạch)</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newCustomerCount[`m${m}`];
                           const estVal = estimatedCounts.newCustomerCount[`m${m}`];
                           const actVal = actualCounts.newCustomerCount[`m${m}`];
@@ -2992,7 +3251,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const khVal = newCountsSummary.newCustomerCount[`q${q}`];
                           const estVal = computedEstimatedSummary.newCustomerCount[`q${q}`];
                           const actVal = computedActualSummary.newCustomerCount[`q${q}`];
@@ -3048,7 +3307,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const khVal = newCountsSummary.newCustomerCount.nam;
                           const estVal = computedEstimatedSummary.newCustomerCount.nam;
                           const actVal = computedActualSummary.newCustomerCount.nam;
@@ -3108,7 +3367,7 @@ const GoalResultList = () => {
                       {/* Row 2: Số lượng hợp đồng mới (kế hoạch) */}
                       <tr>
                         <td className="summary-col-label">Số lượng hợp đồng mới (kế hoạch)</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newContractCount[`m${m}`];
                           const estVal = estimatedCounts.newContractCount[`m${m}`];
                           const actVal = actualCounts.newContractCount[`m${m}`];
@@ -3163,7 +3422,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const khVal = newCountsSummary.newContractCount[`q${q}`];
                           const estVal = computedEstimatedSummary.newContractCount[`q${q}`];
                           const actVal = computedActualSummary.newContractCount[`q${q}`];
@@ -3219,7 +3478,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const khVal = newCountsSummary.newContractCount.nam;
                           const estVal = computedEstimatedSummary.newContractCount.nam;
                           const actVal = computedActualSummary.newContractCount.nam;
@@ -3279,7 +3538,7 @@ const GoalResultList = () => {
                       {/* Row 3: Số lượng khách hàng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.cumCustomerCount[`m${m}`];
                           const estVal = computedEstimatedSummary.cumCustomerCount[`m${m}`];
                           const actVal = computedActualSummary.cumCustomerCount[`m${m}`];
@@ -3334,7 +3593,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const khVal = newCountsSummary.cumCustomerCount[`q${q}`];
                           const estVal = computedEstimatedSummary.cumCustomerCount[`q${q}`];
                           const actVal = computedActualSummary.cumCustomerCount[`q${q}`];
@@ -3390,7 +3649,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const khVal = newCountsSummary.cumCustomerCount.nam;
                           const estVal = computedEstimatedSummary.cumCustomerCount.nam;
                           const actVal = computedActualSummary.cumCustomerCount.nam;
@@ -3450,7 +3709,7 @@ const GoalResultList = () => {
                       {/* Row 4: Số lượng hợp đồng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.cumContractCount[`m${m}`];
                           const estVal = computedEstimatedSummary.cumContractCount[`m${m}`];
                           const actVal = computedActualSummary.cumContractCount[`m${m}`];
@@ -3505,7 +3764,7 @@ const GoalResultList = () => {
                             </React.Fragment>
                           );
                         })}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const khVal = newCountsSummary.cumContractCount[`q${q}`];
                           const estVal = computedEstimatedSummary.cumContractCount[`q${q}`];
                           const actVal = computedActualSummary.cumContractCount[`q${q}`];
@@ -3561,7 +3820,7 @@ const GoalResultList = () => {
                           );
                         })}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const khVal = newCountsSummary.cumContractCount.nam;
                           const estVal = computedEstimatedSummary.cumContractCount.nam;
                           const actVal = computedActualSummary.cumContractCount.nam;
@@ -3651,19 +3910,19 @@ const GoalResultList = () => {
                     <thead>
                       <tr>
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>CHẤT LƯỢNG DỊCH VỤ</th>
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                           <th key={`sq_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                         ))}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                           <th key={`sq_head_q_${q}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{q}</th>
                         ))}
-                        {(selectedPeriod === 'y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
+                        {selectedPeriods.includes('y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
                       </tr>
                       <tr>
 {Array.from({ length: 17 }, (_, i) => i).filter(idx => {
-                          if (idx < 12) return selectedPeriod === 'm' + (idx + 1);
-                          if (idx < 16) return selectedPeriod === 'q' + (idx - 12 + 1);
-                          return selectedPeriod === 'y';
+                          if (idx < 12) return selectedPeriods.includes('m' + (idx + 1));
+                          if (idx < 16) return selectedPeriods.includes('q' + (idx - 12 + 1));
+                          return selectedPeriods.includes('y');
                         }).map(idx => {
                           const isMonth = idx < 12;
                           return (
@@ -3698,7 +3957,7 @@ const GoalResultList = () => {
                               {row.name}
                             </td>
                             {/* Months 1-12 */}
-                            {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                            {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                               const planValRaw = itemValues.plan[`m${m}`];
                               const estVal = itemValues.estimate[`m${m}`] || '';
                               const actVal = itemValues.actual[`m${m}`] || '';
@@ -3785,7 +4044,7 @@ const GoalResultList = () => {
                               );
                             })}
                             {/* Quarters 1-4 */}
-                            {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                            {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                               const planValRaw = itemValues.plan[`q${q}`];
                               const estValRaw = itemValues.estimate[`q${q}`];
                               const actValRaw = itemValues.actual[`q${q}`];
@@ -3851,7 +4110,7 @@ const GoalResultList = () => {
                             })}
                             {/* Year */}
                             {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                               const planValRaw = itemValues.plan.nam;
                               const estValRaw = itemValues.estimate.nam;
                               const actValRaw = itemValues.actual.nam;
@@ -3933,35 +4192,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Đơn vị thực hiện</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
+                      {selectedPeriods.includes('y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
+                          {selectedPeriods.includes('y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -3981,7 +4240,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -3995,7 +4254,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                             <React.Fragment key="y_inds">
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4013,7 +4272,7 @@ const GoalResultList = () => {
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4022,7 +4281,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4030,7 +4289,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                           <>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4050,7 +4309,7 @@ const GoalResultList = () => {
                       <tr key={ud.unitName}>
                         <td className="summary-col-label">{ud.unitName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const p = `m${m}`;
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4061,7 +4320,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const p = `q${q}`;
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4072,7 +4331,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const p = 'y';
                           const val = ud.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4179,35 +4438,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '220px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm khách hàng</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
+                      {selectedPeriods.includes('y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
+                          {selectedPeriods.includes('y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -4227,7 +4486,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4241,7 +4500,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                             <React.Fragment key="y_inds">
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4259,7 +4518,7 @@ const GoalResultList = () => {
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4268,7 +4527,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4276,7 +4535,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                           <>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4296,7 +4555,7 @@ const GoalResultList = () => {
                       <tr key={cgd.groupName}>
                         <td className="summary-col-label">{cgd.groupName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const p = `m${m}`;
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4307,7 +4566,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const p = `q${q}`;
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4318,7 +4577,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const p = 'y';
                           const val = cgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4375,35 +4634,35 @@ const GoalResultList = () => {
                   <thead>
                     <tr>
                       <th rowSpan={activeTab === 'ket_qua_doanh_thu' ? 3 : 2} style={{ minWidth: '180px', verticalAlign: 'middle', textAlign: 'left' }}>Nhóm SPDV</th>
-                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                      {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                         <th key={`m${m}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 13 : 3} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
                       ))}
-                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                      {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                         <th key={`q${q}`} colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : 2} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Quý {q}</th>
                       ))}
-                      {(selectedPeriod === 'y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
+                      {selectedPeriods.includes('y') && <th colSpan={activeTab === 'ket_qua_doanh_thu' ? 10 : (activeTab === 'san_luong_nghiem_thu' ? 4 : 2)} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Cả năm</th>}
                     </tr>
                     {activeTab === 'ket_qua_doanh_thu' ? (
                       <>
                         <tr>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => (
+                          {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                             <React.Fragment key={`m_g_${m}`}>
                               <th colSpan={5} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m === 1 ? `12/${parseInt(selectedYear, 10) - 1}` : m - 1}</th>
                               <th colSpan={4} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Tháng {m} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => (
+                          {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => (
                             <React.Fragment key={`q_g_${q}`}>
                               <th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Quý {q === 1 ? `4/${parseInt(selectedYear, 10) - 1}` : q - 1}</th>
                               <th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Quý {q} năm {parseInt(selectedYear, 10) - 1}</th>
                             </React.Fragment>
                           ))}
-                          {(selectedPeriod === 'y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
+                          {selectedPeriods.includes('y') && <><th colSpan={4} className="cell-center" style={{ background: '#f1f5f9', fontSize: '11px', borderBottom: '1px solid #cbd5e1' }}>{planCompareText}</th><th colSpan={3} className="cell-center" style={{ background: '#ecfdf5', fontSize: '11px', color: '#065f46', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th><th colSpan={3} className="cell-center" style={{ background: '#eff6ff', fontSize: '11px', color: '#1e40af', borderBottom: '1px solid #cbd5e1' }}>So Cả năm {parseInt(selectedYear, 10) - 1}</th></>}
                         </tr>
                         <tr>
-                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                          {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                             <React.Fragment key={`m_inds_${i}`}>
                               {/* Group 1 */}
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
@@ -4423,7 +4682,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
                             </React.Fragment>
                           ))}
-                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                          {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                             <React.Fragment key={`q_inds_${i}`}>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4437,7 +4696,7 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>%</th>
                             </React.Fragment>
                           ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                             <React.Fragment key="y_inds">
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>KH</th>
                               <th className="cell-right" style={{ fontSize: '11px', fontWeight: '600' }}>TH</th>
@@ -4455,7 +4714,7 @@ const GoalResultList = () => {
                       </>
                     ) : (
                       <tr>
-                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriod === 'm' + (i + 1)).map(i => (
+                        {Array.from({ length: 12 }).map((_, i) => i).filter(i => selectedPeriods.includes('m' + (i + 1))).map(i => (
                           <React.Fragment key={`m_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#ea580c', fontWeight: '600' }}>Ước</th>
@@ -4464,7 +4723,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriod === 'q' + (i + 1)).map(i => (
+                        {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
                           <React.Fragment key={`q_ind_${i}`}>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4472,7 +4731,7 @@ const GoalResultList = () => {
                             <th className="cell-right" style={{ fontSize: '11px', color: '#0284c7', fontWeight: '600' }}>% Delta</th>
                           </React.Fragment>
                         ))}
-{(selectedPeriod === 'y') && (
+{selectedPeriods.includes('y') && (
                           <>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>KH</th>
                             <th className="cell-right" style={{ fontSize: '11px', color: '#475569', fontWeight: '600' }}>TH</th>
@@ -4492,7 +4751,7 @@ const GoalResultList = () => {
                       <tr key={sgd.spgName}>
                         <td className="summary-col-label">{sgd.spgName}</td>
                         {/* Month values */}
-                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriod === 'm' + m).map(m => {
+                        {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const p = `m${m}`;
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4503,7 +4762,7 @@ const GoalResultList = () => {
                           }
                         })}
                         {/* Quarter values */}
-                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriod === 'q' + q).map(q => {
+                        {Array.from({ length: 4 }, (_, i) => i + 1).filter(q => selectedPeriods.includes('q' + q)).map(q => {
                           const p = `q${q}`;
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4514,7 +4773,7 @@ const GoalResultList = () => {
                         })}
                         {/* Year values */}
                         {(() => {
-                          if (selectedPeriod !== 'y') return null;
+                          if (!selectedPeriods.includes('y')) return null;
                           const p = 'y';
                           const val = sgd.periods[p];
                           if (activeTab === 'ket_qua_doanh_thu') {
@@ -4664,51 +4923,65 @@ const GoalResultList = () => {
       {/* MODAL: ADVANCED FILTERING */}
       {showAdvancedFilters && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          {activeDropdown && (
+            <div 
+              style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000 }} 
+              onClick={() => setActiveDropdown(null)} 
+            />
+          )}
+          <div className="modal-content" style={{ width: '480px', maxWidth: '90%', zIndex: 1001 }}>
             <div className="modal-header">
-              <h3>Bộ lọc nâng cao</h3>
+              <h3 style={{ fontSize: '18px', fontWeight: '700' }}>Bộ lọc nâng cao</h3>
               <button className="btn-close-modal" onClick={() => setShowAdvancedFilters(false)}>
                 <X size={18} />
               </button>
             </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label>Kỳ báo cáo</label>
-                <select 
-                  value={selectedPeriod} 
-                  onChange={(e) => {
-                    setSelectedPeriod(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <optgroup label="Tháng">
-                    <option value="m1">Tháng 1</option>
-                    <option value="m2">Tháng 2</option>
-                    <option value="m3">Tháng 3</option>
-                    <option value="m4">Tháng 4</option>
-                    <option value="m5">Tháng 5</option>
-                    <option value="m6">Tháng 6</option>
-                    <option value="m7">Tháng 7</option>
-                    <option value="m8">Tháng 8</option>
-                    <option value="m9">Tháng 9</option>
-                    <option value="m10">Tháng 10</option>
-                    <option value="m11">Tháng 11</option>
-                    <option value="m12">Tháng 12</option>
-                  </optgroup>
-                  <optgroup label="Quý">
-                    <option value="q1">Quý 1</option>
-                    <option value="q2">Quý 2</option>
-                    <option value="q3">Quý 3</option>
-                    <option value="q4">Quý 4</option>
-                  </optgroup>
-                  <optgroup label="Cả năm">
-                    <option value="y">Cả năm</option>
-                  </optgroup>
-                </select>
-              </div>
+            <div className="modal-body advanced-filter-grid" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              
+              {renderCustomMultiSelect(
+                'groups', 
+                'Nhóm Khánh Hàng', 
+                CUSTOMER_GROUPS_LIST, 
+                selectedGroups, 
+                handleToggleGroup, 
+                () => setSelectedGroups(CUSTOMER_GROUPS_LIST), 
+                () => setSelectedGroups([])
+              )}
 
-              <div className="form-group">
-                <label>Năm báo cáo</label>
+              {renderCustomMultiSelect(
+                'customers', 
+                'Tên Khách Hàng', 
+                CUSTOMERS_DB.map(c => c.name), 
+                selectedCustomers, 
+                handleToggleCustomer, 
+                () => setSelectedCustomers(CUSTOMERS_DB.map(c => c.name)), 
+                () => setSelectedCustomers([])
+              )}
+
+              {renderCustomMultiSelect(
+                'spdvGroups', 
+                'Nhóm SPDV', 
+                Array.from(new Set(SPDVS_DB.map(s => s.group))), 
+                selectedSPDVGroups, 
+                handleToggleSPDVGroup, 
+                () => setSelectedSPDVGroups(Array.from(new Set(SPDVS_DB.map(s => s.group)))), 
+                () => setSelectedSPDVGroups([])
+              )}
+
+              {renderCustomMultiSelect(
+                'spdvs', 
+                'Tên SPDV', 
+                SPDVS_DB.map(s => s.name), 
+                selectedSPDVs, 
+                handleToggleSPDV, 
+                () => setSelectedSPDVs(SPDVS_DB.map(s => s.name)), 
+                () => setSelectedSPDVs([])
+              )}
+
+              {renderPeriodMultiSelect()}
+
+              <div className="advanced-filter-row">
+                <label>Năm</label>
                 <select 
                   value={selectedYear} 
                   onChange={(e) => {
@@ -4722,90 +4995,43 @@ const GoalResultList = () => {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>Nhóm khách hàng (Multi-select)</label>
-                <div className="multi-select-box">
-                  {CUSTOMER_GROUPS_LIST.map(g => (
-                    <label key={g} className="multi-select-option">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedGroups.includes(g)}
-                        onChange={() => handleToggleGroup(g)}
-                      />
-                      {g}
-                    </label>
-                  ))}
+              <div className="advanced-filter-row">
+                <label>Là Khách Hàng Mới</label>
+                <div style={{ display: 'flex', alignItems: 'center', height: '40px' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={isNewCustomerFilter}
+                    onChange={(e) => {
+                      setIsNewCustomerFilter(e.target.checked);
+                      setCurrentPage(1);
+                    }}
+                    style={{ 
+                      width: '20px', 
+                      height: '20px', 
+                      cursor: 'pointer',
+                      accentColor: '#ee0033',
+                      border: '1.5px solid #cbd5e1',
+                      borderRadius: '4px'
+                    }}
+                  />
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Tên khách hàng (Multi-select)</label>
-                <div className="multi-select-box">
-                  {CUSTOMERS_DB.map(c => (
-                    <label key={c.id} className="multi-select-option">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedCustomers.includes(c.name)}
-                        onChange={() => handleToggleCustomer(c.name)}
-                      />
-                      {c.name}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Nhóm SPDV (Multi-select)</label>
-                <div className="multi-select-box">
-                  {Array.from(new Set(SPDVS_DB.map(s => s.group))).map(sg => (
-                    <label key={sg} className="multi-select-option">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedSPDVGroups.includes(sg)}
-                        onChange={() => handleToggleSPDVGroup(sg)}
-                      />
-                      {sg}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Tên SPDV (Multi-select)</label>
-                <div className="multi-select-box">
-                  {SPDVS_DB.map(s => (
-                    <label key={s.id} className="multi-select-option">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedSPDVs.includes(s.name)}
-                        onChange={() => handleToggleSPDV(s.name)}
-                      />
-                      {s.name}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="form-group" style={{ flexDirection: 'row', gap: '8px', alignItems: 'center', padding: '6px 0' }}>
-                <input 
-                  type="checkbox" 
-                  id="chk-new-cust"
-                  checked={isNewCustomerFilter}
-                  onChange={(e) => {
-                    setIsNewCustomerFilter(e.target.checked);
-                    setCurrentPage(1);
-                  }}
-                  style={{ width: '16px', height: '16px' }}
-                />
-                <label htmlFor="chk-new-cust" style={{ cursor: 'pointer' }}>Là khách hàng mới</label>
-              </div>
             </div>
-            <div className="modal-footer">
-              <button className="btn-cancel" onClick={handleClearAllFilters}>
-                Xóa tất cả bộ lọc
+            <div className="modal-footer" style={{ background: '#ffffff', borderTop: '1px solid #f1f5f9', padding: '16px 24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+              <button 
+                className="btn-cancel" 
+                onClick={handleClearAllFilters}
+                style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                Xóa bộ lọc
               </button>
-              <button className="btn-apply" onClick={() => setShowAdvancedFilters(false)}>
-                Áp dụng
+              <button 
+                className="btn-apply" 
+                onClick={() => setShowAdvancedFilters(false)}
+                style={{ padding: '10px 24px', background: '#ee0033', color: '#ffffff', border: 'none', borderRadius: '6px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                Lọc
               </button>
             </div>
           </div>
