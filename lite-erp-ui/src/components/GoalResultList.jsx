@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Filter, 
@@ -236,6 +236,15 @@ const GoalResultList = () => {
   const itemsPerPage = 10;
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleTabClick = (tabKey) => {
+    if (activePlanTab === 'Kế hoạch nội bộ') {
+      navigate(`/goals/results?tab=${tabKey === 'ket_qua_doanh_thu' ? 'doanh_thu_noi_bo' : 'san_luong_noi_bo'}`);
+    } else {
+      navigate(`/goals/results?tab=${tabKey === 'ket_qua_doanh_thu' ? 'doanh_thu_tap_doan' : 'san_luong_tap_doan'}`);
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -2387,6 +2396,22 @@ const GoalResultList = () => {
           </span>
         </div>
         <p style={{ marginTop: '8px' }}>QUẢN LÝ CHI TIẾT CƠ HỘI VÀ KHÁCH HÀNG TIỀM NĂNG</p>
+
+        {/* Tabs Bar */}
+        <div className="tabs-container">
+          <div 
+            className={`tab-item ${activeTab === 'ket_qua_doanh_thu' ? 'active' : ''}`}
+            onClick={() => handleTabClick('ket_qua_doanh_thu')}
+          >
+            Kết quả doanh thu
+          </div>
+          <div 
+            className={`tab-item ${activeTab === 'san_luong_nghiem_thu' ? 'active' : ''}`}
+            onClick={() => handleTabClick('san_luong_nghiem_thu')}
+          >
+            Sản lượng nghiệm thu
+          </div>
+        </div>
       </div>
 
 
