@@ -8,6 +8,7 @@ function Header() {
   const navigate = useNavigate();
   const currentUserId = 'USR-001';
   const DEPARTMENT_OPTIONS = [
+    'TT Công nghệ Thông tin',
     'Phòng Bán hàng',
     'Phòng Tài chính',
     'Phòng Công nghệ',
@@ -18,10 +19,13 @@ function Header() {
   const POSITION_OPTIONS = [
     'Nhân viên',
     'Chuyên viên',
+    'Chuyên viên AM',
     'Trưởng nhóm',
     'Quản lý',
     'Kế toán trưởng',
-    'Giám đốc'
+    'Giám đốc',
+    'Giám đốc công nghệ',
+    'Giám đốc Bán hàng'
   ];
 
   const menuRef = useRef(null);
@@ -84,11 +88,11 @@ function Header() {
     });
   }, [isMenuOpen, isPreferencesOpen]);
 
-  const displayName = currentUser?.fullName || 'Administrator';
-  const displayEmail = currentUser?.email || 'Chưa cập nhật email';
-  const displayPhone = currentUser?.phone || 'Chưa cập nhật';
-  const displayDepartment = currentUser?.department || 'Chưa cập nhật';
-  const displayRole = currentUser?.role || 'Chưa cập nhật';
+  const displayName = currentUser?.fullName || '';
+  const displayEmail = currentUser?.email || '';
+  const displayPhone = currentUser?.phone || '';
+  const displayDepartment = currentUser?.department || '';
+  const displayRole = currentUser?.role || '';
   const displayPosition = currentUser?.position || '';
   const avatarLetter = (displayName.trim().charAt(0) || 'A').toUpperCase();
 
@@ -174,24 +178,8 @@ function Header() {
 
             {isMenuOpen ? (
               <div className="user-dropdown" role="menu" aria-label="User menu">
-                <button type="button" className="dropdown-item" onClick={openUserProfile}>
-                  Hồ sơ
-                </button>
-                <button type="button" className="dropdown-item dropdown-shortcut" onClick={() => setIsMenuOpen(false)}>
-                  <span>Phím tắt</span>
-                  <span className="dropdown-shortcut-key">CTRL+K</span>
-                </button>
-                <div className="dropdown-divider" />
-                <button type="button" className="dropdown-item dropdown-with-arrow" onClick={() => setIsMenuOpen(false)}>
-                  <span className="status-dot" />
-                  <span>Online</span>
-                  <span className="right-arrow">▸</span>
-                </button>
                 <button type="button" className="dropdown-item" onClick={goToPreferences}>
                   Tùy chọn của tôi
-                </button>
-                <button type="button" className="dropdown-item" onClick={openOdooAccount}>
-                  Tài khoản Odoo.com
                 </button>
                 <button type="button" className="dropdown-item" onClick={handleLogout}>
                   Đăng xuất
@@ -217,13 +205,13 @@ function Header() {
             <div className="prefs-profile">
               <div className="prefs-avatar">{avatarLetter}</div>
               <div className="prefs-user-info">
-                <h3>{displayName}</h3>
-                <p><Mail size={16} /> {displayEmail}</p>
-                <p><Phone size={16} /> {displayPhone}</p>
-                <p><Building2 size={16} /> {displayDepartment}</p>
-                <p><Shield size={16} /> {displayRole}</p>
-                {displayPosition ? <p><BriefcaseBusiness size={16} /> {displayPosition}</p> : null}
-                <p><Smartphone size={16} /> {currentUser?.status === 'Active' ? 'Đang hoạt động' : 'Ngưng hoạt động'}</p>
+                {displayName && <h3>{displayName}</h3>}
+                {displayEmail && <p><Mail size={16} /> {displayEmail}</p>}
+                {displayPhone && <p><Phone size={16} /> {displayPhone}</p>}
+                {displayDepartment && <p><Building2 size={16} /> {displayDepartment}</p>}
+                {displayRole && <p><Shield size={16} /> {displayRole}</p>}
+                {displayPosition && <p><BriefcaseBusiness size={16} /> {displayPosition}</p>}
+                {currentUser?.status && <p><Smartphone size={16} /> {currentUser.status === 'Active' ? 'Hoạt động' : 'Ngưng hoạt động'}</p>}
               </div>
             </div>
 
@@ -235,7 +223,6 @@ function Header() {
             <div className="prefs-content">
               {activePreferencesTab === 'personal' ? (
                 <div>
-                  <h4 className="prefs-section-title">1. Thông tin cơ bản</h4>
                   <div className="prefs-personal-grid">
                     <div className="prefs-form-field">
                       <label>Tên nhân viên <span className="prefs-required">*</span></label>
@@ -285,12 +272,12 @@ function Header() {
                     </div>
 
                     <div className="prefs-form-field">
-                      <label>Tên đăng nhập <span className="prefs-required">*</span></label>
+                      <label>Tên đăng nhập</label>
                       <input type="text" value={personalInfo.username} readOnly disabled className="prefs-readonly" />
                     </div>
 
                     <div className="prefs-form-field">
-                      <label>Chọn quản lý</label>
+                      <label>Quản lý</label>
                       <select value={personalInfo.managerId} onChange={(e) => updatePersonalInfo('managerId', e.target.value)} disabled className="prefs-readonly">
                         <option value="">-- Chọn giá trị --</option>
                         {allUsers.filter(user => user.id !== currentUserId).map(user => (
@@ -304,16 +291,20 @@ function Header() {
                       <input type="date" value={personalInfo.leaveEndDate} onChange={(e) => updatePersonalInfo('leaveEndDate', e.target.value)} disabled className="prefs-readonly" />
                     </div>
 
-                    <div className="prefs-form-field prefs-form-field-wide">
+                    <div className="prefs-form-field">
                       <label>Lý do nghỉ</label>
-                      <textarea
-                        rows={2}
+                      <input
+                        type="text"
                         value={personalInfo.leaveReason}
-                        onChange={(e) => updatePersonalInfo('leaveReason', e.target.value)}
                         disabled
-                        placeholder={!personalInfo.leaveEndDate ? 'Vui lòng nhập ngày hết hạn nghỉ trước' : ''}
                         className="prefs-readonly"
+                        title={personalInfo.leaveReason}
                       />
+                    </div>
+
+                    <div className="prefs-form-field">
+                      <label>Vai trò hệ thống</label>
+                      <input type="text" value={personalInfo.role} readOnly disabled className="prefs-readonly" title={personalInfo.role} />
                     </div>
                   </div>
                 </div>

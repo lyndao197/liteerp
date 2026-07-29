@@ -856,10 +856,10 @@ const INITIAL_DATA = {
   },
   inboundReconciliationIds: ['IBR-2026-001','IBR-2026-002','IBR-2026-003','IBR-2026-004','IBR-2026-005','IBR-2026-006','IBR-2026-007','IBR-2026-008','IBR-2026-009','IBR-2026-010'],
   users: {
-    'USR-001': { id: 'USR-001', username: 'admin', fullName: 'Administrator', email: 'admin@viettel.com.vn', role: 'Quản trị hệ thống', department: 'TT Công nghệ Thông tin', status: 'Active', lastLogin: '2026-04-14 08:30', customPermissions: [] },
-    'USR-002': { id: 'USR-002', username: 'hung.nv', fullName: 'Nguyễn Văn Hùng', email: 'hung.nv@viettel.com.vn', role: 'Giám đốc kinh doanh', department: 'Phòng Bán hàng', status: 'Active', lastLogin: '2026-04-14 07:15', customPermissions: [] },
-    'USR-003': { id: 'USR-003', username: 'phuong.tt', fullName: 'Trần Thị Phương', email: 'phuong.tt@viettel.com.vn', role: 'Kế toán trưởng', department: 'Phòng Tài chính', status: 'Active', lastLogin: '2026-04-13 17:45', customPermissions: [] },
-    'USR-004': { id: 'USR-004', username: 'thanh.le', fullName: 'Lê Văn Thanh', email: 'thanh.le@viettel.com.vn', role: 'Chuyên viên AM', department: 'Phòng Bán hàng', status: 'Inactive', lastLogin: '2026-04-10 09:00', customPermissions: [] }
+    'USR-001': { id: 'USR-001', username: 'admin', fullName: 'Administrator', email: 'admin@viettel.com.vn', phone: '0981234567', position: 'Giám đốc công nghệ', role: 'Quản trị hệ thống', department: 'TT Công nghệ Thông tin', status: 'Active', lastLogin: '2026-04-14 08:30', customPermissions: [], managerId: 'USR-002', leaveEndDate: '2026-12-31', leaveReason: '' },
+    'USR-002': { id: 'USR-002', username: 'hung.nv', fullName: 'Nguyễn Văn Hùng', email: 'hung.nv@viettel.com.vn', phone: '0987654321', position: 'Giám đốc Bán hàng', role: 'Giám đốc kinh doanh', department: 'Phòng Bán hàng', status: 'Active', lastLogin: '2026-04-14 07:15', customPermissions: [], managerId: 'USR-001', leaveEndDate: '2026-11-30', leaveReason: '' },
+    'USR-003': { id: 'USR-003', username: 'phuong.tt', fullName: 'Trần Thị Phương', email: 'phuong.tt@viettel.com.vn', phone: '0912345678', position: 'Kế toán trưởng', role: 'Kế toán trưởng', department: 'Phòng Tài chính', status: 'Active', lastLogin: '2026-04-13 17:45', customPermissions: [], managerId: 'USR-001', leaveEndDate: '2026-10-15', leaveReason: '' },
+    'USR-004': { id: 'USR-004', username: 'thanh.le', fullName: 'Lê Văn Thanh', email: 'thanh.le@viettel.com.vn', phone: '0909998887', position: 'Chuyên viên AM', role: 'Chuyên viên AM', department: 'Phòng Bán hàng', status: 'Inactive', lastLogin: '2026-04-10 09:00', customPermissions: [], managerId: 'USR-002', leaveEndDate: '', leaveReason: '' }
   },
   userIds: ['USR-001', 'USR-002', 'USR-003', 'USR-004'],
   roles: {
@@ -1164,7 +1164,24 @@ export const mockStore = {
     });
 
     // --- NEW MODULES DATA INJECTION ---
-    if (!store.users) store.users = INITIAL_DATA.users || {};
+    if (!store.users) {
+      store.users = INITIAL_DATA.users || {};
+    } else {
+      Object.keys(INITIAL_DATA.users || {}).forEach(uId => {
+        if (!store.users[uId]) {
+          store.users[uId] = INITIAL_DATA.users[uId];
+        } else {
+          store.users[uId] = {
+            ...store.users[uId],
+            position: INITIAL_DATA.users[uId].position || '',
+            managerId: INITIAL_DATA.users[uId].managerId || '',
+            leaveEndDate: INITIAL_DATA.users[uId].leaveEndDate || '',
+            leaveReason: INITIAL_DATA.users[uId].leaveReason || '',
+            phone: INITIAL_DATA.users[uId].phone || ''
+          };
+        }
+      });
+    }
     if (!store.userIds) store.userIds = INITIAL_DATA.userIds || [];
     if (!store.roles) store.roles = INITIAL_DATA.roles || {};
     if (!store.roleIds) store.roleIds = INITIAL_DATA.roleIds || [];
