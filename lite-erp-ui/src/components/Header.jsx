@@ -188,7 +188,7 @@ function Header() {
                   <span className="right-arrow">▸</span>
                 </button>
                 <button type="button" className="dropdown-item" onClick={goToPreferences}>
-                  Tùy chọn cá nhân
+                  Tùy chọn của tôi
                 </button>
                 <button type="button" className="dropdown-item" onClick={openOdooAccount}>
                   Tài khoản Odoo.com
@@ -204,7 +204,7 @@ function Header() {
 
       {isPreferencesOpen ? (
         <div className="prefs-overlay" onClick={closePreferences}>
-          <div className="prefs-modal" role="dialog" aria-label="Tùy chọn cá nhân" onClick={(event) => event.stopPropagation()}>
+          <div className="prefs-modal" role="dialog" aria-label="Tùy chọn của tôi" onClick={(event) => event.stopPropagation()}>
             <div className="prefs-header">
               <h2>Thay đổi tùy chọn của tôi</h2>
               <button type="button" className="prefs-close" onClick={closePreferences} aria-label="Đóng">
