@@ -200,8 +200,6 @@ function Header() {
               </button>
             </div>
 
-            <div className="prefs-alert">Thông báo đẩy Odoo đã bị chặn. Đi tới cài đặt trình duyệt để cho phép.</div>
-
             <div className="prefs-profile">
               <div className="prefs-avatar">{avatarLetter}</div>
               <div className="prefs-user-info">
@@ -326,27 +324,6 @@ function Header() {
                     </div>
                   </div>
 
-                  <div className="prefs-security-row">
-                    <div className="prefs-security-left">
-                      <h4>Xác thực hai yếu tố</h4>
-                      <p>Recommended for extra security.</p>
-                    </div>
-                    <div className="prefs-security-right">
-                      <button type="button" className="btn-security-action">Bật 2FA</button>
-                    </div>
-                  </div>
-
-
-
-                  <div className="prefs-security-row">
-                    <div className="prefs-security-left">
-                      <h4>Khóa truy cập</h4>
-                      <p>Recommended for extra security.</p>
-                    </div>
-                    <div className="prefs-security-right">
-                      <button type="button" className="btn-security-action">Thêm khóa truy cập</button>
-                    </div>
-                  </div>
 
                   <div className="prefs-security-row">
                     <div className="prefs-security-left">
