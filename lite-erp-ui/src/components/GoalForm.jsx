@@ -33,7 +33,6 @@ const MONTH_KEYS = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10',
 const QUARTER_KEYS = ['q1', 'q2', 'q3', 'q4'];
 
 const serviceQualityRows = [
-  { id: '1', name: 'CHẤT LƯỢNG DỊCH VỤ', level: 1 },
   { id: '1.1', name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 2 },
   { id: '1.1.1', name: 'TLKN kênh Di động Vip/Svip', level: 3 },
   { id: '1.1.2', name: 'TLKN kênh Di động thường/Hotline/CDS', level: 3 },
@@ -1446,17 +1445,9 @@ const GoalForm = () => {
                           {/* Months */}
                           {Array.from({ length: 12 }, (_, i) => i + 1).map((m, mIdx) => {
                             const val = itemValues[`m${m}`] || '';
-                            const displayVal = val ? `${val}%` : '';
                             return (
                               <td key={`sq_cell_m_${row.id}_${m}`} className="td-month-input">
-                                {isParent ? (
-                                  <input
-                                    type="text"
-                                    className="month-grid-input readonly-input"
-                                    value={displayVal || '--'}
-                                    readOnly
-                                  />
-                                ) : (
+                                {!isParent && (
                                   <input
                                     type="text"
                                     className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(mIdx)) ? 'readonly-input' : ''}`}
@@ -1473,23 +1464,27 @@ const GoalForm = () => {
                             const val = itemValues[`q${q}`] || '';
                             return (
                               <td key={`sq_cell_q_${row.id}_${q}`} className="td-quarter-input">
-                                <input
-                                  type="text"
-                                  className="month-grid-input readonly-input"
-                                  value={val ? `${val}%` : '--'}
-                                  readOnly
-                                />
+                                {!isParent && (
+                                  <input
+                                    type="text"
+                                    className="month-grid-input readonly-input"
+                                    value={val ? `${val}%` : '--'}
+                                    readOnly
+                                  />
+                                )}
                               </td>
                             );
                           })}
                           {/* Year */}
                           <td className="td-year-input">
-                            <input
-                              type="text"
-                              className="month-grid-input readonly-input"
-                              value={itemValues.nam ? `${itemValues.nam}%` : '--'}
-                              readOnly
-                            />
+                            {!isParent && (
+                              <input
+                                type="text"
+                                className="month-grid-input readonly-input"
+                                value={itemValues.nam ? `${itemValues.nam}%` : '--'}
+                                readOnly
+                              />
+                            )}
                           </td>
                         </tr>
                       );
