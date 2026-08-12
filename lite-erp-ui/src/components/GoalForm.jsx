@@ -32,33 +32,20 @@ const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => (2024 + i).toString())
 const MONTH_KEYS = ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12'];
 const QUARTER_KEYS = ['q1', 'q2', 'q3', 'q4'];
 
-const serviceQualityRows = [
-  { id: '1.1', name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 2 },
-  { id: '1.1.1', name: 'TLKN kênh Di động Vip/Svip', level: 3 },
-  { id: '1.1.2', name: 'TLKN kênh Di động thường/Hotline/CDS', level: 3 },
-  { id: '1.1.3', name: 'TLKN kênh SME', level: 3 },
-  { id: '1.1.4', name: 'TLKN kênh CĐBR và truyền hình', level: 3 },
-  { id: '1.1.5', name: 'TLKN kênh 1789N1', level: 3 },
-  { id: '1.1.6', name: 'TLKN kênh Videocall', level: 3 },
-  { id: '1.1.7', name: 'TLKN kênh 1789N2', level: 3 },
-  { id: '1.2', name: 'Tỷ lệ hài lòng của khách hàng', level: 2 },
-  { id: '1.2.1', name: 'Kênh FO', level: 3 },
-  { id: '1.2.2', name: 'Kênh BO', level: 3 },
-  { id: '1.2.3', name: 'Callbot Inbound', level: 3 }
+const INITIAL_SERVICE_QUALITY_ROWS = [
+  { id: '1.1', name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 2, isParent: true },
+  { id: '1.1.1', parentId: '1.1', name: 'TLKN kênh Di động Vip/Svip', level: 3, isParent: false, implementationUnit: 'P.QLNV', m1: '99.2', m2: '98.8', m3: '99.4', m4: '99.0', m5: '98.6', m6: '99.2', m7: '99.0', m8: '98.8', m9: '99.2', m10: '99.4', m11: '99.0', m12: '99.2' },
+  { id: '1.1.2', parentId: '1.1', name: 'TLKN kênh Di động thường/Hotline/CDS', level: 3, isParent: false, implementationUnit: 'P.QLNV', m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  { id: '1.1.3', parentId: '1.1', name: 'TLKN kênh SME', level: 3, isParent: false, implementationUnit: 'TTCN&KT', m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
+  { id: '1.1.4', parentId: '1.1', name: 'TLKN kênh CĐBR và truyền hình', level: 3, isParent: false, implementationUnit: 'P.QLNV', m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  { id: '1.1.5', parentId: '1.1', name: 'TLKN kênh 1789N1', level: 3, isParent: false, implementationUnit: 'TTCN&KT', m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
+  { id: '1.1.6', parentId: '1.1', name: 'TLKN kênh Videocall', level: 3, isParent: false, implementationUnit: 'GĐSP CX BOT', m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
+  { id: '1.1.7', parentId: '1.1', name: 'TLKN kênh 1789N2', level: 3, isParent: false, implementationUnit: 'TTCN&KT', m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
+  { id: '1.2', name: 'Tỷ lệ hài lòng của khách hàng', level: 2, isParent: true },
+  { id: '1.2.1', parentId: '1.2', name: 'Kênh FO', level: 3, isParent: false, implementationUnit: 'P.DVTN&CSKH', m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
+  { id: '1.2.2', parentId: '1.2', name: 'Kênh BO', level: 3, isParent: false, implementationUnit: 'P.DVTN&CSKH', m1: '94.2', m2: '93.8', m3: '94.4', m4: '94.0', m5: '93.6', m6: '94.2', m7: '94.0', m8: '93.8', m9: '94.2', m10: '94.4', m11: '94.0', m12: '94.2' },
+  { id: '1.2.3', parentId: '1.2', name: 'Callbot Inbound', level: 3, isParent: false, implementationUnit: 'GĐSP CX BOT', m1: '92.2', m2: '91.8', m3: '92.4', m4: '92.0', m5: '91.6', m6: '92.2', m7: '92.0', m8: '91.8', m9: '92.2', m10: '92.4', m11: '92.0', m12: '92.2' }
 ];
-
-const DEFAULT_SERVICE_QUALITY_PLAN = {
-  '1.1.1': { m1: '99.2', m2: '98.8', m3: '99.4', m4: '99.0', m5: '98.6', m6: '99.2', m7: '99.0', m8: '98.8', m9: '99.2', m10: '99.4', m11: '99.0', m12: '99.2' },
-  '1.1.2': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
-  '1.1.3': { m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
-  '1.1.4': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
-  '1.1.5': { m1: '98.2', m2: '97.8', m3: '98.4', m4: '98.0', m5: '97.6', m6: '98.2', m7: '98.0', m8: '97.8', m9: '98.2', m10: '98.4', m11: '98.0', m12: '98.2' },
-  '1.1.6': { m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
-  '1.1.7': { m1: '97.2', m2: '96.8', m3: '97.4', m4: '97.0', m5: '96.6', m6: '97.2', m7: '97.0', m8: '96.8', m9: '97.2', m10: '97.4', m11: '97.0', m12: '97.2' },
-  '1.2.1': { m1: '95.2', m2: '94.8', m3: '95.4', m4: '95.0', m5: '94.6', m6: '95.2', m7: '95.0', m8: '94.8', m9: '95.2', m10: '95.4', m11: '95.0', m12: '95.2' },
-  '1.2.2': { m1: '94.2', m2: '93.8', m3: '94.4', m4: '94.0', m5: '93.6', m6: '94.2', m7: '94.0', m8: '93.8', m9: '94.2', m10: '94.4', m11: '94.0', m12: '94.2' },
-  '1.2.3': { m1: '92.2', m2: '91.8', m3: '92.4', m4: '92.0', m5: '91.6', m6: '92.2', m7: '92.0', m8: '91.8', m9: '92.2', m10: '92.4', m11: '92.0', m12: '92.2' }
-};
 
 const EMPTY_ROW = {
   implementationUnit: '',
@@ -73,26 +60,35 @@ const EMPTY_ROW = {
 };
 
 const IMPLEMENTATION_UNITS = [
-  'Phòng Kinh Doanh',
-  'Phòng CNKT',
-  'Phòng Kỹ Thuật',
-  'Phòng Công Nghệ',
-  'Phòng Kế Hoạch',
-  'Phòng Dự Án',
-  'Phòng Giải Pháp',
-  'Phòng Dịch Vụ',
-  'Phòng Vận Hành',
-  'Phòng Khai Thác',
-  'Phòng Truyền Thông',
-  'Phòng Tài Chính',
-  'Phòng Hành Chính',
-  'Phòng Nhân Sự',
-  'Phòng An Toàn',
-  'Phòng Đối Ngoại',
-  'Phòng Hợp Tác',
-  'Phòng Nghiên Cứu',
-  'Phòng Đào Tạo'
+  'P.CLKD',
+  'BP.BÁN HÀNG',
+  'P.DVTN&CSKH',
+  'P.QLNV',
+  'TTCN&KT',
+  'KVMB',
+  'KVHP',
+  'KVTN',
+  'KVMT',
+  'KVMN',
+  'GĐSP BẢO HÀNH',
+  'GĐSP CX BOT',
+  'GĐSP OMNIX',
+  'GĐSP DIGITAL SALE',
+  'GĐSP ĐỐI NGOẠI',
+  'GĐSP KNOWXHUB',
+  'GĐSP SỐ HÓA'
 ];
+
+const getDefaultUnitForSqRow = (rowId) => {
+  if (rowId.startsWith('1.1.1') || rowId.startsWith('1.1.2') || rowId.startsWith('1.1.4')) return 'P.QLNV';
+  if (rowId.startsWith('1.1.3') || rowId.startsWith('1.1.5') || rowId.startsWith('1.1.7')) return 'TTCN&KT';
+  if (rowId.startsWith('1.1.6')) return 'GĐSP CX BOT';
+  if (rowId.startsWith('1.1')) return 'P.DVTN&CSKH';
+  if (rowId.startsWith('1.2.1') || rowId.startsWith('1.2.2')) return 'P.DVTN&CSKH';
+  if (rowId.startsWith('1.2.3')) return 'GĐSP CX BOT';
+  if (rowId.startsWith('1.2')) return 'P.DVTN&CSKH';
+  return 'P.DVTN&CSKH';
+};
 
 const DOCUMENT_TYPES = [
   'Kế hoạch mục tiêu năm',
@@ -217,10 +213,34 @@ const GoalForm = () => {
   const [activeSideTab, setActiveSideTab] = useState('comment');
   const [commentInput, setCommentInput] = useState('');
   const [existingRows, setExistingRows] = useState([{ ...EMPTY_ROW }]);
+  const [newCustomerPlanRows, setNewCustomerPlanRows] = useState([
+    {
+      id: `new-rev-${Date.now()}-1`,
+      name: 'Doanh thu khách hàng mới (kế hoạch)',
+      implementationUnit: 'BP.BÁN HÀNG',
+      t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+      t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+      q1: '0', q2: '0', q3: '0', q4: '0',
+      nam: '0'
+    }
+  ]);
+  const [collapsedTable1, setCollapsedTable1] = useState(false);
+  const [collapsedTable3, setCollapsedTable3] = useState(false);
+  const [collapsedTable4, setCollapsedTable4] = useState(false);
 
-  const { unitSummaryInForm, formTotalCount, formTotalValue } = useMemo(() => {
+  const {
+    unitSummaryInForm,
+    formTotalCount,
+    formTotalValue,
+    customerGroupSummaryInForm,
+    spdvGroupSummaryInForm
+  } = useMemo(() => {
     const summaryMap = {};
+    const customerSummaryMap = {};
+    const spdvSummaryMap = {};
+
     existingRows.forEach(row => {
+      // 1. Unit Summary
       const unit = row.implementationUnit;
       if (unit) {
         if (!summaryMap[unit]) {
@@ -229,43 +249,82 @@ const GoalForm = () => {
         summaryMap[unit].count += 1;
         summaryMap[unit].total += parseFloat(row.nam) || 0;
       }
+
+      // 2. Customer Group Summary
+      const custGroup = row.customerGroup || 'Chưa phân loại';
+      if (custGroup) {
+        if (!customerSummaryMap[custGroup]) {
+          customerSummaryMap[custGroup] = { group: custGroup, total: 0 };
+        }
+        customerSummaryMap[custGroup].total += parseFloat(row.nam) || 0;
+      }
+
+      // 3. SPDV Group Summary
+      const spdvGroup = row.spdvGroup || 'Chưa phân loại';
+      if (spdvGroup) {
+        if (!spdvSummaryMap[spdvGroup]) {
+          spdvSummaryMap[spdvGroup] = { group: spdvGroup, total: 0 };
+        }
+        spdvSummaryMap[spdvGroup].total += parseFloat(row.nam) || 0;
+      }
+    });
+
+    newCustomerPlanRows.forEach(row => {
+      // 1. Unit Summary
+      const unit = row.implementationUnit;
+      if (unit) {
+        if (!summaryMap[unit]) {
+          summaryMap[unit] = { unit, count: 0, total: 0 };
+        }
+        summaryMap[unit].total += parseFloat(row.nam) || 0;
+      }
+
+      // 2. Customer Group Summary - treat new customer row as 'Khách hàng mới'
+      const custGroup = 'Khách hàng mới';
+      if (!customerSummaryMap[custGroup]) {
+        customerSummaryMap[custGroup] = { group: custGroup, total: 0 };
+      }
+      customerSummaryMap[custGroup].total += parseFloat(row.nam) || 0;
     });
 
     const summaryList = Object.values(summaryMap).sort((a, b) => b.total - a.total);
     const totalCount = summaryList.reduce((sum, item) => sum + item.count, 0);
     const totalValue = summaryList.reduce((sum, item) => sum + item.total, 0);
 
+    const customerList = Object.values(customerSummaryMap).sort((a, b) => b.total - a.total);
+    const spdvList = Object.values(spdvSummaryMap).sort((a, b) => b.total - a.total);
+
     return {
       unitSummaryInForm: summaryList,
       formTotalCount: totalCount,
-      formTotalValue: totalValue
+      formTotalValue: totalValue,
+      customerGroupSummaryInForm: customerList,
+      spdvGroupSummaryInForm: spdvList
     };
-  }, [existingRows]);
-  const [newCustomerPlan, setNewCustomerPlan] = useState({
-    spdvGroup: '',
-    baseline: '0',
-    t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
-    t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
-    q1: 0, q2: 0, q3: 0, q4: 0,
-    nam: 0
-  });
+  }, [existingRows, newCustomerPlanRows]);
 
-  const [newCustomerCountPlan, setNewCustomerCountPlan] = useState({
-    t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
-    t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
-    q1: 0, q2: 0, q3: 0, q4: 0,
-    nam: 0
-  });
+  const [newCustomerCountPlanRows, setNewCustomerCountPlanRows] = useState([
+    {
+      id: `new-cust-count-1`,
+      name: 'Số lượng khách hàng mới (kế hoạch)',
+      implementationUnit: 'BP.BÁN HÀNG',
+      t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+      t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+      q1: '0', q2: '0', q3: '0', q4: '0',
+      nam: '0'
+    },
+    {
+      id: `new-cust-count-2`,
+      name: 'Số lượng hợp đồng mới (kế hoạch)',
+      implementationUnit: 'GĐSP ĐỐI NGOẠI',
+      t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+      t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+      q1: '0', q2: '0', q3: '0', q4: '0',
+      nam: '0'
+    }
+  ]);
 
-  const [newContractCountPlan, setNewContractCountPlan] = useState({
-    t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
-    t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
-    q1: 0, q2: 0, q3: 0, q4: 0,
-    nam: 0
-  });
-
-
-  const [serviceQualityPlan, setServiceQualityPlan] = useState(() => DEFAULT_SERVICE_QUALITY_PLAN);
+  const [serviceQualityPlanRows, setServiceQualityPlanRows] = useState(INITIAL_SERVICE_QUALITY_ROWS);
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [importDataType, setImportDataType] = useState('existing_cust'); // existing_cust, new_cust_rev, new_cust_count, service_quality
@@ -322,7 +381,7 @@ const GoalForm = () => {
         },
         {
           id: `row-${Date.now()}-2`,
-          implementationUnit: 'Phòng Kinh Doanh',
+          implementationUnit: 'BP.BÁN HÀNG',
           customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
           customerName: 'Công ty Cổ phần Sữa Việt Nam',
           spdvGroup: 'DV CC outsourcing',
@@ -336,47 +395,60 @@ const GoalForm = () => {
       setExistingRows(mockExisting);
       alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu doanh thu khách hàng hiện hữu từ file Excel!');
     } else if (importDataType === 'new_cust_rev') {
-      setNewCustomerPlan({
-        spdvGroup: 'Giải pháp, Platform',
-        baseline: '0',
-        t1: '50000000', t2: '60000000', t3: '70000000', t4: '80000000', t5: '90000000', t6: '100000000',
-        t7: '110000000', t8: '120000000', t9: '130000000', t10: '140000000', t11: '150000000', t12: '160000000',
-        q1: 180000000, q2: 270000000, q3: 360000000, q4: 450000000,
-        nam: 1260000000
-      });
+      setNewCustomerPlanRows([
+        {
+          id: `new-rev-${Date.now()}-1`,
+          name: 'Doanh thu khách hàng mới (kế hoạch)',
+          implementationUnit: 'BP.BÁN HÀNG',
+          t1: '50000000', t2: '60000000', t3: '70000000', t4: '80000000', t5: '90000000', t6: '100000000',
+          t7: '110000000', t8: '120000000', t9: '130000000', t10: '140000000', t11: '150000000', t12: '160000000',
+          q1: 180000000, q2: 270000000, q3: 360000000, q4: 450000000,
+          nam: 1260000000
+        }
+      ]);
       alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu doanh thu khách hàng mới từ file Excel!');
-    } else if (importDataType === 'new_cust_count') {
-      setNewCustomerCountPlan({
-        t1: '2', t2: '3', t3: '2', t4: '4', t5: '3', t6: '3',
-        t7: '2', t8: '4', t9: '3', t10: '5', t11: '3', t12: '4',
-        q1: 7, q2: 10, q3: 9, q4: 12,
-        nam: 38
-      });
-      setNewContractCountPlan({
-        t1: '4', t2: '5', t3: '3', t4: '6', t5: '5', t6: '4',
-        t7: '5', t8: '6', t9: '4', t10: '7', t11: '5', t12: '6',
-        q1: 12, q2: 15, q3: 15, q4: 18,
-        nam: 60
-      });
+      setNewCustomerCountPlanRows([
+        {
+          id: `new-cust-count-1`,
+          name: 'Số lượng khách hàng mới (kế hoạch)',
+          implementationUnit: 'BP.BÁN HÀNG',
+          t1: '2', t2: '3', t3: '2', t4: '4', t5: '3', t6: '3',
+          t7: '2', t8: '4', t9: '3', t10: '5', t11: '3', t12: '4',
+          q1: 7, q2: 10, q3: 9, q4: 12,
+          nam: 38
+        },
+        {
+          id: `new-cust-count-2`,
+          name: 'Số lượng hợp đồng mới (kế hoạch)',
+          implementationUnit: 'GĐSP ĐỐI NGOẠI',
+          t1: '4', t2: '5', t3: '3', t4: '6', t5: '5', t6: '4',
+          t7: '5', t8: '6', t9: '4', t10: '7', t11: '5', t12: '6',
+          q1: 12, q2: 15, q3: 15, q4: 18,
+          nam: 60
+        }
+      ]);
       alert('Đã nhập thành công số liệu kế hoạch số lượng khách hàng và hợp đồng mới từ file Excel!');
     } else if (importDataType === 'service_quality') {
-      const mockSQ = { ...serviceQualityPlan };
-      Object.keys(mockSQ).forEach(id => {
-        mockSQ[id] = {
-          ...mockSQ[id],
+      setServiceQualityPlanRows(prev => prev.map(row => {
+        if (row.isParent) return row;
+        return {
+          ...row,
           m1: '98.5', m2: '98.0', m3: '98.5', m4: '99.0', m5: '98.7', m6: '98.5',
           m7: '99.0', m8: '98.8', m9: '98.5', m10: '99.0', m11: '98.5', m12: '99.2'
         };
-      });
-      setServiceQualityPlan(mockSQ);
+      }));
       alert('Đã nhập thành công số liệu kế hoạch chỉ tiêu chất lượng dịch vụ từ file Excel!');
     }
     handleCloseImportModal();
   };
 
   const computedServiceQualityPlan = useMemo(() => {
-    const data = JSON.parse(JSON.stringify(serviceQualityPlan));
-    const childIds = ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7', '1.2.1', '1.2.2', '1.2.3'];
+    const data = {};
+    serviceQualityPlanRows.forEach(row => {
+      data[row.id] = { ...row };
+    });
+
+    const childIds = serviceQualityPlanRows.filter(r => !r.isParent).map(r => r.id);
     
     childIds.forEach(id => {
       const row = data[id] || {};
@@ -397,7 +469,7 @@ const GoalForm = () => {
     });
 
     const calculateParent = (parentId, childrenIds) => {
-      data[parentId] = {};
+      data[parentId] = { ...(data[parentId] || {}) };
       for (let m = 1; m <= 12; m++) {
         const mKey = `m${m}`;
         const vals = childrenIds.map(cid => parseFloat(data[cid]?.[mKey])).filter(v => !isNaN(v));
@@ -412,12 +484,17 @@ const GoalForm = () => {
       data[parentId].nam = yearVals.length > 0 ? (yearVals.reduce((s, v) => s + v, 0) / yearVals.length).toFixed(1) : '';
     };
 
-    calculateParent('1.1', ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7']);
-    calculateParent('1.2', ['1.2.1', '1.2.2', '1.2.3']);
+    const techChildIds = serviceQualityPlanRows.filter(r => r.parentId === '1.1').map(r => r.id);
+    const serviceChildIds = serviceQualityPlanRows.filter(r => r.parentId === '1.2').map(r => r.id);
+
+    calculateParent('1.1', techChildIds);
+    calculateParent('1.2', serviceChildIds);
+
+    data['1'] = { id: '1', name: 'I. CHỈ TIÊU CHẤT LƯỢNG DỊCH VỤ', level: 1, isParent: true };
     calculateParent('1', ['1.1', '1.2']);
 
     return data;
-  }, [serviceQualityPlan]);
+  }, [serviceQualityPlanRows]);
 
   const [attachmentFiles, setAttachmentFiles] = useState([]);
   const [historyLogs, setHistoryLogs] = useState([]);
@@ -468,18 +545,63 @@ const GoalForm = () => {
           ]);
         }
         if (goal.newCustomerPlan) {
-          setNewCustomerPlan(goal.newCustomerPlan);
+          if (Array.isArray(goal.newCustomerPlan)) {
+            setNewCustomerPlanRows(goal.newCustomerPlan);
+          } else {
+            setNewCustomerPlanRows([
+              {
+                id: `new-rev-legacy`,
+                name: 'Doanh thu khách hàng mới (kế hoạch)',
+                implementationUnit: goal.newCustomerPlan.implementationUnit || 'BP.BÁN HÀNG',
+                ...goal.newCustomerPlan
+              }
+            ]);
+          }
         }
         if (goal.newCustomerCountPlan) {
-          setNewCustomerCountPlan(goal.newCustomerCountPlan);
-        }
-        if (goal.newContractCountPlan) {
-          setNewContractCountPlan(goal.newContractCountPlan);
+          if (Array.isArray(goal.newCustomerCountPlan)) {
+            setNewCustomerCountPlanRows(goal.newCustomerCountPlan);
+          } else {
+            const legacyCust = {
+              id: `count-row-legacy-1`,
+              name: 'Số lượng khách hàng mới (kế hoạch)',
+              implementationUnit: goal.newCustomerCountPlan.implementationUnit || 'BP.BÁN HÀNG',
+              ...goal.newCustomerCountPlan
+            };
+            const legacyCont = goal.newContractCountPlan ? {
+              id: `count-row-legacy-2`,
+              name: 'Số lượng hợp đồng mới (kế hoạch)',
+              implementationUnit: goal.newContractCountPlan.implementationUnit || 'GĐSP ĐỐI NGOẠI',
+              ...goal.newContractCountPlan
+            } : {
+              id: `count-row-legacy-2`,
+              name: 'Số lượng hợp đồng mới (kế hoạch)',
+              implementationUnit: 'GĐSP ĐỐI NGOẠI',
+              t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+              t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+              q1: '0', q2: '0', q3: '0', q4: '0',
+              nam: '0'
+            };
+            setNewCustomerCountPlanRows([legacyCust, legacyCont]);
+          }
         }
         if (goal.serviceQualityPlan) {
-          setServiceQualityPlan(goal.serviceQualityPlan);
+          if (Array.isArray(goal.serviceQualityPlan)) {
+            setServiceQualityPlanRows(goal.serviceQualityPlan);
+          } else {
+            const mappedRows = INITIAL_SERVICE_QUALITY_ROWS.map(row => {
+              if (row.isParent) return row;
+              const values = goal.serviceQualityPlan[row.id] || {};
+              return {
+                ...row,
+                ...values,
+                implementationUnit: values.implementationUnit || getDefaultUnitForSqRow(row.id)
+              };
+            });
+            setServiceQualityPlanRows(mappedRows);
+          }
         } else {
-          setServiceQualityPlan(DEFAULT_SERVICE_QUALITY_PLAN);
+          setServiceQualityPlanRows(INITIAL_SERVICE_QUALITY_ROWS);
         }
         if (goal.attachmentFiles) {
           setAttachmentFiles(goal.attachmentFiles);
@@ -515,42 +637,35 @@ const GoalForm = () => {
       }
     }
 
-    for (const mKey of MONTH_KEYS) {
-      const val = parseFloat(newCustomerPlan[mKey]);
-      if (isNaN(val) || val < 0) {
-        alert(`Phần chỉ tiêu khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
-        return false;
+    for (const row of newCustomerPlanRows) {
+      for (const mKey of MONTH_KEYS) {
+        const val = parseFloat(row[mKey]);
+        if (isNaN(val) || val < 0) {
+          alert(`Phần chỉ tiêu doanh thu khách hàng mới "${row.name}", tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+          return false;
+        }
       }
     }
 
-    if (planType !== 'Kế hoạch nội bộ') {
+    for (const row of newCustomerCountPlanRows) {
       for (const mKey of MONTH_KEYS) {
-        const val = parseInt(newCustomerCountPlan[mKey], 10);
+        const val = parseInt(row[mKey], 10);
         if (isNaN(val) || val < 0) {
-          alert(`Số lượng khách hàng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
+          alert(`Chỉ tiêu "${row.name}", tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
           return false;
         }
       }
+    }
 
-      for (const mKey of MONTH_KEYS) {
-        const val = parseInt(newContractCountPlan[mKey], 10);
-        if (isNaN(val) || val < 0) {
-          alert(`Số lượng hợp đồng mới, tháng ${mKey.toUpperCase()} nhập sai định dạng số (phải >= 0).`);
-          return false;
-        }
-      }
-
-      const childIds = ['1.1.1', '1.1.2', '1.1.3', '1.1.4', '1.1.5', '1.1.6', '1.1.7', '1.2.1', '1.2.2', '1.2.3'];
-      for (const cid of childIds) {
-        const row = serviceQualityPlan[cid] || {};
-        for (let m = 1; m <= 12; m++) {
-          const valStr = row[`m${m}`];
-          if (valStr) {
-            const val = parseFloat(valStr);
-            if (isNaN(val) || val < 0 || val > 100) {
-              alert(`Chỉ tiêu chất lượng dịch vụ nhập sai định dạng phần trăm (phải từ 0 đến 100).`);
-              return false;
-            }
+    for (const row of serviceQualityPlanRows) {
+      if (row.isParent) continue;
+      for (let m = 1; m <= 12; m++) {
+        const valStr = row[`m${m}`];
+        if (valStr) {
+          const val = parseFloat(valStr);
+          if (isNaN(val) || val < 0) {
+            alert(`Chỉ tiêu chất lượng dịch vụ "${row.name}", tháng T${m} nhập sai định dạng số (phải >= 0).`);
+            return false;
           }
         }
       }
@@ -603,10 +718,9 @@ const GoalForm = () => {
       planType,
       statusLabel: 'Mới tạo',
       existingRows,
-      newCustomerPlan,
-      newCustomerCountPlan,
-      newContractCountPlan,
-      serviceQualityPlan,
+      newCustomerPlan: newCustomerPlanRows,
+      newCustomerCountPlan: newCustomerCountPlanRows,
+      serviceQualityPlan: serviceQualityPlanRows,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -641,10 +755,9 @@ const GoalForm = () => {
       planType,
       statusLabel: 'Hiệu lực',
       existingRows,
-      newCustomerPlan,
-      newCustomerCountPlan,
-      newContractCountPlan,
-      serviceQualityPlan,
+      newCustomerPlan: newCustomerPlanRows,
+      newCustomerCountPlan: newCustomerCountPlanRows,
+      serviceQualityPlan: serviceQualityPlanRows,
       attachmentFiles,
       comments,
       historyLogs: [
@@ -731,93 +844,133 @@ const GoalForm = () => {
     );
   };
 
-  const updateNewCustomerPlan = (key, value) => {
-    setNewCustomerPlan(prev => {
-      const updated = { ...prev, [key]: value };
+  const updateNewCustomerPlanRowField = (rowId, key, value) => {
+    setNewCustomerPlanRows(prev => prev.map(row => {
+      if (row.id !== rowId) return row;
+      const updated = { ...row, [key]: value };
       
-      const getVal = (val) => parseFloat(val) || 0;
-      const t1 = key === 't1' ? getVal(value) : getVal(prev.t1);
-      const t2 = key === 't2' ? getVal(value) : getVal(prev.t2);
-      const t3 = key === 't3' ? getVal(value) : getVal(prev.t3);
-      const t4 = key === 't4' ? getVal(value) : getVal(prev.t4);
-      const t5 = key === 't5' ? getVal(value) : getVal(prev.t5);
-      const t6 = key === 't6' ? getVal(value) : getVal(prev.t6);
-      const t7 = key === 't7' ? getVal(value) : getVal(prev.t7);
-      const t8 = key === 't8' ? getVal(value) : getVal(prev.t8);
-      const t9 = key === 't9' ? getVal(value) : getVal(prev.t9);
-      const t10 = key === 't10' ? getVal(value) : getVal(prev.t10);
-      const t11 = key === 't11' ? getVal(value) : getVal(prev.t11);
-      const t12 = key === 't12' ? getVal(value) : getVal(prev.t12);
+      if (MONTH_KEYS.includes(key)) {
+        const getVal = (val) => parseFloat(val) || 0;
+        const t1 = key === 't1' ? getVal(value) : getVal(row.t1);
+        const t2 = key === 't2' ? getVal(value) : getVal(row.t2);
+        const t3 = key === 't3' ? getVal(value) : getVal(row.t3);
+        const t4 = key === 't4' ? getVal(value) : getVal(row.t4);
+        const t5 = key === 't5' ? getVal(value) : getVal(row.t5);
+        const t6 = key === 't6' ? getVal(value) : getVal(row.t6);
+        const t7 = key === 't7' ? getVal(value) : getVal(row.t7);
+        const t8 = key === 't8' ? getVal(value) : getVal(row.t8);
+        const t9 = key === 't9' ? getVal(value) : getVal(row.t9);
+        const t10 = key === 't10' ? getVal(value) : getVal(row.t10);
+        const t11 = key === 't11' ? getVal(value) : getVal(row.t11);
+        const t12 = key === 't12' ? getVal(value) : getVal(row.t12);
 
-      updated.q1 = t1 + t2 + t3;
-      updated.q2 = t4 + t5 + t6;
-      updated.q3 = t7 + t8 + t9;
-      updated.q4 = t10 + t11 + t12;
-      updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
-
-      return updated;
-    });
-  };
-  const updateNewCustomerCountPlan = (key, value) => {
-    setNewCustomerCountPlan(prev => {
-      const updated = { ...prev, [key]: value };
-      const getVal = (val) => parseInt(val, 10) || 0;
-      const t1 = key === 't1' ? getVal(value) : getVal(prev.t1);
-      const t2 = key === 't2' ? getVal(value) : getVal(prev.t2);
-      const t3 = key === 't3' ? getVal(value) : getVal(prev.t3);
-      const t4 = key === 't4' ? getVal(value) : getVal(prev.t4);
-      const t5 = key === 't5' ? getVal(value) : getVal(prev.t5);
-      const t6 = key === 't6' ? getVal(value) : getVal(prev.t6);
-      const t7 = key === 't7' ? getVal(value) : getVal(prev.t7);
-      const t8 = key === 't8' ? getVal(value) : getVal(prev.t8);
-      const t9 = key === 't9' ? getVal(value) : getVal(prev.t9);
-      const t10 = key === 't10' ? getVal(value) : getVal(prev.t10);
-      const t11 = key === 't11' ? getVal(value) : getVal(prev.t11);
-      const t12 = key === 't12' ? getVal(value) : getVal(prev.t12);
-
-      updated.q1 = t1 + t2 + t3;
-      updated.q2 = t4 + t5 + t6;
-      updated.q3 = t7 + t8 + t9;
-      updated.q4 = t10 + t11 + t12;
-      updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
-      return updated;
-    });
-  };
-
-  const updateNewContractCountPlan = (key, value) => {
-    setNewContractCountPlan(prev => {
-      const updated = { ...prev, [key]: value };
-      const getVal = (val) => parseInt(val, 10) || 0;
-      const t1 = key === 't1' ? getVal(value) : getVal(prev.t1);
-      const t2 = key === 't2' ? getVal(value) : getVal(prev.t2);
-      const t3 = key === 't3' ? getVal(value) : getVal(prev.t3);
-      const t4 = key === 't4' ? getVal(value) : getVal(prev.t4);
-      const t5 = key === 't5' ? getVal(value) : getVal(prev.t5);
-      const t6 = key === 't6' ? getVal(value) : getVal(prev.t6);
-      const t7 = key === 't7' ? getVal(value) : getVal(prev.t7);
-      const t8 = key === 't8' ? getVal(value) : getVal(prev.t8);
-      const t9 = key === 't9' ? getVal(value) : getVal(prev.t9);
-      const t10 = key === 't10' ? getVal(value) : getVal(prev.t10);
-      const t11 = key === 't11' ? getVal(value) : getVal(prev.t11);
-      const t12 = key === 't12' ? getVal(value) : getVal(prev.t12);
-
-      updated.q1 = t1 + t2 + t3;
-      updated.q2 = t4 + t5 + t6;
-      updated.q3 = t7 + t8 + t9;
-      updated.q4 = t10 + t11 + t12;
-      updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
-      return updated;
-    });
-  };
-
-  const handleServiceQualityPlanChange = (rowId, monthKey, val) => {
-    setServiceQualityPlan(prev => ({
-      ...prev,
-      [rowId]: {
-        ...(prev[rowId] || {}),
-        [monthKey]: val
+        updated.q1 = t1 + t2 + t3;
+        updated.q2 = t4 + t5 + t6;
+        updated.q3 = t7 + t8 + t9;
+        updated.q4 = t10 + t11 + t12;
+        updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
       }
+      
+      return updated;
     }));
+  };
+
+  const addNewCustomerPlanRow = () => {
+    setNewCustomerPlanRows(prev => [
+      ...prev,
+      {
+        id: `new-rev-${Date.now()}`,
+        name: `Doanh thu khách hàng mới (kế hoạch) ${prev.length + 1}`,
+        implementationUnit: 'BP.BÁN HÀNG',
+        t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+        t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+        q1: '0', q2: '0', q3: '0', q4: '0',
+        nam: '0'
+      }
+    ]);
+  };
+
+  const removeNewCustomerPlanRow = (rowId) => {
+    setNewCustomerPlanRows(prev => prev.filter(row => row.id !== rowId));
+  };
+
+  const updateNewCustomerCountPlanRowField = (rowId, key, value) => {
+    setNewCustomerCountPlanRows(prev => prev.map(row => {
+      if (row.id !== rowId) return row;
+      const updated = { ...row, [key]: value };
+      
+      if (MONTH_KEYS.includes(key)) {
+        const getVal = (val) => parseInt(val, 10) || 0;
+        const t1 = key === 't1' ? getVal(value) : getVal(row.t1);
+        const t2 = key === 't2' ? getVal(value) : getVal(row.t2);
+        const t3 = key === 't3' ? getVal(value) : getVal(row.t3);
+        const t4 = key === 't4' ? getVal(value) : getVal(row.t4);
+        const t5 = key === 't5' ? getVal(value) : getVal(row.t5);
+        const t6 = key === 't6' ? getVal(value) : getVal(row.t6);
+        const t7 = key === 't7' ? getVal(value) : getVal(row.t7);
+        const t8 = key === 't8' ? getVal(value) : getVal(row.t8);
+        const t9 = key === 't9' ? getVal(value) : getVal(row.t9);
+        const t10 = key === 't10' ? getVal(value) : getVal(row.t10);
+        const t11 = key === 't11' ? getVal(value) : getVal(row.t11);
+        const t12 = key === 't12' ? getVal(value) : getVal(row.t12);
+
+        updated.q1 = t1 + t2 + t3;
+        updated.q2 = t4 + t5 + t6;
+        updated.q3 = t7 + t8 + t9;
+        updated.q4 = t10 + t11 + t12;
+        updated.nam = t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12;
+      }
+      
+      return updated;
+    }));
+  };
+
+  const addNewCustomerCountPlanRow = () => {
+    setNewCustomerCountPlanRows(prev => [
+      ...prev,
+      {
+        id: `new-cust-count-${Date.now()}`,
+        name: `Chỉ tiêu mới ${prev.length + 1}`,
+        implementationUnit: 'BP.BÁN HÀNG',
+        t1: '0', t2: '0', t3: '0', t4: '0', t5: '0', t6: '0',
+        t7: '0', t8: '0', t9: '0', t10: '0', t11: '0', t12: '0',
+        q1: '0', q2: '0', q3: '0', q4: '0',
+        nam: '0'
+      }
+    ]);
+  };
+
+  const removeNewCustomerCountPlanRow = (rowId) => {
+    setNewCustomerCountPlanRows(prev => prev.filter(row => row.id !== rowId));
+  };
+
+  const handleServiceQualityPlanChange = (rowId, key, value) => {
+    setServiceQualityPlanRows(prev => prev.map(row => {
+      if (row.id !== rowId) return row;
+      return { ...row, [key]: value };
+    }));
+  };
+
+  const addNewServiceQualityRow = () => {
+    setServiceQualityPlanRows(prev => [
+      ...prev,
+      {
+        id: `custom-sq-${Date.now()}`,
+        parentId: '1.2',
+        name: `Chỉ tiêu chất lượng dịch vụ mới ${prev.filter(r => !r.isParent).length - 9}`,
+        level: 3,
+        isParent: false,
+        implementationUnit: 'P.DVTN&CSKH',
+        m1: '', m2: '', m3: '', m4: '', m5: '', m6: '',
+        m7: '', m8: '', m9: '', m10: '', m11: '', m12: '',
+        q1: '', q2: '', q3: '', q4: '',
+        nam: ''
+      }
+    ]);
+  };
+
+  const removeServiceQualityRow = (rowId) => {
+    setServiceQualityPlanRows(prev => prev.filter(row => row.id !== rowId));
   };
 
   const handleAttachmentUpload = (e) => {
@@ -947,6 +1100,15 @@ const GoalForm = () => {
               </div>
             </div>
           </section>
+
+          {/* Section: Kế hoạch doanh thu nội bộ chi tiết */}
+          {planType === 'Kế hoạch nội bộ' && (
+            <div style={{ margin: '24px 0 12px 0' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1e3a8a', textTransform: 'uppercase', letterSpacing: '-0.3px', borderLeft: '4px solid #3b82f6', paddingLeft: '12px' }}>
+                Kế hoạch doanh thu nội bộ chi tiết
+              </h2>
+            </div>
+          )}
 
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
@@ -1157,8 +1319,7 @@ const GoalForm = () => {
           </section>
 
           {/* Card 2.5: Chỉ tiêu doanh thu khách hàng mới */}
-          {planType !== 'Kế hoạch nội bộ' && (
-            <section className="goal-card" style={{ marginTop: '16px' }}>
+          <section className="goal-card" style={{ marginTop: '16px' }}>
                <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3>Chỉ tiêu doanh thu khách hàng mới (VNĐ)</h3>
                 <button 
@@ -1180,7 +1341,13 @@ const GoalForm = () => {
                 <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
                   <thead>
                     <tr style={{ background: '#f8fafc' }}>
-                      <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
+                      <th style={{ width: '40px' }}></th>
+                      {planType === 'Kế hoạch nội bộ' && (
+                        <th style={{ minWidth: '150px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
+                      )}
+                      {planType !== 'Kế hoạch nội bộ' && (
+                        <th style={{ minWidth: '320px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
+                      )}
                       {Array.from({ length: 12 }, (_, i) => (
                         <th key={`new_rev_head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
                       ))}
@@ -1191,309 +1358,245 @@ const GoalForm = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
-                      <td style={{ padding: '10px 16px', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px' }}>Doanh thu khách hàng mới (kế hoạch)</td>
-                      {MONTH_KEYS.map((mKey, idx) => (
-                        <td key={`new_rev_m_${mKey}`} className="td-month-input">
-                          <input
-                            type="text"
-                            className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
-                            value={newCustomerPlan[mKey]}
-                            onChange={(e) => updateNewCustomerPlan(mKey, e.target.value)}
-                            disabled={isReadOnlyForm || isMonthDisabled(idx)}
-                          />
+                    {newCustomerPlanRows.map((row) => (
+                      <tr key={row.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                        <td style={{ textAlign: 'center', padding: '6px' }}>
+                          <button
+                            type="button"
+                            onClick={() => removeNewCustomerPlanRow(row.id)}
+                            disabled={isReadOnlyForm || newCustomerPlanRows.length === 1}
+                            style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}
+                          >
+                            <Trash2 size={15} />
+                          </button>
                         </td>
-                      ))}
-                      {QUARTER_KEYS.map((qKey) => (
-                        <td key={`new_rev_q_${qKey}`} className="td-quarter-input">
+                        {planType === 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '6px 10px', minWidth: '150px' }}>
+                            <select
+                              value={row.implementationUnit || 'BP.BÁN HÀNG'}
+                              onChange={(e) => updateNewCustomerPlanRowField(row.id, 'implementationUnit', e.target.value)}
+                              disabled={isReadOnlyForm}
+                              className="month-grid-input"
+                              style={{ width: '100%', height: '32px', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px' }}
+                            >
+                              {IMPLEMENTATION_UNITS.map(unit => (
+                                <option key={unit} value={unit}>{unit}</option>
+                              ))}
+                            </select>
+                          </td>
+                        )}
+                        {planType !== 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '6px 10px', minWidth: '320px' }}>
+                            <input
+                              type="text"
+                              className="month-grid-input"
+                              style={{ width: '100%', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px', border: '1px solid #e2e8f0', borderRadius: '4px', height: '32px', padding: '0 8px', textAlign: 'left' }}
+                              value={row.name}
+                              onChange={(e) => updateNewCustomerPlanRowField(row.id, 'name', e.target.value)}
+                              disabled={isReadOnlyForm}
+                            />
+                          </td>
+                        )}
+                        {MONTH_KEYS.map((mKey, idx) => (
+                          <td key={`new_rev_m_${row.id}_${mKey}`} className="td-month-input">
+                            <input
+                              type="text"
+                              className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
+                              value={row[mKey]}
+                              onChange={(e) => updateNewCustomerPlanRowField(row.id, mKey, e.target.value)}
+                              disabled={isReadOnlyForm || isMonthDisabled(idx)}
+                            />
+                          </td>
+                        ))}
+                        {QUARTER_KEYS.map((qKey) => (
+                          <td key={`new_rev_q_${row.id}_${qKey}`} className="td-quarter-input">
+                            <input
+                              type="text"
+                              className="month-grid-input readonly-input"
+                              value={row[qKey]}
+                              readOnly
+                            />
+                          </td>
+                        ))}
+                        <td className="td-year-input">
                           <input
                             type="text"
                             className="month-grid-input readonly-input"
-                            value={newCustomerPlan[qKey]}
+                            value={row.nam}
                             readOnly
                           />
                         </td>
-                      ))}
-                      <td className="td-year-input">
-                        <input
-                          type="text"
-                          className="month-grid-input readonly-input"
-                          value={newCustomerPlan.nam}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
-            </section>
-          )}
-
-          {/* Bảng tổng hợp kế hoạch theo Đơn vị thực hiện */}
-          {planType !== 'Kế hoạch tập đoàn' && (
-            <section className="goal-card" style={{ marginTop: '16px' }}>
-              <div className="goal-card-header">
-                <h3>Bảng tổng hợp kế hoạch theo Đơn vị thực hiện</h3>
+              <div className="table-footer-action" style={{ marginTop: '12px' }}>
+                <button 
+                  type="button" 
+                  className="btn-add-row" 
+                  onClick={addNewCustomerPlanRow}
+                  disabled={isReadOnlyForm}
+                >
+                  <Plus size={16} />
+                  Thêm dòng
+                </button>
               </div>
-              <div className="table-container" style={{ padding: '16px' }}>
-                {unitSummaryInForm.length > 0 ? (
-                  <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ background: '#f8fafc' }}>
-                        <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
-                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {unitSummaryInForm.map((item) => (
-                        <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
-                          <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
-                            {item.total.toLocaleString('vi-VN')}
-                          </td>
-                        </tr>
-                      ))}
-                      <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
-                        <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
-                        <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
-                          {formTotalValue.toLocaleString('vi-VN')}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
-                    Chưa có đơn vị thực hiện nào được gán chỉ tiêu.
+            </section>
+
+          {/* Biểu mẫu doanh thu nội bộ tổng hợp */}
+          {planType !== 'Kế hoạch tập đoàn' && (
+            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ borderLeft: '4px solid #10b981', paddingLeft: '12px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#065f46', textTransform: 'uppercase', margin: '0', letterSpacing: '-0.3px' }}>
+                  Kế hoạch doanh thu nội bộ tổng hợp
+                </h2>
+              </div>
+
+              {/* 2.1 Biểu tổng hợp kế hoạch theo đơn vị thực hiện */}
+              <section className="goal-card" style={{ marginTop: '0' }}>
+                <div 
+                  className="goal-card-header" 
+                  onClick={() => setCollapsedTable1(!collapsedTable1)}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                >
+                  <h3>Tổng hợp kế hoạch theo đơn vị thực hiện</h3>
+                  <ChevronDown size={18} style={{ transform: collapsedTable1 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
+                </div>
+                {!collapsedTable1 && (
+                  <div className="table-container" style={{ padding: '16px' }}>
+                    {unitSummaryInForm.length > 0 ? (
+                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ background: '#f8fafc' }}>
+                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
+                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {unitSummaryInForm.map((item) => (
+                            <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
+                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                                {item.total.toLocaleString('vi-VN')}
+                              </td>
+                            </tr>
+                          ))}
+                          <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                            <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
+                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                              {formTotalValue.toLocaleString('vi-VN')}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
+                        Chưa có đơn vị thực hiện nào được gán chỉ tiêu.
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            </section>
-          )}
+              </section>
 
-          {/* Card 3: Chỉ tiêu số lượng khách hàng và hợp đồng mới */}
-          {planType !== 'Kế hoạch nội bộ' && (
-            <section className="goal-card">
-               <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3>Chỉ tiêu số lượng khách hàng và hợp đồng mới</h3>
-                <button 
-                  className="btn-excel-action" 
-                  type="button"
-                  onClick={() => {
-                    setImportDataType('new_cust_count');
-                    setShowImportModal(true);
-                  }}
-                  disabled={isReadOnlyForm}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+
+
+              {/* 2.3 Tổng hợp kết quả thực hiện theo nhóm khách hàng */}
+              <section className="goal-card" style={{ marginTop: '0' }}>
+                <div 
+                  className="goal-card-header" 
+                  onClick={() => setCollapsedTable3(!collapsedTable3)}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
                 >
-                  <Upload size={14} />
-                  Nhập Excel
-                </button>
-              </div>
+                  <h3>Tổng hợp kế hoạch theo nhóm khách hàng</h3>
+                  <ChevronDown size={18} style={{ transform: collapsedTable3 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
+                </div>
+                {!collapsedTable3 && (
+                  <div className="table-container" style={{ padding: '16px' }}>
+                    {customerGroupSummaryInForm.length > 0 ? (
+                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ background: '#f8fafc' }}>
+                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Nhóm khách hàng</th>
+                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {customerGroupSummaryInForm.map((item) => (
+                            <tr key={item.group} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.group}</td>
+                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                                {item.total.toLocaleString('vi-VN')}
+                              </td>
+                            </tr>
+                          ))}
+                          <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                            <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
+                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                              {formTotalValue.toLocaleString('vi-VN')}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
+                        Chưa có dữ liệu nhóm khách hàng.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
 
-              {/* Unified grid table */}
-              <div className="table-container scrollable-table-container">
-                <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
-                  <thead>
-                    <tr style={{ background: '#f8fafc' }}>
-                      <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Chỉ tiêu</th>
-                      {Array.from({ length: 12 }, (_, i) => (
-                        <th key={`head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => (
-                        <th key={`head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
-                      ))}
-                      <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* 2. Số lượng khách hàng mới (kế hoạch) */}
-                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '10px 16px', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px' }}>Số lượng khách hàng mới (kế hoạch)</td>
-                      {MONTH_KEYS.map((mKey, idx) => (
-                        <td key={`cust_m_${mKey}`} className="td-month-input">
-                          <input
-                            type="text"
-                            className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
-                            value={newCustomerCountPlan[mKey]}
-                            onChange={(e) => updateNewCustomerCountPlan(mKey, e.target.value)}
-                            disabled={isReadOnlyForm || isMonthDisabled(idx)}
-                          />
-                        </td>
-                      ))}
-                      {QUARTER_KEYS.map((qKey) => (
-                        <td key={`cust_q_${qKey}`} className="td-quarter-input">
-                          <input
-                            type="text"
-                            className="month-grid-input readonly-input"
-                            value={newCustomerCountPlan[qKey]}
-                            readOnly
-                          />
-                        </td>
-                      ))}
-                      <td className="td-year-input">
-                        <input
-                          type="text"
-                          className="month-grid-input readonly-input"
-                          value={newCustomerCountPlan.nam}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
-
-                    {/* 3. Số lượng hợp đồng mới (kế hoạch) */}
-                    <tr style={{ borderBottom: '1px solid #cbd5e1' }}>
-                      <td style={{ padding: '10px 16px', fontWeight: '600', color: '#334155', background: '#fafafa', fontSize: '13px' }}>Số lượng hợp đồng mới (kế hoạch)</td>
-                      {MONTH_KEYS.map((mKey, idx) => (
-                        <td key={`cnt_m_${mKey}`} className="td-month-input">
-                          <input
-                            type="text"
-                            className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(idx)) ? 'readonly-input' : ''}`}
-                            value={newContractCountPlan[mKey]}
-                            onChange={(e) => updateNewContractCountPlan(mKey, e.target.value)}
-                            disabled={isReadOnlyForm || isMonthDisabled(idx)}
-                          />
-                        </td>
-                      ))}
-                      {QUARTER_KEYS.map((qKey) => (
-                        <td key={`cnt_q_${qKey}`} className="td-quarter-input">
-                          <input
-                            type="text"
-                            className="month-grid-input readonly-input"
-                            value={newContractCountPlan[qKey]}
-                            readOnly
-                          />
-                        </td>
-                      ))}
-                      <td className="td-year-input">
-                        <input
-                          type="text"
-                          className="month-grid-input readonly-input"
-                          value={newContractCountPlan.nam}
-                          readOnly
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          )}
-          {/* Card 3.5: Chỉ tiêu chất lượng dịch vụ */}
-          {planType !== 'Kế hoạch nội bộ' && (
-            <section className="goal-card" style={{ marginTop: '16px' }}>
-               <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3>Chỉ tiêu chất lượng dịch vụ</h3>
-                <button 
-                  className="btn-excel-action" 
-                  type="button"
-                  onClick={() => {
-                    setImportDataType('service_quality');
-                    setShowImportModal(true);
-                  }}
-                  disabled={isReadOnlyForm}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', color: '#f5222d', border: '1px solid #f5222d', borderRadius: '6px', padding: '6px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+              {/* 2.4 Tổng hợp kết quả thực hiện theo nhóm SPDV */}
+              <section className="goal-card" style={{ marginTop: '0' }}>
+                <div 
+                  className="goal-card-header" 
+                  onClick={() => setCollapsedTable4(!collapsedTable4)}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
                 >
-                  <Upload size={14} />
-                  Nhập Excel
-                </button>
-              </div>
-
-              <div className="table-container scrollable-table-container">
-                <table className="goal-data-table month-table" style={{ borderCollapse: 'collapse', width: '100%' }}>
-                  <thead>
-                    <tr style={{ background: '#f8fafc' }}>
-                      <th style={{ minWidth: '220px', textAlign: 'left', padding: '10px 16px', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>CHẤT LƯỢNG DỊCH VỤ</th>
-                      {Array.from({ length: 12 }, (_, i) => (
-                        <th key={`sq_head_month_${i+1}`} className="sub-th-month" style={{ borderBottom: '1px solid #cbd5e1' }}>T{i+1}</th>
-                      ))}
-                      {Array.from({ length: 4 }, (_, i) => (
-                        <th key={`sq_head_quarter_${i+1}`} className="sub-th-quarter" style={{ borderBottom: '1px solid #cbd5e1' }}>Q{i+1}</th>
-                      ))}
-                      <th className="sub-th-year" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {serviceQualityRows.map((row, idx) => {
-                      const isParent = row.level === 1 || row.level === 2;
-                      let paddingLeft = '16px';
-                      let fontWeight = 'normal';
-                      let color = '#334155';
-                      let background = '#ffffff';
-
-                      if (row.level === 1) {
-                        paddingLeft = '16px';
-                        fontWeight = '800';
-                        color = '#1e3a8a';
-                        background = '#f8fafc';
-                      } else if (row.level === 2) {
-                        paddingLeft = '32px';
-                        fontWeight = '700';
-                        color = '#0f172a';
-                        background = '#fafafa';
-                      } else if (row.level === 3) {
-                        paddingLeft = '48px';
-                        color = '#475569';
-                      }
-
-                      const itemValues = computedServiceQualityPlan[row.id] || {};
-
-                      return (
-                        <tr key={idx} style={{ background, borderBottom: '1px solid #e2e8f0' }}>
-                          <td style={{ padding: '10px 16px', paddingLeft, fontWeight, color, fontSize: '13px' }}>
-                            {row.name}
-                          </td>
-                          {/* Months */}
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map((m, mIdx) => {
-                            const val = itemValues[`m${m}`] || '';
-                            return (
-                              <td key={`sq_cell_m_${row.id}_${m}`} className="td-month-input">
-                                {!isParent && (
-                                  <input
-                                    type="text"
-                                    className={`month-grid-input ${(isReadOnlyForm || isMonthDisabled(mIdx)) ? 'readonly-input' : ''}`}
-                                    value={val}
-                                    onChange={(e) => handleServiceQualityPlanChange(row.id, `m${m}`, e.target.value)}
-                                    disabled={isReadOnlyForm || isMonthDisabled(mIdx)}
-                                  />
-                                )}
+                  <h3>Tổng hợp kế hoạch theo nhóm SPDV</h3>
+                  <ChevronDown size={18} style={{ transform: collapsedTable4 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
+                </div>
+                {!collapsedTable4 && (
+                  <div className="table-container" style={{ padding: '16px' }}>
+                    {spdvGroupSummaryInForm.length > 0 ? (
+                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ background: '#f8fafc' }}>
+                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Nhóm SPDV</th>
+                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {spdvGroupSummaryInForm.map((item) => (
+                            <tr key={item.group} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.group}</td>
+                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                                {item.total.toLocaleString('vi-VN')}
                               </td>
-                            );
-                          })}
-                          {/* Quarters */}
-                          {Array.from({ length: 4 }, (_, i) => i + 1).map((q) => {
-                            const val = itemValues[`q${q}`] || '';
-                            return (
-                              <td key={`sq_cell_q_${row.id}_${q}`} className="td-quarter-input">
-                                {!isParent && (
-                                  <input
-                                    type="text"
-                                    className="month-grid-input readonly-input"
-                                    value={val ? `${val}%` : '--'}
-                                    readOnly
-                                  />
-                                )}
-                              </td>
-                            );
-                          })}
-                          {/* Year */}
-                          <td className="td-year-input">
-                            {!isParent && (
-                              <input
-                                type="text"
-                                className="month-grid-input readonly-input"
-                                value={itemValues.nam ? `${itemValues.nam}%` : '--'}
-                                readOnly
-                              />
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                            </tr>
+                          ))}
+                          <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
+                            <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
+                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                              {formTotalValue.toLocaleString('vi-VN')}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '24px', color: '#64748b', fontSize: '14px' }}>
+                        Chưa có dữ liệu nhóm sản phẩm dịch vụ.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </section>
+
+            </div>
           )}
+
+
 
           {/* Card 4: Khối tài liệu */}
           <section className="goal-card" style={{ marginTop: '16px' }}>

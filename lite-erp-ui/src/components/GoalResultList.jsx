@@ -71,52 +71,50 @@ const generateMatrixValue = (rowId, year, periodKey) => {
 };
 
 const UNITS = [
-  'Phòng Kinh Doanh',
-  'Phòng CNKT',
-  'Phòng Kỹ Thuật',
-  'Phòng Công Nghệ',
-  'Phòng Kế Hoạch',
-  'Phòng Dự Án',
-  'Phòng Giải Pháp',
-  'Phòng Dịch Vụ',
-  'Phòng Vận Hành',
-  'Phòng Khai Thác',
-  'Phòng Truyền Thông',
-  'Phòng Tài Chính',
-  'Phòng Hành Chính',
-  'Phòng Nhân Sự',
-  'Phòng An Toàn',
-  'Phòng Đối Ngoại',
-  'Phòng Hợp Tác',
-  'Phòng Nghiên Cứu',
-  'Phòng Đào Tạo'
+  'P.CLKD',
+  'BP.BÁN HÀNG',
+  'P.DVTN&CSKH',
+  'P.QLNV',
+  'TTCN&KT',
+  'KVMB',
+  'KVHP',
+  'KVTN',
+  'KVMT',
+  'KVMN',
+  'GĐSP BẢO HÀNH',
+  'GĐSP CX BOT',
+  'GĐSP OMNIX',
+  'GĐSP DIGITAL SALE',
+  'GĐSP ĐỐI NGOẠI',
+  'GĐSP KNOWXHUB',
+  'GĐSP SỐ HÓA'
 ];
 
 // Combinations of unit, customer, product to build rows
 const MATRIX_ROWS_BASE = [
-  // Phòng Kinh Doanh
-  { id: 'R-1', unit: 'Phòng Kinh Doanh', customerId: 'C-01', spdvId: 'S-01' },
-  { id: 'R-2', unit: 'Phòng Kinh Doanh', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-3', unit: 'Phòng Kinh Doanh', customerId: 'C-05', spdvId: 'S-03' },
-  { id: 'R-4', unit: 'Phòng Kinh Doanh', customerId: 'C-10', spdvId: 'S-04' },
+  // BP.BÁN HÀNG
+  { id: 'R-1', unit: 'BP.BÁN HÀNG', customerId: 'C-01', spdvId: 'S-01' },
+  { id: 'R-2', unit: 'BP.BÁN HÀNG', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-3', unit: 'BP.BÁN HÀNG', customerId: 'C-05', spdvId: 'S-03' },
+  { id: 'R-4', unit: 'BP.BÁN HÀNG', customerId: 'C-10', spdvId: 'S-04' },
   
-  // Phòng CNKT
-  { id: 'R-5', unit: 'Phòng CNKT', customerId: 'C-01', spdvId: 'S-02' },
-  { id: 'R-6', unit: 'Phòng CNKT', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-7', unit: 'Phòng CNKT', customerId: 'C-05', spdvId: 'S-03' },
-  { id: 'R-8', unit: 'Phòng CNKT', customerId: 'C-10', spdvId: 'S-05' },
+  // TTCN&KT
+  { id: 'R-5', unit: 'TTCN&KT', customerId: 'C-01', spdvId: 'S-02' },
+  { id: 'R-6', unit: 'TTCN&KT', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-7', unit: 'TTCN&KT', customerId: 'C-05', spdvId: 'S-03' },
+  { id: 'R-8', unit: 'TTCN&KT', customerId: 'C-10', spdvId: 'S-05' },
 
-  // Phòng Kỹ Thuật
-  { id: 'R-9', unit: 'Phòng Kỹ Thuật', customerId: 'C-01', spdvId: 'S-01' },
-  { id: 'R-10', unit: 'Phòng Kỹ Thuật', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-11', unit: 'Phòng Kỹ Thuật', customerId: 'C-05', spdvId: 'S-06' },
-  { id: 'R-12', unit: 'Phòng Kỹ Thuật', customerId: 'C-10', spdvId: 'S-08' },
+  // KVHP
+  { id: 'R-9', unit: 'KVHP', customerId: 'C-01', spdvId: 'S-01' },
+  { id: 'R-10', unit: 'KVHP', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-11', unit: 'KVHP', customerId: 'C-05', spdvId: 'S-06' },
+  { id: 'R-12', unit: 'KVHP', customerId: 'C-10', spdvId: 'S-08' },
 
-  // Phòng Công Nghệ
-  { id: 'R-13', unit: 'Phòng Công Nghệ', customerId: 'C-01', spdvId: 'S-02' },
-  { id: 'R-14', unit: 'Phòng Công Nghệ', customerId: 'C-04', spdvId: 'S-09' },
-  { id: 'R-15', unit: 'Phòng Công Nghệ', customerId: 'C-05', spdvId: 'S-07' },
-  { id: 'R-16', unit: 'Phòng Công Nghệ', customerId: 'C-10', spdvId: 'S-04' }
+  // GĐSP CX BOT
+  { id: 'R-13', unit: 'GĐSP CX BOT', customerId: 'C-01', spdvId: 'S-02' },
+  { id: 'R-14', unit: 'GĐSP CX BOT', customerId: 'C-04', spdvId: 'S-09' },
+  { id: 'R-15', unit: 'GĐSP CX BOT', customerId: 'C-05', spdvId: 'S-07' },
+  { id: 'R-16', unit: 'GĐSP CX BOT', customerId: 'C-10', spdvId: 'S-04' }
 ];
 
 const CUSTOMER_GROUPS_LIST = [
@@ -545,18 +543,18 @@ const GoalResultList = () => {
   const [collapsedServiceQuality, setCollapsedServiceQuality] = useState(false);
 
   const serviceQualityRows = useMemo(() => [
-    { id: 0, name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 1 },
-    { id: 1, name: 'TLKN kênh Di động Vip/Svip', level: 2 },
-    { id: 2, name: 'TLKN kênh Di động thường/Hotline/CDS', level: 2 },
-    { id: 3, name: 'TLKN kênh SME', level: 2 },
-    { id: 4, name: 'TLKN kênh CĐBR và truyền hình', level: 2 },
-    { id: 5, name: 'TLKN kênh 1789N1', level: 2 },
-    { id: 6, name: 'TLKN kênh Videocall', level: 2 },
-    { id: 7, name: 'TLKN kênh 1789N2', level: 2 },
-    { id: 8, name: 'Tỷ lệ hài lòng của khách hàng', level: 1 },
-    { id: 9, name: 'Kênh FO', level: 2 },
-    { id: 10, name: 'Kênh BO', level: 2 },
-    { id: 11, name: 'Callbot Inbound', level: 2 }
+    { id: 0, name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', level: 1, implementationUnit: 'P.DVTN&CSKH' },
+    { id: 1, name: 'TLKN kênh Di động Vip/Svip', level: 2, implementationUnit: 'P.DVTN&CSKH' },
+    { id: 2, name: 'TLKN kênh Di động thường/Hotline/CDS', level: 2, implementationUnit: 'P.DVTN&CSKH' },
+    { id: 3, name: 'TLKN kênh SME', level: 2, implementationUnit: 'BP.BÁN HÀNG' },
+    { id: 4, name: 'TLKN kênh CĐBR và truyền hình', level: 2, implementationUnit: 'TTCN&KT' },
+    { id: 5, name: 'TLKN kênh 1789N1', level: 2, implementationUnit: 'TTCN&KT' },
+    { id: 6, name: 'TLKN kênh Videocall', level: 2, implementationUnit: 'GĐSP CX BOT' },
+    { id: 7, name: 'TLKN kênh 1789N2', level: 2, implementationUnit: 'TTCN&KT' },
+    { id: 8, name: 'Tỷ lệ hài lòng của khách hàng', level: 1, implementationUnit: 'P.DVTN&CSKH' },
+    { id: 9, name: 'Kênh FO', level: 2, implementationUnit: 'P.DVTN&CSKH' },
+    { id: 10, name: 'Kênh BO', level: 2, implementationUnit: 'P.QLNV' },
+    { id: 11, name: 'Callbot Inbound', level: 2, implementationUnit: 'GĐSP CX BOT' }
   ], []);
 
   const [serviceQualityValues, setServiceQualityValues] = useState(() => {
@@ -2702,6 +2700,14 @@ const GoalResultList = () => {
         </div>
       </div>
 
+      {activeTab === 'ket_qua_doanh_thu' && activePlanTab === 'Kế hoạch nội bộ' && (
+        <div style={{ margin: '24px 0 12px 0' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1e3a8a', textTransform: 'uppercase', letterSpacing: '-0.3px', borderLeft: '4px solid #3b82f6', paddingLeft: '12px' }}>
+            Kết quả thực hiện doanh thu nội bộ chi tiết
+          </h2>
+        </div>
+      )}
+
       {/* Instant Actions & Filters */}
       <div className="actions-bar">
         <div className="search-input-wrapper">
@@ -3133,13 +3139,7 @@ const GoalResultList = () => {
       {/* 4 collapsible summary tables - visible on both tabs */}
       {(activeTab === 'ket_qua_doanh_thu' || activeTab === 'san_luong_nghiem_thu') && (
         <div className="summary-sections-wrapper">
-          {activeTab === 'ket_qua_doanh_thu' && activePlanTab === 'Kế hoạch nội bộ' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', margin: '0', textTransform: 'uppercase', letterSpacing: '-0.3px' }}>
-                Biểu mẫu doanh thu nội bộ tổng hợp
-              </h2>
-            </div>
-          )}
+
 
           {/* Section: KẾT QUẢ THỰC HIỆN - SỐ LƯỢNG KHÁCH HÀNG VÀ HỢP ĐỒNG MỚI */}
           {activeTab === 'ket_qua_doanh_thu' && activePlanTab !== 'Kế hoạch nội bộ' && (
@@ -3167,6 +3167,9 @@ const GoalResultList = () => {
                   <table className="summary-table">
                     <thead>
                       <tr>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <th rowSpan={2} style={{ minWidth: '180px', textAlign: 'left', verticalAlign: 'middle' }}>Đơn vị thực hiện</th>
+                        )}
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>Chỉ tiêu</th>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                           <th key={`new_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
@@ -3195,6 +3198,9 @@ const GoalResultList = () => {
                     <tbody>
                       {/* Row 1: Số lượng khách hàng mới (kế hoạch) */}
                       <tr>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '8px', color: '#475569', fontWeight: '500', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>BP.BÁN HÀNG</td>
+                        )}
                         <td className="summary-col-label">Số lượng khách hàng mới</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newCustomerCount[`m${m}`];
@@ -3318,7 +3324,7 @@ const GoalResultList = () => {
                                 <input 
                                   type="text" 
                                   className="month-grid-input readonly-input cell-center" 
-                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
+                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
                                   value={khVal} 
                                   readOnly 
                                 />
@@ -3345,7 +3351,7 @@ const GoalResultList = () => {
                                 <input 
                                   type="text" 
                                   className="month-grid-input readonly-input cell-center" 
-                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.diffColor, fontWeight: 'bold' }} 
+                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.diffColor, fontWeight: '600' }} 
                                   value={comp.diff} 
                                   readOnly 
                                 />
@@ -3366,6 +3372,9 @@ const GoalResultList = () => {
 
                       {/* Row 2: Số lượng hợp đồng mới (kế hoạch) */}
                       <tr>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '8px', color: '#475569', fontWeight: '500', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>GĐSP ĐỐI NGOẠI</td>
+                        )}
                         <td className="summary-col-label">Số lượng hợp đồng mới</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.newContractCount[`m${m}`];
@@ -3489,7 +3498,7 @@ const GoalResultList = () => {
                                 <input 
                                   type="text" 
                                   className="month-grid-input readonly-input cell-center" 
-                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '12px', color: '#64748b', fontWeight: 'bold' }} 
+                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '4px', fontWeight: '600', color: '#475569', fontSize: '12px' }} 
                                   value={khVal} 
                                   readOnly 
                                 />
@@ -3516,7 +3525,7 @@ const GoalResultList = () => {
                                 <input 
                                   type="text" 
                                   className="month-grid-input readonly-input cell-center" 
-                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.diffColor, fontWeight: 'bold' }} 
+                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.diffColor, fontWeight: '600' }} 
                                   value={comp.diff} 
                                   readOnly 
                                 />
@@ -3525,7 +3534,7 @@ const GoalResultList = () => {
                                 <input 
                                   type="text" 
                                   className="month-grid-input readonly-input cell-center" 
-                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.pctColor, fontWeight: 'bold' }} 
+                                  style={{ width: '42px', height: '28px', margin: '0 auto', textAlign: 'center', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '4px', fontSize: '12px', color: comp.pctColor, fontWeight: '700' }} 
                                   value={comp.percent} 
                                   readOnly 
                                 />
@@ -3537,6 +3546,9 @@ const GoalResultList = () => {
                       
                       {/* Row 3: Số lượng khách hàng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '8px', color: '#475569', fontWeight: '600', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>BP.BÁN HÀNG</td>
+                        )}
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng khách hàng lũy kế</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.cumCustomerCount[`m${m}`];
@@ -3708,6 +3720,9 @@ const GoalResultList = () => {
                       
                       {/* Row 4: Số lượng hợp đồng lũy kế */}
                       <tr style={{ background: '#f8fafc' }}>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <td style={{ padding: '8px', color: '#475569', fontWeight: '600', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>GĐSP ĐỐI NGOẠI</td>
+                        )}
                         <td className="summary-col-label" style={{ fontWeight: '600', color: '#1e293b' }}>Số lượng hợp đồng lũy kế</td>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => {
                           const khVal = newCountsSummary.cumContractCount[`m${m}`];
@@ -3909,6 +3924,9 @@ const GoalResultList = () => {
                   <table className="summary-table">
                     <thead>
                       <tr>
+                        {activePlanTab === 'Kế hoạch nội bộ' && (
+                          <th rowSpan={2} style={{ minWidth: '180px', textAlign: 'left', verticalAlign: 'middle' }}>Đơn vị thực hiện</th>
+                        )}
                         <th rowSpan={2} style={{ minWidth: '220px', textAlign: 'left', verticalAlign: 'middle' }}>CHẤT LƯỢNG DỊCH VỤ</th>
                         {Array.from({ length: 12 }, (_, i) => i + 1).filter(m => selectedPeriods.includes('m' + m)).map(m => (
                           <th key={`sq_head_m_${m}`} colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>T{m}</th>
@@ -3919,7 +3937,7 @@ const GoalResultList = () => {
                         {selectedPeriods.includes('y') && <th colSpan={5} className="cell-center" style={{ borderBottom: '1px solid #cbd5e1' }}>Năm</th>}
                       </tr>
                       <tr>
-{Array.from({ length: 17 }, (_, i) => i).filter(idx => {
+                        {Array.from({ length: 17 }, (_, i) => i).filter(idx => {
                           if (idx < 12) return selectedPeriods.includes('m' + (idx + 1));
                           if (idx < 16) return selectedPeriods.includes('q' + (idx - 12 + 1));
                           return selectedPeriods.includes('y');
@@ -3953,6 +3971,11 @@ const GoalResultList = () => {
 
                         return (
                           <tr key={idx} style={{ background }}>
+                            {activePlanTab === 'Kế hoạch nội bộ' && (
+                              <td style={{ padding: '8px', color: '#475569', fontWeight: isParent ? '700' : 'normal', background: isParent ? '#f8fafc' : 'transparent', borderBottom: '1px solid #e2e8f0' }}>
+                                {row.implementationUnit || '-'}
+                              </td>
+                            )}
                             <td className="summary-col-label" style={{ paddingLeft, fontWeight, color }}>
                               {row.name}
                             </td>
@@ -4209,10 +4232,15 @@ const GoalResultList = () => {
           {/* Table 2.1 to 2.5 are visible only for Kế hoạch nội bộ of Doanh thu */}
           {activeTab === 'ket_qua_doanh_thu' && activePlanTab === 'Kế hoạch nội bộ' && (
             <>
+              <div style={{ margin: '32px 0 12px 0', borderLeft: '4px solid #10b981', paddingLeft: '12px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#065f46', textTransform: 'uppercase', margin: '0', letterSpacing: '-0.3px' }}>
+                  Kết quả thực hiện doanh thu nội bộ tổng hợp
+                </h2>
+              </div>
               {/* Table 2.1: Theo đơn vị thực hiện */}
               <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable1(!collapsedTable1)}>
-              <h3>2.1 Biểu tổng hợp kết quả theo đơn vị thực hiện</h3>
+              <h3>Tổng hợp kết quả theo đơn vị thực hiện</h3>
               <div className="summary-card-header-right">
                 <ChevronDown size={16} style={{ transform: collapsedTable1 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
@@ -4408,7 +4436,7 @@ const GoalResultList = () => {
           {/* Table 2.2: Số lượng hoàn thành */}
           <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable1_2(!collapsedTable1_2)}>
-              <h3>2.2 Số lượng hoàn thành kế hoạch</h3>
+              <h3>Tổng hợp số lượng đơn vị hoàn thành kế hoạch</h3>
               <div className="summary-card-header-right">
                 <ChevronDown size={16} style={{ transform: collapsedTable1_2 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
@@ -4458,7 +4486,7 @@ const GoalResultList = () => {
           {/* Table 2.3: Theo nhóm khách hàng */}
           <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable2(!collapsedTable2)}>
-              <h3>2.3 Tổng hợp kết quả thực hiện theo nhóm khách hàng</h3>
+              <h3>Tổng hợp kết quả thực hiện theo nhóm khách hàng</h3>
               <div className="summary-card-header-right">
                 <ChevronDown size={16} style={{ transform: collapsedTable2 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
@@ -4654,7 +4682,7 @@ const GoalResultList = () => {
           {/* Table 2.4: Theo nhóm SPDV */}
           <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable3(!collapsedTable3)}>
-              <h3>2.4 Tổng hợp kết quả thực hiện theo nhóm SPDV</h3>
+              <h3>Tổng hợp kết quả thực hiện theo nhóm SPDV</h3>
               <div className="summary-card-header-right">
                 <ChevronDown size={16} style={{ transform: collapsedTable3 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>
@@ -4850,7 +4878,7 @@ const GoalResultList = () => {
           {/* Table 2.5: Tỷ lệ nhóm SPDV hoàn thành kế hoạch */}
           <div className="summary-card">
             <div className="summary-card-header" onClick={() => setCollapsedTable4(!collapsedTable4)}>
-              <h3>2.5 Tỉ lệ nhóm SPDV hoàn thành kế hoạch</h3>
+              <h3>Tỷ lệ nhóm SPDV hoàn thành kế hoạch</h3>
               <div className="summary-card-header-right">
                 <ChevronDown size={16} style={{ transform: collapsedTable4 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s' }} />
               </div>

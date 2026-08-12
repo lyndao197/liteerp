@@ -260,24 +260,37 @@ const GoalList = () => {
 
   const unitSummaryData = useMemo(() => {
     const UNITS = [
-      'Phòng Kinh Doanh', 'Phòng CNKT', 'Phòng Kỹ Thuật', 'Phòng Công Nghệ', 'Phòng Kế Hoạch',
-      'Phòng Dự Án', 'Phòng Giải Pháp', 'Phòng Dịch Vụ', 'Phòng Vận Hành', 'Phòng Khai Thác',
-      'Phòng Truyền Thông', 'Phòng Tài Chính', 'Phòng Hành Chính', 'Phòng Nhân Sự', 'Phòng An Toàn',
-      'Phòng Đối Ngoại', 'Phòng Hợp Tác', 'Phòng Nghiên Cứu', 'Phòng Đào Tạo'
+      'P.CLKD',
+      'BP.BÁN HÀNG',
+      'P.DVTN&CSKH',
+      'P.QLNV',
+      'TTCN&KT',
+      'KVMB',
+      'KVHP',
+      'KVTN',
+      'KVMT',
+      'KVMN',
+      'GĐSP BẢO HÀNH',
+      'GĐSP CX BOT',
+      'GĐSP OMNIX',
+      'GĐSP DIGITAL SALE',
+      'GĐSP ĐỐI NGOẠI',
+      'GĐSP KNOWXHUB',
+      'GĐSP SỐ HÓA'
     ];
 
     const basePlan = {
-      'Phòng Kinh Doanh': 1500, 'Phòng CNKT': 2100, 'Phòng Kỹ Thuật': 1800, 'Phòng Công Nghệ': 3200, 'Phòng Kế Hoạch': 950,
-      'Phòng Dự Án': 450, 'Phòng Giải Pháp': 300, 'Phòng Dịch Vụ': 750, 'Phòng Vận Hành': 1200, 'Phòng Khai Thác': 600,
-      'Phòng Truyền Thông': 400, 'Phòng Tài Chính': 500, 'Phòng Hành Chính': 650, 'Phòng Nhân Sự': 350, 'Phòng An Toàn': 250,
-      'Phòng Đối Ngoại': 1400, 'Phòng Hợp Tác': 800, 'Phòng Nghiên Cứu': 550, 'Phòng Đào Tạo': 380
+      'P.CLKD': 1500, 'BP.BÁN HÀNG': 2100, 'P.DVTN&CSKH': 1800, 'P.QLNV': 3200, 'TTCN&KT': 950,
+      'KVMB': 450, 'KVHP': 300, 'KVTN': 750, 'KVMT': 1200, 'KVMN': 600,
+      'GĐSP BẢO HÀNH': 400, 'GĐSP CX BOT': 500, 'GĐSP OMNIX': 650, 'GĐSP DIGITAL SALE': 350, 'GĐSP ĐỐI NGOẠI': 250,
+      'GĐSP KNOWXHUB': 1400, 'GĐSP SỐ HÓA': 800
     };
 
     const baseCount = {
-      'Phòng Kinh Doanh': 4, 'Phòng CNKT': 4, 'Phòng Kỹ Thuật': 4, 'Phòng Công Nghệ': 4, 'Phòng Kế Hoạch': 3,
-      'Phòng Dự Án': 2, 'Phòng Giải Pháp': 2, 'Phòng Dịch Vụ': 3, 'Phòng Vận Hành': 3, 'Phòng Khai Thác': 2,
-      'Phòng Truyền Thông': 2, 'Phòng Tài Chính': 3, 'Phòng Hành Chính': 3, 'Phòng Nhân Sự': 2, 'Phòng An Toàn': 2,
-      'Phòng Đối Ngoại': 3, 'Phòng Hợp Tác': 3, 'Phòng Nghiên Cứu': 2, 'Phòng Đào Tạo': 2
+      'P.CLKD': 4, 'BP.BÁN HÀNG': 4, 'P.DVTN&CSKH': 4, 'P.QLNV': 4, 'TTCN&KT': 3,
+      'KVMB': 2, 'KVHP': 2, 'KVTN': 3, 'KVMT': 3, 'KVMN': 2,
+      'GĐSP BẢO HÀNH': 2, 'GĐSP CX BOT': 3, 'GĐSP OMNIX': 3, 'GĐSP DIGITAL SALE': 2, 'GĐSP ĐỐI NGOẠI': 2,
+      'GĐSP KNOWXHUB': 3, 'GĐSP SỐ HÓA': 3
     };
 
     filteredGoalsByTab.forEach(goal => {
@@ -370,19 +383,19 @@ const GoalList = () => {
   };
 
   const serviceQualityData = useMemo(() => [
-    { name: 'CHẤT LƯỢNG DỊCH VỤ', unit: '%', target: '95.5%', level: 1 },
-    { name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', unit: '%', target: '94.8%', level: 2 },
-    { name: 'TLKN kênh Di động Vip/Svip', unit: '%', target: '98.5%', level: 3 },
-    { name: 'TLKN kênh Di động thường/Hotline/CDS', unit: '%', target: '95.0%', level: 3 },
-    { name: 'TLKN kênh SME', unit: '%', target: '94.2%', level: 3 },
-    { name: 'TLKN kênh CĐBR và truyền hình', unit: '%', target: '93.8%', level: 3 },
-    { name: 'TLKN kênh 1789N1', unit: '%', target: '94.5%', level: 3 },
-    { name: 'TLKN kênh Videocall', unit: '%', target: '92.0%', level: 3 },
-    { name: 'TLKN kênh 1789N2', unit: '%', target: '93.5%', level: 3 },
-    { name: 'Tỷ lệ hài lòng của khách hàng', unit: '%', target: '96.5%', level: 2 },
-    { name: 'Kênh FO', unit: '%', target: '97.0%', level: 3 },
-    { name: 'Kênh BO', unit: '%', target: '96.2%', level: 3 },
-    { name: 'Callbot Inbound', unit: '%', target: '95.5%', level: 3 }
+    { name: 'CHẤT LƯỢNG DỊCH VỤ', unit: '%', target: '95.5%', level: 1, implementationUnit: 'P.DVTN&CSKH' },
+    { name: 'Tỷ lệ cuộc gọi kết nối thành công đến tổng đài', unit: '%', target: '94.8%', level: 2, implementationUnit: 'P.DVTN&CSKH' },
+    { name: 'TLKN kênh Di động Vip/Svip', unit: '%', target: '98.5%', level: 3, implementationUnit: 'TTCN&KT' },
+    { name: 'TLKN kênh Di động thường/Hotline/CDS', unit: '%', target: '95.0%', level: 3, implementationUnit: 'TTCN&KT' },
+    { name: 'TLKN kênh SME', unit: '%', target: '94.2%', level: 3, implementationUnit: 'BP.BÁN HÀNG' },
+    { name: 'TLKN kênh CĐBR và truyền hình', unit: '%', target: '93.8%', level: 3, implementationUnit: 'TTCN&KT' },
+    { name: 'TLKN kênh 1789N1', unit: '%', target: '94.5%', level: 3, implementationUnit: 'TTCN&KT' },
+    { name: 'TLKN kênh Videocall', unit: '%', target: '92.0%', level: 3, implementationUnit: 'GĐSP CX BOT' },
+    { name: 'TLKN kênh 1789N2', unit: '%', target: '93.5%', level: 3, implementationUnit: 'TTCN&KT' },
+    { name: 'Tỷ lệ hài lòng của khách hàng', unit: '%', target: '96.5%', level: 2, implementationUnit: 'P.DVTN&CSKH' },
+    { name: 'Kênh FO', unit: '%', target: '97.0%', level: 3, implementationUnit: 'P.DVTN&CSKH' },
+    { name: 'Kênh BO', unit: '%', target: '96.2%', level: 3, implementationUnit: 'P.QLNV' },
+    { name: 'Callbot Inbound', unit: '%', target: '95.5%', level: 3, implementationUnit: 'GĐSP CX BOT' }
   ], []);
 
   return (
@@ -616,6 +629,9 @@ const GoalList = () => {
               <thead>
                 <tr>
                   <th style={{ paddingLeft: '24px' }}>Chỉ tiêu</th>
+                  {activePlanTypeTab === 'Kế hoạch nội bộ' && (
+                    <th style={{ width: '200px', textAlign: 'left' }}>Đơn vị thực hiện</th>
+                  )}
                   <th style={{ width: '150px', textAlign: 'center' }}>Đơn vị tính</th>
                   <th className="cell-right" style={{ textAlign: 'right', paddingRight: '24px', width: '250px' }}>Kế hoạch năm 2026</th>
                 </tr>
@@ -646,6 +662,11 @@ const GoalList = () => {
                       <td style={{ paddingLeft, fontWeight, color }}>
                         {item.name}
                       </td>
+                      {activePlanTypeTab === 'Kế hoạch nội bộ' && (
+                        <td style={{ textAlign: 'left', fontWeight: item.level === 1 ? '700' : 'normal', color }}>
+                          {item.implementationUnit || '-'}
+                        </td>
+                      )}
                       <td style={{ textAlign: 'center', fontWeight: item.level === 1 ? '700' : 'normal', color }}>
                         {item.unit}
                       </td>
