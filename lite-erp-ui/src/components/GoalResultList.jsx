@@ -1421,15 +1421,13 @@ const GoalResultList = () => {
   }, [selectedYear]);
 
   const allPeriodsKeys = useMemo(() => {
-    return [selectedPeriod];
-  }, [selectedPeriod]);
+    return ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12', 'q1', 'q2', 'q3', 'q4', 'y'];
+  }, []);
   
   const getPeriodLabel = (pKey) => {
     if (pKey.startsWith('m')) {
       const mNum = pKey.substring(1);
-      const shortYear = selectedYear.substring(2);
-      const monthsNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return `${monthsNames[parseInt(mNum, 10)]}-${shortYear}`;
+      return `T${mNum}`;
     } else if (pKey.startsWith('q')) {
       return pKey.toUpperCase();
     } else {
@@ -4446,36 +4444,60 @@ const GoalResultList = () => {
                 <table className="summary-table">
                   <thead>
                     <tr>
-                      <th style={{ minWidth: '180px' }}>Chỉ tiêu thống kê</th>
-                      {allPeriodsKeys.map(p => <th key={p} className="cell-right">{getPeriodLabel(p)}</th>)}
+                      <th style={{ minWidth: '180px', textAlign: 'left' }}>Chỉ tiêu thống kê</th>
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <th key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {getPeriodLabel(p)}
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Tổng số lượng đơn vị thực hiện</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right">
-                          {summaryCalculations.unitCompletion[p].total}
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {summaryCalculations.unitCompletion[p].total}
+                          </td>
+                        );
+                      })}
                     </tr>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Số lượng đơn vị hoàn thành kế hoạch &gt;= 100%</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right" style={{ color: '#16a34a' }}>
-                          {summaryCalculations.unitCompletion[p].completed}
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ color: '#16a34a', width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {summaryCalculations.unitCompletion[p].completed}
+                          </td>
+                        );
+                      })}
                     </tr>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Tỷ lệ hoàn thành (&gt;= 100% / Tổng)</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right">
-                          <span className={summaryCalculations.unitCompletion[p].rate >= 50 ? 'badge-green' : 'badge-red'}>
-                            {summaryCalculations.unitCompletion[p].rate}%
-                          </span>
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            <span className={summaryCalculations.unitCompletion[p].rate >= 50 ? 'badge-green' : 'badge-red'}>
+                              {summaryCalculations.unitCompletion[p].rate}%
+                            </span>
+                          </td>
+                        );
+                      })}
                     </tr>
                   </tbody>
                 </table>
@@ -4888,36 +4910,60 @@ const GoalResultList = () => {
                 <table className="summary-table">
                   <thead>
                     <tr>
-                      <th style={{ minWidth: '220px' }}>Chỉ số đánh giá SPDV</th>
-                      {allPeriodsKeys.map(p => <th key={p} className="cell-right">{getPeriodLabel(p)}</th>)}
+                      <th style={{ minWidth: '220px', textAlign: 'left' }}>Chỉ số đánh giá SPDV</th>
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <th key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {getPeriodLabel(p)}
+                          </th>
+                        );
+                      })}
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Tổng số nhóm SPDV</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right">
-                          {summaryCalculations.spdvCompletion[p].total}
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {summaryCalculations.spdvCompletion[p].total}
+                          </td>
+                        );
+                      })}
                     </tr>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Số nhóm SPDV hoàn thành tối thiểu 100%</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right" style={{ color: '#16a34a' }}>
-                          {summaryCalculations.spdvCompletion[p].completed}
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ color: '#16a34a', width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            {summaryCalculations.spdvCompletion[p].completed}
+                          </td>
+                        );
+                      })}
                     </tr>
                     <tr className="summary-table-row-highlight">
                       <td className="summary-col-label">Tỷ lệ nhóm SPDV hoàn thành tối thiểu 100%/Tổng số nhóm SPDV</td>
-                      {allPeriodsKeys.map(p => (
-                        <td key={p} className="cell-right">
-                          <span className={summaryCalculations.spdvCompletion[p].rate >= 50 ? 'badge-green' : 'badge-red'}>
-                            {summaryCalculations.spdvCompletion[p].rate}%
-                          </span>
-                        </td>
-                      ))}
+                      {allPeriodsKeys.map(p => {
+                        const isMonth = p.startsWith('m');
+                        const isQuarter = p.startsWith('q');
+                        const widthVal = isMonth ? '80px' : (isQuarter ? '90px' : '120px');
+                        return (
+                          <td key={p} className="cell-center" style={{ width: widthVal, minWidth: widthVal, maxWidth: widthVal }}>
+                            <span className={summaryCalculations.spdvCompletion[p].rate >= 50 ? 'badge-green' : 'badge-red'}>
+                              {summaryCalculations.spdvCompletion[p].rate}%
+                            </span>
+                          </td>
+                        );
+                      })}
                     </tr>
                   </tbody>
                 </table>

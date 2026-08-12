@@ -232,6 +232,8 @@ const GoalForm = () => {
     unitSummaryInForm,
     formTotalCount,
     formTotalValue,
+    formTotalMonths,
+    formTotalQuarters,
     customerGroupSummaryInForm,
     spdvGroupSummaryInForm
   } = useMemo(() => {
@@ -239,33 +241,62 @@ const GoalForm = () => {
     const customerSummaryMap = {};
     const spdvSummaryMap = {};
 
+    const initSummaryItem = (key, nameKey) => {
+      const item = {
+        [nameKey]: key,
+        count: 0,
+        total: 0
+      };
+      MONTH_KEYS.forEach(m => { item[m] = 0; });
+      QUARTER_KEYS.forEach(q => { item[q] = 0; });
+      return item;
+    };
+
     existingRows.forEach(row => {
       // 1. Unit Summary
       const unit = row.implementationUnit;
       if (unit) {
         if (!summaryMap[unit]) {
-          summaryMap[unit] = { unit, count: 0, total: 0 };
+          summaryMap[unit] = initSummaryItem(unit, 'unit');
         }
         summaryMap[unit].count += 1;
         summaryMap[unit].total += parseFloat(row.nam) || 0;
+        MONTH_KEYS.forEach(m => {
+          summaryMap[unit][m] += parseFloat(row[m]) || 0;
+        });
+        QUARTER_KEYS.forEach(q => {
+          summaryMap[unit][q] += parseFloat(row[q]) || 0;
+        });
       }
 
       // 2. Customer Group Summary
       const custGroup = row.customerGroup || 'Chưa phân loại';
       if (custGroup) {
         if (!customerSummaryMap[custGroup]) {
-          customerSummaryMap[custGroup] = { group: custGroup, total: 0 };
+          customerSummaryMap[custGroup] = initSummaryItem(custGroup, 'group');
         }
         customerSummaryMap[custGroup].total += parseFloat(row.nam) || 0;
+        MONTH_KEYS.forEach(m => {
+          customerSummaryMap[custGroup][m] += parseFloat(row[m]) || 0;
+        });
+        QUARTER_KEYS.forEach(q => {
+          customerSummaryMap[custGroup][q] += parseFloat(row[q]) || 0;
+        });
       }
 
       // 3. SPDV Group Summary
       const spdvGroup = row.spdvGroup || 'Chưa phân loại';
       if (spdvGroup) {
         if (!spdvSummaryMap[spdvGroup]) {
-          spdvSummaryMap[spdvGroup] = { group: spdvGroup, total: 0 };
+          spdvSummaryMap[spdvGroup] = initSummaryItem(spdvGroup, 'group');
         }
         spdvSummaryMap[spdvGroup].total += parseFloat(row.nam) || 0;
+        MONTH_KEYS.forEach(m => {
+          spdvSummaryMap[spdvGroup][m] += parseFloat(row[m]) || 0;
+        });
+        QUARTER_KEYS.forEach(q => {
+          spdvSummaryMap[spdvGroup][q] += parseFloat(row[q]) || 0;
+        });
       }
     });
 
@@ -274,22 +305,43 @@ const GoalForm = () => {
       const unit = row.implementationUnit;
       if (unit) {
         if (!summaryMap[unit]) {
-          summaryMap[unit] = { unit, count: 0, total: 0 };
+          summaryMap[unit] = initSummaryItem(unit, 'unit');
         }
         summaryMap[unit].total += parseFloat(row.nam) || 0;
+        MONTH_KEYS.forEach(m => {
+          summaryMap[unit][m] += parseFloat(row[m]) || 0;
+        });
+        QUARTER_KEYS.forEach(q => {
+          summaryMap[unit][q] += parseFloat(row[q]) || 0;
+        });
       }
 
       // 2. Customer Group Summary - treat new customer row as 'Khách hàng mới'
       const custGroup = 'Khách hàng mới';
       if (!customerSummaryMap[custGroup]) {
-        customerSummaryMap[custGroup] = { group: custGroup, total: 0 };
+        customerSummaryMap[custGroup] = initSummaryItem(custGroup, 'group');
       }
       customerSummaryMap[custGroup].total += parseFloat(row.nam) || 0;
+      MONTH_KEYS.forEach(m => {
+        customerSummaryMap[custGroup][m] += parseFloat(row[m]) || 0;
+      });
+      QUARTER_KEYS.forEach(q => {
+        customerSummaryMap[custGroup][q] += parseFloat(row[q]) || 0;
+      });
     });
 
     const summaryList = Object.values(summaryMap).sort((a, b) => b.total - a.total);
     const totalCount = summaryList.reduce((sum, item) => sum + item.count, 0);
     const totalValue = summaryList.reduce((sum, item) => sum + item.total, 0);
+
+    const totalMonths = MONTH_KEYS.reduce((acc, m) => {
+      acc[m] = summaryList.reduce((sum, item) => sum + (item[m] || 0), 0);
+      return acc;
+    }, {});
+    const totalQuarters = QUARTER_KEYS.reduce((acc, q) => {
+      acc[q] = summaryList.reduce((sum, item) => sum + (item[q] || 0), 0);
+      return acc;
+    }, {});
 
     const customerList = Object.values(customerSummaryMap).sort((a, b) => b.total - a.total);
     const spdvList = Object.values(spdvSummaryMap).sort((a, b) => b.total - a.total);
@@ -298,6 +350,8 @@ const GoalForm = () => {
       unitSummaryInForm: summaryList,
       formTotalCount: totalCount,
       formTotalValue: totalValue,
+      formTotalMonths: totalMonths,
+      formTotalQuarters: totalQuarters,
       customerGroupSummaryInForm: customerList,
       spdvGroupSummaryInForm: spdvList
     };
@@ -1464,27 +1518,56 @@ const GoalForm = () => {
                   <ChevronDown size={18} style={{ transform: collapsedTable1 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
                 </div>
                 {!collapsedTable1 && (
-                  <div className="table-container" style={{ padding: '16px' }}>
+                  <div className="table-container scrollable-table-container">
                     {unitSummaryInForm.length > 0 ? (
-                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <table className="goal-data-table unified-grid-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
-                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Đơn vị thực hiện</th>
-                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                            <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Đơn vị thực hiện</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                          </tr>
+                          <tr style={{ background: '#f8fafc' }}>
+                            {Array.from({ length: 12 }, (_, i) => (
+                              <th key={`t${i+1}`} className="sub-th-month" style={{ width: '80px', minWidth: '80px', maxWidth: '80px' }}>T{i+1}</th>
+                            ))}
+                            {Array.from({ length: 4 }, (_, i) => (
+                              <th key={`q${i+1}`} className="sub-th-quarter" style={{ width: '90px', minWidth: '90px', maxWidth: '90px' }}>Q{i+1}</th>
+                            ))}
+                            <th className="sub-th-year" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>Năm</th>
                           </tr>
                         </thead>
                         <tbody>
                           {unitSummaryInForm.map((item) => (
                             <tr key={item.unit} style={{ borderBottom: '1px solid #f1f5f9' }}>
                               <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.unit}</td>
-                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                              {MONTH_KEYS.map((mKey) => (
+                                <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#334155', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                  {(item[mKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              {QUARTER_KEYS.map((qKey) => (
+                                <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 600, color: '#475569', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                  {(item[qKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              <td style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                                 {item.total.toLocaleString('vi-VN')}
                               </td>
                             </tr>
                           ))}
                           <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
                             <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
-                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                            {MONTH_KEYS.map((mKey) => (
+                              <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                {(formTotalMonths[mKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            {QUARTER_KEYS.map((qKey) => (
+                              <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                {(formTotalQuarters[qKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            <td style={{ padding: '10px 16px', textAlign: 'center', color: '#e32b4c', fontWeight: 700, width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {formTotalValue.toLocaleString('vi-VN')}
                             </td>
                           </tr>
@@ -1512,27 +1595,56 @@ const GoalForm = () => {
                   <ChevronDown size={18} style={{ transform: collapsedTable3 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
                 </div>
                 {!collapsedTable3 && (
-                  <div className="table-container" style={{ padding: '16px' }}>
+                  <div className="table-container scrollable-table-container">
                     {customerGroupSummaryInForm.length > 0 ? (
-                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <table className="goal-data-table unified-grid-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
-                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Nhóm khách hàng</th>
-                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                            <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Nhóm khách hàng</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                          </tr>
+                          <tr style={{ background: '#f8fafc' }}>
+                            {Array.from({ length: 12 }, (_, i) => (
+                              <th key={`t${i+1}`} className="sub-th-month" style={{ width: '80px', minWidth: '80px', maxWidth: '80px' }}>T{i+1}</th>
+                            ))}
+                            {Array.from({ length: 4 }, (_, i) => (
+                              <th key={`q${i+1}`} className="sub-th-quarter" style={{ width: '90px', minWidth: '90px', maxWidth: '90px' }}>Q{i+1}</th>
+                            ))}
+                            <th className="sub-th-year" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>Năm</th>
                           </tr>
                         </thead>
                         <tbody>
                           {customerGroupSummaryInForm.map((item) => (
                             <tr key={item.group} style={{ borderBottom: '1px solid #f1f5f9' }}>
                               <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.group}</td>
-                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                              {MONTH_KEYS.map((mKey) => (
+                                <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#334155', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                  {(item[mKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              {QUARTER_KEYS.map((qKey) => (
+                                <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 600, color: '#475569', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                  {(item[qKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              <td style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                                 {item.total.toLocaleString('vi-VN')}
                               </td>
                             </tr>
                           ))}
                           <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
                             <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
-                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                            {MONTH_KEYS.map((mKey) => (
+                              <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                {(formTotalMonths[mKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            {QUARTER_KEYS.map((qKey) => (
+                              <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                {(formTotalQuarters[qKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            <td style={{ padding: '10px 16px', textAlign: 'center', color: '#e32b4c', fontWeight: 700, width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {formTotalValue.toLocaleString('vi-VN')}
                             </td>
                           </tr>
@@ -1558,27 +1670,56 @@ const GoalForm = () => {
                   <ChevronDown size={18} style={{ transform: collapsedTable4 ? 'rotate(-90deg)' : 'none', transition: 'transform 0.2s', color: '#64748b' }} />
                 </div>
                 {!collapsedTable4 && (
-                  <div className="table-container" style={{ padding: '16px' }}>
+                  <div className="table-container scrollable-table-container">
                     {spdvGroupSummaryInForm.length > 0 ? (
-                      <table className="goal-data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <table className="goal-data-table unified-grid-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
-                            <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Nhóm SPDV</th>
-                            <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', width: '250px' }}>KH Doanh thu cả năm (VNĐ)</th>
+                            <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Nhóm SPDV</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                          </tr>
+                          <tr style={{ background: '#f8fafc' }}>
+                            {Array.from({ length: 12 }, (_, i) => (
+                              <th key={`t${i+1}`} className="sub-th-month" style={{ width: '80px', minWidth: '80px', maxWidth: '80px' }}>T{i+1}</th>
+                            ))}
+                            {Array.from({ length: 4 }, (_, i) => (
+                              <th key={`q${i+1}`} className="sub-th-quarter" style={{ width: '90px', minWidth: '90px', maxWidth: '90px' }}>Q{i+1}</th>
+                            ))}
+                            <th className="sub-th-year" style={{ width: '120px', minWidth: '120px', maxWidth: '120px' }}>Năm</th>
                           </tr>
                         </thead>
                         <tbody>
                           {spdvGroupSummaryInForm.map((item) => (
                             <tr key={item.group} style={{ borderBottom: '1px solid #f1f5f9' }}>
                               <td style={{ padding: '10px 16px', fontWeight: 600, color: '#0f172a' }}>{item.group}</td>
-                              <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#2563eb' }}>
+                              {MONTH_KEYS.map((mKey) => (
+                                <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#334155', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                  {(item[mKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              {QUARTER_KEYS.map((qKey) => (
+                                <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', fontWeight: 600, color: '#475569', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                  {(item[qKey] || 0).toLocaleString('vi-VN')}
+                                </td>
+                              ))}
+                              <td style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                                 {item.total.toLocaleString('vi-VN')}
                               </td>
                             </tr>
                           ))}
                           <tr style={{ background: '#f8fafc', fontWeight: 'bold', borderTop: '2px solid #cbd5e1' }}>
                             <td style={{ padding: '10px 16px', color: '#0f172a' }}>Tổng cộng</td>
-                            <td style={{ padding: '10px 16px', textAlign: 'right', color: '#e32b4c', fontWeight: 700 }}>
+                            {MONTH_KEYS.map((mKey) => (
+                              <td key={mKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', width: '80px', minWidth: '80px', maxWidth: '80px' }}>
+                                {(formTotalMonths[mKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            {QUARTER_KEYS.map((qKey) => (
+                              <td key={qKey} style={{ padding: '10px 6px', textAlign: 'center', color: '#0f172a', background: '#f8fafc', width: '90px', minWidth: '90px', maxWidth: '90px' }}>
+                                {(formTotalQuarters[qKey] || 0).toLocaleString('vi-VN')}
+                              </td>
+                            ))}
+                            <td style={{ padding: '10px 16px', textAlign: 'center', color: '#e32b4c', fontWeight: 700, width: '120px', minWidth: '120px', maxWidth: '120px' }}>
                               {formTotalValue.toLocaleString('vi-VN')}
                             </td>
                           </tr>
