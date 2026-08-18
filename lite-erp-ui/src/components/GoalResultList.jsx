@@ -208,12 +208,13 @@ const GoalResultList = () => {
   const [dbValues, setDbValues] = useState({});
 
   // Filters State
+  const [selectedUnits, setSelectedUnits] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedCustomers, setSelectedCustomers] = useState([]);
   const [selectedSPDVGroups, setSelectedSPDVGroups] = useState([]);
   const [selectedSPDVs, setSelectedSPDVs] = useState([]);
   const [isNewCustomerFilter, setIsNewCustomerFilter] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null); // 'groups', 'customers', 'spdvGroups', 'spdvs', 'periods' or null
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'units', 'groups', 'customers', 'spdvGroups', 'spdvs', 'periods' or null
   const [selectedPeriods, setSelectedPeriods] = useState(['m6']); // Default Month 6
   const selectedPeriod = useMemo(() => {
     return selectedPeriods[0] || 'm6';
@@ -232,6 +233,101 @@ const GoalResultList = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportTemplate, setExportTemplate] = useState('detail'); // 'detail' or 'summary'
+  const [selectedExportCols, setSelectedExportCols] = useState([
+    'unit', 'customerGroup', 'customerName', 'isNewCustomer', 'spdvGroup', 'spdvName',
+    'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11', 'm12',
+    'q1', 'q2', 'q3', 'q4', 'y'
+  ]);
+  const [exportSubTables, setExportSubTables] = useState({
+    unitSummary: true,
+    unitCompletion: true,
+    groupSummary: true,
+    spdvSummary: true,
+    spdvCompletion: true
+  });
+
+  const allExportCols = useMemo(() => {
+    const hideUnitColumn = activePlanTab === 'Kế hoạch tập đoàn' || activeTab === 'san_luong_nghiem_thu';
+    return [
+      ...(!hideUnitColumn ? [{ key: 'unit', label: 'Đơn vị thực hiện' }] : []),
+      { key: 'customerGroup', label: 'Nhóm khách hàng' },
+      { key: 'customerName', label: 'Tên khách hàng' },
+      { key: 'isNewCustomer', label: 'Là khách hàng mới' },
+      { key: 'spdvGroup', label: 'Nhóm SPDV' },
+      { key: 'spdvName', label: 'Tên SPDV' },
+      ...Array.from({ length: 12 }, (_, i) => ({ key: `m${i+1}`, label: `Tháng ${i+1}` })),
+      ...Array.from({ length: 4 }, (_, i) => ({ key: `q${i+1}`, label: `Quý ${i+1}` })),
+      { key: 'y', label: 'Cả năm' }
+    ];
+  }, [activePlanTab, activeTab]);
+
+  const isAllColsSelected = useMemo(() => {
+    return allExportCols.every(col => selectedExportCols.includes(col.key));
+  }, [allExportCols, selectedExportCols]);
+
+  const selectedColsCount = useMemo(() => {
+    return allExportCols.filter(col => selectedExportCols.includes(col.key)).length;
+  }, [allExportCols, selectedExportCols]);
+
+  const handleToggleExportCol = (colKey) => {
+    setSelectedExportCols(prev =>
+      prev.includes(colKey) ? prev.filter(k => k !== colKey) : [...prev, colKey]
+    );
+  };
+
+  const handleToggleAllColumns = () => {
+    const availableKeys = allExportCols.map(col => col.key);
+    const allSelected = availableKeys.every(k => selectedExportCols.includes(k));
+    if (allSelected) {
+      setSelectedExportCols([]);
+    } else {
+      setSelectedExportCols(availableKeys);
+    }
+  };
+
+  const allSubTables = [
+    { key: 'unitSummary', label: 'Tổng hợp kết quả theo đơn vị thực hiện' },
+    { key: 'unitCompletion', label: 'Tổng hợp số lượng đơn vị hoàn thành kế hoạch' },
+    { key: 'groupSummary', label: 'Tổng hợp kết quả thực hiện theo nhóm khách hàng' },
+    { key: 'spdvSummary', label: 'Tổng hợp kết quả thực hiện theo nhóm SPDV' },
+    { key: 'spdvCompletion', label: 'Tỷ lệ nhóm SPDV hoàn thành kế hoạch' }
+  ];
+
+  const isAllSubTablesSelected = useMemo(() => {
+    return Object.values(exportSubTables).every(Boolean);
+  }, [exportSubTables]);
+
+  const selectedSubTablesCount = useMemo(() => {
+    return Object.values(exportSubTables).filter(Boolean).length;
+  }, [exportSubTables]);
+
+  const handleToggleExportSubTable = (tableKey) => {
+    setExportSubTables(prev => ({
+      ...prev,
+      [tableKey]: !prev[tableKey]
+    }));
+  };
+
+  const handleToggleAllSubTables = () => {
+    const currentlyAllChecked = Object.values(exportSubTables).every(Boolean);
+    if (currentlyAllChecked) {
+      setExportSubTables({
+        unitSummary: false,
+        unitCompletion: false,
+        groupSummary: false,
+        spdvSummary: false,
+        spdvCompletion: false
+      });
+    } else {
+      setExportSubTables({
+        unitSummary: true,
+        unitCompletion: true,
+        groupSummary: true,
+        spdvSummary: true,
+        spdvCompletion: true
+      });
+    }
+  };
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -973,6 +1069,9 @@ const GoalResultList = () => {
     }
 
     // Advanced Multi-choice filters
+    if (selectedUnits.length > 0) {
+      result = result.filter(item => selectedUnits.includes(item.implementationUnit));
+    }
     if (selectedGroups.length > 0) {
       result = result.filter(item => selectedGroups.includes(item.customerGroup));
     }
@@ -1005,7 +1104,7 @@ const GoalResultList = () => {
     }
 
     return result;
-  }, [computedRows, activePlanTab, searchTerm, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter, sortField, sortDirection]);
+  }, [computedRows, activePlanTab, searchTerm, selectedUnits, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter, sortField, sortDirection]);
 
   // Data for KPI cards row - does NOT filter by Plan Type Tab (user request: keep statistics panel intact)
   const kpiData = useMemo(() => {
@@ -1023,6 +1122,9 @@ const GoalResultList = () => {
     }
 
     // Advanced Multi-choice filters
+    if (selectedUnits.length > 0) {
+      result = result.filter(item => selectedUnits.includes(item.implementationUnit));
+    }
     if (selectedGroups.length > 0) {
       result = result.filter(item => selectedGroups.includes(item.customerGroup));
     }
@@ -1040,7 +1142,7 @@ const GoalResultList = () => {
     }
 
     return result;
-  }, [computedRows, searchTerm, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter]);
+  }, [computedRows, searchTerm, selectedUnits, selectedGroups, selectedCustomers, selectedSPDVGroups, selectedSPDVs, isNewCustomerFilter]);
 
   // Summary Metrics calculations
   const summaryStats = useMemo(() => {
@@ -1455,6 +1557,13 @@ const GoalResultList = () => {
   };
 
   // Multiple selection helper toggles
+  const handleToggleUnit = (unitName) => {
+    setSelectedUnits(prev => 
+      prev.includes(unitName) ? prev.filter(u => u !== unitName) : [...prev, unitName]
+    );
+    setCurrentPage(1);
+  };
+
   const handleToggleGroup = (groupName) => {
     setSelectedGroups(prev => 
       prev.includes(groupName) ? prev.filter(g => g !== groupName) : [...prev, groupName]
@@ -1483,6 +1592,7 @@ const GoalResultList = () => {
   };
 
   const handleClearAllFilters = () => {
+    setSelectedUnits([]);
     setSelectedGroups([]);
     setSelectedCustomers([]);
     setSelectedSPDVGroups([]);
@@ -1991,50 +2101,67 @@ const GoalResultList = () => {
         if (exportTemplate === 'detail') {
           fileName = `Detailed_Matrix_Report_${selectedYear}.csv`;
           
-          let header = 'Đơn vị thực hiện,Nhóm khách hàng,Tên khách hàng,Nhóm SPDV,Tên SPDV,Là khách hàng mới';
-          Array.from({ length: 12 }, (_, i) => i + 1).forEach(m => {
-            header += `,Tháng ${m} - KH,Tháng ${m} - Ước TH,Tháng ${m} - TH`;
+          const activeCols = allExportCols.filter(col => selectedExportCols.includes(col.key));
+          
+          let headerParts = [];
+          activeCols.forEach(col => {
+            if (col.key.startsWith('m')) {
+              const mNum = col.key.substring(1);
+              headerParts.push(`Tháng ${mNum} - KH`, `Tháng ${mNum} - Ước TH`, `Tháng ${mNum} - TH`);
+            } else if (col.key.startsWith('q')) {
+              const qNum = col.key.substring(1);
+              headerParts.push(`Quý ${qNum} - KH`, `Quý ${qNum} - TH`);
+            } else if (col.key === 'y') {
+              headerParts.push('Cả năm - KH', 'Cả năm - TH');
+            } else {
+              headerParts.push(col.label);
+            }
           });
-          Array.from({ length: 4 }, (_, i) => i + 1).forEach(q => {
-            header += `,Quý ${q} - KH,Quý ${q} - TH`;
-          });
-          header += ',Cả năm - KH,Cả năm - TH\n';
-          csvContent += header;
+          csvContent += headerParts.join(',') + '\n';
 
           filteredAndSortedData.forEach(r => {
             const valScale = activeTab === 'ket_qua_doanh_thu' ? 1.5 : 1;
-            let rowCsv = `"${r.implementationUnit}","${r.customerGroup}","${r.customerName}","${r.spdvGroup}","${r.spdvName}",${r.isNewCustomer}`;
-            
-            // Months
-            Array.from({ length: 12 }, (_, i) => i + 1).forEach(m => {
-              const periodKey = `m${m}`;
-              const valKey = `${r.id}_${selectedYear}_${periodKey}`;
-              const val = dbValues[valKey] || { kh: 0, th: 0 };
-              const estVal = estimatesDb[valKey] || '';
-              const isClosed = officialMonths.includes(periodKey);
-              const scaledKh = Math.round(val.kh * valScale);
-              const scaledTh = Math.round(val.th * valScale);
-              const scaledEst = estVal ? Math.round(estVal * valScale) : '';
-              rowCsv += `,${scaledKh},${scaledEst},${isClosed ? scaledTh : ''}`;
+            let rowParts = [];
+
+            activeCols.forEach(col => {
+              if (col.key === 'unit') {
+                rowParts.push(`"${r.implementationUnit}"`);
+              } else if (col.key === 'customerGroup') {
+                rowParts.push(`"${r.customerGroup}"`);
+              } else if (col.key === 'customerName') {
+                rowParts.push(`"${r.customerName}"`);
+              } else if (col.key === 'spdvGroup') {
+                rowParts.push(`"${r.spdvGroup}"`);
+              } else if (col.key === 'spdvName') {
+                rowParts.push(`"${r.spdvName}"`);
+              } else if (col.key === 'isNewCustomer') {
+                rowParts.push(r.isNewCustomer);
+              } else if (col.key.startsWith('m')) {
+                const periodKey = col.key;
+                const valKey = `${r.id}_${selectedYear}_${periodKey}`;
+                const val = dbValues[valKey] || { kh: 0, th: 0 };
+                const estVal = estimatesDb[valKey] || '';
+                const isClosed = officialMonths.includes(periodKey);
+                const scaledKh = Math.round(val.kh * valScale);
+                const scaledTh = Math.round(val.th * valScale);
+                const scaledEst = estVal ? Math.round(estVal * valScale) : '';
+                rowParts.push(scaledKh, scaledEst, isClosed ? scaledTh : '');
+              } else if (col.key.startsWith('q')) {
+                const periodKey = col.key;
+                const valKey = `${r.id}_${selectedYear}_${periodKey}`;
+                const val = dbValues[valKey] || { kh: 0, th: 0 };
+                const scaledKh = Math.round(val.kh * valScale);
+                const scaledTh = Math.round(val.th * valScale);
+                rowParts.push(scaledKh, scaledTh);
+              } else if (col.key === 'y') {
+                const yearVal = dbValues[`${r.id}_${selectedYear}_y`] || { kh: 0, th: 0 };
+                const scaledKh = Math.round(yearVal.kh * valScale);
+                const scaledTh = Math.round(yearVal.th * valScale);
+                rowParts.push(scaledKh, scaledTh);
+              }
             });
 
-            // Quarters
-            Array.from({ length: 4 }, (_, i) => i + 1).forEach(q => {
-              const periodKey = `q${q}`;
-              const valKey = `${r.id}_${selectedYear}_${periodKey}`;
-              const val = dbValues[valKey] || { kh: 0, th: 0 };
-              const scaledKh = Math.round(val.kh * valScale);
-              const scaledTh = Math.round(val.th * valScale);
-              rowCsv += `,${scaledKh},${scaledTh}`;
-            });
-
-            // Year
-            const yearVal = dbValues[`${r.id}_${selectedYear}_y`] || { kh: 0, th: 0 };
-            const scaledKh = Math.round(yearVal.kh * valScale);
-            const scaledTh = Math.round(yearVal.th * valScale);
-            rowCsv += `,${scaledKh},${scaledTh}\n`;
-
-            csvContent += rowCsv;
+            csvContent += rowParts.join(',') + '\n';
           });
         } else {
           fileName = `Internal_Revenue_Summary_Report_${selectedYear}.csv`;
@@ -2047,47 +2174,58 @@ const GoalResultList = () => {
           };
 
           // 2.1
-          csvContent += '2.1 Biểu tổng hợp kết quả theo đơn vị thực hiện\n';
-          csvContent += 'Đơn vị thực hiện,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
-          summaryCalculations.unitData.forEach(ud => {
-            csvContent += getSummaryRowCsv(ud.unitName, ud.periods);
-          });
+          if (exportSubTables.unitSummary) {
+            csvContent += '2.1 Tổng hợp kết quả theo đơn vị thực hiện\n';
+            csvContent += 'Đơn vị thực hiện,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
+            summaryCalculations.unitData.forEach(ud => {
+              csvContent += getSummaryRowCsv(ud.unitName, ud.periods);
+            });
+            csvContent += '\n';
+          }
           
           // 2.2
-          csvContent += '\n2.2 Số lượng hoàn thành kế hoạch\n';
-          csvContent += 'Chỉ tiêu thống kê,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
-          csvContent += '"Tổng số lượng đơn vị thực hiện",';
-          csvContent += allPeriodsKeys.map(p => summaryCalculations.unitCompletion[p].total).join(',') + '\n';
-          csvContent += '"Số lượng đơn vị hoàn thành kế hoạch >= 100%",';
-          csvContent += allPeriodsKeys.map(p => summaryCalculations.unitCompletion[p].completed).join(',') + '\n';
-          csvContent += '"Tỷ lệ hoàn thành (%)",';
-          csvContent += allPeriodsKeys.map(p => `${summaryCalculations.unitCompletion[p].rate}%`).join(',') + '\n\n';
+          if (exportSubTables.unitCompletion) {
+            csvContent += '2.2 Tổng hợp số lượng đơn vị hoàn thành kế hoạch\n';
+            csvContent += 'Chỉ tiêu thống kê,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
+            csvContent += '"Tổng số lượng đơn vị thực hiện",';
+            csvContent += allPeriodsKeys.map(p => summaryCalculations.unitCompletion[p].total).join(',') + '\n';
+            csvContent += '"Số lượng đơn vị hoàn thành kế hoạch >= 100%",';
+            csvContent += allPeriodsKeys.map(p => summaryCalculations.unitCompletion[p].completed).join(',') + '\n';
+            csvContent += '"Tỷ lệ hoàn thành (%)",';
+            csvContent += allPeriodsKeys.map(p => `${summaryCalculations.unitCompletion[p].rate}%`).join(',') + '\n\n';
+          }
 
           // 2.3
-          csvContent += '2.3 Tổng hợp kết quả thực hiện theo nhóm khách hàng\n';
-          csvContent += 'Nhóm khách hàng,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
-          summaryCalculations.customerGroupData.forEach(cgd => {
-            csvContent += getSummaryRowCsv(cgd.groupName, cgd.periods);
-          });
-          csvContent += '\n';
+          if (exportSubTables.groupSummary) {
+            csvContent += '2.3 Tổng hợp kết quả thực hiện theo nhóm khách hàng\n';
+            csvContent += 'Nhóm khách hàng,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
+            summaryCalculations.customerGroupData.forEach(cgd => {
+              csvContent += getSummaryRowCsv(cgd.groupName, cgd.periods);
+            });
+            csvContent += '\n';
+          }
 
           // 2.4
-          csvContent += '2.4 Tổng hợp kết quả thực hiện theo nhóm SPDV\n';
-          csvContent += 'Nhóm SPDV,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
-          summaryCalculations.spdvGroupData.forEach(sgd => {
-            csvContent += getSummaryRowCsv(sgd.spgName, sgd.periods);
-          });
-          csvContent += '\n';
+          if (exportSubTables.spdvSummary) {
+            csvContent += '2.4 Tổng hợp kết quả thực hiện theo nhóm SPDV\n';
+            csvContent += 'Nhóm SPDV,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
+            summaryCalculations.spdvGroupData.forEach(sgd => {
+              csvContent += getSummaryRowCsv(sgd.spgName, sgd.periods);
+            });
+            csvContent += '\n';
+          }
 
           // 2.5
-          csvContent += '2.5 Tỉ lệ nhóm SPDV hoàn thành kế hoạch\n';
-          csvContent += 'Chỉ số đánh giá SPDV,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
-          csvContent += '"Tổng số nhóm SPDV",';
-          csvContent += allPeriodsKeys.map(p => summaryCalculations.spdvCompletion[p].total).join(',') + '\n';
-          csvContent += '"Số nhóm SPDV hoàn thành tối thiểu 100%",';
-          csvContent += allPeriodsKeys.map(p => summaryCalculations.spdvCompletion[p].completed).join(',') + '\n';
-          csvContent += '"Tỷ lệ nhóm SPDV hoàn thành tối thiểu 100%/Tổng số nhóm SPDV (%)",';
-          csvContent += allPeriodsKeys.map(p => `${summaryCalculations.spdvCompletion[p].rate}%`).join(',') + '\n';
+          if (exportSubTables.spdvCompletion) {
+            csvContent += '2.5 Tỷ lệ nhóm SPDV hoàn thành kế hoạch\n';
+            csvContent += 'Chỉ số đánh giá SPDV,' + allPeriodsKeys.map(p => getPeriodLabel(p)).join(',') + '\n';
+            csvContent += '"Tổng số nhóm SPDV",';
+            csvContent += allPeriodsKeys.map(p => summaryCalculations.spdvCompletion[p].total).join(',') + '\n';
+            csvContent += '"Số nhóm SPDV hoàn thành tối thiểu 100%",';
+            csvContent += allPeriodsKeys.map(p => summaryCalculations.spdvCompletion[p].completed).join(',') + '\n';
+            csvContent += '"Tỷ lệ nhóm SPDV hoàn thành tối thiểu 100%/Tổng số nhóm SPDV (%)",';
+            csvContent += allPeriodsKeys.map(p => `${summaryCalculations.spdvCompletion[p].rate}%`).join(',') + '\n';
+          }
         }
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -2740,7 +2878,7 @@ const GoalResultList = () => {
             Nhập Excel
           </button>
 
-          <button className="btn-excel-action" onClick={handleExportData}>
+          <button className="btn-excel-action" onClick={() => setShowExportModal(true)}>
             <Download size={16} />
             Xuất Excel
           </button>
@@ -5044,8 +5182,18 @@ const GoalResultList = () => {
             <div className="modal-body advanced-filter-grid" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               
               {renderCustomMultiSelect(
+                'units', 
+                'Đơn vị thực hiện', 
+                UNITS, 
+                selectedUnits, 
+                handleToggleUnit, 
+                () => setSelectedUnits(UNITS), 
+                () => setSelectedUnits([])
+              )}
+
+              {renderCustomMultiSelect(
                 'groups', 
-                'Nhóm Khánh Hàng', 
+                'Nhóm Khách Hàng', 
                 CUSTOMER_GROUPS_LIST, 
                 selectedGroups, 
                 handleToggleGroup, 
@@ -5483,6 +5631,213 @@ const GoalResultList = () => {
 
 
 
+
+      {/* MODAL: EXPORT CONFIGURATION */}
+      {showExportModal && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ width: '480px', maxWidth: '90%', zIndex: 1001 }}>
+            <div className="modal-header">
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>Xuất Excel</h3>
+              <button className="btn-close-modal" onClick={() => setShowExportModal(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', maxHeight: '520px', overflowY: 'auto' }}>
+              
+              <div className="form-group" style={{ marginBottom: '4px' }}>
+                <label style={{ fontWeight: '600', marginBottom: '8px', fontSize: '13px', color: '#1e293b' }}>Loại biểu mẫu xuất</label>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                    <input 
+                      type="radio" 
+                      name="exportTemplate" 
+                      value="detail" 
+                      checked={exportTemplate === 'detail'} 
+                      onChange={() => setExportTemplate('detail')} 
+                      style={{ cursor: 'pointer', accentColor: '#ee0033' }}
+                    />
+                    <span>Bảng chi tiết kết quả</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                    <input 
+                      type="radio" 
+                      name="exportTemplate" 
+                      value="summary" 
+                      checked={exportTemplate === 'summary'} 
+                      onChange={() => setExportTemplate('summary')} 
+                      style={{ cursor: 'pointer', accentColor: '#ee0033' }}
+                    />
+                    <span>Báo cáo tổng hợp</span>
+                  </label>
+                </div>
+              </div>
+
+              {exportTemplate === 'detail' && (
+                <>
+                  <div style={{ 
+                    background: '#eff6ff', 
+                    border: '1px solid #bfdbfe', 
+                    borderRadius: '8px', 
+                    padding: '12px 16px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px',
+                    boxSizing: 'border-box'
+                  }}>
+                    <input 
+                      type="checkbox" 
+                      checked={isAllColsSelected}
+                      onChange={handleToggleAllColumns}
+                      style={{ 
+                        width: '18px', 
+                        height: '18px', 
+                        cursor: 'pointer',
+                        accentColor: '#ee0033'
+                      }} 
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: '700', fontSize: '14px', color: '#1e293b' }}>Chọn tất cả</span>
+                      <span style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>{selectedColsCount} / {allExportCols.length} trường được chọn</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingLeft: '4px' }}>
+                    {allExportCols.map(col => {
+                      const isSelected = selectedExportCols.includes(col.key);
+                      return (
+                        <label 
+                          key={col.key} 
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px', 
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            color: '#334155',
+                            padding: '2px 0'
+                          }}
+                        >
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected}
+                            onChange={() => handleToggleExportCol(col.key)}
+                            style={{ 
+                              width: '16px', 
+                              height: '16px', 
+                              cursor: 'pointer',
+                              accentColor: '#ee0033'
+                            }}
+                          />
+                          <span>{col.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
+              {exportTemplate === 'summary' && (
+                <>
+                  <div style={{ 
+                    background: '#eff6ff', 
+                    border: '1px solid #bfdbfe', 
+                    borderRadius: '8px', 
+                    padding: '12px 16px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px',
+                    boxSizing: 'border-box'
+                  }}>
+                    <input 
+                      type="checkbox" 
+                      checked={isAllSubTablesSelected}
+                      onChange={handleToggleAllSubTables}
+                      style={{ 
+                        width: '18px', 
+                        height: '18px', 
+                        cursor: 'pointer',
+                        accentColor: '#ee0033'
+                      }} 
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: '700', fontSize: '14px', color: '#1e293b' }}>Chọn tất cả</span>
+                      <span style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>{selectedSubTablesCount} / {allSubTables.length} bảng được chọn</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingLeft: '4px' }}>
+                    {allSubTables.map(table => {
+                      const isSelected = exportSubTables[table.key];
+                      return (
+                        <label 
+                          key={table.key} 
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px', 
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            color: '#334155',
+                            padding: '2px 0'
+                          }}
+                        >
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected}
+                            onChange={() => handleToggleExportSubTable(table.key)}
+                            style={{ 
+                              width: '16px', 
+                              height: '16px', 
+                              cursor: 'pointer',
+                              accentColor: '#ee0033'
+                            }}
+                          />
+                          <span>{table.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+
+            </div>
+            <div className="modal-footer" style={{ display: 'flex', justifyContent: 'center', gap: '12px', padding: '16px 24px', borderTop: '1px solid #f1f5f9' }}>
+              <button 
+                className="btn-cancel" 
+                onClick={() => setShowExportModal(false)}
+                style={{
+                  padding: '10px 24px',
+                  background: '#f1f5f9',
+                  color: '#0f172a',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Hủy
+              </button>
+              <button 
+                className="btn-apply" 
+                onClick={handleExportData}
+                style={{ 
+                  padding: '10px 24px', 
+                  background: '#ee0033', 
+                  color: '#ffffff', 
+                  border: 'none', 
+                  borderRadius: '6px', 
+                  fontSize: '14px', 
+                  fontWeight: '600', 
+                  cursor: 'pointer' 
+                }}
+              >
+                Xuất dữ liệu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Spinner layout when background exporting */}
       {isExporting && (

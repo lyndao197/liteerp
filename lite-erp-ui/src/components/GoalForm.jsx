@@ -1167,7 +1167,7 @@ const GoalForm = () => {
           {/* Card 2: Bảng chỉ tiêu doanh thu khách hàng hiện hữu */}
           <section className="goal-card">
             <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (VNĐ)</h3>
+              <h3>Bảng chỉ tiêu doanh thu khách hàng hiện hữu (triệu đồng)</h3>
               <button 
                 className="btn-excel-action" 
                 type="button"
@@ -1375,7 +1375,7 @@ const GoalForm = () => {
           {/* Card 2.5: Chỉ tiêu doanh thu khách hàng mới */}
           <section className="goal-card" style={{ marginTop: '16px' }}>
                <div className="goal-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3>Chỉ tiêu doanh thu khách hàng mới (VNĐ)</h3>
+                <h3>Chỉ tiêu doanh thu khách hàng mới (triệu đồng)</h3>
                 <button 
                   className="btn-excel-action" 
                   type="button"
@@ -1524,7 +1524,7 @@ const GoalForm = () => {
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
                             <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Đơn vị thực hiện</th>
-                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (triệu đồng)</th>
                           </tr>
                           <tr style={{ background: '#f8fafc' }}>
                             {Array.from({ length: 12 }, (_, i) => (
@@ -1601,7 +1601,7 @@ const GoalForm = () => {
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
                             <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Nhóm khách hàng</th>
-                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (triệu đồng)</th>
                           </tr>
                           <tr style={{ background: '#f8fafc' }}>
                             {Array.from({ length: 12 }, (_, i) => (
@@ -1676,7 +1676,7 @@ const GoalForm = () => {
                         <thead>
                           <tr style={{ background: '#f8fafc' }}>
                             <th rowSpan={2} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1', verticalAlign: 'middle', minWidth: '150px' }}>Nhóm SPDV</th>
-                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (VNĐ)</th>
+                            <th colSpan={17} style={{ textAlign: 'center', fontWeight: '600', color: '#475569', borderBottom: '1px solid #cbd5e1' }}>Kế hoạch doanh thu năm (triệu đồng)</th>
                           </tr>
                           <tr style={{ background: '#f8fafc' }}>
                             {Array.from({ length: 12 }, (_, i) => (
