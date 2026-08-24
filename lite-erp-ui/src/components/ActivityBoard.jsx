@@ -22,15 +22,16 @@ import * as XLSX from 'xlsx';
 import { TASKS_UPDATED_EVENT, loadPersonalTasks, savePersonalTasks } from '../utils/taskSyncStore';
 
 // Custom Multi-Select with "Tất cả" option
-function MultiSelect({ options, selected, onChange, placeholder = '-- Chọn giá trị --' }) {
+function MultiSelect({ options = [], selected = [], onChange, placeholder = '-- Chọn giá trị --' }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const normalizedOptions = options.map(opt => 
+  const safeSelected = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+  const normalizedOptions = (options || []).map(opt => 
     typeof opt === 'object' ? opt : { value: opt, label: opt }
   );
 
   const allValues = normalizedOptions.map(o => o.value);
-  const isAllSelected = selected.length === 0 || selected.includes('ALL') || selected.length === allValues.length;
+  const isAllSelected = safeSelected.length === 0 || safeSelected.includes('ALL') || safeSelected.length === allValues.length;
 
   const handleToggleAll = (e) => {
     e.stopPropagation();
@@ -43,7 +44,7 @@ function MultiSelect({ options, selected, onChange, placeholder = '-- Chọn gi�
 
   const handleToggleItem = (val, e) => {
     e.stopPropagation();
-    let currentSelected = selected.includes('ALL') ? [...allValues] : [...selected];
+    let currentSelected = safeSelected.includes('ALL') ? [...allValues] : [...safeSelected];
     if (currentSelected.includes(val)) {
       currentSelected = currentSelected.filter(v => v !== val);
     } else {
@@ -59,15 +60,15 @@ function MultiSelect({ options, selected, onChange, placeholder = '-- Chọn gi�
 
   const displayText = useMemo(() => {
     if (isAllSelected) return 'Tất cả';
-    if (selected.length === 1) {
-      const found = normalizedOptions.find(o => o.value === selected[0]);
-      return found ? found.label : selected[0];
+    if (safeSelected.length === 1) {
+      const found = normalizedOptions.find(o => o.value === safeSelected[0]);
+      return found ? found.label : safeSelected[0];
     }
-    if (selected.length > 1) {
-      return `${selected.length} đã chọn`;
+    if (safeSelected.length > 1) {
+      return `${safeSelected.length} đã chọn`;
     }
     return placeholder;
-  }, [selected, isAllSelected, normalizedOptions, placeholder]);
+  }, [safeSelected, isAllSelected, normalizedOptions, placeholder]);
 
   return (
     <div className="ab-adv-multiselect-container" onClick={(e) => e.stopPropagation()}>
@@ -94,7 +95,7 @@ function MultiSelect({ options, selected, onChange, placeholder = '-- Chọn gi�
 
           {/* Individual Options */}
           {normalizedOptions.map(opt => {
-            const isChecked = isAllSelected || selected.includes(opt.value);
+            const isChecked = isAllSelected || safeSelected.includes(opt.value);
             return (
               <label 
                 key={opt.value}
@@ -193,11 +194,11 @@ function ActivityBoard() {
 
   // Advanced Filter Form State
   const [advFilterForm, setAdvFilterForm] = useState({
-    reporter: '',
+    reporters: ['ALL'],
     dueDate: '18/05/2026',
-    priority: 'low',
-    source: '',
-    status: '',
+    priorities: ['low'],
+    sources: ['ALL'],
+    statuses: ['ALL'],
     createdFrom: '04/2026',
     createdTo: '17/04/2026'
   });
