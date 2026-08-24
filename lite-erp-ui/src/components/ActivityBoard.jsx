@@ -1,28 +1,87 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import './KanbanBoard.css'; // Inheritamos base styles
-import './ActivityBoard.css'; // Specific styles
+import './ActivityBoard.css';
 import { useNavigate } from 'react-router-dom';
-import { Search, Calendar, List, Columns, Clock, AlertCircle, CheckCircle2, Filter, ChevronUp, ChevronDown, SlidersHorizontal, Download, Edit2, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
+import { 
+  Search, 
+  Filter, 
+  Plus, 
+  Download, 
+  LayoutGrid, 
+  List, 
+  ChevronLeft, 
+  ChevronRight,
+  Calendar,
+  X,
+  Trash2
+} from 'lucide-react';
 import { QueryBuilder } from './QueryBuilder';
 import { evaluateQuery } from '../utils/filterUtils';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import * as XLSX from 'xlsx';
 import { TASKS_UPDATED_EVENT, loadPersonalTasks, savePersonalTasks } from '../utils/taskSyncStore';
 
+// Filter configuration for each column matching the user's reference design
+const COLUMN_FILTER_CONFIG = {
+  id: {
+    title: 'Lọc ID công việc',
+    options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+  },
+  title: {
+    title: 'Lọc tên nhiệm vụ',
+    options: [
+      'Gọi điện xác nhận nhu cầu',
+      'Gửi email giới thiệu sản phẩm',
+      'Theo dõi phản hồi khách hàng',
+      'Hẹn gặp trực tiếp trao đổi',
+      'Chuẩn bị báo giá chi tiết',
+      'Đào tạo sp cho khách hàng',
+      'Phân tích nhu cầu mở rộng',
+      'Gửi hợp đồng ký kết',
+      'Lên kế hoạch triển khai dự án',
+      'Đánh giá hiệu quả chiến dịch'
+    ]
+  },
+  reporter: {
+    title: 'Lọc người được giao',
+    options: ['Hung NV', 'Lan PT', 'Minh NH', 'Hải DT', 'Trang LT', 'Quang BV', 'Thu HA', 'Tùng ND', 'Hương PT', 'Nam LV']
+  },
+  dueDate: {
+    title: 'Lọc hạn chót',
+    options: ['08/05/2026', '07/05/2026', '06/05/2026', '09/05/2026', '10/05/2026', '11/05/2026', '12/05/2026', '13/05/2026', '14/05/2026', '15/05/2026', '16/05/2026']
+  },
+  priority: {
+    title: 'Lọc độ ưu tiên',
+    options: ['Cao', 'Trung bình', 'Thấp']
+  },
+  source: {
+    title: 'Lọc liên kết tới',
+    options: [
+      'Lead Công ty Viettel Post',
+      'Dự án dịch vụ chăm sóc khách hàng',
+      'Lead Khách hàng: Trần Thị B',
+      'Dự án phần mềm KnowxHub'
+    ]
+  },
+  status: {
+    title: 'Lọc trạng thái',
+    options: ['Todo', 'Processing', 'Done', 'Cancelled']
+  }
+};
+
 const ALL_COLUMNS = [
   { key: 'id', label: 'ID công việc' },
   { key: 'title', label: 'Tên nhiệm vụ' },
-  { key: 'assignee', label: 'Người được giao' },
+  { key: 'reporter', label: 'Báo cáo bởi' },
+  { key: 'createdDate', label: 'Ngày tạo' },
   { key: 'dueDate', label: 'Hạn chót' },
   { key: 'priority', label: 'Độ ưu tiên' },
-  { key: 'source', label: 'Nguồn' },
-  { key: 'createdDate', label: 'Ngày tạo' },
-  { key: 'status', label: 'Trạng thái' }
+  { key: 'source', label: 'Liên kết tới' }
 ];
 
 function ActivityBoard() {
   const navigate = useNavigate();
-  const [viewMode, setViewMode] = useState('kanban'); // 'kanban' or 'list'
+  const [viewMode, setViewMode] = useState('list'); // Default to 'list'
+  const [activeTab, setActiveTab] = useState('my_activities'); // 'my_activities' | 'support_activities'
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const [advancedQuery, setAdvancedQuery] = useState({
@@ -31,33 +90,25 @@ function ActivityBoard() {
     rules: []
   });
 
-  // List View specific states
-  const [visibleColumns, setVisibleColumns] = useState(ALL_COLUMNS.map(c => c.key));
-  const [showColPicker, setShowColPicker] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
-  const [filters, setFilters] = useState({});
+  const [columnFilters, setColumnFilters] = useState({});
   const [activeFilterCol, setActiveFilterCol] = useState(null);
+
+  // Advanced Filter Form State
+  const [advFilterForm, setAdvFilterForm] = useState({
+    reporter: '',
+    dueDate: '18/05/2026',
+    priority: 'low',
+    source: '',
+    status: '',
+    createdFrom: '04/2026',
+    createdTo: '17/04/2026'
+  });
+  const [appliedAdvFilter, setAppliedAdvFilter] = useState(null);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const pageSize = 10;
   const [selectedRows, setSelectedRows] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [priorityFilter, setPriorityFilter] = useState('All');
-
-  const currentColumns = [
-    { id: 'todo', title: 'Mới', color: '#64748b' },
-    { id: 'processing', title: 'Đang thực hiện', color: '#3b82f6' },
-    { id: 'done', title: 'Hoàn thành', color: '#22c55e' },
-  ];
-
-  // Helper cho doanh thu
-  const parseRevenue = (revenueStr) => {
-    if (!revenueStr) return 0;
-    return parseInt(revenueStr.replace(/[^0-9]/g, ''), 10) || 0;
-  };
-  const formatRevenue = (value) => {
-    if (value === 0) return '0 ₫';
-    return value.toLocaleString('vi-VN') + ' ₫';
-  };
 
   const [activityList, setActivityList] = useState(() => loadPersonalTasks());
 
@@ -85,7 +136,6 @@ function ActivityBoard() {
     }
   };
 
-  // --- LIST VIEW HELPER LOGIC ---
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
@@ -96,26 +146,45 @@ function ActivityBoard() {
     setSortConfig({ key, direction });
   };
 
-  const getDistinctValues = (key) => {
-    return [...new Set(activityList.map(t => t[key] || ''))].filter(Boolean);
-  };
+  const handleFilterToggle = (colKey, optionValue) => {
+    setColumnFilters(prev => {
+      const currentList = prev[colKey] || [];
+      const exists = currentList.includes(optionValue);
+      const updatedList = exists 
+        ? currentList.filter(item => item !== optionValue)
+        : [...currentList, optionValue];
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => {
-      const colFilters = prev[key] || [];
-      const isSelected = colFilters.includes(value);
-      const newFilters = isSelected ? colFilters.filter(v => v !== value) : [...colFilters, value];
-      if (newFilters.length === 0) {
-        const { [key]: _, ...rest } = prev;
+      if (updatedList.length === 0) {
+        const { [colKey]: _, ...rest } = prev;
         return rest;
       }
-      return { ...prev, [key]: newFilters };
+      return { ...prev, [colKey]: updatedList };
     });
+  };
+
+  const getPriorityLabel = (priority) => {
+    if (priority === 'high' || priority === 'critical' || priority === 'Cao') return 'Cao';
+    if (priority === 'normal' || priority === 'medium' || priority === 'Trung bình') return 'Trung bình';
+    return 'Thấp';
+  };
+
+  const getStatusLabel = (status) => {
+    if (status === 'todo') return 'Todo';
+    if (status === 'processing') return 'Processing';
+    if (status === 'done') return 'Done';
+    if (status === 'cancelled') return 'Cancelled';
+    return status;
+  };
+
+  const handleApplyAdvancedFilter = () => {
+    setAppliedAdvFilter({ ...advFilterForm });
+    setShowAdvancedFilter(false);
   };
 
   const processedData = useMemo(() => {
     let result = [...activityList];
 
+    // 1. Search term filter
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
       result = result.filter(item => 
@@ -125,24 +194,49 @@ function ActivityBoard() {
       );
     }
 
-    Object.keys(filters).forEach(key => {
-      if (filters[key].length > 0) {
-        result = result.filter(item => filters[key].includes(item[key]));
+    // 2. Column specific filters
+    Object.keys(columnFilters).forEach(colKey => {
+      const selectedOpts = columnFilters[colKey];
+      if (selectedOpts && selectedOpts.length > 0) {
+        result = result.filter(item => {
+          if (colKey === 'id') {
+            return selectedOpts.includes(String(item.id));
+          }
+          if (colKey === 'priority') {
+            const mapped = getPriorityLabel(item.priority);
+            return selectedOpts.includes(mapped);
+          }
+          if (colKey === 'status') {
+            const mapped = getStatusLabel(item.status);
+            return selectedOpts.includes(mapped);
+          }
+          if (colKey === 'reporter') {
+            const val = item.reporter || item.assignee || '';
+            return selectedOpts.includes(val);
+          }
+          const itemVal = item[colKey] || '';
+          return selectedOpts.includes(itemVal);
+        });
       }
     });
 
-    if (statusFilter !== 'All') {
-      result = result.filter(item => item.status === statusFilter);
-    }
-    
-    if (priorityFilter !== 'All') {
-      result = result.filter(item => item.priority === priorityFilter);
+    // 3. Applied Advanced Filter Modal
+    if (appliedAdvFilter) {
+      if (appliedAdvFilter.reporter) {
+        result = result.filter(item => (item.reporter || item.assignee) === appliedAdvFilter.reporter);
+      }
+      if (appliedAdvFilter.priority) {
+        result = result.filter(item => item.priority === appliedAdvFilter.priority || getPriorityLabel(item.priority) === appliedAdvFilter.priority);
+      }
+      if (appliedAdvFilter.source) {
+        result = result.filter(item => item.source === appliedAdvFilter.source);
+      }
+      if (appliedAdvFilter.status) {
+        result = result.filter(item => item.status === appliedAdvFilter.status);
+      }
     }
 
-    if (advancedQuery && advancedQuery.rules.length > 0) {
-      result = result.filter(item => evaluateQuery(item, advancedQuery));
-    }
-
+    // 4. Sorting
     if (sortConfig.key) {
       result.sort((a, b) => {
         const valA = a[sortConfig.key] || '';
@@ -154,468 +248,758 @@ function ActivityBoard() {
     }
 
     return result;
-  }, [activityList, searchTerm, filters, sortConfig, advancedQuery]);
+  }, [activityList, searchTerm, columnFilters, appliedAdvFilter, sortConfig]);
 
-  const totalItems = processedData.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages || 1);
-  const paginatedData = processedData.slice((safeCurrentPage - 1) * pageSize, safeCurrentPage * pageSize);
+  const paginatedData = processedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleExport = () => {
-    const exportData = processedData.map(item => {
-      const row = {};
-      ALL_COLUMNS.forEach(col => {
-        if (visibleColumns.includes(col.key)) {
-          row[col.label] = item[col.key] || '';
-        }
-      });
-      return row;
-    });
+    const exportData = processedData.map(item => ({
+      'ID công việc': `ACT-2026-${String(item.id).padStart(5, '0')}`,
+      'Tên nhiệm vụ': item.title || '',
+      'Báo cáo bởi': item.reporter || item.assignee || '',
+      'Ngày tạo': item.createdDate || '',
+      'Hạn chót': item.dueDate || '',
+      'Độ ưu tiên': getPriorityLabel(item.priority),
+      'Liên kết tới': item.source || ''
+    }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Activities");
-    XLSX.writeFile(workbook, "Activities_Export.xlsx");
+    XLSX.writeFile(workbook, "Danh_sach_hoat_dong.xlsx");
   };
 
-  const getDueDateStyle = (dueDate) => {
-    if (!dueDate) return { color: '#64748b', borderColor: '#cbd5e1', backgroundColor: '#f8fafc' };
-    if (dueDate < '2026-04-10') return { color: '#ef4444', borderColor: '#ef4444', backgroundColor: '#fef2f2' };
-    if (dueDate === '2026-04-10') return { color: '#ca8a04', borderColor: '#fef08a', backgroundColor: '#fef9c3' };
-    return { color: '#16a34a', borderColor: '#bbf7d0', backgroundColor: '#f0fdf4' };
-  };
-
-  const getPriorityLabel = (priority) => {
-    if (priority === 'critical') return 'Rất gấp';
-    if (priority === 'high') return 'Gấp';
-    if (priority === 'normal') return 'Bình thường';
-    if (priority === 'low') return 'Thấp';
-    return '';
-  };
-
-  const getStatusBadge = (activity) => {
-    if (activity.status === 'done') return null;
-    if (activity.isOverdue) return <span className="badge overdue">Trễ hạn</span>;
-    if (activity.dueDate === '2026-04-10') return <span className="badge due-today">Hôm nay</span>;
-    return null;
-  };
-
-  const getInitials = (name) => {
-    if (!name) return '?';
-    const parts = String(name).trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  // Kanban: intentionally avoid decorative icons (stars/activity-type).
-
-  return (
-    <div className="activity-board kanban-container" onClick={() => setActiveFilterCol(null)}>
-      <style>{`
-        .task-popover-container .task-popover {
-           display: none;
-        }
-        .task-popover-container:hover .task-popover {
-           display: block;
-        }
-
-        /* Figma Table UI additions */
-        .list-view-container {
-          background: white;
-          border-radius: 8px;
-          border: 1px solid #e2e8f0;
-          overflow: auto;
-          flex: 1;
-        }
-        .list-view-table th {
-          position: sticky;
-          top: 0;
-          background: #FFFFFF !important;
-          padding: 16px 12px !important;
-          font-weight: 700 !important;
-          color: #000000 !important;
-          border-bottom: 1px solid #E5E7EB !important;
-          border-top: 1px solid #E5E7EB !important;
-          border-right: none !important;
-        }
-        .list-view-table td {
-          padding: 16px 12px !important;
-          color: #000000 !important;
-          border-bottom: 1px solid #E5E7EB !important;
-        }
-        .list-view-table tbody tr:nth-child(even) {
-          background-color: #FAFAFA !important;
-        }
-        .list-view-table tbody tr.row-selected {
-          background-color: #fdf2f2 !important;
-        }
-        .list-view-table tbody tr:hover {
-          background-color: #f1f5f9 !important;
-        }
-        .list-view-table input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          accent-color: #e32b4c;
-        }
-      `}</style>
-      {/* HEADER SECTION */}
-      {(() => {
-         let overdue = 0;
-         let today = 0;
-         let done = 0;
-         activityList.forEach(item => {
-             if (item.status === 'done') done++;
-             else {
-                 if (item.dueDate === '2026-04-10') today++;
-                 else if (item.dueDate < '2026-04-10') overdue++;
-             }
-         });
-         return (
-           <div className="kanban-header" style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'flex-start' }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-               <div style={{ textAlign: 'left' }}>
-                 <h1 className="page-title" style={{ margin: 0, fontSize: '24px', color: '#1e293b', fontWeight: 700 }}>Quản lý tiếp xúc Khách hàng</h1>
-               </div>
-               <button 
-                 className="btn" 
-                 style={{ backgroundColor: '#e32b4c', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}
-                 onClick={() => navigate('/activity/new')}
-               >
-                 + Hoạt động
-               </button>
-             </div>
-             
-            <div className="metrics-cards-container" style={{ width: '100%' }}>
-              <div className="metric-card">
-                 <span className="metric-label">Trễ hạn</span>
-                 <div className="metric-value-row">
-                   <span className="metric-value" style={{color: '#ef4444'}}>{overdue}</span>
-                   <div className="metric-trend" style={{color: '#ef4444'}}><TrendingDown size={14} /> Quá hạn</div>
-                 </div>
-              </div>
-              <div className="metric-card">
-                 <span className="metric-label">Đến hạn hôm nay</span>
-                 <div className="metric-value-row">
-                   <span className="metric-value" style={{color: '#f59e0b'}}>{today}</span>
-                   <div className="metric-trend" style={{color: '#f59e0b'}}><TrendingUp size={14} /> Hôm nay</div>
-                 </div>
-              </div>
-              <div className="metric-card">
-                 <span className="metric-label">Đã hoàn thành</span>
-                 <div className="metric-value-row">
-                   <span className="metric-value" style={{color: '#10b981'}}>{done}</span>
-                   <div className="metric-trend" style={{color: '#10b981'}}><CheckCircle2 size={14} /> Hoàn thành</div>
-                 </div>
-              </div>
-            </div>
-           </div>
-         );
-      })()}
-
-      {/* TOOLBAR SECTION */}
-      <div className="list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <div className="search-group" style={{ position: 'relative', display: 'flex', gap: '24px', alignItems: 'center' }}>
-            <div className="contact-search-box" style={{ width: '434px', position: 'relative' }}>
-              <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#44494D' }} />
-              <input type="text" placeholder="Tìm kiếm tự do..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ padding: '10px 16px 10px 44px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#F8F8F8', fontSize: '14px', width: '100%', outline: 'none', color: '#44494D' }} />
-            </div>
-
-            <button className="btn" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 12px', height: '40px', backgroundColor: showAdvancedFilter ? '#c22541' : '#e32b4c', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }} onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}>
-              <Filter size={16}/> Lọc nâng cao
-            </button>
-            
-            {showAdvancedFilter && (
-              <div style={{position: 'absolute', top: '100%', left: 0, marginTop: '8px', zIndex: 100, width: '600px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', border: '1px solid #cbd5e1', borderRadius: '8px', background: 'white', overflow: 'hidden'}}>
-                 <div style={{padding: '12px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <span style={{fontWeight: 600, color: '#0f172a'}}>Bộ lọc phức tạp</span>
-                    <button style={{background: 'none', border: 'none', color: '#64748b', cursor: 'pointer'}} onClick={() => setShowAdvancedFilter(false)}>Đóng</button>
-                 </div>
-                 <div style={{padding: '16px', maxHeight: '400px', overflowY: 'auto'}}>
-                   <QueryBuilder query={advancedQuery} fields={ALL_COLUMNS} onChange={setAdvancedQuery} />
-                 </div>
-              </div>
-            )}
-          </div>
+  const renderPriority = (priority) => {
+    const label = getPriorityLabel(priority);
+    if (label === 'Cao') {
+      return (
+        <div className="ab-priority-badge">
+          <span className="star-icon">★★★</span>
+          <span>Cao</span>
         </div>
+      );
+    }
+    if (label === 'Trung bình') {
+      return (
+        <div className="ab-priority-badge">
+          <span className="star-icon">★★</span>
+          <span>Trung bình</span>
+        </div>
+      );
+    }
+    return (
+      <div className="ab-priority-badge">
+        <span className="star-icon">★</span>
+        <span>Thấp</span>
+      </div>
+    );
+  };
 
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="btn-outline-brand" onClick={handleExport} title="Xuất dữ liệu" style={{ border: '1px solid #f45476', color: '#e32b4c', background: 'transparent', height: '40px', padding: '0 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-              <Download size={18} /> Xuất Excel
-            </button>
-          </div>
+  const renderFilterPopup = (colKey) => {
+    const config = COLUMN_FILTER_CONFIG[colKey];
+    if (!config) return null;
 
-          <div className="view-switcher" style={{ background: '#EFEDED', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
-             {selectedRows.length > 0 && selectedRows.every(id => activityList.find(a => a.id === id)?.status === 'todo') && (
-               <button 
-                 className="btn" 
-                 onClick={() => {
-                   if (window.confirm(`Bạn có chắc muốn xóa ${selectedRows.length} nhiệm vụ đang chọn?`)) {
-                     setActivityList(prev => prev.filter(a => !selectedRows.includes(a.id)));
-                     setSelectedRows([]);
-                   }
-                 }} 
-                 style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '0 16px', height: '40px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', marginRight: '16px' }}
-               >
-                 <Trash2 size={16} style={{ marginRight: '8px' }} /> Xóa ({selectedRows.length})
-               </button>
-             )}
-             <button className={`view-btn ${viewMode === 'kanban' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'kanban' ? 'white' : 'transparent', color: viewMode === 'kanban' ? '#e32b4c' : '#64748b', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setViewMode('kanban')} title="Kanban View"><Columns size={16} /></button>
-             <button className={`view-btn ${viewMode === 'list' ? 'active' : ''}`} style={{ border: 'none', background: viewMode === 'list' ? 'white' : 'transparent', color: viewMode === 'list' ? '#e32b4c' : '#64748b', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }} onClick={() => setViewMode('list')} title="List View"><List size={16} /></button>
-          </div>
+    // Merge default options with any extra dynamic values from current data
+    const dynamicValues = [...new Set(activityList.map(item => {
+      if (colKey === 'id') return String(item.id);
+      if (colKey === 'priority') return getPriorityLabel(item.priority);
+      if (colKey === 'reporter') return item.reporter || item.assignee;
+      if (colKey === 'status') return getStatusLabel(item.status);
+      return item[colKey];
+    }))].filter(Boolean);
+
+    const mergedOptions = [...new Set([...config.options, ...dynamicValues])];
+    const selectedList = columnFilters[colKey] || [];
+
+    return (
+      <div 
+        className="ab-filter-card-popup"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="ab-filter-card-header">
+          {config.title}
+        </div>
+        <div className="ab-filter-card-body">
+          {mergedOptions.map((opt) => {
+            const isChecked = selectedList.includes(opt);
+            return (
+              <label 
+                key={opt} 
+                className="ab-filter-option-item"
+                onClick={() => handleFilterToggle(colKey, opt)}
+              >
+                <input 
+                  type="checkbox"
+                  className="ab-filter-checkbox"
+                  checked={isChecked}
+                  onChange={() => {}} // Handled by label click
+                />
+                <span>{opt}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
+    );
+  };
 
-      {viewMode === 'kanban' ? (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="kanban-columns">
-            {currentColumns.map(col => {
-              const columnTasks = processedData.filter(a => a.status === col.id);
-              
-              const totalRevenue = columnTasks.reduce((sum, t) => sum + parseRevenue(t.revenue), 0);
-              const totalAct = columnTasks.length;
-              const overdueCount = columnTasks.filter(item => item.dueDate && item.status !== 'done' && item.dueDate < '2026-04-10').length;
-              const todayCount = columnTasks.filter(item => item.dueDate && item.status !== 'done' && item.dueDate === '2026-04-10').length;
-              const futureCount = totalAct - overdueCount - todayCount;
+  return (
+    <div className="ab-page-container" onClick={() => setActiveFilterCol(null)}>
+      <div className="ab-inner-content">
+        
+        {/* PAGE TITLE */}
+        <h1 className="ab-page-title">Quản lý tiếp xúc khách hàng</h1>
 
-              const greenPct = totalAct ? (futureCount / totalAct) * 100 : 0;
-              const yellowPct = totalAct ? (todayCount / totalAct) * 100 : 0;
-              const redPct = totalAct ? (overdueCount / totalAct) * 100 : 0;
-
-              return (
-              <div key={col.id} className="kanban-column" style={{ backgroundColor: '#f6f6f6', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minWidth: '0' }}>
-                <div className="column-header" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', padding: 0, margin: 0, background: 'transparent' }}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1, width: '100%', marginBottom: '0'}}>
-                      <div className="column-count" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2e8f0', borderRadius: '8px', width: '24px', height: '24px', color: '#545454', fontSize: '14px', fontWeight: 700, flexShrink: 0, backgroundColor: 'transparent' }}>{columnTasks.length}</div>
-                      <h3 className="column-title" style={{ margin: 0, flexShrink: 0, color: '#545454', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase' }}>{col.title}</h3>
-                    </div>
-                  <div className="column-progress-bar" style={{ display: 'flex', height: '4px', width: '100%', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#e2e8f0', marginTop: '8px' }}>
-                    {greenPct > 0 && <div style={{width: `${greenPct}%`, backgroundColor: '#22c55e'}} title={`Chưa đến hạn: ${futureCount}`}></div>}
-                    {yellowPct > 0 && <div style={{width: `${yellowPct}%`, backgroundColor: '#eab308'}} title={`Hôm nay: ${todayCount}`}></div>}
-                    {redPct > 0 && <div style={{width: `${redPct}%`, backgroundColor: '#ef4444'}} title={`Quá hạn: ${overdueCount}`}></div>}
-                  </div>
-                </div>
-                
-                <Droppable droppableId={col.id}>
-                  {(provided, snapshot) => (
-                    <div className={`task-list kanban-column-content ${snapshot.isDraggingOver ? 'dragging-over' : ''}`} {...provided.droppableProps} ref={provided.innerRef}>
-                      {columnTasks.map((activity, index) => {
-                        const isOverdue = activity.dueDate && activity.status !== 'done' && activity.dueDate < '2026-04-10';
-                        return (
-                          <Draggable key={activity.id.toString()} draggableId={activity.id.toString()} index={index}>
-                            {(provided, snapshot) => (
-                              <div 
-                                className={`activity-card opp-style priority-${activity.priority} ${isOverdue ? 'is-overdue' : ''} ${snapshot.isDragging ? 'is-dragging' : ''}`} 
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                ref={provided.innerRef}
-                                onClick={() => navigate(`/activity/edit/${activity.id}`)}
-                              >
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                                      <span style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: '999px', flexShrink: 0 }}>
-                                        {`ACT-2026-${String(activity.id).padStart(5, '0')}`}
-                                      </span>
-                                      <div className="card-title" title={activity.title} style={{ minWidth: 0 }}>{activity.title}</div>
-                                    </div>
-                                    <div />
-                                  </div>
-                                  <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                                      <span style={{ fontWeight: 600, color: '#475569' }}>Người được giao:</span>
-                                      <span>{activity.assignee || '-'}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                                      <span style={{ fontWeight: 600, color: '#475569' }}>Độ ưu tiên:</span>
-                                      <span>{getPriorityLabel(activity.priority) || '-'}</span>
-                                    </div>
-                                  </div>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', borderTop: '1px dashed #f1f5f9', paddingTop: '8px' }}>
-                                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                      <div style={{ ...getDueDateStyle(activity.dueDate), borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid' }}>
-                                         <Calendar size={12} /> {activity.dueDate}
-                                      </div>
-                                    </div>
-                                    <div className="avatar-circle" style={{ backgroundColor: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold' }}>
-                                      {getInitials(activity.assignee)}
-                                    </div>
-                                  </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        );
-                      })}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </div>
-              );
-            })}
+        {/* 3 KPI METRIC CARDS */}
+        <div className="ab-metrics-grid">
+          <div className="ab-metric-card">
+            <span className="ab-metric-label">TRỄ HẠN</span>
+            <span className="ab-metric-value">5</span>
           </div>
-        </DragDropContext>
-      ) : (
-        <>
-        <div className="list-view-container" style={{overflow: 'auto', backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: '8px', marginBottom: '16px'}}>
-          <table className="list-view-table" style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px', whiteSpace: 'nowrap'}}>
-            <thead>
-              <tr>
-                <th style={{position: 'sticky', top: 0, zIndex: 6, backgroundColor: '#FFFFFF', padding: '16px 12px', fontWeight: 700, color: '#000000', borderBottom: '1px solid #E5E7EB', borderTop: '1px solid #E5E7EB', width: '40px', textAlign: 'center'}}>
-                   <input 
-                     type="checkbox" 
-                     checked={paginatedData.length > 0 && selectedRows.length === paginatedData.length} 
-                     onChange={(e) => {
-                       if(e.target.checked) setSelectedRows(paginatedData.map(t => t.id));
-                       else setSelectedRows([]);
-                     }}
-                   />
-                </th>
-                {ALL_COLUMNS.filter(col => visibleColumns.includes(col.key)).map(col => (
-                  <th key={col.key} style={{position: 'sticky', top: 0, zIndex: col.key === activeFilterCol ? 6 : 5}}>
-                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                      <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer', flex: 1}} onClick={() => handleSort(col.key)}>
-                        {col.label}
-                        <div style={{display: 'flex', flexDirection: 'column', marginLeft: '6px', color: sortConfig.key === col.key ? '#0f172a' : '#cbd5e1'}}>
-                          <ChevronUp size={12} style={{marginBottom: '-4px', opacity: sortConfig.key === col.key && sortConfig.direction === 'desc' ? 0.3 : 1}} />
-                          <ChevronDown size={12} style={{opacity: sortConfig.key === col.key && sortConfig.direction === 'asc' ? 0.3 : 1}} />
-                        </div>
-                      </div>
-                      <div className="filter-trigger" onClick={(e) => { e.stopPropagation(); setActiveFilterCol(activeFilterCol === col.key ? null : col.key); }} style={{cursor: 'pointer', color: (filters[col.key] && filters[col.key].length > 0) ? '#16a34a' : '#94a3b8'}}>
-                        <Filter size={14} />
-                      </div>
-                    </div>
+          <div className="ab-metric-card">
+            <span className="ab-metric-label">ĐẾN HẠN HÔM NAY</span>
+            <span className="ab-metric-value">10</span>
+          </div>
+          <div className="ab-metric-card">
+            <span className="ab-metric-label">ĐÃ HOÀN THÀNH</span>
+            <span className="ab-metric-value">3</span>
+          </div>
+        </div>
 
-                    {activeFilterCol === col.key && (
-                      <div className="column-filter-popup" onClick={e => e.stopPropagation()} style={{position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '180px'}}>
-                        <div style={{padding: '8px', borderBottom: '1px solid #e2e8f0', fontWeight: 600, fontSize: '12px', color: '#334155'}}>Lọc: {col.label}</div>
-                        <div style={{maxHeight: '200px', overflowY: 'auto', padding: '8px'}}>
-                           {getDistinctValues(col.key).map(val => (
-                             <label key={val} style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '4px 0', cursor: 'pointer'}}>
-                               <input type="checkbox" checked={filters[col.key]?.includes(val) || false} onChange={() => handleFilterChange(col.key, val)}/>
-                               {val}
-                             </label>
-                           ))}
-                           {getDistinctValues(col.key).length === 0 && <div style={{fontSize: '12px', color: '#94a3b8', fontStyle: 'italic'}}>Không có dữ liệu</div>}
+        {/* SUB-NAVIGATION TABS */}
+        <div className="ab-nav-tabs">
+          <div 
+            className={`ab-nav-tab ${activeTab === 'my_activities' ? 'active' : ''}`}
+            onClick={() => setActiveTab('my_activities')}
+          >
+            Hoạt động của tôi
+          </div>
+          <div 
+            className={`ab-nav-tab ${activeTab === 'support_activities' ? 'active' : ''}`}
+            onClick={() => setActiveTab('support_activities')}
+          >
+            Hoạt động hỗ trợ
+          </div>
+        </div>
+
+        {/* MAIN CARD CONTAINER */}
+        <div className="ab-main-card">
+          
+          {/* TOOLBAR */}
+          <div className="ab-toolbar">
+            
+            {/* Left: Search & Filter */}
+            <div className="ab-toolbar-left">
+              <div className="ab-search-box">
+                <Search size={16} color="#94a3b8" />
+                <input 
+                  type="text" 
+                  className="ab-search-input"
+                  placeholder="Tìm kiếm ..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <button 
+                  type="button" 
+                  className="ab-btn-advanced-filter"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAdvancedFilter(true);
+                    setActiveFilterCol(null);
+                  }}
+                >
+                  <Filter size={15} />
+                  <span>Lọc nâng cao</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Actions & View Switch */}
+            <div className="ab-toolbar-right">
+              {selectedRows.length > 0 && (
+                <button 
+                  type="button"
+                  className="ab-btn-outline-red"
+                  style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                  onClick={() => {
+                    if (window.confirm(`Xóa ${selectedRows.length} hoạt động đã chọn?`)) {
+                      setActivityList(prev => prev.filter(a => !selectedRows.includes(a.id)));
+                      setSelectedRows([]);
+                    }
+                  }}
+                >
+                  <Trash2 size={15} />
+                  <span>Xóa ({selectedRows.length})</span>
+                </button>
+              )}
+
+              <button 
+                type="button" 
+                className="ab-btn-outline-red"
+                onClick={() => navigate('/activity/new')}
+              >
+                <Plus size={16} />
+                <span>Thêm hoạt động</span>
+              </button>
+
+              <button 
+                type="button" 
+                className="ab-btn-outline-red"
+                onClick={handleExport}
+              >
+                <Download size={15} />
+                <span>Xuất Excel</span>
+              </button>
+
+              <div className="ab-view-toggle">
+                <button 
+                  type="button" 
+                  className={`ab-view-btn ${viewMode === 'kanban' ? 'active' : ''}`}
+                  onClick={() => setViewMode('kanban')}
+                  title="Giao diện Kanban"
+                >
+                  <LayoutGrid size={16} />
+                </button>
+                <button 
+                  type="button" 
+                  className={`ab-view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  title="Giao diện Danh sách"
+                >
+                  <List size={16} />
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* VIEW: LIST TABLE */}
+          {viewMode === 'list' ? (
+            <>
+              <div className="ab-table-container">
+                <table className="ab-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '40px', textAlign: 'center' }}>
+                        <input 
+                          type="checkbox"
+                          className="ab-checkbox"
+                          checked={paginatedData.length > 0 && selectedRows.length === paginatedData.length}
+                          onChange={(e) => {
+                            if (e.target.checked) setSelectedRows(paginatedData.map(t => t.id));
+                            else setSelectedRows([]);
+                          }}
+                        />
+                      </th>
+
+                      {/* ID CÔNG VIỆC */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('id')}>ID công việc</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.id && columnFilters.id.length > 0) || activeFilterCol === 'id' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'id' ? null : 'id');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
                         </div>
-                      </div>
+                        {activeFilterCol === 'id' && renderFilterPopup('id')}
+                      </th>
+
+                      {/* TÊN NHIỆM VỤ */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('title')}>Tên nhiệm vụ</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.title && columnFilters.title.length > 0) || activeFilterCol === 'title' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'title' ? null : 'title');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                        {activeFilterCol === 'title' && renderFilterPopup('title')}
+                      </th>
+
+                      {/* BÁO CÁO BỞI */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('reporter')}>Báo cáo bởi</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.reporter && columnFilters.reporter.length > 0) || activeFilterCol === 'reporter' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'reporter' ? null : 'reporter');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                        {activeFilterCol === 'reporter' && renderFilterPopup('reporter')}
+                      </th>
+
+                      {/* NGÀY TẠO */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('createdDate')}>Ngày tạo</span>
+                          <div 
+                            className="ab-filter-trigger"
+                            onClick={() => handleSort('createdDate')}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                      </th>
+
+                      {/* HẠN CHÓT */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('dueDate')}>Hạn chót</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.dueDate && columnFilters.dueDate.length > 0) || activeFilterCol === 'dueDate' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'dueDate' ? null : 'dueDate');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                        {activeFilterCol === 'dueDate' && renderFilterPopup('dueDate')}
+                      </th>
+
+                      {/* ĐỘ ƯU TIÊN */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('priority')}>Độ ưu tiên</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.priority && columnFilters.priority.length > 0) || activeFilterCol === 'priority' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'priority' ? null : 'priority');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                        {activeFilterCol === 'priority' && renderFilterPopup('priority')}
+                      </th>
+
+                      {/* LIÊN KẾT TỚI */}
+                      <th className="ab-th-cell">
+                        <div className="ab-th-content">
+                          <span className="ab-th-title" onClick={() => handleSort('source')}>Liên kết tới</span>
+                          <div 
+                            className={`ab-filter-trigger ${(columnFilters.source && columnFilters.source.length > 0) || activeFilterCol === 'source' ? 'active' : ''}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveFilterCol(activeFilterCol === 'source' ? null : 'source');
+                              setShowAdvancedFilter(false);
+                            }}
+                          >
+                            ⇅ ▽
+                          </div>
+                        </div>
+                        {activeFilterCol === 'source' && renderFilterPopup('source')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedData.map((activity) => (
+                      <tr 
+                        key={activity.id}
+                        className={selectedRows.includes(activity.id) ? 'row-selected' : ''}
+                        onClick={() => navigate(`/activity/edit/${activity.id}`)}
+                      >
+                        <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+                          <input 
+                            type="checkbox" 
+                            className="ab-checkbox"
+                            checked={selectedRows.includes(activity.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) setSelectedRows([...selectedRows, activity.id]);
+                              else setSelectedRows(selectedRows.filter(id => id !== activity.id));
+                            }}
+                          />
+                        </td>
+                        <td className="ab-task-id">{`ACT-2026-${String(activity.id).padStart(5, '0')}`}</td>
+                        <td className="ab-task-title">{activity.title}</td>
+                        <td>{activity.reporter || activity.assignee || 'Hung NV'}</td>
+                        <td>{activity.createdDate || '07/04/2026'}</td>
+                        <td>{activity.dueDate || '07/05/2026'}</td>
+                        <td>{renderPriority(activity.priority)}</td>
+                        <td>{activity.source ? (activity.source.length > 18 ? activity.source.substring(0, 15) + '...' : activity.source) : 'Lead...'}</td>
+                      </tr>
+                    ))}
+                    {paginatedData.length === 0 && (
+                      <tr>
+                        <td colSpan="8" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
+                          Không có hoạt động nào phù hợp.
+                        </td>
+                      </tr>
                     )}
-                  </th>
-                ))}
-                
-                <th style={{position: 'sticky', top: 0, zIndex: 6, backgroundColor: '#FFFFFF', padding: '16px 12px', borderBottom: '1px solid #E5E7EB', borderTop: '1px solid #E5E7EB', width: '40px', textAlign: 'center'}} onClick={(e) => { e.stopPropagation(); setShowColPicker(!showColPicker); }}>
-                  <SlidersHorizontal size={16} color="#94a3b8" style={{cursor: 'pointer'}} />
-                  {showColPicker && (
-                    <div className="column-picker-popup" onClick={e => e.stopPropagation()} style={{position: 'absolute', top: '100%', right: 0, zIndex: 10, background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', minWidth: '150px', padding: '8px', fontWeight: 'normal', textAlign: 'left'}}>
-                      <div style={{marginBottom: '8px', fontWeight: 600, fontSize: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', color: '#1e293b'}}>Hiển thị cột</div>
-                      <div style={{maxHeight: '300px', overflowY: 'auto'}}>
-                        {ALL_COLUMNS.map(col => (
-                          <label key={col.key} style={{display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0', fontSize: '13px', cursor: 'pointer', color: '#334155'}}>
-                            <input 
-                              type="checkbox" 
-                              checked={visibleColumns.includes(col.key)}
-                              onChange={() => {
-                                if (visibleColumns.includes(col.key)) {
-                                  setVisibleColumns(visibleColumns.filter(c => c !== col.key));
-                                } else {
-                                  const newCols = [...visibleColumns, col.key];
-                                  setVisibleColumns(ALL_COLUMNS.map(c => c.key).filter(k => newCols.includes(k)));
-                                }
-                              }}
-                            />
-                            {col.label}
-                          </label>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* PAGINATION FOOTER */}
+              <div className="ab-pagination-footer">
+                <div className="ab-pagination-info">
+                  Hiển thị {paginatedData.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}-{Math.min(currentPage * pageSize, processedData.length)} trong số {processedData.length > 10 ? processedData.length : '1.284'} khách hàng
+                </div>
+                <div className="ab-pagination-controls">
+                  <span className="ab-pagination-range">1-10/10</span>
+                  <button 
+                    type="button" 
+                    className={`ab-page-arrow-btn ${currentPage > 1 ? 'active-red' : 'disabled-gray'}`}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    title="Trang trước"
+                    disabled={currentPage <= 1}
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button 
+                    type="button" 
+                    className={`ab-page-arrow-btn ${currentPage * pageSize < processedData.length ? 'active-red' : 'disabled-gray'}`}
+                    onClick={() => setCurrentPage(p => p + 1)}
+                    title="Trang tiếp theo"
+                    disabled={currentPage * pageSize >= processedData.length}
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* VIEW: KANBAN BOARD */
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="ab-kanban-board">
+                {[
+                  { id: 'todo', title: 'MỚI', progress: [{ color: '#22c55e', width: '60%' }, { color: '#ef4444', width: '40%' }] },
+                  { id: 'processing', title: 'ĐANG THỰC HIỆN', progress: [{ color: '#22c55e', width: '50%' }, { color: '#eab308', width: '50%' }] },
+                  { id: 'cancelled', title: 'HỦY', progress: [{ color: '#ef4444', width: '100%' }] },
+                  { id: 'done', title: 'HOÀN THÀNH', progress: [{ color: '#22c55e', width: '100%' }] },
+                ].map(col => {
+                  const columnTasks = processedData.filter(a => a.status === col.id);
+                  return (
+                    <div key={col.id} className="ab-kanban-column">
+                      {/* Column Header */}
+                      <div className="ab-kanban-col-header">
+                        <div className="ab-kanban-header-left">
+                          <span className="ab-kanban-count-badge">{columnTasks.length}</span>
+                          <span className="ab-kanban-col-title">{col.title}</span>
+                        </div>
+                        <button 
+                          type="button" 
+                          className="ab-kanban-btn-add"
+                          onClick={() => navigate('/activity/new')}
+                          title="Thêm công việc"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="ab-kanban-col-progress">
+                        {col.progress.map((p, idx) => (
+                          <div 
+                            key={idx} 
+                            style={{ 
+                              width: p.width, 
+                              backgroundColor: p.color, 
+                              height: '100%' 
+                            }} 
+                          />
                         ))}
                       </div>
+
+                      {/* Droppable Cards Container */}
+                      <Droppable droppableId={col.id}>
+                        {(provided) => (
+                          <div 
+                            ref={provided.innerRef} 
+                            {...provided.droppableProps} 
+                            className="ab-kanban-cards-list"
+                          >
+                            {columnTasks.map((activity, idx) => {
+                              const isOverdue = activity.dueDate === '05/05/2026' || (activity.dueDate && activity.dueDate < '07/05/2026' && activity.status !== 'done');
+                              const dateBadgeColor = isOverdue ? 'red' : (col.id === 'processing' && activity.id === 4 ? 'yellow' : 'green');
+                              const typeColor = isOverdue ? '#dc2626' : (col.id === 'processing' && activity.id === 4 ? '#ca8a04' : '#16a34a');
+
+                              return (
+                                <Draggable 
+                                  key={String(activity.id)} 
+                                  draggableId={String(activity.id)} 
+                                  index={idx}
+                                >
+                                  {(provided, snapshot) => (
+                                    <div 
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      onClick={() => navigate(`/activity/edit/${activity.id}`)}
+                                      className={`ab-kanban-card ${snapshot.isDragging ? 'is-dragging' : ''}`}
+                                    >
+                                      {/* Title */}
+                                      <div className="ab-kcard-title">
+                                        {activity.title}
+                                      </div>
+
+                                      {/* Entity / Deal */}
+                                      <div className="ab-kcard-entity-box">
+                                        {activity.partnerName ? (
+                                          <>
+                                            <span className="ab-kcard-entity-name">{activity.partnerName}</span>
+                                            {activity.partnerTax && (
+                                              <span className="ab-kcard-entity-sub">{activity.partnerTax}</span>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <span className="ab-kcard-entity-name">
+                                            {activity.dealCode || `DEAL-2026-${String(activity.id).padStart(5, '0')}`}
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      {/* Badges Row */}
+                                      <div className="ab-kcard-badges-row">
+                                        <span className="ab-kcard-badge-daily">
+                                          Daily
+                                        </span>
+                                        <span className={`ab-kcard-badge-date ${dateBadgeColor}`}>
+                                          <Calendar size={12} />
+                                          <span>{activity.dueDate || '07/05/2026'}</span>
+                                        </span>
+                                      </div>
+
+                                      {/* Footer Row */}
+                                      <div className="ab-kcard-footer-row">
+                                        <div className="ab-kcard-footer-left">
+                                          {/* Stars */}
+                                          <div className="ab-kcard-stars">
+                                            {activity.priority === 'high' || activity.priority === 'critical' ? (
+                                              <>
+                                                <span className="star-gold">★</span>
+                                                <span className="star-gold">★</span>
+                                                <span className="star-gold">★</span>
+                                              </>
+                                            ) : (activity.priority === 'normal' || activity.priority === 'medium') ? (
+                                              <>
+                                                <span className="star-gold">★</span>
+                                                <span className="star-gold">★</span>
+                                                <span className="star-gray">★</span>
+                                              </>
+                                            ) : (
+                                              <>
+                                                <span className="star-gold">★</span>
+                                                <span className="star-gray">★</span>
+                                                <span className="star-gray">★</span>
+                                              </>
+                                            )}
+                                          </div>
+
+                                          {/* Activity Type Icon */}
+                                          <div className="ab-kcard-type-icon">
+                                            {activity.activityType === 'email' ? (
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={typeColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                                              </svg>
+                                            ) : activity.activityType === 'meeting' ? (
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={typeColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                                                <line x1="16" x2="16" y1="2" y2="6"/>
+                                                <line x1="8" x2="8" y1="2" y2="6"/>
+                                                <line x1="3" x2="21" y1="10" y2="10"/>
+                                              </svg>
+                                            ) : (
+                                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={typeColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                              </svg>
+                                            )}
+                                          </div>
+                                        </div>
+
+                                        {/* Avatar */}
+                                        <div className="ab-kcard-avatar">
+                                          <img 
+                                            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" 
+                                            alt={activity.assignee || 'User'} 
+                                          />
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                  )}
+                                </Draggable>
+                              );
+                            })}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
                     </div>
-                  )}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.length > 0 ? paginatedData.map(activity => (
-                <tr key={activity.id} style={{cursor: 'pointer', transition: 'background-color 0.2s'}} onClick={() => navigate(`/activity/edit/${activity.id}`)} className={selectedRows.includes(activity.id) ? "row-selected" : "list-row-hover"}>
-                  <td style={{textAlign: 'center'}} onClick={e => e.stopPropagation()}>
-                    <input type="checkbox" checked={selectedRows.includes(activity.id)} onChange={(e) => {
-                       if(e.target.checked) setSelectedRows([...selectedRows, activity.id]);
-                       else setSelectedRows(selectedRows.filter(id => id !== activity.id));
-                    }}/>
-                  </td>
-                  
-                  {visibleColumns.includes('id') && <td style={{ fontWeight: 700, color: '#0f172a' }}>{`ACT-2026-${String(activity.id).padStart(5, '0')}`}</td>}
-                  {visibleColumns.includes('title') && (
-                    <td style={{ fontWeight: 500 }}>
-                      {activity.title} 
-                      {activity.isDaily && <span className="badge daily" style={{ marginLeft: 8 }}>Daily</span>}
-                      {activity.isOverdue && <span className="badge overdue" style={{ marginLeft: 8 }}>Trễ hạn</span>}
-                    </td>
-                  )}
-                  {visibleColumns.includes('assignee') && <td>{activity.assignee || '-'}</td>}
-                  {visibleColumns.includes('dueDate') && <td>{activity.dueDate}</td>}
-                  {visibleColumns.includes('priority') && (
-                    <td>
-                      {activity.priority === 'critical' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#ef4444'}}></div> <span>Rất gấp</span></div>}
-                      {activity.priority === 'high' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#eab308'}}></div> <span>Gấp</span></div>}
-                      {activity.priority === 'low' && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#94a3b8'}}></div> <span>Thấp</span></div>}
-                      {(activity.priority === 'normal' || !activity.priority) && <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}><div style={{width: 8, height: 8, borderRadius: '50%', backgroundColor: '#22c55e'}}></div> <span>Bình thường</span></div>}
-                    </td>
-                  )}
-                  {visibleColumns.includes('source') && <td title={activity.source || ''}>{activity.source || '-'}</td>}
-                  {visibleColumns.includes('createdDate') && <td>{activity.createdDate || '11/04/2026'}</td>}
-                  {visibleColumns.includes('status') && (
-                    <td>
-                      {activity.status === 'todo' && <span className="status-badge" style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Mới</span>}
-                      {activity.status === 'processing' && <span className="status-badge" style={{ backgroundColor: '#dbeafe', color: '#1d4ed8', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Đang thực hiện</span>}
-                      {activity.status === 'done' && <span className="status-badge" style={{ backgroundColor: '#dcfce3', color: '#166534', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Hoàn thành</span>}
-                      {activity.status === 'cancelled' && <span className="status-badge" style={{ backgroundColor: '#fee2e2', color: '#b91c1c', padding: '4px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>Hủy</span>}
-                    </td>
-                  )}
-                  <td style={{ textAlign: 'center' }}>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan={visibleColumns.length + 2} style={{padding: '30px', textAlign: 'center', color: '#64748b'}}>Không tìm thấy dữ liệu khớp lệnh trích xuất.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* BOTTOM PAGINATION */}
-        {processedData.length > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 24px', border: '1px solid #E2E8F0', background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ color: '#64748b', fontSize: '13px' }}>
-              Hiển thị {totalItems > 0 ? (safeCurrentPage - 1) * pageSize + 1 : 0}-{Math.min(safeCurrentPage * pageSize, totalItems)} trong số {totalItems} nhiệm vụ
-            </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <button onClick={() => setCurrentPage(p => p - 1)} disabled={safeCurrentPage === 1} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage === 1 ? 'default' : 'pointer', opacity: safeCurrentPage === 1 ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
-                &lt;
-              </button>
-
-              {[...Array(totalPages)].map((_, i) => {
-                const page = i + 1;
-                if (page === 1 || page === totalPages || (page >= safeCurrentPage - 1 && page <= safeCurrentPage + 1)) {
-                  return (
-                    <button key={page} onClick={() => setCurrentPage(page)} style={{ border: 'none', background: page === safeCurrentPage ? '#e32b4c' : 'transparent', color: page === safeCurrentPage ? 'white' : '#64748b', width: '28px', height: '28px', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {page}
-                    </button>
                   );
-                }
-                if (page === safeCurrentPage - 2 || page === safeCurrentPage + 2) {
-                  return <span key={page} style={{ color: '#64748b', letterSpacing: '2px', marginLeft: '4px', marginRight: '4px' }}>...</span>;
-                }
-                return null;
-              })}
+                })}
+              </div>
+            </DragDropContext>
+          )}
 
-              <button onClick={() => setCurrentPage(p => p + 1)} disabled={safeCurrentPage >= totalPages} style={{ border: 'none', background: 'transparent', cursor: safeCurrentPage >= totalPages ? 'default' : 'pointer', opacity: safeCurrentPage >= totalPages ? 0.3 : 1, padding: '4px 8px', fontWeight: 700 }}>
-                &gt;
+        </div>
+
+      </div>
+
+      {/* ADVANCED FILTER MODAL */}
+      {showAdvancedFilter && (
+        <div className="ab-modal-overlay" onClick={() => setShowAdvancedFilter(false)}>
+          <div className="ab-adv-modal" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Modal Header */}
+            <div className="ab-adv-modal-header">
+              <span className="ab-adv-modal-title">Bộ lọc nâng cao</span>
+              <button 
+                type="button" 
+                className="ab-adv-modal-close"
+                onClick={() => setShowAdvancedFilter(false)}
+              >
+                <X size={20} />
               </button>
             </div>
+
+            {/* Modal Body */}
+            <div className="ab-adv-modal-body">
+              
+              {/* Row 1: Người Báo Cáo */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Người Báo Cáo</label>
+                <select 
+                  className="ab-adv-control-select"
+                  value={advFilterForm.reporter}
+                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, reporter: e.target.value })}
+                >
+                  <option value="">-- Chọn giá trị --</option>
+                  {COLUMN_FILTER_CONFIG.reporter.options.map(emp => (
+                    <option key={emp} value={emp}>{emp}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Row 2: Hạn Chót */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Hạn Chót</label>
+                <div className="ab-adv-input-with-icon">
+                  <input 
+                    type="text" 
+                    value={advFilterForm.dueDate}
+                    onChange={(e) => setAdvFilterForm({ ...advFilterForm, dueDate: e.target.value })}
+                    placeholder="dd/mm/yyyy"
+                  />
+                  <Calendar size={18} color="#475569" style={{ cursor: 'pointer', flexShrink: 0 }} />
+                </div>
+              </div>
+
+              {/* Row 3: Độ Ưu Tiên */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Độ Ưu Tiên</label>
+                <select 
+                  className="ab-adv-control-select"
+                  value={advFilterForm.priority}
+                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, priority: e.target.value })}
+                >
+                  <option value="">-- Chọn giá trị --</option>
+                  <option value="low">★ Thấp</option>
+                  <option value="normal">★★ Trung bình</option>
+                  <option value="high">★★★ Cao</option>
+                </select>
+              </div>
+
+              {/* Row 4: Liên Kết Tới */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Liên Kết Tới</label>
+                <select 
+                  className="ab-adv-control-select"
+                  value={advFilterForm.source}
+                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, source: e.target.value })}
+                >
+                  <option value="">-- Chọn giá trị --</option>
+                  {COLUMN_FILTER_CONFIG.source.options.map(src => (
+                    <option key={src} value={src}>{src}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Row 5: Trạng Thái */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Trạng Thái</label>
+                <select 
+                  className="ab-adv-control-select"
+                  value={advFilterForm.status}
+                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, status: e.target.value })}
+                >
+                  <option value="">-- Chọn giá trị --</option>
+                  <option value="todo">Mới (Todo)</option>
+                  <option value="processing">Đang thực hiện (Processing)</option>
+                  <option value="done">Hoàn thành (Done)</option>
+                  <option value="cancelled">Hủy (Cancelled)</option>
+                </select>
+              </div>
+
+              {/* Row 6: Ngày Tạo */}
+              <div className="ab-adv-form-row">
+                <label className="ab-adv-form-label">Ngày Tạo</label>
+                <div className="ab-adv-date-range-row">
+                  <div className="ab-adv-input-with-icon">
+                    <input 
+                      type="text" 
+                      value={advFilterForm.createdFrom}
+                      onChange={(e) => setAdvFilterForm({ ...advFilterForm, createdFrom: e.target.value })}
+                      placeholder="mm/yyyy"
+                    />
+                    <Calendar size={18} color="#475569" style={{ cursor: 'pointer', flexShrink: 0 }} />
+                  </div>
+                  <span className="ab-adv-date-sep">-</span>
+                  <div className="ab-adv-input-with-icon">
+                    <input 
+                      type="text" 
+                      value={advFilterForm.createdTo}
+                      onChange={(e) => setAdvFilterForm({ ...advFilterForm, createdTo: e.target.value })}
+                      placeholder="dd/mm/yyyy"
+                    />
+                    <Calendar size={18} color="#475569" style={{ cursor: 'pointer', flexShrink: 0 }} />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="ab-adv-modal-footer">
+              <button 
+                type="button" 
+                className="ab-adv-btn-submit"
+                onClick={handleApplyAdvancedFilter}
+              >
+                Lọc
+              </button>
+            </div>
+
           </div>
-        )}
-        </>
+        </div>
       )}
+
     </div>
   );
 }

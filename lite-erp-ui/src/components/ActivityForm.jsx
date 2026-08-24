@@ -1,649 +1,750 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save, X, MessageSquare, Search, Phone, Mail, Calendar, Paperclip, Smile, Maximize2, ArrowDownToLine, FileText, Trash2, ChevronDown, ChevronRight, Edit2, ThumbsUp, Heart } from 'lucide-react';
-import './LeadForm.css';
+import { 
+  ArrowLeft, 
+  Save, 
+  X, 
+  Search, 
+  Calendar, 
+  Trash2, 
+  ArrowDownToLine, 
+  UploadCloud, 
+  MessageSquare, 
+  Clock, 
+  MoreVertical, 
+  Smile, 
+  Send 
+} from 'lucide-react';
+import './ActivityForm.css';
 import { mockStore } from '../utils/mockStore';
 
-const EMPLOYEES = ['Trần B (Bạn)', 'Nguyễn Văn A', 'Lê Thị C'];
+const EMPLOYEES = ['Nguyễn Văn A', 'Trần Thị B', 'Lê Thị C', 'Mitchell Admin'];
 
 function ActivityForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   
   const [formData, setFormData] = useState({
-    title: '',
-    type: 'call',
+    title: 'Nhập tên nhiệm vụ',
+    type: '',
     relatedEntity: '',
     relatedEntityName: '',
-    dueDate: '',
-    priority: 'normal',
-    status: 'todo',
-    isDaily: false,
+    dueDate: '2026-05-08',
+    priority: 'low',
+    status: 'todo', // 'todo' (Mới), 'processing' (Đang thực hiện), 'done' (Hoàn thành)
+    tag: '',
     notes: '',
-    assignee: 'Trần B (Bạn)',
-    assignees: [{ name: 'Trần B (Bạn)', description: '' }],
-    reporter: 'Trần B (Bạn)'
+    reporter: 'Nguyễn Văn A',
+    assignees: [
+      { name: '', description: '' }
+    ]
   });
 
   const [modalState, setModalState] = useState({ open: false, type: '', searchInput: '' });
+  const [activeSidebarTab, setActiveSidebarTab] = useState('comment'); // 'comment' | 'history'
+  
+  const [comments, setComments] = useState([
+    {
+      id: 1,
+      author: 'Nguyễn Văn A',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      time: '2h trước',
+      text: 'Cần cập nhật thông tin báo giá cho khách hàng.',
+      likes: 45,
+      hearts: 25,
+      userLiked: false,
+      userHearted: false
+    },
+    {
+      id: 2,
+      author: 'Trần Thị B',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+      time: '5h trước',
+      text: 'Đã liên hệ với khách hàng, họ đang xem xét đề xuất.',
+      likes: 45,
+      hearts: 25,
+      userLiked: false,
+      userHearted: false
+    }
+  ]);
+  
+  const [historyLogs, setHistoryLogs] = useState([
+    { id: 1, author: 'Nguyễn Văn A', time: '08:30 17/04/2026', text: 'Đã tạo nhiệm vụ mới' },
+    { id: 2, author: 'Nguyễn Văn A', time: '09:15 17/04/2026', text: 'Đã đính kèm tài liệu Hopdo...' }
+  ]);
 
-  const [activeChatterTab, setActiveChatterTab] = useState('log_note');
-  const [chatterMessages, setChatterMessages] = useState([]);
-  const [chatterInput, setChatterInput] = useState('');
-  const [showMention, setShowMention] = useState(false);
-  const [mentionPos, setMentionPos] = useState({ top: 0, left: 0 });
-  const textareaRef = useRef(null);
+  const [commentInput, setCommentInput] = useState('');
   
   const [documents, setDocuments] = useState([
-    { id: 'DOC-001', name: 'Báo_giá_Cloud_v1.pdf', category: 'Tài liệu về giá sản phẩm', description: 'Báo giá sơ bộ gửi KH', date: '2026-04-10', author: 'Mitchell Admin' }
+    { 
+      id: 'DOC-001', 
+      name: 'Hopdo...', 
+      fullName: 'Hopdong_Cungcap_Dichvu_v1.pdf',
+      description: 'Báo giá sơ bộ gửi KH', 
+      date: '17/04/2026' 
+    }
   ]);
-  const [isDocsCollapsed, setIsDocsCollapsed] = useState(false);
-  const [activeNotebookTab, setActiveNotebookTab] = useState('notes');
-  const [editingNoteId, setEditingNoteId] = useState(null);
-  const [editingNoteText, setEditingNoteText] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const hf = (field, val) => {
-    setFormData(prev => ({...prev, [field]: val}));
+    setFormData(prev => ({ ...prev, [field]: val }));
   };
 
   const handleSave = (e) => {
     e.preventDefault();
-    
     if (!formData.title || !formData.title.trim()) {
-      alert('Vui lòng điền Tên nhiệm vụ trước khi lưu.');
+      alert('Vui lòng nhập tên nhiệm vụ.');
       return;
     }
+    
+    // Add log entry
+    setHistoryLogs(prev => [
+      { id: Date.now(), author: 'Bạn', time: 'Vừa xong', text: 'Đã lưu thông tin nhiệm vụ' },
+      ...prev
+    ]);
+    
+    alert('Đã lưu nhiệm vụ thành công!');
+  };
 
-    // Simulate save logic here
-    if (!id || id === 'new') {
-      const newId = `ACT-${Math.floor(Math.random() * 1000)}`;
-      addChatterMessage('log', 'Hệ', 'Đã tạo mới và lưu thành công công việc', 'vừa xong', '#fef3c7');
-      alert('Đã tạo nhiệm vụ thành công!');
-      // STAY ON SCREEN but transform to Edit mode
-      navigate(`/activity/edit/${newId}`, { replace: true });
-    } else {
-      addChatterMessage('log', 'Hệ', 'Đã lưu mọi thay đổi nội dung công việc', 'vừa xong', '#fef3c7');
-      alert('Đã lưu thay đổi!');
+  const handleAddAssignee = () => {
+    setFormData(prev => ({
+      ...prev,
+      assignees: [...prev.assignees, { name: '', description: '' }]
+    }));
+  };
+
+  const handleRemoveAssignee = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      assignees: prev.assignees.filter((_, idx) => idx !== index)
+    }));
+  };
+
+  const handleAssigneeChange = (index, field, value) => {
+    setFormData(prev => {
+      const updated = [...prev.assignees];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, assignees: updated };
+    });
+  };
+
+  const handleSendComment = () => {
+    if (!commentInput.trim()) return;
+    const newComment = {
+      id: Date.now(),
+      author: 'Bạn',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      time: 'Vừa xong',
+      text: commentInput,
+      likes: 0,
+      hearts: 0,
+      userLiked: false,
+      userHearted: false
+    };
+    setComments(prev => [...prev, newComment]);
+    setCommentInput('');
+  };
+
+  const toggleReaction = (commentId, type) => {
+    setComments(prev => prev.map(c => {
+      if (c.id !== commentId) return c;
+      if (type === 'like') {
+        return {
+          ...c,
+          likes: c.userLiked ? c.likes - 1 : c.likes + 1,
+          userLiked: !c.userLiked
+        };
+      } else if (type === 'heart') {
+        return {
+          ...c,
+          hearts: c.userHearted ? c.hearts - 1 : c.hearts + 1,
+          userHearted: !c.userHearted
+        };
+      }
+      return c;
+    }));
+  };
+
+  const handleFileUpload = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newDocs = Array.from(files).map((f, i) => ({
+        id: `DOC-${Date.now()}-${i}`,
+        name: f.name.length > 10 ? f.name.substring(0, 8) + '...' : f.name,
+        fullName: f.name,
+        description: 'Tài liệu bổ sung',
+        date: new Date().toLocaleDateString('vi-VN')
+      }));
+      setDocuments(prev => [...prev, ...newDocs]);
     }
   };
 
-  const isReadOnly = id && id !== 'new' && formData.status !== 'todo';
-
-  const handleChatterChange = (e) => {
-    const val = e.target.value;
-    setChatterInput(val);
-    const words = val.slice(0, e.target.selectionStart).split(' ');
-    const lastWord = words[words.length - 1];
-    if (lastWord.startsWith('@')) {
-      setShowMention(true);
-      setMentionPos({ top: 40, left: 20 + (lastWord.length * 5) });
-    } else { setShowMention(false); }
+  const handleDeleteDoc = (id) => {
+    setDocuments(prev => prev.filter(d => d.id !== id));
   };
 
   const openSearchModal = (type) => {
     setModalState({ open: true, type, searchInput: '' });
   };
-  const closeSearchModal = () => setModalState({ open: false, type: '', searchInput: '' });
 
-  const handleSelectModalItem = (id, name) => {
-    if (modalState.type === 'entity') {
-      hf('relatedEntity', id);
-      hf('relatedEntityName', name);
-    }
+  const closeSearchModal = () => {
+    setModalState({ open: false, type: '', searchInput: '' });
+  };
+
+  const handleSelectEntity = (id, name) => {
+    hf('relatedEntity', id);
+    hf('relatedEntityName', name);
     closeSearchModal();
   };
 
-  const insertMention = (emp) => {
-    if(!textareaRef.current) return;
-    const textBefore = chatterInput.slice(0, textareaRef.current.selectionStart);
-    const textAfter = chatterInput.slice(textareaRef.current.selectionStart);
-    const words = textBefore.split(' ');
-    words.pop();
-    const newTextBefore = words.length > 0 ? words.join(' ') + ` @${emp} ` : `@${emp} `;
-    setChatterInput(newTextBefore + textAfter);
-    setShowMention(false);
-    textareaRef.current.focus();
-  };
-
-  const addChatterMessage = (type, author, text, time, bg) => {
-    setChatterMessages(prev => [{ id: Date.now(), type, author, text, time, bg, reactions: [] }, ...prev]);
-  };
-
-  const postNote = (e) => {
-    e.preventDefault();
-    if(!chatterInput) return;
-    addChatterMessage('note', 'Bạn', chatterInput, 'vừa xong', '#fef3c7');
-    setChatterInput('');
-  };
-
-  const handleDeleteNote = (id) => {
-    setChatterMessages(prev => prev.filter(m => m.id !== id));
-  };
-
-  const handleStartEdit = (msg) => {
-    setEditingNoteId(msg.id);
-    setEditingNoteText(msg.text);
-  };
-
-  const handleSaveEdit = () => {
-    setChatterMessages(prev => prev.map(m => m.id === editingNoteId ? { ...m, text: editingNoteText } : m));
-    setEditingNoteId(null);
-    setEditingNoteText('');
-  };
-
-  const toggleReaction = (msgId, emoji) => {
-    setChatterMessages(prev => prev.map(m => {
-      if (m.id !== msgId) return m;
-      const reactions = m.reactions || [];
-      if (reactions.includes(emoji)) {
-        return { ...m, reactions: reactions.filter(r => r !== emoji) };
-      }
-      return { ...m, reactions: [...reactions, emoji] };
-    }));
-  };
-
   return (
-    <div className="lead-form-container">
-      {/* HEADER */}
-      <div className="lead-form-header" style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-        <div className="breadcrumb">
-          <span className="breadcrumb-item" onClick={() => navigate('/activity')}>Danh sách Nhiệm vụ</span>
-          <span className="breadcrumb-separator">/</span>
-          <span className="breadcrumb-current">{id ? id : 'Mới'}</span>
-        </div>
-        <div className="header-actions" style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginLeft: 'auto'}}>
-           <div className="actions-left" style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
-             {id && id !== 'new' && formData.status === 'todo' && (
-               <button type="button" className="btn btn-secondary" style={{ color: '#ef4444', borderColor: '#ef4444' }} onClick={() => setShowDeleteConfirm(true)}>
-                 Xóa
-               </button>
-             )}
-             <button type="button" className="btn btn-secondary" onClick={() => navigate('/activities')}>Hủy</button>
-             <button type="button" className="btn btn-primary" onClick={handleSave} disabled={isReadOnly}>Lưu</button>
-           </div>
-        </div>
-      </div>
+    <div className="af-page-container">
+      <div className="af-inner-content">
+        
+        {/* HEADER BAR */}
+        <div className="af-header-bar">
+          <button type="button" className="af-btn-back" onClick={() => navigate(-1)}>
+            <ArrowLeft size={16} />
+            <span>Quay lại</span>
+          </button>
 
-      <div className="form-chatter-wrapper">
-        <div className="lead-form-sheet sheet-inner-wrapper">
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
-            <div className="oe_button_box" style={{marginBottom: 0}}></div>
-            <div className="statusbar" style={{background: 'transparent', margin: 0, gap: '4px'}}>
-               {['todo', 'processing', 'done'].map((st) => {
-                  const isCurrent = formData.status === st;
-                  const label = st === 'todo' ? 'Mới' : (st === 'processing' ? 'Đang thực hiện' : 'Hoàn thành');
-                  return (
-                  <div 
-                    key={st} 
-                    className="statusbar-item"
-                    style={{
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      fontWeight: 500,
-                      fontSize: '13px',
-                      userSelect: 'none',
-                      whiteSpace: 'nowrap',
-                      backgroundColor: isCurrent ? '#E32B4C' : '#F8FAFC',
-                      color: isCurrent ? 'white' : '#94A3B8',
-                      border: !isCurrent ? '1px solid transparent' : 'none',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => {
-                      hf('status', st);
-                      addChatterMessage('log', 'Hệ', `Đã chuyển trạng thái sang ${label}`, 'vừa xong', '#fef3c7');
-                    }}
-                  >
-                    {label}
+          {/* STEPPER */}
+          <div className="af-stepper-container">
+            <div className="af-step-item" onClick={() => hf('status', 'todo')}>
+              <div className={`af-step-circle ${formData.status === 'todo' ? 'active' : ''}`}>1</div>
+              <span className={`af-step-label ${formData.status === 'todo' ? 'active' : ''}`}>Mới</span>
+            </div>
+
+            <div className="af-step-line" />
+
+            <div className="af-step-item" onClick={() => hf('status', 'processing')}>
+              <div className={`af-step-circle ${formData.status === 'processing' ? 'active' : ''}`}>2</div>
+              <span className={`af-step-label ${formData.status === 'processing' ? 'active' : ''}`}>Đang thực hiện</span>
+            </div>
+
+            <div className="af-step-line" />
+
+            <div className="af-step-item" onClick={() => hf('status', 'done')}>
+              <div className={`af-step-circle ${formData.status === 'done' ? 'active' : ''}`}>3</div>
+              <span className={`af-step-label ${formData.status === 'done' ? 'active' : ''}`}>Hoàn thành</span>
+            </div>
+          </div>
+
+          <button type="button" className="af-btn-save" onClick={handleSave}>
+            <Save size={16} />
+            <span>Lưu</span>
+          </button>
+        </div>
+
+        {/* TASK TITLE SECTION */}
+        <div className="af-title-section">
+          <div className="af-title-label">
+            Tên Nhiệm Vụ<span className="required-star">*</span>
+          </div>
+          <div className="af-title-input-wrapper">
+            <input 
+              type="text" 
+              className="af-title-input"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Nhập tên nhiệm vụ"
+            />
+            {formData.title && (
+              <div className="af-title-clear-btn" onClick={() => hf('title', '')} title="Xóa">
+                <X size={18} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 2-COLUMN MAIN LAYOUT */}
+        <div className="af-main-grid">
+          
+          {/* LEFT COLUMN: 3 MAIN CARDS */}
+          <div className="af-left-col">
+            
+            {/* 1. THÔNG TIN CHUNG */}
+            <div>
+              <h3 className="af-section-title">Thông tin chung</h3>
+              <div className="af-card">
+                
+                {/* Row 1: Phân Loại & Độ Ưu Tiên */}
+                <div className="af-form-grid-2">
+                  <div className="af-field-row" style={{ marginBottom: 0 }}>
+                    <label className="af-field-label">Phân Loại<span className="required-star">*</span></label>
+                    <select 
+                      className="af-control-select"
+                      name="type"
+                      value={formData.type}
+                      onChange={handleChange}
+                    >
+                      <option value="">-- Chọn giá trị --</option>
+                      <option value="email">Email</option>
+                      <option value="call">Cuộc gọi</option>
+                      <option value="meeting">Gặp mặt</option>
+                      <option value="task">Công việc</option>
+                    </select>
                   </div>
-               )})}
-            </div>
-          </div>
 
-          <div className="sheet-title-section">
-            <div className="oe_title">
-              <label>Tên nhiệm vụ <span style={{color:'red'}}>*</span></label>
-              <input type="text" className="title-input" placeholder="VD: Gọi điện chăm sóc định kỳ..." name="title" value={formData.title} onChange={handleChange} disabled={isReadOnly} />
-            </div>
-          </div>
-
-          <div className="sheet-main-content">
-            {/* L COLUMN */}
-            <div className="form-column">
-              <div className="column-title">Thông tin chung</div>
-              <div className="form-group">
-                <label className="form-label">Phân loại</label>
-                <select className="form-control" name="type" value={formData.type} onChange={handleChange} disabled={isReadOnly}>
-                  <option value="email">Email</option>
-                  <option value="call">Call</option>
-                  <option value="meeting">Meeting</option>
-                  <option value="task">Task</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Liên kết tới</label>
-                <div className="autocomplete-container" style={{display: 'flex'}}>
-                  <input type="text" className="form-control" name="relatedEntityName" value={formData.relatedEntityName || formData.relatedEntity || ''} onChange={handleChange} placeholder="Chọn cơ hội/khách hàng..." style={{borderRight: 'none'}} disabled={isReadOnly} />
-                  <button type="button" className="btn btn-secondary" style={{padding: '4px 8px', borderLeft: 'none', background: 'transparent', borderColor: 'transparent', borderBottom: '1px solid #e2e8f0'}} onClick={() => openSearchModal('entity')} disabled={isReadOnly}>
-                    <Search size={16} color="#64748b"/>
-                  </button>
+                  <div className="af-field-row" style={{ marginBottom: 0 }}>
+                    <label className="af-field-label">Độ Ưu Tiên</label>
+                    <select 
+                      className="af-control-select"
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleChange}
+                    >
+                      <option value="low">★ Thấp</option>
+                      <option value="medium">★★ Trung bình</option>
+                      <option value="high">★★★ Cao</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-group">
-                <label className="form-label">Độ ưu tiên</label>
-                <div style={{position: 'relative', width: '65%'}}>
-                  <select 
-                    className="form-control" 
-                    name="priority" 
-                    value={formData.priority} 
+                {/* Row 2: Liên Kết Tới */}
+                <div className="af-field-row">
+                  <label className="af-field-label">Liên Kết Tới<span className="required-star">*</span></label>
+                  <div className="af-input-with-icon" style={{ maxWidth: '300px' }}>
+                    <input 
+                      type="text" 
+                      className="af-control-input"
+                      placeholder="Chọn cơ hội/KH"
+                      value={formData.relatedEntityName || formData.relatedEntity || ''}
+                      onChange={handleChange}
+                      name="relatedEntityName"
+                    />
+                    <Search 
+                      size={16} 
+                      color="#64748b" 
+                      style={{ cursor: 'pointer', flexShrink: 0 }} 
+                      onClick={() => openSearchModal('entity')}
+                    />
+                  </div>
+                </div>
+
+                {/* Row 3: Tag */}
+                <div className="af-field-row">
+                  <label className="af-field-label">Tag</label>
+                  <div style={{ maxWidth: '100%' }}>
+                    <select 
+                      className="af-control-select"
+                      name="tag"
+                      value={formData.tag}
+                      onChange={handleChange}
+                    >
+                      <option value="">-- Chọn tag --</option>
+                      <option value="vip">Khách hàng VIP</option>
+                      <option value="hot">Tiềm năng cao</option>
+                      <option value="followup">Cần chăm sóc ngay</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Row 4: Tóm Tắt Hoạt Động */}
+                <div className="af-field-row align-top">
+                  <label className="af-field-label" style={{ marginTop: '8px' }}>
+                    Tóm Tắt Hoạt<br />Động
+                  </label>
+                  <textarea 
+                    className="af-control-textarea"
+                    name="notes"
+                    value={formData.notes}
                     onChange={handleChange}
-                    style={{width: '100%'}}
-                    disabled={isReadOnly}
-                  >
-                    <option value="normal">⭐ Bình thường</option>
-                    <option value="high">⭐ Gấp</option>
-                    <option value="critical">⭐ Rất gấp</option>
-                  </select>
+                    placeholder="Nhập tóm tắt hoạt động"
+                  />
                 </div>
+
               </div>
             </div>
 
-            {/* R COLUMN */}
-            <div className="form-column">
-              <div className="column-title">Thời gian & Phân công</div>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label">Giao việc cho</label>
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead style={{ backgroundColor: '#f8fafc' }}>
+            {/* 2. THỜI GIAN & PHÂN CÔNG */}
+            <div>
+              <h3 className="af-section-title">Thời gian & phân công</h3>
+              <div className="af-card">
+                
+                {/* Row 1: Báo Cáo Bởi & Hạn Chót */}
+                <div className="af-form-grid-2">
+                  <div className="af-field-row" style={{ marginBottom: 0 }}>
+                    <label className="af-field-label">Báo Cáo Bởi</label>
+                    <select 
+                      className="af-control-select"
+                      name="reporter"
+                      value={formData.reporter}
+                      onChange={handleChange}
+                    >
+                      {EMPLOYEES.map(emp => (
+                        <option key={emp} value={emp}>{emp}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="af-field-row" style={{ marginBottom: 0 }}>
+                    <label className="af-field-label">Hạn Chót</label>
+                    <div className="af-input-with-icon">
+                      <input 
+                        type="date"
+                        className="af-control-input"
+                        name="dueDate"
+                        value={formData.dueDate}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sub-label: Giao Việc Cho */}
+                <div className="af-sub-label">Giao Việc Cho</div>
+
+                {/* Assignees Table */}
+                <div className="af-assignment-box">
+                  <table className="af-assignment-table">
+                    <thead>
                       <tr>
-                        <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#64748b', fontWeight: 600, width: '40%' }}>Người thực hiện</th>
-                        <th style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #e2e8f0', fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Mô tả</th>
-                        {!isReadOnly && <th style={{ padding: '8px', width: '40px', borderBottom: '1px solid #e2e8f0' }}></th>}
+                        <th style={{ width: '40px' }}></th>
+                        <th style={{ width: '38%' }}>Người thực hiện</th>
+                        <th>Mô tả</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {formData.assignees && formData.assignees.map((assignee, idx) => (
+                      {formData.assignees.map((assignee, idx) => (
                         <tr key={idx}>
-                          <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0' }}>
-                            <select 
-                              className="form-control" 
-                              value={assignee.name} 
-                              onChange={(e) => {
-                                const newAssignees = [...formData.assignees];
-                                newAssignees[idx].name = e.target.value;
-                                hf('assignees', newAssignees);
-                              }} 
-                              disabled={isReadOnly}
-                              style={{ border: 'none', background: 'transparent', padding: '4px', width: '100%', height: '32px' }}
-                            >
-                              <option value="">-- Chọn người --</option>
-                              {EMPLOYEES.map(e => <option key={e} value={e}>{e}</option>)}
-                            </select>
-                          </td>
-                          <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0' }}>
-                            <input 
-                              type="text" 
-                              className="form-control" 
-                              value={assignee.description}
-                              onChange={(e) => {
-                                const newAssignees = [...formData.assignees];
-                                newAssignees[idx].description = e.target.value;
-                                hf('assignees', newAssignees);
-                              }} 
-                              disabled={isReadOnly}
-                              placeholder="Mô tả công việc..."
-                              style={{ border: 'none', background: 'transparent', padding: '4px', width: '100%', height: '32px' }}
+                          <td style={{ textAlign: 'center', color: '#64748b' }}>
+                            <Trash2 
+                              size={16} 
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => handleRemoveAssignee(idx)}
                             />
                           </td>
-                          {!isReadOnly && (
-                            <td style={{ padding: '4px 8px', borderBottom: '1px solid #e2e8f0', textAlign: 'center' }}>
-                              <Trash2 
-                                size={14} 
-                                color="#ef4444" 
-                                style={{ cursor: 'pointer' }} 
-                                onClick={() => {
-                                  const newAssignees = formData.assignees.filter((_, i) => i !== idx);
-                                  hf('assignees', newAssignees);
-                                }} 
-                              />
-                            </td>
-                          )}
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <select 
+                                className="af-control-select"
+                                value={assignee.name}
+                                onChange={(e) => handleAssigneeChange(idx, 'name', e.target.value)}
+                              >
+                                <option value="">-- Chọn liên hệ --</option>
+                                {EMPLOYEES.map(emp => (
+                                  <option key={emp} value={emp}>{emp}</option>
+                                ))}
+                              </select>
+                              <span className="required-star" style={{ fontSize: '16px' }}>*</span>
+                            </div>
+                          </td>
+                          <td>
+                            <input 
+                              type="text" 
+                              className="af-control-input"
+                              placeholder="Mô tả công việc"
+                              value={assignee.description}
+                              onChange={(e) => handleAssigneeChange(idx, 'description', e.target.value)}
+                            />
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  {!isReadOnly && (
-                    <div style={{ padding: '8px' }}>
-                      <button 
-                        type="button" 
-                        onClick={() => hf('assignees', [...(formData.assignees || []), { name: '', description: '' }])}
-                        style={{ background: 'transparent', border: 'none', color: '#0f172a', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}
-                      >
-                        + Thêm dòng
-                      </button>
-                    </div>
-                  )}
+                  <div className="af-assignment-footer">
+                    <button type="button" className="af-btn-add-row" onClick={handleAddAssignee}>
+                      + Thêm giao việc
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-group">
-                <label className="form-label">Báo cáo bởi</label>
-                <select className="form-control" name="reporter" value={formData.reporter} onChange={handleChange} disabled>
-                  {EMPLOYEES.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Hạn chót</label>
-                <input type="date" className="form-control" name="dueDate" value={formData.dueDate} onChange={handleChange} disabled={isReadOnly} />
               </div>
             </div>
-          </div>
-        </div>
-          
 
-        {/* DOCUMENT SECTION (MOVED UP) */}
-        <div className="lead-form-sheet sheet-inner-wrapper" style={{ marginTop: '24px' }}>
-          <div className="documents-section-modern">
-              <div className="section-header-modern" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                  <div className="section-title-box" onClick={() => setIsDocsCollapsed(!isDocsCollapsed)} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, color: '#1e293b' }}>
-                      {isDocsCollapsed ? <ChevronRight size={20} /> : <ChevronDown size={20} />}
-                      <span style={{ fontSize: '18px' }}>Tài liệu đính kèm</span>
-                  </div>
-                  <button onClick={() => alert('Đang chuẩn bị tải xuống toàn bộ...')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'transparent', border: '1px solid #e2e8f0', padding: '6px 12px', borderRadius: '4px', fontSize: '13px', cursor: 'pointer', color: '#64748b' }}>
-                    <ArrowDownToLine size={16} /> Download All
+            {/* 3. TÀI LIỆU ĐÍNH KÈM */}
+            <div>
+              <div className="af-section-header-row">
+                <h3 className="af-section-title" style={{ margin: 0 }}>Tài liệu đính kèm</h3>
+                <button 
+                  type="button" 
+                  className="af-btn-download-all"
+                  onClick={() => alert('Đang chuẩn bị tải xuống toàn bộ tài liệu...')}
+                >
+                  <ArrowDownToLine size={15} />
+                  <span>Download all</span>
+                </button>
+              </div>
+
+              <div className="af-card">
+                
+                {/* Drag and Drop Zone */}
+                <div 
+                  className="af-upload-dropzone"
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileUpload} 
+                    multiple 
+                    style={{ display: 'none' }} 
+                  />
+                  <div className="af-upload-text">Drag and drop or Browse your file</div>
+                  <button type="button" className="af-upload-btn" onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current && fileInputRef.current.click();
+                  }}>
+                    <UploadCloud size={16} />
+                    <span>Choose file</span>
                   </button>
-              </div>
-
-              {!isDocsCollapsed && (
-                <div className="docs-wrapper">
-                  <div className="upload-header-odoo" onClick={() => document.getElementById('file-upload').click()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px', background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '8px', cursor: 'pointer', marginBottom: '20px', transition: 'all 0.2s' }}>
-                      <input type="file" id="file-upload" multiple style={{ display: 'none' }} onChange={(e) => {
-                        if (e.target.files.length > 0) {
-                          const newDoc = {
-                            id: `DOC-${Date.now()}`,
-                            name: e.target.files[0].name,
-                            category: 'Tài liệu khác',
-                            description: '',
-                            date: 'Vừa xong',
-                            author: 'Mitchell Admin'
-                          };
-                          setDocuments([newDoc, ...documents]);
-                          addChatterMessage('log', 'Mitchell Admin', `Đã tải lên tài liệu: ${newDoc.name}`, 'vừa xong', '#fef3c7');
-                        }
-                      }} />
-                      <ArrowDownToLine size={40} color="#e32b4c" />
-                      <div style={{ marginTop: '12px', color: '#1e293b', fontWeight: 600, fontSize: '15px' }}>Kéo thả hoặc Duyệt để tải file lên</div>
-                      <div style={{ marginTop: '4px', color: '#64748b', fontSize: '13px' }}>Tối đa 20MB mỗi file</div>
-                  </div>
-                  
-                  <div className="doc-table-container" style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden', backgroundColor: 'white' }}>
-                    <table className="document-table-modern" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                                <th style={{ width: '50px', textAlign: 'center', padding: '12px', fontSize: '13px', color: '#475569' }}>STT</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569' }}>Tài liệu</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569' }}>Nội dung tài liệu</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569' }}>Thời điểm</th>
-                                <th style={{ width: '60px', textAlign: 'center', padding: '12px', fontSize: '13px', color: '#475569' }}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {documents.map((doc, i) => (
-                                <tr key={doc.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ textAlign: 'center', padding: '12px', fontSize: '13px' }}>{(i + 1).toString().padStart(2, '0')}</td>
-                                    <td style={{ padding: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <FileText size={18} color={doc.name.endsWith('.pdf') ? '#ef4444' : '#3b82f6'} />
-                                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#e32b4c', cursor: 'pointer' }}>{doc.name}</span>
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '12px' }}>
-                                        <input type="text" style={{ width: '100%', border: 'none', background: 'transparent', fontSize: '13px', borderBottom: '1px solid transparent' }} placeholder="Ghi chú file..." value={doc.description} onChange={() => {}} />
-                                    </td>
-                                    <td style={{ padding: '12px', fontSize: '12px', color: '#94a3b8' }}>{doc.date} bởi <strong>{doc.author}</strong></td>
-                                    <td style={{ textAlign: 'center', padding: '12px' }}>
-                                        <Trash2 size={16} color="#94a3b8" style={{ cursor: 'pointer' }} onClick={() => setDocuments(documents.filter(d => d.id !== doc.id))} />
-                                    </td>
-                                </tr>
-                            ))}
-                            {documents.length === 0 && (
-                                <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#94a3b8', fontSize: '14px' }}>Chưa có tài liệu nào.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                  </div>
+                  <div className="af-upload-subtext">Type: xls, xlsx, pdf, doc. Max size: 20MB</div>
                 </div>
-              )}
-          </div>
-        </div>
 
-        {/* BOTTOM NOTEBOOK: NOTES & HISTORY */}
-        <div className="lead-form-sheet sheet-inner-wrapper" style={{ marginTop: '24px', marginBottom: '40px' }}>
-          <div className="notebook" style={{ border: 'none' }}>
-            <div className="notebook-tabs" style={{ display: 'flex', gap: '24px', borderBottom: '1px solid #e2e8f0', marginBottom: '24px' }}>
-              <div 
-                className={`notebook-tab ${activeNotebookTab === 'notes' ? 'active' : ''}`} 
-                onClick={() => setActiveNotebookTab('notes')}
-                style={{ 
-                    padding: '8px 4px', 
-                    cursor: 'pointer', 
-                    fontSize: '15px', 
-                    fontWeight: 600, 
-                    color: activeNotebookTab === 'notes' ? '#e32b4c' : '#64748b',
-                    borderBottom: activeNotebookTab === 'notes' ? '2px solid #e32b4c' : 'none'
-                }}
-              >
-                Ghi chú nội bộ
-              </div>
-              <div 
-                className={`notebook-tab ${activeNotebookTab === 'history' ? 'active' : ''}`} 
-                onClick={() => setActiveNotebookTab('history')}
-                style={{ 
-                    padding: '8px 4px', 
-                    cursor: 'pointer', 
-                    fontSize: '15px', 
-                    fontWeight: 600, 
-                    color: activeNotebookTab === 'history' ? '#e32b4c' : '#64748b',
-                    borderBottom: activeNotebookTab === 'history' ? '2px solid #e32b4c' : 'none'
-                }}
-              >
-                Lịch sử hoạt động
+                {/* Documents Table */}
+                <div className="af-doc-table-box">
+                  <table className="af-doc-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '40px' }}></th>
+                        <th style={{ width: '60px' }}>No <span className="th-sort-icon">⇅ ▽</span></th>
+                        <th style={{ width: '180px' }}>Tài liệu <span className="th-sort-icon">⇅ ▽</span></th>
+                        <th>Nội dung tài liệu <span className="th-sort-icon">⇅ ▽</span></th>
+                        <th style={{ width: '140px' }}>Thời điểm tải lên <span className="th-sort-icon">⇅ ▽</span></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {documents.map((doc, idx) => (
+                        <tr key={doc.id}>
+                          <td style={{ textAlign: 'center', color: '#64748b' }}>
+                            <Trash2 
+                              size={16} 
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => handleDeleteDoc(doc.id)}
+                            />
+                          </td>
+                          <td style={{ textAlign: 'center' }}>{idx + 1}</td>
+                          <td>
+                            <a 
+                              href="#download" 
+                              className="af-doc-link" 
+                              title={doc.fullName || doc.name}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                alert(`Tải xuống tài liệu: ${doc.fullName || doc.name}`);
+                              }}
+                            >
+                              {doc.name}
+                            </a>
+                          </td>
+                          <td>{doc.description}</td>
+                          <td>{doc.date}</td>
+                        </tr>
+                      ))}
+                      {documents.length === 0 && (
+                        <tr>
+                          <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#94a3b8' }}>
+                            Chưa có tài liệu đính kèm nào.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
               </div>
             </div>
 
-            <div className="notebook-content">
-              {activeNotebookTab === 'notes' && (
-                <div className="notes-tab-content">
-                  <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                    <div className="chatter-avatar-small" style={{ width: '40px', height: '40px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                      <img src="https://api.dicebear.com/7.x/personas/svg?seed=Felix&backgroundColor=b6e3f4" alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div className="chatter-input-box" style={{ border: '1px solid #cbd5e1', borderRadius: '8px', overflow: 'hidden', backgroundColor: 'white' }}>
-                        <textarea 
-                          className="chatter-textarea" 
-                          placeholder="Ghi chú nội dung trao đổi hoặc log hoạt động..." 
-                          value={chatterInput} 
-                          onChange={handleChatterChange}
-                          ref={textareaRef}
-                          style={{ width: '100%', border: 'none', padding: '12px', minHeight: '80px', outline: 'none', fontSize: '14px', resize: 'vertical' }}
-                        />
-                        <div className="chatter-input-toolbar" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', borderTop: '1px solid #f1f5f9', background: '#fafafa' }}>
-                          <div className="chatter-toolbar-left" style={{ display: 'flex', gap: '12px', color: '#64748b' }}>
-                            <Smile size={18} style={{ cursor: 'pointer' }} />
-                            <Paperclip size={18} style={{ cursor: 'pointer' }} onClick={() => document.getElementById('file-upload').click()} />
-                          </div>
-                          <div className="chatter-toolbar-right">
-                            <Maximize2 size={16} style={{ cursor: 'pointer', color: '#64748b' }} />
+          </div>
+
+          {/* RIGHT COLUMN: COMMENT & HISTORY SIDEBAR */}
+          <div className="af-right-col">
+            
+            {/* Sidebar Tabs */}
+            <div className="af-sidebar-tabs">
+              <div 
+                className={`af-sidebar-tab ${activeSidebarTab === 'comment' ? 'active' : ''}`}
+                onClick={() => setActiveSidebarTab('comment')}
+              >
+                <MessageSquare size={14} />
+                <span>COMMENT</span>
+              </div>
+              <div 
+                className={`af-sidebar-tab ${activeSidebarTab === 'history' ? 'active' : ''}`}
+                onClick={() => setActiveSidebarTab('history')}
+              >
+                <Clock size={14} />
+                <span>LỊCH SỬ</span>
+              </div>
+            </div>
+
+            {/* TAB CONTENT: COMMENT */}
+            {activeSidebarTab === 'comment' && (
+              <>
+                {/* Comments List */}
+                <div className="af-comments-list">
+                  {comments.map((cmt) => (
+                    <div key={cmt.id} className="af-comment-item">
+                      <div className="af-comment-avatar">
+                        <img src={cmt.avatar} alt={cmt.author} />
+                      </div>
+                      <div className="af-comment-bubble">
+                        <div className="af-comment-header">
+                          <span className="af-comment-author">{cmt.author}</span>
+                          <div className="af-comment-meta">
+                            <span className="af-comment-time">{cmt.time}</span>
+                            <div className="af-comment-more-btn">
+                              <MoreVertical size={14} />
+                            </div>
                           </div>
                         </div>
+                        <div className="af-comment-text">{cmt.text}</div>
+                        <div className="af-comment-reactions">
+                          <span className="af-reaction-btn" title="Cảm xúc">
+                            😀
+                          </span>
+                          <span 
+                            className="af-reaction-btn" 
+                            style={{ color: cmt.userLiked ? '#e11d48' : 'inherit' }}
+                            onClick={() => toggleReaction(cmt.id, 'like')}
+                          >
+                            👍 {cmt.likes}
+                          </span>
+                          <span 
+                            className="af-reaction-btn" 
+                            style={{ color: cmt.userHearted ? '#e11d48' : 'inherit' }}
+                            onClick={() => toggleReaction(cmt.id, 'heart')}
+                          >
+                            ❤️ {cmt.hearts}
+                          </span>
+                        </div>
                       </div>
-                      <button 
-                        className="btn-log-odoo" 
-                        onClick={postNote}
-                        style={{ marginTop: '12px', background: '#e32b4c', color: 'white', border: 'none', padding: '8px 24px', borderRadius: '6px', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
-                      >
-                        Ghi
+                    </div>
+                  ))}
+                </div>
+
+                {/* Comment Input Box */}
+                <div className="af-comment-input-row">
+                  <div className="af-comment-avatar">
+                    <img 
+                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" 
+                      alt="Current User" 
+                    />
+                  </div>
+                  <div className="af-comment-input-box">
+                    <textarea 
+                      className="af-comment-textarea"
+                      placeholder="Viết comment..."
+                      value={commentInput}
+                      onChange={(e) => setCommentInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendComment();
+                        }
+                      }}
+                    />
+                    <div className="af-comment-submit-row">
+                      <button type="button" className="af-btn-send" onClick={handleSendComment}>
+                        <Send size={14} />
+                        <span>Gửi</span>
                       </button>
                     </div>
                   </div>
-
-                  <div className="chatter-messages" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {chatterMessages.filter(m => m.type !== 'log').map(msg => (
-                      <div key={msg.id} className="message-item-odoo" style={{ display: 'flex', gap: '12px', position: 'relative', group: 'true' }}>
-                        <div className="chatter-avatar-small" style={{ width: '36px', height: '36px', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, backgroundColor: '#e0e7ff' }}>
-                           <img src={`https://api.dicebear.com/7.x/personas/svg?seed=${msg.author}&backgroundColor=b6e3f4`} alt="Author" style={{ width: '100%', height: '100%' }} />
-                        </div>
-                        <div className="message-content-wrapper" style={{ flex: 1 }}>
-                          <div className="message-author-info" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span className="message-author-name" style={{ fontWeight: 700, fontSize: '14px', color: '#334155' }}>{msg.author}</span>
-                              <span style={{ fontSize: '12px', color: '#94a3b8' }}>- {msg.time}</span>
-                            </div>
-                            
-                            {/* ACTION BUTTONS (VISIBLE ON HOVER-ISH) */}
-                            <div className="message-actions" style={{ display: 'flex', gap: '8px', opacity: 0.8 }}>
-                                <Smile size={14} style={{ cursor: 'pointer', color: '#94a3b8' }} onClick={() => toggleReaction(msg.id, '😊')} />
-                                <ThumbsUp size={14} style={{ cursor: 'pointer', color: '#94a3b8' }} onClick={() => toggleReaction(msg.id, '👍')} />
-                                <Heart size={14} style={{ cursor: 'pointer', color: '#94a3b8' }} onClick={() => toggleReaction(msg.id, '❤️')} />
-                                <Edit2 size={14} style={{ cursor: 'pointer', color: '#64748b', marginLeft: '8px' }} onClick={() => handleStartEdit(msg)} />
-                                <Trash2 size={14} style={{ cursor: 'pointer', color: '#ef4444' }} onClick={() => handleDeleteNote(msg.id)} />
-                            </div>
-                          </div>
-
-                          {editingNoteId === msg.id ? (
-                            <div style={{ marginTop: '8px' }}>
-                              <textarea 
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #cbd5e1', fontSize: '14px' }}
-                                value={editingNoteText}
-                                onChange={(e) => setEditingNoteText(e.target.value)}
-                              />
-                              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                                <button className="btn btn-primary" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={handleSaveEdit}>Lưu</button>
-                                <button className="btn btn-secondary" style={{ padding: '4px 12px', fontSize: '12px' }} onClick={() => setEditingNoteId(null)}>Hủy</button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="message-body-odoo" style={{ fontSize: '14px', color: '#475569', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
-                               {msg.text}
-                            </div>
-                          )}
-
-                          {/* REACTIONS DISPLAY */}
-                          {msg.reactions && msg.reactions.length > 0 && (
-                            <div style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
-                              {msg.reactions.map((r, idx) => (
-                                <span key={idx} style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: '100px', fontSize: '12px', cursor: 'pointer' }} onClick={() => toggleReaction(msg.id, r)}>
-                                  {r}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {chatterMessages.filter(m => m.type !== 'log').length === 0 && (
-                        <div style={{ textAlign: 'center', color: '#94a3b8', padding: '24px', fontStyle: 'italic' }}>Chưa có ghi chú nào.</div>
-                    )}
-                  </div>
                 </div>
-              )}
+              </>
+            )}
 
-              {activeNotebookTab === 'history' && (
-                <div className="history-tab-content">
-                  <div className="doc-table-container" style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden', backgroundColor: 'white' }}>
-                    <table className="document-table-modern" style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>Người thao tác</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>Thời gian</th>
-                                <th style={{ textAlign: 'left', padding: '12px', fontSize: '13px', color: '#475569', fontWeight: 600 }}>Nội dung thay đổi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {chatterMessages.filter(m => m.type === 'log').map(log => (
-                                <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ padding: '12px', fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <div style={{ width: '24px', height: '24px', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
-                                                <img src={`https://api.dicebear.com/7.x/personas/svg?seed=${log.author}&backgroundColor=f1f5f9`} alt="Avatar" style={{ width: '100%', height: '100%' }} />
-                                            </div>
-                                            {log.author}
-                                        </div>
-                                    </td>
-                                    <td style={{ padding: '12px', fontSize: '13px', color: '#64748b' }}>{log.time}</td>
-                                    <td style={{ padding: '12px', fontSize: '13px', color: '#475569' }}>
-                                        <div style={{ background: '#f8fafc', padding: '4px 10px', borderRadius: '4px', display: 'inline-block', border: '1px solid #f1f5f9' }}>
-                                            {log.text}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {chatterMessages.filter(m => m.type === 'log').length === 0 && (
-                                <tr>
-                                    <td colSpan="3" style={{ textAlign: 'center', padding: '24px', color: '#94a3b8', fontSize: '14px' }}>Chưa có lịch sử hoạt động.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+            {/* TAB CONTENT: HISTORY */}
+            {activeSidebarTab === 'history' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {historyLogs.map(log => (
+                  <div key={log.id} style={{ fontSize: '13px', padding: '8px 10px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#64748b', fontSize: '11px' }}>
+                      <strong style={{ color: '#0f172a' }}>{log.author}</strong>
+                      <span>{log.time}</span>
+                    </div>
+                    <div style={{ color: '#334155' }}>{log.text}</div>
                   </div>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
+
           </div>
+
         </div>
+
       </div>
 
       {/* SEARCH MODAL */}
       {modalState.open && modalState.type === 'entity' && (
-        <div className="modal-overlay" onClick={() => closeSearchModal()}>
-          <div className="modal-content modal-partner" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-title">Liên kết Khách hàng / Cơ hội</div>
-              <button className="modal-close" onClick={closeSearchModal}>&times;</button>
+        <div className="modal-overlay" onClick={closeSearchModal} style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div 
+            className="modal-content" 
+            onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '8px',
+              width: '500px',
+              maxWidth: '90vw',
+              padding: '20px',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>Liên kết Khách hàng / Cơ hội</div>
+              <button 
+                onClick={closeSearchModal}
+                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#64748b' }}
+              >
+                &times;
+              </button>
             </div>
-            <div className="modal-body" style={{padding: 0}}>
-              <div className="odoo-search-bar">
-                <input 
-                  type="text" 
-                  autoFocus
-                  placeholder="Gõ tên khách hàng để tìm..." 
-                  className="form-control"
-                  style={{width: '300px', borderBottom: '1px solid #cbd5e1'}}
-                  value={modalState.searchInput}
-                  onChange={e => setModalState({...modalState, searchInput: e.target.value})}
-                />
-              </div>
-              <div className="partner-table-wrapper" style={{maxHeight: '350px'}}>
-                <table className="odoo-table">
+            <div>
+              <input 
+                type="text" 
+                autoFocus
+                placeholder="Gõ tên khách hàng để tìm..." 
+                className="af-control-input"
+                style={{ width: '100%', marginBottom: '16px' }}
+                value={modalState.searchInput}
+                onChange={e => setModalState({...modalState, searchInput: e.target.value})}
+              />
+              <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                   <thead>
-                    <tr>
-                      <th>Tên đối tác</th>
-                      <th>Mã số thuế</th>
-                      <th>Phân loại</th>
+                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Tên đối tác</th>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Mã số thuế</th>
+                      <th style={{ padding: '8px', textAlign: 'left' }}>Phân loại</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {mockStore.getAllCustomers().filter(c => c.name.toLowerCase().includes(modalState.searchInput.toLowerCase())).map(cli => (
-                      <tr key={cli.id} onClick={() => handleSelectModalItem(cli.id, cli.name)}>
-                        <td style={{fontWeight: 600, color: '#0f172a'}}>{cli.name}</td>
-                        <td>{cli.mst}</td>
-                        <td>{cli.type}</td>
-                      </tr>
+                    {mockStore.getAllCustomers()
+                      .filter(c => c.name.toLowerCase().includes(modalState.searchInput.toLowerCase()))
+                      .map(cli => (
+                        <tr 
+                          key={cli.id} 
+                          onClick={() => handleSelectEntity(cli.id, cli.name)}
+                          style={{ borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}
+                        >
+                          <td style={{ padding: '8px', fontWeight: 600, color: '#2563eb' }}>{cli.name}</td>
+                          <td style={{ padding: '8px', color: '#64748b' }}>{cli.mst || '---'}</td>
+                          <td style={{ padding: '8px', color: '#64748b' }}>{cli.type || 'Khách hàng'}</td>
+                        </tr>
                     ))}
                   </tbody>
                 </table>
@@ -653,26 +754,6 @@ function ActivityForm() {
         </div>
       )}
 
-      {/* DELETE CONFIRM MODAL */}
-      {showDeleteConfirm && (
-        <div className="modal-overlay" style={{ zIndex: 1100 }}>
-          <div className="modal-content" style={{ maxWidth: '400px', padding: '24px' }}>
-             <div style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px', color: '#1e293b' }}>
-               Xác nhận xóa
-             </div>
-             <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '24px' }}>
-               Bạn có chắc chắn muốn xóa công việc này không? Thao tác này không thể hoàn tác.
-             </p>
-             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-               <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Hủy</button>
-               <button className="btn btn-primary" style={{ backgroundColor: '#ef4444', borderColor: '#ef4444' }} onClick={() => {
-                 // Simulate delete
-                 navigate('/activity');
-               }}>Đồng ý</button>
-             </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
