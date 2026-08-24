@@ -10,6 +10,7 @@ import {
   List, 
   ChevronLeft, 
   ChevronRight,
+  ChevronDown,
   Calendar,
   X,
   Trash2
@@ -19,6 +20,102 @@ import { evaluateQuery } from '../utils/filterUtils';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import * as XLSX from 'xlsx';
 import { TASKS_UPDATED_EVENT, loadPersonalTasks, savePersonalTasks } from '../utils/taskSyncStore';
+
+// Custom Multi-Select with "Tất cả" option
+function MultiSelect({ options, selected, onChange, placeholder = '-- Chọn giá trị --' }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const normalizedOptions = options.map(opt => 
+    typeof opt === 'object' ? opt : { value: opt, label: opt }
+  );
+
+  const allValues = normalizedOptions.map(o => o.value);
+  const isAllSelected = selected.length === 0 || selected.includes('ALL') || selected.length === allValues.length;
+
+  const handleToggleAll = (e) => {
+    e.stopPropagation();
+    if (isAllSelected) {
+      onChange([]);
+    } else {
+      onChange(['ALL']);
+    }
+  };
+
+  const handleToggleItem = (val, e) => {
+    e.stopPropagation();
+    let currentSelected = selected.includes('ALL') ? [...allValues] : [...selected];
+    if (currentSelected.includes(val)) {
+      currentSelected = currentSelected.filter(v => v !== val);
+    } else {
+      currentSelected.push(val);
+    }
+
+    if (currentSelected.length === allValues.length || currentSelected.length === 0) {
+      onChange(['ALL']);
+    } else {
+      onChange(currentSelected);
+    }
+  };
+
+  const displayText = useMemo(() => {
+    if (isAllSelected) return 'Tất cả';
+    if (selected.length === 1) {
+      const found = normalizedOptions.find(o => o.value === selected[0]);
+      return found ? found.label : selected[0];
+    }
+    if (selected.length > 1) {
+      return `${selected.length} đã chọn`;
+    }
+    return placeholder;
+  }, [selected, isAllSelected, normalizedOptions, placeholder]);
+
+  return (
+    <div className="ab-adv-multiselect-container" onClick={(e) => e.stopPropagation()}>
+      <div 
+        className={`ab-adv-multiselect-trigger ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="ab-adv-multiselect-label">{displayText}</span>
+        <ChevronDown size={16} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', flexShrink: 0 }} />
+      </div>
+
+      {isOpen && (
+        <div className="ab-adv-multiselect-dropdown" onClick={e => e.stopPropagation()}>
+          {/* Option: Tất cả */}
+          <label className="ab-adv-multiselect-item all-option" onClick={handleToggleAll}>
+            <input 
+              type="checkbox"
+              className="ab-filter-checkbox"
+              checked={isAllSelected}
+              onChange={() => {}}
+            />
+            <span>Tất cả</span>
+          </label>
+
+          {/* Individual Options */}
+          {normalizedOptions.map(opt => {
+            const isChecked = isAllSelected || selected.includes(opt.value);
+            return (
+              <label 
+                key={opt.value}
+                className="ab-adv-multiselect-item"
+                onClick={(e) => handleToggleItem(opt.value, e)}
+              >
+                <input 
+                  type="checkbox"
+                  className="ab-filter-checkbox"
+                  checked={isChecked}
+                  onChange={() => {}}
+                />
+                <span>{opt.label}</span>
+              </label>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Filter configuration for each column matching the user's reference design
 const COLUMN_FILTER_CONFIG = {
@@ -885,16 +982,11 @@ function ActivityBoard() {
               {/* Row 1: Người Báo Cáo */}
               <div className="ab-adv-form-row">
                 <label className="ab-adv-form-label">Người Báo Cáo</label>
-                <select 
-                  className="ab-adv-control-select"
-                  value={advFilterForm.reporter}
-                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, reporter: e.target.value })}
-                >
-                  <option value="">-- Chọn giá trị --</option>
-                  {COLUMN_FILTER_CONFIG.reporter.options.map(emp => (
-                    <option key={emp} value={emp}>{emp}</option>
-                  ))}
-                </select>
+                <MultiSelect 
+                  options={COLUMN_FILTER_CONFIG.reporter.options}
+                  selected={advFilterForm.reporters}
+                  onChange={(vals) => setAdvFilterForm({ ...advFilterForm, reporters: vals })}
+                />
               </div>
 
               {/* Row 2: Hạn Chót */}
@@ -914,47 +1006,40 @@ function ActivityBoard() {
               {/* Row 3: Độ Ưu Tiên */}
               <div className="ab-adv-form-row">
                 <label className="ab-adv-form-label">Độ Ưu Tiên</label>
-                <select 
-                  className="ab-adv-control-select"
-                  value={advFilterForm.priority}
-                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, priority: e.target.value })}
-                >
-                  <option value="">-- Chọn giá trị --</option>
-                  <option value="low">★ Thấp</option>
-                  <option value="normal">★★ Trung bình</option>
-                  <option value="high">★★★ Cao</option>
-                </select>
+                <MultiSelect 
+                  options={[
+                    { value: 'low', label: '★ Thấp' },
+                    { value: 'normal', label: '★★ Trung bình' },
+                    { value: 'high', label: '★★★ Cao' }
+                  ]}
+                  selected={advFilterForm.priorities}
+                  onChange={(vals) => setAdvFilterForm({ ...advFilterForm, priorities: vals })}
+                />
               </div>
 
               {/* Row 4: Liên Kết Tới */}
               <div className="ab-adv-form-row">
                 <label className="ab-adv-form-label">Liên Kết Tới</label>
-                <select 
-                  className="ab-adv-control-select"
-                  value={advFilterForm.source}
-                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, source: e.target.value })}
-                >
-                  <option value="">-- Chọn giá trị --</option>
-                  {COLUMN_FILTER_CONFIG.source.options.map(src => (
-                    <option key={src} value={src}>{src}</option>
-                  ))}
-                </select>
+                <MultiSelect 
+                  options={COLUMN_FILTER_CONFIG.source.options}
+                  selected={advFilterForm.sources}
+                  onChange={(vals) => setAdvFilterForm({ ...advFilterForm, sources: vals })}
+                />
               </div>
 
               {/* Row 5: Trạng Thái */}
               <div className="ab-adv-form-row">
                 <label className="ab-adv-form-label">Trạng Thái</label>
-                <select 
-                  className="ab-adv-control-select"
-                  value={advFilterForm.status}
-                  onChange={(e) => setAdvFilterForm({ ...advFilterForm, status: e.target.value })}
-                >
-                  <option value="">-- Chọn giá trị --</option>
-                  <option value="todo">Mới (Todo)</option>
-                  <option value="processing">Đang thực hiện (Processing)</option>
-                  <option value="done">Hoàn thành (Done)</option>
-                  <option value="cancelled">Hủy (Cancelled)</option>
-                </select>
+                <MultiSelect 
+                  options={[
+                    { value: 'todo', label: 'Mới (Todo)' },
+                    { value: 'processing', label: 'Đang thực hiện (Processing)' },
+                    { value: 'done', label: 'Hoàn thành (Done)' },
+                    { value: 'cancelled', label: 'Hủy (Cancelled)' }
+                  ]}
+                  selected={advFilterForm.statuses}
+                  onChange={(vals) => setAdvFilterForm({ ...advFilterForm, statuses: vals })}
+                />
               </div>
 
               {/* Row 6: Ngày Tạo */}

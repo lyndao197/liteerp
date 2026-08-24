@@ -629,6 +629,87 @@
   background-color: #be123c;
 }
 
+/* Multi-select Dropdown inside Advanced Filter Modal */
+.ab-adv-multiselect-container {
+  position: relative;
+  width: 100%;
+}
+
+.ab-adv-multiselect-trigger {
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #1e293b;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
+  transition: all 0.2s;
+  min-height: 38px;
+}
+
+.ab-adv-multiselect-trigger:hover,
+.ab-adv-multiselect-trigger.open {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1.5px #cbd5e1;
+}
+
+.ab-adv-multiselect-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 24px);
+}
+
+.ab-adv-multiselect-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1050;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: abFadeIn 0.15s ease-out;
+}
+
+.ab-adv-multiselect-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s;
+}
+
+.ab-adv-multiselect-item:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.ab-adv-multiselect-item.all-option {
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
 /* ==================== LIST TABLE ==================== */
 .ab-table-container {
   overflow-x: auto;
