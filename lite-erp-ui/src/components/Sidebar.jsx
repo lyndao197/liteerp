@@ -27,7 +27,9 @@ import {
   ArrowUpFromLine,
   Layers,
   Briefcase,
-  FileSliders
+  FileSliders,
+  ClipboardCheck,
+  AlertCircle
 } from 'lucide-react';
 
 function Sidebar() {
@@ -98,7 +100,7 @@ function Sidebar() {
           </div>
           <div className={`nav-item ${location.pathname === '/activities' ? 'active' : ''}`} onClick={() => navigate('/activities')}>
             <Kanban size={20} />
-            <span>Quản lý tiếp xúc Khách hàng</span>
+            <span>Quản lý công việc</span>
             <span className="mvp-badge">MVP</span>
           </div>
           {/* Goals - Collapsible */}
@@ -167,16 +169,22 @@ function Sidebar() {
             <span>Quản lý hồ sơ khách hàng</span>
             <span className="mvp-badge">MVP</span>
           </div>
+          <div className={`nav-item ${location.pathname.includes('/issues') || location.pathname.includes('/pakh') ? 'active' : ''}`} onClick={() => navigate('/issues')}>
+            <AlertCircle size={20} />
+            <span>Phản ánh khách hàng</span>
+            <span className="mvp-badge" style={{ backgroundColor: '#10b981' }}>New</span>
+          </div>
           <div className={`nav-item ${location.pathname.includes('/customer-service') ? 'active' : ''}`} onClick={() => navigate('/customer-service')}>
             <Settings size={20} />
             <span>Customer Service</span>
           </div>
           <div
-            className={`nav-item ${location.pathname.includes('/customer-service/surveys') ? 'active' : ''}`}
-            onClick={() => navigate('/customer-service/surveys')}
+            className={`nav-item ${location.pathname.includes('/surveys') || location.pathname.includes('/customer-service/surveys') || location.pathname.startsWith('/survey') ? 'active' : ''}`}
+            onClick={() => navigate('/surveys')}
           >
-            <Tag size={20} />
-            <span>Quản lý Khảo sát khách hàng</span>
+            <ClipboardCheck size={20} />
+            <span>Quản lý Khảo sát (Survey)</span>
+            <span className="mvp-badge" style={{ backgroundColor: '#10b981' }}>New</span>
           </div>
           <div
             className={`nav-item ${location.pathname.includes('/loyalty') ? 'active' : ''}`}

@@ -12,7 +12,9 @@ import CustomerList from './components/CustomerList';
 import CustomerForm from './components/CustomerForm';
 import ContactList from './components/ContactList';
 import ContactForm from './components/ContactForm';
-import ActivityBoard from './components/ActivityBoard';
+import ActivityBoard from './components/ActivityList';
+import IssueList from './components/IssueList';
+import IssueForm from './components/IssueForm';
 import TeamActivityBoard from './components/TeamActivityBoard';
 import TeamTaskDetail from './components/TeamTaskDetail';
 import ActivityForm from './components/ActivityForm';
@@ -40,6 +42,8 @@ import RoleForm from './components/RoleForm';
 import MarketingCampaignList from './components/MarketingCampaignList';
 import ServiceTicketList from './components/ServiceTicketList';
 import CustomerSurveyList from './components/CustomerSurveyList';
+import Surveylist from './components/Surveylist';
+import Surveyform from './components/Surveyform';
 import LoyaltyProgramList from './components/LoyaltyProgramList';
 import ProductList from './components/ProductList';
 import ConfigFileList from './components/ConfigFileList';
@@ -90,6 +94,7 @@ function AppRoutes() {
               <Route path="/contact/new" element={<ContactForm />} />
               <Route path="/contact/edit/:id" element={<ContactForm />} />
               <Route path="/activities" element={<ActivityBoard />} />
+              <Route path="/activity" element={<ActivityBoard />} />
               <Route path="/activities/team" element={<TeamActivityBoard />} />
               <Route path="/activities/team/:id" element={<TeamTaskDetail />} />
               <Route path="/activity/new" element={<ActivityForm />} />
@@ -133,7 +138,17 @@ function AppRoutes() {
               <Route path="/ticketing" element={<ServiceTicketList />} />
               <Route path="/customer-service" element={<ServiceTicketList />} />
               <Route path="/customer-service/tickets" element={<ServiceTicketList />} />
-              <Route path="/customer-service/surveys" element={<CustomerSurveyList />} />
+              <Route path="/customer-service/surveys" element={<Surveylist />} />
+              <Route path="/customer-service/issues" element={<IssueList />} />
+              <Route path="/issues" element={<IssueList />} />
+              <Route path="/pakh" element={<IssueList />} />
+              <Route path="/pakh/new" element={<IssueForm />} />
+              <Route path="/pakh/edit/:id" element={<IssueForm />} />
+              <Route path="/issue/new" element={<IssueForm />} />
+              <Route path="/issue/edit/:id" element={<IssueForm />} />
+              <Route path="/surveys" element={<Surveylist />} />
+              <Route path="/survey/new" element={<Surveyform />} />
+              <Route path="/survey/edit/:id" element={<Surveyform />} />
               <Route path="/loyalty" element={<LoyaltyProgramList />} />
               <Route path="/products" element={<ProductList />} />
               <Route path="/config-files" element={<ConfigFileList />} />

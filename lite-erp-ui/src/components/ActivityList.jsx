@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import './ActivityBoard.css';
+import './ActivityList.css';
 import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -13,13 +13,96 @@ import {
   ChevronDown,
   Calendar,
   X,
-  Trash2
+  Trash2,
+  Check
 } from 'lucide-react';
 import { QueryBuilder } from './QueryBuilder';
 import { evaluateQuery } from '../utils/filterUtils';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import * as XLSX from 'xlsx';
 import { TASKS_UPDATED_EVENT, loadPersonalTasks, savePersonalTasks } from '../utils/taskSyncStore';
+
+// Initial dataset for Hoạt động hỗ trợ matching user requirements
+const INITIAL_SUPPORT_ACTIVITIES = [
+  {
+    id: 101,
+    title: 'Hỗ trợ rà soát phụ lục hợp đồng và đối soát cước FO',
+    assignee: 'Lê Văn Hưng',
+    reporter: 'Lê Văn Hưng',
+    partnerName: 'Viettel Telecom (VTT)',
+    source: 'Lead Công ty Viettel Post',
+    createdDate: '27/08/2026',
+    dueDate: '28/08/2026',
+    priority: 'high',
+    activityType: 'call',
+    status: 'todo'
+  },
+  {
+    id: 102,
+    title: 'Hỗ trợ kiểm tra chính sách chiết khấu dịch vụ BO',
+    assignee: 'Nguyễn Thị Lan',
+    reporter: 'Nguyễn Thị Lan',
+    partnerName: 'Viettel Solutions (VTS)',
+    source: 'Dự án dịch vụ chăm sóc khách hàng',
+    createdDate: '26/08/2026',
+    dueDate: '28/08/2026',
+    priority: 'normal',
+    activityType: 'email',
+    status: 'processing'
+  },
+  {
+    id: 103,
+    title: 'Hỗ trợ thỏa thuận yêu cầu rút phản ánh khách hàng',
+    assignee: 'Trần Minh Hải',
+    reporter: 'Trần Minh Hải',
+    partnerName: 'Viettel Cyber Security (VCS)',
+    source: 'Lead Khách hàng: Trần Thị B',
+    createdDate: '25/08/2026',
+    dueDate: '28/08/2026',
+    priority: 'low',
+    activityType: 'meeting',
+    status: 'cancelled'
+  },
+  {
+    id: 104,
+    title: 'Hỗ trợ khắc phục sự cố kết nối hệ thống tổng đài',
+    assignee: 'Nguyễn Văn Nam',
+    reporter: 'Lê Văn Hưng',
+    partnerName: 'Viettel Telecom (VTT)',
+    source: 'Dự án phần mềm KnowxHub',
+    createdDate: '24/08/2026',
+    dueDate: '25/08/2026',
+    priority: 'high',
+    activityType: 'call',
+    status: 'done'
+  },
+  {
+    id: 105,
+    title: 'Hỗ trợ đồng bộ dữ liệu hóa đơn điện tử portal',
+    assignee: 'Phạm Đức Long',
+    reporter: 'Nguyễn Thị Lan',
+    partnerName: 'Viettel High Tech (VHT)',
+    source: 'Dự án dịch vụ chăm sóc khách hàng',
+    createdDate: '27/08/2026',
+    dueDate: '29/08/2026',
+    priority: 'high',
+    activityType: 'email',
+    status: 'processing'
+  },
+  {
+    id: 106,
+    title: 'Hỗ trợ hướng dẫn cấu hình phân quyền người dùng ERP',
+    assignee: 'Hung NV',
+    reporter: 'Hung NV',
+    partnerName: 'Ngân hàng TMCP An Bình (ABBank)',
+    source: 'Lead Công ty Viettel Post',
+    createdDate: '25/08/2026',
+    dueDate: '27/08/2026',
+    priority: 'normal',
+    activityType: 'meeting',
+    status: 'done'
+  }
+];
 
 // Custom Multi-Select with "Tất cả" option
 function MultiSelect({ options = [], selected = [], onChange, placeholder = '-- Chọn giá trị --' }) {
@@ -124,6 +207,10 @@ const COLUMN_FILTER_CONFIG = {
     title: 'Lọc ID công việc',
     options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
   },
+  supportType: {
+    title: 'Lọc Loại hỗ trợ',
+    options: ['PAKH', 'CSKH']
+  },
   title: {
     title: 'Lọc tên nhiệm vụ',
     options: [
@@ -176,12 +263,28 @@ const ALL_COLUMNS = [
   { key: 'source', label: 'Liên kết tới' }
 ];
 
+const EXPORT_AVAILABLE_COLUMNS = [
+  { key: 'id', label: 'ID công việc' },
+  { key: 'supportType', label: 'Loại hỗ trợ' },
+  { key: 'title', label: 'Tên nhiệm vụ' },
+  { key: 'reporter', label: 'Người được giao' },
+  { key: 'createdDate', label: 'Ngày tạo' },
+  { key: 'dueDate', label: 'Hạn chót' },
+  { key: 'priority', label: 'Độ ưu tiên' },
+  { key: 'source', label: 'Liên kết tới' },
+  { key: 'status', label: 'Trạng thái' }
+];
+
 function ActivityBoard() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('list'); // Default to 'list'
   const [activeTab, setActiveTab] = useState('my_activities'); // 'my_activities' | 'support_activities'
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportSelectedCols, setExportSelectedCols] = useState([
+    'id', 'supportType', 'title', 'priority', 'source', 'status'
+  ]);
   const [advancedQuery, setAdvancedQuery] = useState({
     id: 'root',
     combinator: 'AND',
@@ -209,6 +312,7 @@ function ActivityBoard() {
   const [selectedRows, setSelectedRows] = useState([]);
 
   const [activityList, setActivityList] = useState(() => loadPersonalTasks());
+  const [supportList, setSupportList] = useState(INITIAL_SUPPORT_ACTIVITIES);
 
   useEffect(() => {
     savePersonalTasks(activityList);
@@ -225,12 +329,21 @@ function ActivityBoard() {
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-    const updatedActivities = [...activityList];
-    const activityIndex = updatedActivities.findIndex(a => a.id.toString() === draggableId.toString());
-    
-    if (activityIndex !== -1) {
-      updatedActivities[activityIndex].status = destination.droppableId;
-      setActivityList(updatedActivities);
+    if (activeTab === 'support_activities') {
+      const updated = [...supportList];
+      const idx = updated.findIndex(a => a.id.toString() === draggableId.toString());
+      if (idx !== -1) {
+        updated[idx].status = destination.droppableId;
+        setSupportList(updated);
+      }
+    } else {
+      const updatedActivities = [...activityList];
+      const activityIndex = updatedActivities.findIndex(a => a.id.toString() === draggableId.toString());
+      
+      if (activityIndex !== -1) {
+        updatedActivities[activityIndex].status = destination.droppableId;
+        setActivityList(updatedActivities);
+      }
     }
   };
 
@@ -280,7 +393,8 @@ function ActivityBoard() {
   };
 
   const processedData = useMemo(() => {
-    let result = [...activityList];
+    let rawList = activeTab === 'support_activities' ? supportList : activityList;
+    let result = [...rawList];
 
     // 1. Search term filter
     if (searchTerm) {
@@ -346,25 +460,67 @@ function ActivityBoard() {
     }
 
     return result;
-  }, [activityList, searchTerm, columnFilters, appliedAdvFilter, sortConfig]);
+  }, [activityList, supportList, activeTab, searchTerm, columnFilters, appliedAdvFilter, sortConfig]);
 
   const paginatedData = processedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const handleExport = () => {
-    const exportData = processedData.map(item => ({
-      'ID công việc': `ACT-2026-${String(item.id).padStart(5, '0')}`,
-      'Tên nhiệm vụ': item.title || '',
-      'Báo cáo bởi': item.reporter || item.assignee || '',
-      'Ngày tạo': item.createdDate || '',
-      'Hạn chót': item.dueDate || '',
-      'Độ ưu tiên': getPriorityLabel(item.priority),
-      'Liên kết tới': item.source || ''
-    }));
+  const handleToggleExportCol = (key) => {
+    setExportSelectedCols(prev => 
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
+
+  const handleToggleAllExportCols = () => {
+    if (exportSelectedCols.length === EXPORT_AVAILABLE_COLUMNS.length) {
+      setExportSelectedCols([]);
+    } else {
+      setExportSelectedCols(EXPORT_AVAILABLE_COLUMNS.map(c => c.key));
+    }
+  };
+
+  const handleExecuteExport = () => {
+    if (exportSelectedCols.length === 0) {
+      alert('Vui lòng chọn ít nhất 1 trường để xuất dữ liệu!');
+      return;
+    }
+
+    const exportData = processedData.map(item => {
+      const row = {};
+      if (exportSelectedCols.includes('id')) {
+        row['ID công việc'] = `ACT-2026-${String(item.id).padStart(5, '0')}`;
+      }
+      if (exportSelectedCols.includes('supportType')) {
+        row['Loại hỗ trợ'] = item.supportType || (item.id % 2 === 0 ? 'PAKH' : 'CSKH');
+      }
+      if (exportSelectedCols.includes('title')) {
+        row['Tên nhiệm vụ'] = item.title || '';
+      }
+      if (exportSelectedCols.includes('reporter')) {
+        row['Người được giao'] = item.reporter || item.assignee || '';
+      }
+      if (exportSelectedCols.includes('createdDate')) {
+        row['Ngày tạo'] = item.createdDate || '';
+      }
+      if (exportSelectedCols.includes('dueDate')) {
+        row['Hạn chót'] = item.dueDate || '';
+      }
+      if (exportSelectedCols.includes('priority')) {
+        row['Độ ưu tiên'] = getPriorityLabel(item.priority);
+      }
+      if (exportSelectedCols.includes('source')) {
+        row['Liên kết tới'] = item.source || '';
+      }
+      if (exportSelectedCols.includes('status')) {
+        row['Trạng thái'] = getStatusLabel(item.status);
+      }
+      return row;
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Activities");
     XLSX.writeFile(workbook, "Danh_sach_hoat_dong.xlsx");
+    setShowExportModal(false);
   };
 
   const renderPriority = (priority) => {
@@ -398,7 +554,8 @@ function ActivityBoard() {
     if (!config) return null;
 
     // Merge default options with any extra dynamic values from current data
-    const dynamicValues = [...new Set(activityList.map(item => {
+    const activeDataset = activeTab === 'support_activities' ? supportList : activityList;
+    const dynamicValues = [...new Set(activeDataset.map(item => {
       if (colKey === 'id') return String(item.id);
       if (colKey === 'priority') return getPriorityLabel(item.priority);
       if (colKey === 'reporter') return item.reporter || item.assignee;
@@ -446,7 +603,7 @@ function ActivityBoard() {
       <div className="ab-inner-content">
         
         {/* PAGE TITLE */}
-        <h1 className="ab-page-title">Quản lý tiếp xúc khách hàng</h1>
+        <h1 className="ab-page-title">Quản lý công việc</h1>
 
         {/* 3 KPI METRIC CARDS */}
         <div className="ab-metrics-grid">
@@ -519,7 +676,7 @@ function ActivityBoard() {
             <div className="ab-toolbar-right">
               {selectedRows.length > 0 && (
                 <button 
-                  type="button"
+                  type="button" 
                   className="ab-btn-outline-red"
                   style={{ borderColor: '#ef4444', color: '#ef4444' }}
                   onClick={() => {
@@ -534,19 +691,21 @@ function ActivityBoard() {
                 </button>
               )}
 
-              <button 
-                type="button" 
-                className="ab-btn-outline-red"
-                onClick={() => navigate('/activity/new')}
-              >
-                <Plus size={16} />
-                <span>Thêm hoạt động</span>
-              </button>
+              {activeTab === 'my_activities' && (
+                <button 
+                  type="button" 
+                  className="ab-btn-outline-red"
+                  onClick={() => navigate('/activity/new')}
+                >
+                  <Plus size={16} />
+                  <span>Thêm hoạt động</span>
+                </button>
+              )}
 
               <button 
                 type="button" 
                 className="ab-btn-outline-red"
-                onClick={handleExport}
+                onClick={() => setShowExportModal(true)}
               >
                 <Download size={15} />
                 <span>Xuất Excel</span>
@@ -583,7 +742,7 @@ function ActivityBoard() {
                     <tr>
                       <th style={{ width: '40px', textAlign: 'center' }}>
                         <input 
-                          type="checkbox"
+                          type="checkbox" 
                           className="ab-checkbox"
                           checked={paginatedData.length > 0 && selectedRows.length === paginatedData.length}
                           onChange={(e) => {
@@ -592,8 +751,6 @@ function ActivityBoard() {
                           }}
                         />
                       </th>
-
-                      {/* ID CÔNG VIỆC */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('id')}>ID công việc</span>
@@ -610,8 +767,6 @@ function ActivityBoard() {
                         </div>
                         {activeFilterCol === 'id' && renderFilterPopup('id')}
                       </th>
-
-                      {/* TÊN NHIỆM VỤ */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('title')}>Tên nhiệm vụ</span>
@@ -628,8 +783,6 @@ function ActivityBoard() {
                         </div>
                         {activeFilterCol === 'title' && renderFilterPopup('title')}
                       </th>
-
-                      {/* BÁO CÁO BỞI */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('reporter')}>Báo cáo bởi</span>
@@ -646,8 +799,6 @@ function ActivityBoard() {
                         </div>
                         {activeFilterCol === 'reporter' && renderFilterPopup('reporter')}
                       </th>
-
-                      {/* NGÀY TẠO */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('createdDate')}>Ngày tạo</span>
@@ -659,8 +810,6 @@ function ActivityBoard() {
                           </div>
                         </div>
                       </th>
-
-                      {/* HẠN CHÓT */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('dueDate')}>Hạn chót</span>
@@ -677,8 +826,6 @@ function ActivityBoard() {
                         </div>
                         {activeFilterCol === 'dueDate' && renderFilterPopup('dueDate')}
                       </th>
-
-                      {/* ĐỘ ƯU TIÊN */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('priority')}>Độ ưu tiên</span>
@@ -695,8 +842,6 @@ function ActivityBoard() {
                         </div>
                         {activeFilterCol === 'priority' && renderFilterPopup('priority')}
                       </th>
-
-                      {/* LIÊN KẾT TỚI */}
                       <th className="ab-th-cell">
                         <div className="ab-th-content">
                           <span className="ab-th-title" onClick={() => handleSort('source')}>Liên kết tới</span>
@@ -720,7 +865,7 @@ function ActivityBoard() {
                       <tr 
                         key={activity.id}
                         className={selectedRows.includes(activity.id) ? 'row-selected' : ''}
-                        onClick={() => navigate(`/activity/edit/${activity.id}`)}
+                        onClick={() => navigate(`/activity/edit/${activity.id}${activeTab === 'support_activities' ? '?tab=support' : ''}`)}
                       >
                         <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
                           <input 
@@ -739,12 +884,12 @@ function ActivityBoard() {
                         <td>{activity.createdDate || '07/04/2026'}</td>
                         <td>{activity.dueDate || '07/05/2026'}</td>
                         <td>{renderPriority(activity.priority)}</td>
-                        <td>{activity.source ? (activity.source.length > 18 ? activity.source.substring(0, 15) + '...' : activity.source) : 'Lead...'}</td>
+                        <td>{activity.source ? (activity.source.length > 25 ? activity.source.substring(0, 22) + '...' : activity.source) : 'Lead...'}</td>
                       </tr>
                     ))}
                     {paginatedData.length === 0 && (
                       <tr>
-                        <td colSpan="8" style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
+                        <td colSpan={8} style={{ textAlign: 'center', padding: '30px', color: '#94a3b8' }}>
                           Không có hoạt động nào phù hợp.
                         </td>
                       </tr>
@@ -800,14 +945,16 @@ function ActivityBoard() {
                           <span className="ab-kanban-count-badge">{columnTasks.length}</span>
                           <span className="ab-kanban-col-title">{col.title}</span>
                         </div>
-                        <button 
-                          type="button" 
-                          className="ab-kanban-btn-add"
-                          onClick={() => navigate('/activity/new')}
-                          title="Thêm công việc"
-                        >
-                          +
-                        </button>
+                        {activeTab === 'my_activities' && (
+                          <button 
+                            type="button" 
+                            className="ab-kanban-btn-add"
+                            onClick={() => navigate('/activity/new')}
+                            title="Thêm công việc"
+                          >
+                            +
+                          </button>
+                        )}
                       </div>
 
                       {/* Progress Bar */}
@@ -848,7 +995,7 @@ function ActivityBoard() {
                                       ref={provided.innerRef}
                                       {...provided.draggableProps}
                                       {...provided.dragHandleProps}
-                                      onClick={() => navigate(`/activity/edit/${activity.id}`)}
+                                      onClick={() => navigate(`/activity/edit/${activity.id}` + (activeTab === 'support_activities' ? '?tab=support' : ''))}
                                       className={`ab-kanban-card ${snapshot.isDragging ? 'is-dragging' : ''}`}
                                     >
                                       {/* Title */}
@@ -1079,6 +1226,83 @@ function ActivityBoard() {
                 onClick={handleApplyAdvancedFilter}
               >
                 Lọc
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* EXPORT EXCEL MODAL */}
+      {showExportModal && (
+        <div className="ab-export-modal-overlay" onClick={() => setShowExportModal(false)}>
+          <div className="ab-export-modal" onClick={e => e.stopPropagation()}>
+            
+            {/* Modal Header */}
+            <div className="ab-export-modal-header">
+              <div className="ab-export-modal-title">Xuất Excel</div>
+              <button 
+                type="button" 
+                className="ab-export-modal-close" 
+                onClick={() => setShowExportModal(false)}
+                aria-label="Đóng"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="ab-export-modal-body">
+              
+              {/* Select All Box */}
+              <div className="ab-export-select-all-box" onClick={handleToggleAllExportCols}>
+                <div className={`ab-export-checkbox ${exportSelectedCols.length === EXPORT_AVAILABLE_COLUMNS.length ? 'checked' : ''}`}>
+                  {exportSelectedCols.length === EXPORT_AVAILABLE_COLUMNS.length && <Check size={13} strokeWidth={3} />}
+                </div>
+                <div className="ab-export-select-all-info">
+                  <div className="ab-export-select-all-title">Chọn tất cả các trường</div>
+                  <div className="ab-export-select-all-sub">
+                    {exportSelectedCols.length} / {EXPORT_AVAILABLE_COLUMNS.length} trường được chọn
+                  </div>
+                </div>
+              </div>
+
+              {/* Selectable Fields List */}
+              <div className="ab-export-fields-list">
+                {EXPORT_AVAILABLE_COLUMNS.map(col => {
+                  const isChecked = exportSelectedCols.includes(col.key);
+                  return (
+                    <div 
+                      key={col.key} 
+                      className="ab-export-field-item"
+                      onClick={() => handleToggleExportCol(col.key)}
+                    >
+                      <div className={`ab-export-checkbox ${isChecked ? 'checked' : ''}`}>
+                        {isChecked && <Check size={13} strokeWidth={3} />}
+                      </div>
+                      <span>{col.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="ab-export-modal-footer">
+              <button 
+                type="button" 
+                className="ab-export-btn-cancel"
+                onClick={() => setShowExportModal(false)}
+              >
+                Hủy
+              </button>
+              <button 
+                type="button" 
+                className="ab-export-btn-submit"
+                onClick={handleExecuteExport}
+              >
+                Xuất dữ liệu
               </button>
             </div>
 
