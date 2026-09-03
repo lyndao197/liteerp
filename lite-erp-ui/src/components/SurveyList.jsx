@@ -316,7 +316,16 @@ export default function Surveylist() {
   const [topTab, setTopTab] = useState('surveys'); // 'surveys' | 'participants' | 'qa'
 
   // Surveys state (Tab 1)
-  const [surveys, setSurveys] = useState(INITIAL_SURVEYS);
+  const [surveys, setSurveys] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lite_erp_surveys');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return INITIAL_SURVEYS;
+  });
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
