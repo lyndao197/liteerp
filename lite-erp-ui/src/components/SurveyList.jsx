@@ -37,7 +37,7 @@ import {
   BarChart3,
   HelpCircle
 } from 'lucide-react';
-import './Surveylist.css';
+import './SurveyList.css';
 
 // Initial survey dataset matching the mockup design with contracts and survey types
 const INITIAL_SURVEYS = [
