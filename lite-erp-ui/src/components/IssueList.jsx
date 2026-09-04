@@ -207,6 +207,7 @@ const PAKH_COLUMNS = [
   { key: 'nhanVienTiepNhan', label: 'Nhân viên tiếp nhận', width: '160px', defaultVisible: true },
   { key: 'kenhTiepNhan', label: 'Kênh tiếp nhận', width: '130px', defaultVisible: true },
   { key: 'ngayTiepNhan', label: 'Ngày tiếp nhận', width: '130px', defaultVisible: true },
+  { key: 'gioTiepNhan', label: 'Giờ tiếp nhận', width: '110px', defaultVisible: false },
   { key: 'mucDoUuTien', label: 'Mức độ ưu tiên', width: '140px', defaultVisible: true },
   { key: 'nhomSpDv', label: 'Nhóm SP/DV', width: '160px', defaultVisible: true },
   { key: 'loaiSpDv', label: 'Loại SP/DV', width: '120px', defaultVisible: true },
@@ -217,9 +218,12 @@ const PAKH_COLUMNS = [
   { key: 'thoiHanXuLy', label: 'Thời hạn xử lý', width: '120px', defaultVisible: true },
   { key: 'ngayHenXuLy', label: 'Ngày hẹn xử lý', width: '130px', defaultVisible: true },
   { key: 'hinhThucPhanHoi', label: 'Hình thức phản hồi', width: '150px', defaultVisible: true },
-  { key: 'sdtDiaChiPhanHoi', label: 'SĐT / Địa chỉ phản hồi', width: '180px', defaultVisible: true },
+  { key: 'sdtDiaChiPhanHoi', label: 'SĐT/Địa chỉ phản hồi', width: '180px', defaultVisible: true },
   { key: 'noiDungXuLy', label: 'Nội dung xử lý', width: '240px', defaultVisible: true },
-  { key: 'donViXuLy', label: 'Đơn vị xử lý', width: '180px', defaultVisible: true }
+  { key: 'donViXuLy', label: 'Đơn vị xử lý', width: '180px', defaultVisible: true },
+  { key: 'nguoiXuLyCuoi', label: 'Người xử lý cuối', width: '160px', defaultVisible: false },
+  { key: 'ngayDongPhanAnh', label: 'Ngày đóng phản ánh', width: '140px', defaultVisible: false },
+  { key: 'gioDongPhanAnh', label: 'Giờ đóng phản ánh', width: '120px', defaultVisible: false }
 ];
 
 const PAKH_EXPORT_COLUMNS = PAKH_COLUMNS;
@@ -314,7 +318,18 @@ export default function IssueList() {
   const [issues, setIssues] = useState(() => {
     try {
       const stored = localStorage.getItem('ha_pakh_issues');
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed.map(item => ({
+            ...item,
+            gioTiepNhan: item.gioTiepNhan || '09:00',
+            nguoiXuLyCuoi: item.nguoiXuLyCuoi || item.reporter || 'Lê Văn Hưng',
+            ngayDongPhanAnh: item.ngayDongPhanAnh || (item.trangThaiPhanAnh === 'Đã hoàn thành' || item.trangThaiPhanAnh === 'Hủy phản ánh' ? '26/08/2026' : '-'),
+            gioDongPhanAnh: item.gioDongPhanAnh || (item.trangThaiPhanAnh === 'Đã hoàn thành' || item.trangThaiPhanAnh === 'Hủy phản ánh' ? '11:00' : '-')
+          }));
+        }
+      }
       localStorage.setItem('ha_pakh_issues', JSON.stringify(INITIAL_ISSUES));
       return INITIAL_ISSUES;
     } catch {
@@ -369,11 +384,18 @@ export default function IssueList() {
 
   const [visibleColumns, setVisibleColumns] = useState(() => {
     try {
-      const stored = localStorage.getItem('ha_pakh_visible_cols');
-      if (stored) return JSON.parse(stored);
-      return PAKH_COLUMNS.map(c => c.key);
+      const stored = localStorage.getItem('ha_pakh_visible_cols_v2');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const allColKeys = PAKH_COLUMNS.map(c => c.key);
+          const valid = allColKeys.filter(k => parsed.includes(k));
+          if (valid.length > 0) return valid;
+        }
+      }
+      return PAKH_COLUMNS.filter(c => c.defaultVisible !== false).map(c => c.key);
     } catch {
-      return PAKH_COLUMNS.map(c => c.key);
+      return PAKH_COLUMNS.filter(c => c.defaultVisible !== false).map(c => c.key);
     }
   });
   const [showColConfigModal, setShowColConfigModal] = useState(false);
@@ -411,8 +433,12 @@ export default function IssueList() {
     ngayHenXuLy: '',
     hinhThucPhanHoi: 'HPC',
     sdtDiaChiPhanHoi: '',
+    noiDungXuLy: '',
     donViXuLy: 'Trung tâm Vận hành FO',
     trangThaiPhanAnh: 'Tiếp nhận mới',
+    nguoiXuLyCuoi: 'Lê Văn Hưng',
+    ngayDongPhanAnh: '-',
+    gioDongPhanAnh: '-',
     tienDoXuLy: 'Trong hạn',
     status: 'todo'
   });
@@ -773,6 +799,14 @@ export default function IssueList() {
         return renderPakhStatus(item.trangThaiPhanAnh);
       case 'tienDoXuLy':
         return renderPakhProgress(item.tienDoXuLy);
+      case 'nguoiXuLyCuoi':
+        return <span style={{ fontWeight: 500, color: '#334155' }}>{item.nguoiXuLyCuoi || '-'}</span>;
+      case 'gioTiepNhan':
+        return item.gioTiepNhan || '-';
+      case 'ngayDongPhanAnh':
+        return item.ngayDongPhanAnh || '-';
+      case 'gioDongPhanAnh':
+        return item.gioDongPhanAnh || '-';
       default:
         return item[colKey] || '-';
     }
@@ -1658,7 +1692,7 @@ export default function IssueList() {
                 onClick={() => {
                   const allKeys = PAKH_COLUMNS.map(c => c.key);
                   setVisibleColumns(allKeys);
-                  localStorage.setItem('ha_pakh_visible_cols', JSON.stringify(allKeys));
+                  localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(allKeys));
                 }}
               >
                 Hiển thị tất cả
@@ -1670,18 +1704,18 @@ export default function IssueList() {
                 onClick={() => {
                   const defaultKeys = PAKH_COLUMNS.filter(c => c.defaultVisible !== false).map(c => c.key);
                   setVisibleColumns(defaultKeys);
-                  localStorage.setItem('ha_pakh_visible_cols', JSON.stringify(defaultKeys));
+                  localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(defaultKeys));
                 }}
               >
-                Mặc định
+                Mặc định (21 cột)
               </button>
             </div>
 
-            <div style={{ padding: '16px 20px', maxHeight: '380px', overflowY: 'auto' }}>
+            <div style={{ padding: '16px 20px', maxHeight: '420px', overflowY: 'auto' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 {PAKH_COLUMNS.filter(c => !colSearchQuery.trim() || c.label.toLowerCase().includes(colSearchQuery.toLowerCase())).map(col => {
                   const isChecked = visibleColumns.includes(col.key);
-                  const isFixed = col.key === 'maKhieuNai' || col.key === 'trangThaiPhanAnh' || col.key === 'tienDoXuLy';
+                  const colIndex = PAKH_COLUMNS.findIndex(c => c.key === col.key) + 1;
 
                   return (
                     <label 
@@ -1689,22 +1723,26 @@ export default function IssueList() {
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px',
+                        gap: '8px',
                         padding: '8px 10px',
                         borderRadius: '6px',
-                        border: isChecked ? '1px solid #fecaca' : '1px solid #f1f5f9',
+                        border: isChecked ? '1px solid #fecaca' : '1px solid #e2e8f0',
                         backgroundColor: isChecked ? '#fff1f2' : '#ffffff',
-                        cursor: isFixed ? 'not-allowed' : 'pointer',
+                        cursor: 'pointer',
                         userSelect: 'none',
                         transition: 'all 0.15s'
                       }}
                       onClick={() => {
-                        if (isFixed) return;
                         setVisibleColumns(prev => {
-                          const updated = prev.includes(col.key)
-                            ? prev.filter(k => k !== col.key)
-                            : [...prev, col.key];
-                          localStorage.setItem('ha_pakh_visible_cols', JSON.stringify(updated));
+                          let updated;
+                          if (prev.includes(col.key)) {
+                            if (prev.length <= 1) return prev; // Keep at least 1 column
+                            updated = prev.filter(k => k !== col.key);
+                          } else {
+                            // Maintain PAKH_COLUMNS natural sequence
+                            updated = PAKH_COLUMNS.map(c => c.key).filter(k => prev.includes(k) || k === col.key);
+                          }
+                          localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(updated));
                           return updated;
                         });
                       }}
@@ -1713,15 +1751,17 @@ export default function IssueList() {
                         type="checkbox"
                         className="ab-filter-checkbox"
                         checked={isChecked}
-                        disabled={isFixed}
                         onChange={() => {}}
                       />
-                      <span style={{ fontSize: '13px', color: '#1e293b', flex: 1, fontWeight: isChecked ? 600 : 400 }}>
+                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 600, minWidth: '20px' }}>
+                        {colIndex}.
+                      </span>
+                      <span style={{ fontSize: '12.5px', color: '#1e293b', flex: 1, fontWeight: isChecked ? 600 : 400 }}>
                         {col.label}
                       </span>
-                      {isFixed && (
-                        <span style={{ fontSize: '10.5px', background: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
-                          Cố định
+                      {col.defaultVisible === false && (
+                        <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#64748b', padding: '2px 5px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
+                          Mặc định ẩn
                         </span>
                       )}
                     </label>
