@@ -399,7 +399,7 @@ export default function IssueList() {
     }
   });
   const [showColConfigModal, setShowColConfigModal] = useState(false);
-  const [colSearchQuery, setColSearchQuery] = useState('');
+  const [colConfigPos, setColConfigPos] = useState({ top: 150, right: 20 });
   const [columnFilters, setColumnFilters] = useState({});
   const [activeFilterCol, setActiveFilterCol] = useState(null);
   const [filterSearchTerm, setFilterSearchTerm] = useState('');
@@ -1158,7 +1158,12 @@ export default function IssueList() {
                           title="Cấu hình cột hiển thị"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setShowColConfigModal(true);
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setColConfigPos({
+                              top: rect.bottom + 6,
+                              right: Math.max(16, window.innerWidth - rect.right)
+                            });
+                            setShowColConfigModal(prev => !prev);
                           }}
                         >
                           <SlidersHorizontal size={17} strokeWidth={2} />
@@ -1645,143 +1650,93 @@ export default function IssueList() {
         </div>
       )}
 
-      {/* COLUMN CONFIGURATION MODAL */}
+      {/* COLUMN CONFIGURATION POPOVER */}
       {showColConfigModal && (
-        <div className="ab-modal-overlay" onClick={() => setShowColConfigModal(false)}>
+        <div 
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'transparent' }}
+          onClick={() => setShowColConfigModal(false)}
+        >
           <div 
-            className="ab-adv-modal" 
-            style={{ width: '560px', maxWidth: '95%' }}
             onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'fixed',
+              top: `${colConfigPos.top}px`,
+              right: `${colConfigPos.right}px`,
+              width: '240px',
+              maxHeight: '440px',
+              backgroundColor: '#ffffff',
+              borderRadius: '8px',
+              boxShadow: '0 12px 30px -4px rgba(0, 0, 0, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.08)',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
+            }}
           >
-            <div className="ab-adv-modal-header">
-              <div>
-                <h3 className="ab-adv-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Settings size={18} color="#ee0033" />
-                  <span>Cấu hình cột hiển thị</span>
-                </h3>
-                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>
-                  Tùy chỉnh bật/tắt các cột hiển thị trên bảng danh sách PAKH
-                </p>
+            <div style={{ padding: '16px 20px 12px 20px', borderBottom: '1px solid #f1f5f9' }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>
+                Hiển thị cột
               </div>
-              <button 
-                type="button" 
-                className="ab-modal-close-btn"
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}
-                onClick={() => setShowColConfigModal(false)}
-              >
-                <X size={18} />
-              </button>
             </div>
 
-            <div style={{ padding: '12px 20px', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <div className="ab-search-field-with-icon" style={{ flex: 1 }}>
-                <input 
-                  type="text" 
-                  className="ab-search-field"
-                  placeholder="Tìm kiếm tên cột..."
-                  value={colSearchQuery}
-                  onChange={(e) => setColSearchQuery(e.target.value)}
-                  style={{ height: '34px', fontSize: '12.5px' }}
-                />
-                <Search size={14} className="ab-search-field-icon" />
-              </div>
+            <div 
+              style={{ 
+                padding: '16px 20px', 
+                overflowY: 'auto', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '16px' 
+              }}
+            >
+              {PAKH_COLUMNS.map(col => {
+                const isChecked = visibleColumns.includes(col.key);
 
-              <button 
-                type="button" 
-                style={{ height: '34px', padding: '0 12px', fontSize: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 500 }}
-                onClick={() => {
-                  const allKeys = PAKH_COLUMNS.map(c => c.key);
-                  setVisibleColumns(allKeys);
-                  localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(allKeys));
-                }}
-              >
-                Hiển thị tất cả
-              </button>
-
-              <button 
-                type="button" 
-                style={{ height: '34px', padding: '0 12px', fontSize: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 500 }}
-                onClick={() => {
-                  const defaultKeys = PAKH_COLUMNS.filter(c => c.defaultVisible !== false).map(c => c.key);
-                  setVisibleColumns(defaultKeys);
-                  localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(defaultKeys));
-                }}
-              >
-                Mặc định (21 cột)
-              </button>
-            </div>
-
-            <div style={{ padding: '16px 20px', maxHeight: '420px', overflowY: 'auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                {PAKH_COLUMNS.filter(c => !colSearchQuery.trim() || c.label.toLowerCase().includes(colSearchQuery.toLowerCase())).map(col => {
-                  const isChecked = visibleColumns.includes(col.key);
-                  const colIndex = PAKH_COLUMNS.findIndex(c => c.key === col.key) + 1;
-
-                  return (
-                    <label 
-                      key={col.key}
+                return (
+                  <div 
+                    key={col.key}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                    onClick={() => {
+                      setVisibleColumns(prev => {
+                        let updated;
+                        if (prev.includes(col.key)) {
+                          if (prev.length <= 1) return prev;
+                          updated = prev.filter(k => k !== col.key);
+                        } else {
+                          updated = PAKH_COLUMNS.map(c => c.key).filter(k => prev.includes(k) || k === col.key);
+                        }
+                        localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(updated));
+                        return updated;
+                      });
+                    }}
+                  >
+                    <div 
                       style={{
+                        width: '19px',
+                        height: '19px',
+                        borderRadius: '3px',
+                        backgroundColor: isChecked ? '#ee0033' : '#ffffff',
+                        border: isChecked ? '2px solid #ee0033' : '2px solid #334155',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 10px',
-                        borderRadius: '6px',
-                        border: isChecked ? '1px solid #fecaca' : '1px solid #e2e8f0',
-                        backgroundColor: isChecked ? '#fff1f2' : '#ffffff',
-                        cursor: 'pointer',
-                        userSelect: 'none',
-                        transition: 'all 0.15s'
-                      }}
-                      onClick={() => {
-                        setVisibleColumns(prev => {
-                          let updated;
-                          if (prev.includes(col.key)) {
-                            if (prev.length <= 1) return prev; // Keep at least 1 column
-                            updated = prev.filter(k => k !== col.key);
-                          } else {
-                            // Maintain PAKH_COLUMNS natural sequence
-                            updated = PAKH_COLUMNS.map(c => c.key).filter(k => prev.includes(k) || k === col.key);
-                          }
-                          localStorage.setItem('ha_pakh_visible_cols_v2', JSON.stringify(updated));
-                          return updated;
-                        });
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.12s ease'
                       }}
                     >
-                      <input 
-                        type="checkbox"
-                        className="ab-filter-checkbox"
-                        checked={isChecked}
-                        onChange={() => {}}
-                      />
-                      <span style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: 600, minWidth: '20px' }}>
-                        {colIndex}.
-                      </span>
-                      <span style={{ fontSize: '12.5px', color: '#1e293b', flex: 1, fontWeight: isChecked ? 600 : 400 }}>
-                        {col.label}
-                      </span>
-                      {col.defaultVisible === false && (
-                        <span style={{ fontSize: '10px', background: '#f1f5f9', color: '#64748b', padding: '2px 5px', borderRadius: '4px', whiteSpace: 'nowrap' }}>
-                          Mặc định ẩn
-                        </span>
-                      )}
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="ab-adv-modal-footer" style={{ justifyContent: 'space-between', padding: '12px 20px', borderTop: '1px solid #f1f5f9' }}>
-              <span style={{ fontSize: '12.5px', color: '#64748b' }}>
-                Đang hiển thị <strong>{visibleColumns.length}</strong> / {PAKH_COLUMNS.length} cột
-              </span>
-              <button 
-                type="button" 
-                className="ab-btn-collapse-red"
-                style={{ height: '34px', padding: '0 20px' }}
-                onClick={() => setShowColConfigModal(false)}
-              >
-                Xong
-              </button>
+                      {isChecked && <Check size={13} color="#ffffff" strokeWidth={3.5} />}
+                    </div>
+                    <span style={{ fontSize: '15px', color: '#1e293b', fontWeight: 500, lineHeight: 1.3 }}>
+                      {col.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
