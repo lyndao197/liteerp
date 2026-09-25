@@ -1793,38 +1793,36 @@ const ExecutiveGaugeMasterCard = ({
 
       {/* Top Section: Metrics + Rainbow Gauge */}
       <div className="tr-top-section">
-        {/* Left Column: Number & Side-by-side Comparisons */}
-        <div className="tr-left-metrics-panel">
-          {/* Main Metric Box */}
-          <div className="tr-metric-main-box">
-            <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
+        {/* Left: Main Metric Box */}
+        <div className="tr-metric-main-box">
+          <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
 
-            <div className="tr-main-value-row">
-              <span className="tr-big-value">
-                {typeof cfg.actual === 'number' ? cfg.actual.toLocaleString('vi-VN') : cfg.actual}
-              </span>
-              {cfg.unit !== '%' && <span className="tr-value-unit">{cfg.unit}</span>}
-            </div>
-
-            <div className="tr-plan-subline">
-              <span className="tr-plan-label">KH tháng:</span>
-              <strong>{typeof cfg.plan === 'number' ? cfg.plan.toLocaleString('vi-VN') : cfg.plan}{cfg.unit !== '%' ? ` ${cfg.unit}` : ''}</strong>
-              <span className="tr-subline-sep">|</span>
-              <span className="tr-plan-label">Đạt</span>
-              <strong className={cfg.rate >= 100 ? 'text-green' : 'text-red'}>{cfg.rate.toString().replace('.', ',')}%</strong>
-            </div>
+          <div className="tr-main-value-row">
+            <span className="tr-big-value">
+              {typeof cfg.actual === 'number' ? cfg.actual.toLocaleString('vi-VN') : cfg.actual}
+            </span>
+            {cfg.unit !== '%' && <span className="tr-value-unit">{cfg.unit}</span>}
           </div>
 
+          <div className="tr-plan-subline">
+            <span className="tr-plan-label">KH tháng:</span>
+            <strong>{typeof cfg.plan === 'number' ? cfg.plan.toLocaleString('vi-VN') : cfg.plan}{cfg.unit !== '%' ? ` ${cfg.unit}` : ''}</strong>
+            <span className="tr-subline-sep">|</span>
+            <span className="tr-plan-label">Đạt</span>
+            <strong className={cfg.rate >= 100 ? 'text-green' : 'text-red'}>{cfg.rate.toString().replace('.', ',')}%</strong>
+          </div>
+        </div>
+
+        {/* Center: 2 Side-by-side Comparisons (Centered) */}
+        <div className="tr-middle-compare-wrap">
           {/* Compare Col 1: So tháng trước (T-1) */}
           <div className="tr-metric-compare-col">
             <span className="tr-compare-col-label">So T{prevMonthNum}</span>
             <div className={`tr-compare-col-value ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
               <span className="tr-compare-col-arrow">{cfg.diffPrevIsNeg ? '▼' : '▲'}</span>
               <span className="tr-compare-col-num">{cfg.diffPrevVal}</span>
+              <span className="tr-compare-col-pct">({cfg.pctPrev})</span>
             </div>
-            <span className={`tr-compare-col-pct ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
-              ({cfg.pctPrev})
-            </span>
           </div>
 
           {/* Compare Col 2: So cùng kỳ năm trước */}
@@ -1833,10 +1831,8 @@ const ExecutiveGaugeMasterCard = ({
             <div className={`tr-compare-col-value ${cfg.diffYearIsNeg ? 'negative' : 'positive'}`}>
               <span className="tr-compare-col-arrow">{cfg.diffYearIsNeg ? '▼' : '▲'}</span>
               <span className="tr-compare-col-num">{cfg.diffYearVal}</span>
+              <span className="tr-compare-col-pct">({cfg.pctYear})</span>
             </div>
-            <span className={`tr-compare-col-pct ${cfg.diffYearIsNeg ? 'negative' : 'positive'}`}>
-              ({cfg.pctYear})
-            </span>
           </div>
         </div>
 

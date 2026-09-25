@@ -2361,29 +2361,22 @@
 }
 
 /* Top Section */
+/* Top Section */
 .tr-top-section {
   display: flex;
   justify-content: space-between;
-  align-items: stretch;
-  gap: 20px;
+  align-items: center;
+  gap: 16px;
   width: 100%;
   margin-bottom: 6px;
 }
 
-.tr-left-metrics-panel {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
 .tr-metric-main-box {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 24px;
-  min-width: 180px;
+  min-width: 170px;
 }
 
 .tr-period-badge {
@@ -2452,18 +2445,26 @@
   color: #dc2626 !important;
 }
 
+/* Center Comparison Container */
+.tr-middle-compare-wrap {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
 /* Comparison Columns (So T7, So cùng kỳ) */
 .tr-metric-compare-col {
-  flex: 0 0 auto;
-  border-left: 1px solid #f1f5f9;
-  padding: 0 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 4px;
-  min-width: 105px;
+  gap: 3px;
+  padding: 0 20px;
+  border-left: 1px solid #f1f5f9;
+  white-space: nowrap;
 }
 
 .tr-compare-col-label {
@@ -2472,17 +2473,16 @@
   color: #64748b;
   white-space: nowrap;
   text-align: center;
+  margin-bottom: 2px;
 }
 
 .tr-compare-col-value {
-  display: flex;
-  align-items: center;
+  display: inline-flex;
+  align-items: baseline;
   justify-content: center;
   gap: 4px;
-  font-size: 21px;
-  font-weight: 800;
-  line-height: 1.1;
-  text-align: center;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .tr-compare-col-value.positive {
@@ -2495,27 +2495,19 @@
 
 .tr-compare-col-arrow {
   font-size: 13px;
+  line-height: 1;
 }
 
 .tr-compare-col-num {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.3px;
 }
 
 .tr-compare-col-pct {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1;
-  text-align: center;
-}
-
-.tr-compare-col-pct.positive {
-  color: #16a34a;
-}
-
-.tr-compare-col-pct.negative {
-  color: #dc2626;
+  margin-left: 2px;
 }
 
 /* Right Gauge Box */
