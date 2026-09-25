@@ -1,0 +1,473 @@
+/* ============================================================================== */
+/* PHÂN TÍCH THEO THÁNG - 2-COLUMN SUB-CARD GRID STYLES                           */
+/* ============================================================================== */
+
+.month-charts-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Filter Row: Top-Right aligned above cards */
+.month-top-filter-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: -4px;
+  margin-bottom: 2px;
+}
+
+.clean-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clean-filter-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.clean-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.clean-filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 30px 6px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1e293b;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.clean-filter-select:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.clean-filter-select:focus {
+  background-color: #ffffff;
+  border-color: #e11d48;
+  box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.1);
+}
+
+.clean-select-chevron {
+  position: absolute;
+  right: 8px;
+  pointer-events: none;
+  color: #475569;
+}
+
+/* Blank alert for month 12 */
+.month-blank-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #b45309;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.month-blank-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #f59e0b;
+}
+
+/* 2-Column Row Grid */
+.month-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+/* Sub-card (Khu 1 and Khu 2) */
+.month-subcard {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px 20px 14px 20px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+.month-subcard:hover {
+  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.06);
+}
+
+.month-subcard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  min-height: 28px;
+  gap: 10px;
+}
+
+.month-subcard-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.month-subcard-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.month-subcard-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  white-space: nowrap;
+}
+
+/* Expand / Collapse Toggle Button (Icon only) */
+.chart-view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.chart-view-toggle-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.chart-view-toggle-btn.is-collapsed,
+.chart-view-toggle-btn.is-unviewed {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #2563eb;
+}
+
+.chart-view-toggle-btn.is-collapsed:hover,
+.chart-view-toggle-btn.is-unviewed:hover {
+  background-color: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+/* Expand / Collapse All Button (Icon only) */
+.chart-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+.chart-view-all-btn:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.chart-view-all-btn.is-collapsed,
+.chart-view-all-btn.is-unviewed {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #2563eb;
+}
+
+.chart-view-all-btn.is-collapsed:hover,
+.chart-view-all-btn.is-unviewed:hover {
+  background-color: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+/* Main full-width chart card */
+.month-chart-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.month-chart-card.is-collapsed {
+  padding: 12px 20px;
+}
+
+.month-chart-card.is-collapsed .month-chart-header {
+  margin-bottom: 0;
+}
+
+.month-subcard.is-collapsed {
+  padding: 11px 18px;
+  min-height: auto;
+  transition: all 0.2s ease;
+}
+
+.month-subcard.is-collapsed .month-subcard-header {
+  margin-bottom: 0;
+}
+
+
+/* SVG Chart Container */
+.month-subcard-svg-wrap {
+  width: 100%;
+  position: relative;
+}
+
+.month-subcard-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Text styles inside SVG */
+.axis-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  fill: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.axis-tick-text {
+  font-size: 11px;
+  font-weight: 400;
+  fill: #334155;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.axis-tick-text-ratio {
+  font-size: 10px;
+  font-weight: 400;
+  fill: #334155;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.legend-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #334155;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.category-x-label {
+  font-size: 11px;
+  font-weight: 500;
+  fill: #1e293b;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bar-val-primary {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bar-val-secondary {
+  font-size: 11px;
+  font-weight: 400;
+  fill: #475569;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bar-top-rate {
+  font-size: 12.5px;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bar-top-rate.positive {
+  fill: #16a34a;
+}
+
+.bar-top-rate.negative {
+  fill: #e11d48;
+}
+
+.chart-empty-text {
+  font-size: 13px;
+  font-style: italic;
+  fill: #94a3b8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.bar-rect {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  cursor: pointer;
+}
+
+.bar-highlight {
+  opacity: 0.85;
+  filter: brightness(1.05);
+}
+
+/* Subcard Tooltip */
+.month-subcard-tooltip {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 11.5px;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeIn 0.15s ease;
+  min-width: 170px;
+}
+
+.tooltip-item-title {
+  font-weight: 700;
+  color: #f8fafc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+}
+
+.tooltip-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+}
+
+.tooltip-stat-row strong {
+  margin-left: auto;
+  color: #ffffff;
+}
+
+.tooltip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltip-dot.red {
+  background-color: #e11d48;
+}
+
+.tooltip-dot.gray {
+  background-color: #94a3b8;
+}
+
+.text-green {
+  color: #4ade80 !important;
+}
+
+.text-red {
+  color: #fb7185 !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .month-row-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Explicit Bold Styles for Chart Titles across branches */
+.month-chart-main-title {
+  font-size: 20px;
+  font-weight: 800 !important;
+  color: #1e3a8a;
+  margin: 0;
+  letter-spacing: -0.2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.chart-compare-basis {
+  font-size: 15px;
+  font-weight: 700 !important;
+  color: #0f172a;
+  margin-top: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.chart-subtitle-text {
+  font-size: 13.5px;
+  font-weight: 700 !important;
+  fill: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

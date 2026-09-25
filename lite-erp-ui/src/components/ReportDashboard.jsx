@@ -1,307 +1,503 @@
-import React, { useMemo } from 'react';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, Legend, LabelList
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
 } from 'recharts';
-import { 
-  TrendingUp, Users, Target, FileText, BarChart3, PieChart as PieChartIcon, 
-  Layers, Package, Globe, ShieldCheck
+import {
+  ChevronDown, ChevronUp, Filter, Tag, X,
+  BarChart2, Activity, PieChart as PieChartIcon,
+  Save, Grid, List, AreaChart, Check, Download, TrendingUp
 } from 'lucide-react';
-import { mockStore } from '../utils/mockStore';
+import * as XLSX from 'xlsx';
 import './ReportDashboard.css';
+import './RevenueReportDashboard.css';
 
-const COLORS = ['#EE0033', '#3b82f6', '#16a34a', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+// Exact slice data matching the design screenshot
+const INITIAL_CHART_DATA = [
+  { id: '1', name: 'Đề xuất - 06/2026', stage: 'Đề xuất', month: '06/2026', count: 60, percent: 60, color: '#ff5376' },
+  { id: '2', name: 'Đủ điều kiện - 04/2026', stage: 'Đủ điều kiện', month: '04/2026', count: 4, percent: 4, color: '#fbc02d' },
+  { id: '3', name: 'Đề xuất - 05/2026', stage: 'Đề xuất', month: '05/2026', count: 16, percent: 16, color: '#38c3c8' },
+  { id: '4', name: 'Mới - 07/2026', stage: 'Mới', month: '07/2026', count: 20, percent: 20, color: '#2563eb' }
+];
+
+const OBJECT_OPTIONS = [
+  { id: 'opp', label: 'Cơ hội bán hàng' },
+  { id: 'lead', label: 'Lead' },
+  { id: 'customer', label: 'Khách hàng' },
+  { id: 'contract', label: 'Hợp đồng' },
+  { id: 'order', label: 'Đơn hàng' }
+];
+
+const MEASURE_OPTIONS = [
+  { id: 'count', label: 'Đếm' },
+  { id: 'revenue', label: 'Doanh thu (VNĐ)' },
+  { id: 'value', label: 'Giá trị hợp đồng' }
+];
 
 const ReportDashboard = () => {
-  const store = mockStore.getStore();
-  const [startDate, setStartDate] = React.useState('2026-01-01');
-  const [endDate, setEndDate] = React.useState('2026-12-31');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Helper to parse date from various formats: 'DD/MM/YYYY' or 'YYYY-MM-DD'
-  const parseDate = (dateStr) => {
-    if (!dateStr) return null;
-    if (dateStr.includes('-')) return new Date(dateStr); // YYYY-MM-DD
-    if (dateStr.includes('/')) {
-      const [d, m, y] = dateStr.split('/');
-      return new Date(`${y}-${m}-${d}`); // DD/MM/YYYY to YYYY-MM-DD for parsing
+  // Navigation & Control States
+  const [targetObject, setTargetObject] = useState('Cơ hội bán hàng');
+  const [isObjectOpen, setIsObjectOpen] = useState(false);
+  const [measure, setMeasure] = useState('Đếm');
+  const [isMeasureOpen, setIsMeasureOpen] = useState(false);
+
+  // Sync targetObject from URL query param ?object=
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const objectParam = searchParams.get('object');
+    if (objectParam) {
+      const match = OBJECT_OPTIONS.find(
+        opt => opt.id === objectParam || opt.label.toLowerCase() === objectParam.toLowerCase()
+      );
+      if (match) {
+        setTargetObject(match.label);
+      }
+    }
+  }, [location.search]);
+
+  // View switchers: 'chart' | 'pivot' | 'list'
+  const [viewMode, setViewMode] = useState('chart');
+
+  // Chart type: 'donut' | 'bar' | 'line'
+  const [chartType, setChartType] = useState('donut');
+
+  // Filter chips
+  const [filters, setFilters] = useState([
+    { id: 'time', text: 'Thời điểm tạo: 2026', icon: 'filter' },
+    { id: 'tag', text: 'Tag', icon: 'tag' }
+  ]);
+  const [searchText, setSearchText] = useState('');
+  const [isFilterExpanded, setIsFilterExpanded] = useState(true);
+
+  // Notification Toast
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
+  const removeFilter = (id) => {
+    setFilters(prev => prev.filter(f => f.id !== id));
+  };
+
+  const handleSave = () => {
+    showToast('Đã lưu cấu hình báo cáo thành công!');
+  };
+
+  const handleExportExcel = () => {
+    try {
+      const dataToExport = INITIAL_CHART_DATA.map(item => ({
+        'Giai đoạn / Thời điểm': item.name,
+        'Giai đoạn': item.stage,
+        'Tháng': item.month,
+        'Số lượng': item.count,
+        'Tỷ lệ (%)': `${item.percent}%`
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(dataToExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'PhanTichBaoCao');
+      XLSX.writeFile(wb, `Bao_cao_phan_tich_${targetObject}_2026.xlsx`);
+      showToast('Đã xuất file Excel thành công!');
+    } catch (err) {
+      console.error(err);
+      showToast('Lỗi khi xuất file Excel');
+    }
+  };
+
+  // Custom tooltip for Donut/Pie
+  const CustomDonutTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const item = payload[0].payload;
+      return (
+        <div className="report-tooltip-box">
+          <div className="tooltip-title" style={{ color: item.color }}>{item.name}</div>
+          <div className="tooltip-value">
+            <span>{measure}: <strong>{item.count}</strong></span>
+            <span>Tỷ lệ: <strong>{item.percent}%</strong></span>
+          </div>
+        </div>
+      );
     }
     return null;
   };
 
-  const isWithinRange = (dateStr) => {
-    const d = parseDate(dateStr);
-    if (!d) return true; // Default to true if no date (fallback)
-    const start = startDate ? new Date(startDate) : null;
-    const end = endDate ? new Date(endDate) : null;
-    
-    if (start && d < start) return false;
-    if (end && d > end) return false;
-    return true;
-  };
-
-  // 1. Data Aggregation for Metrics
-  const metrics = useMemo(() => {
-    const tasks = Object.values(store.tasks || {}).filter(t => isWithinRange(t.date));
-    const opps = Object.values(store.oppTasks || {}).filter(o => isWithinRange(o.date));
-    const contracts = Object.values(store.contracts || {}).filter(c => isWithinRange(c.effectiveDate || c.signedDate));
-
-    const totalLeads = tasks.length;
-    const totalOpps = opps.length;
-    const totalContracts = contracts.length;
-    
-    const totalRevenue = contracts.reduce((sum, c) => {
-      const val = parseInt((c.contractValue || '0').replace(/,/g, ''), 10);
-      return sum + (isNaN(val) ? 0 : val);
-    }, 0);
-
-    return { totalLeads, totalOpps, totalContracts, totalRevenue };
-  }, [store, startDate, endDate]);
-
-  // 2. Tỷ lệ Khách hàng nội bộ vs Khách hàng ngoài
-  const customerTypeData = useMemo(() => {
-    const contracts = Object.values(store.contracts || {}).filter(c => isWithinRange(c.effectiveDate || c.signedDate));
-    const counts = { 'Nội bộ': 0, 'Ngoài': 0 };
-    contracts.forEach(c => {
-      const type = c.classification === 'Nội bộ' ? 'Nội bộ' : 'Ngoài';
-      counts[type]++;
-    });
-    return [
-      { name: 'Khách hàng nội bộ', value: counts['Nội bộ'], color: '#EE0033' },
-      { name: 'Khách hàng ngoài', value: counts['Ngoài'], color: '#3b82f6' }
-    ];
-  }, [store, startDate, endDate]);
-
-  // 3. Tỷ lệ Sản phẩm/Dịch vụ
-  const productDistributionData = useMemo(() => {
-    const contracts = Object.values(store.contracts || {}).filter(c => isWithinRange(c.effectiveDate || c.signedDate));
-    const counts = {
-      'OmniX': 0,
-      'KnowxHUB': 0,
-      'Dịch vụ hỗ trợ khách hàng': 0,
-      'Dịch vụ BPO': 0,
-      'Khác': 0
-    };
-
-    contracts.forEach(c => {
-      const name = (c.name || '').toLowerCase();
-      if (name.includes('omnix')) counts['OmniX']++;
-      else if (name.includes('knowxhub')) counts['KnowxHUB']++;
-      else if (name.includes('bpo')) counts['Dịch vụ BPO']++;
-      else if (name.includes('hỗ trợ') || name.includes('chăm sóc') || name.includes('cskh')) counts['Dịch vụ hỗ trợ khách hàng']++;
-      else counts['Khác']++;
-    });
-
-    return Object.entries(counts)
-      .filter(([_, value]) => value > 0)
-      .map(([name, value], index) => ({
-        name,
-        value,
-        color: COLORS[index % COLORS.length]
-      }));
-  }, [store, startDate, endDate]);
-
-  // 4. Trạng thái Lead & CHKD (Pipeline)
-  const pipelineStatusData = useMemo(() => {
-    const leadCounts = {};
-    const oppCounts = {};
-
-    Object.values(store.tasks || {})
-      .filter(t => isWithinRange(t.date))
-      .forEach(t => {
-        leadCounts[t.status] = (leadCounts[t.status] || 0) + 1;
-      });
-
-    Object.values(store.oppTasks || {})
-      .filter(o => isWithinRange(o.date))
-      .forEach(o => {
-        oppCounts[o.status] = (oppCounts[o.status] || 0) + 1;
-      });
-
-    const allStatuses = Array.from(new Set([
-      ...Object.keys(leadCounts),
-      ...Object.keys(oppCounts)
-    ])).filter(s => 
-      s !== 'Thành công' && 
-      s !== 'Không thành công' && 
-      s !== 'Converted' && 
-      s !== 'Lost' && 
-      s !== 'Thua'
-    );
-
-    return allStatuses.map(status => ({
-      status: status === 'New' ? 'Mới' : status,
-      'Leads': leadCounts[status] || 0,
-      'Cơ hội': oppCounts[status] || 0
-    }));
-  }, [store, startDate, endDate]);
-
-  const fmtCurrency = (val) => {
-    if (val >= 1000000000) return (val / 1000000000).toFixed(2) + ' tỷ VNĐ';
-    if (val >= 1000000) return (val / 1000000).toFixed(0) + ' triệu VNĐ';
-    return val.toLocaleString() + ' VNĐ';
-  };
-
-  const renderActiveShape = (props) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
-    return (
-      <g>
-        <Pie
-          {...props}
-          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-        />
-      </g>
-    );
-  };
-
   return (
-    <div className="report-dashboard-container">
-      <div className="report-header">
-        <div className="report-title-area">
-          <h2>Báo cáo Dashboard Tổng quan</h2>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '13px' }}>
-            Dữ liệu tích lũy đến: {new Date().toLocaleDateString('vi-VN')}
-          </p>
+    <div className="report-analysis-page">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="report-toast">
+          <Check size={16} />
+          <span>{toastMessage}</span>
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-             <div className="filter-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'white', padding: '6px 16px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-               <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Từ:</span>
-               <input 
-                 type="date"
-                 value={startDate} 
-                 onChange={(e) => setStartDate(e.target.value)}
-                 style={{ border: 'none', outline: 'none', fontSize: '13px', fontWeight: 600, color: '#0f172a', background: 'transparent', cursor: 'pointer' }}
-               />
-               <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginLeft: '8px' }}>Đến:</span>
-               <input 
-                 type="date"
-                 value={endDate} 
-                 onChange={(e) => setEndDate(e.target.value)}
-                 style={{ border: 'none', outline: 'none', fontSize: '13px', fontWeight: 600, color: '#0f172a', background: 'transparent', cursor: 'pointer' }}
-               />
-             </div>
-             <button className="dashboard-settings-btn"><TrendingUp size={16} /> Xuất báo cáo</button>
+      )}
+
+      {/* Sub-navigation Tabs: Switch between Report Branches */}
+      <div className="report-branch-nav" style={{ marginBottom: '16px' }}>
+        <button
+          className="report-branch-tab active"
+          onClick={() => navigate('/reports?object=opp')}
+        >
+          <PieChartIcon size={16} />
+          <span>Report Dashboard</span>
+        </button>
+        <button
+          className="report-branch-tab"
+          onClick={() => navigate('/reports/revenue?view=month')}
+        >
+          <TrendingUp size={16} />
+          <span>Báo cáo doanh thu</span>
+          <span className="report-tab-badge">Mới</span>
+        </button>
+      </div>
+
+      {/* Top Header Bar */}
+      <div className="report-top-header">
+        <div className="report-header-left">
+          <h1 className="report-main-title">Report Dashboard - Phân tích {targetObject}</h1>
+          
+          {/* Object Dropdown */}
+          <div className="object-dropdown-wrapper">
+            <button 
+              className="object-dropdown-btn"
+              onClick={() => setIsObjectOpen(!isObjectOpen)}
+            >
+              <span>Đối tượng: {targetObject}</span>
+              <ChevronDown size={14} className={isObjectOpen ? 'rotate-180' : ''} />
+            </button>
+            {isObjectOpen && (
+              <div className="dropdown-popover">
+                {OBJECT_OPTIONS.map(opt => (
+                  <div
+                    key={opt.id}
+                    className={`dropdown-popover-item ${targetObject === opt.label ? 'selected' : ''}`}
+                    onClick={() => {
+                      setTargetObject(opt.label);
+                      setIsObjectOpen(false);
+                      navigate(`/reports?object=${opt.id}`);
+                    }}
+                  >
+                    {opt.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="report-header-right">
+          {/* Search & Filter Pill Container */}
+          <div className="filter-pill-container">
+            {filters.map(filter => (
+              <div key={filter.id} className="filter-chip">
+                {filter.icon === 'filter' ? <Filter size={12} /> : <Tag size={12} />}
+                <span>{filter.text}</span>
+                <button className="chip-close-btn" onClick={() => removeFilter(filter.id)}>
+                  <X size={11} />
+                </button>
+              </div>
+            ))}
+
+            <input
+              type="text"
+              className="filter-search-input"
+              placeholder="Tìm kiếm..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+
+            {searchText && (
+              <button className="clear-search-btn" onClick={() => setSearchText('')}>
+                <X size={12} />
+              </button>
+            )}
+
+            <button 
+              className="collapse-filter-btn"
+              onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+              title={isFilterExpanded ? 'Thu gọn' : 'Mở rộng'}
+            >
+              {isFilterExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+          </div>
+
+          {/* View Switchers: Chart | Pivot Table | List */}
+          <div className="view-mode-group">
+            <button
+              className={`view-mode-btn ${viewMode === 'chart' ? 'active' : ''}`}
+              onClick={() => setViewMode('chart')}
+              title="Biểu đồ"
+            >
+              <AreaChart size={18} />
+            </button>
+            <button
+              className={`view-mode-btn ${viewMode === 'pivot' ? 'active' : ''}`}
+              onClick={() => setViewMode('pivot')}
+              title="Bảng tổng hợp (Pivot)"
+            >
+              <Grid size={18} />
+            </button>
+            <button
+              className={`view-mode-btn ${viewMode === 'list' ? 'active' : ''}`}
+              onClick={() => setViewMode('list')}
+              title="Danh sách"
+            >
+              <List size={18} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Metrics Row */}
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-label">Tổng số Lead</div>
-          <div className="stat-value">{metrics.totalLeads}</div>
-          <div style={{ color: '#16a34a', fontSize: '12px', fontWeight: 600 }}>
-            <TrendingUp size={12} style={{ verticalAlign: 'middle', marginRight: 4 }}/> +8% tuần qua
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Cơ hội bán hàng</div>
-          <div className="stat-value">{metrics.totalOpps}</div>
-          <div style={{ color: '#3b82f6', fontSize: '12px', fontWeight: 600 }}>
-             <Target size={12} style={{ verticalAlign: 'middle', marginRight: 4 }}/> Đang theo dõi
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Hợp đồng ký kết</div>
-          <div className="stat-value">{metrics.totalContracts}</div>
-          <div style={{ color: '#16a34a', fontSize: '12px', fontWeight: 600 }}>
-             <ShieldCheck size={12} style={{ verticalAlign: 'middle', marginRight: 4 }}/> 92% hiệu lực
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Tổng Doanh thu (HĐ)</div>
-          <div className="stat-value" style={{ fontSize: '22px' }}>{fmtCurrency(metrics.totalRevenue)}</div>
-          <div style={{ color: '#EE0033', fontSize: '12px', fontWeight: 600 }}>
-             Viettel CS XERP
-          </div>
-        </div>
-      </div>
-
-      <div className="charts-main-grid">
-        {/* Pie 1: Customer Type */}
-        <div className="chart-card">
-          <div className="chart-title">
-            <Users size={18} color="#EE0033" /> Tỷ lệ Khách hàng Nội bộ & Ngoài
-          </div>
-          <div className="chart-container-inner">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={customerTypeData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                  label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
-                >
-                  {customerTypeData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Pie 2: Product Distribution */}
-        <div className="chart-card">
-          <div className="chart-title">
-            <Package size={18} color="#3b82f6" /> Tỷ lệ sản phẩm & dịch vụ đã bán
-          </div>
-          <div className="chart-container-inner">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={productDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={0}
-                  outerRadius={100}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                >
-                  {productDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Bar: Pipeline Status */}
-        <div className="chart-card full-width">
-          <div className="chart-title">
-            <Layers size={18} color="#f59e0b" /> Trạng thái Lead và CHKD theo phễu
-          </div>
-          <div className="chart-container-inner" style={{ minHeight: '350px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={pipelineStatusData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+      {/* Main Analysis White Container */}
+      <div className="analysis-card-container">
+        {/* Inner Action Bar */}
+        <div className="analysis-action-bar">
+          <div className="action-bar-left">
+            {/* Measure Dropdown (Đếm / Doanh thu...) */}
+            <div className="measure-dropdown-wrapper">
+              <button
+                className="measure-dropdown-btn"
+                onClick={() => setIsMeasureOpen(!isMeasureOpen)}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis 
-                    dataKey="status" 
-                    angle={-45} 
-                    textAnchor="end" 
-                    interval={0} 
-                    height={80}
-                    tick={{ fontSize: 11, fill: '#64748b' }} 
-                />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
-                <RechartsTooltip cursor={{ fill: '#f1f5f9' }} />
-                <Legend verticalAlign="top" height={36}/>
-                <Bar dataKey="Leads" fill="#EE0033" radius={[4, 4, 0, 0]} barSize={24} />
-                <Bar dataKey="Cơ hội" fill="#8b5cf6" radius={[4, 4, 0, 0]} barSize={24} />
-              </BarChart>
-            </ResponsiveContainer>
+                <span>{measure}</span>
+                <ChevronDown size={14} className={isMeasureOpen ? 'rotate-180' : ''} />
+              </button>
+              {isMeasureOpen && (
+                <div className="dropdown-popover">
+                  {MEASURE_OPTIONS.map(opt => (
+                    <div
+                      key={opt.id}
+                      className={`dropdown-popover-item ${measure === opt.label ? 'selected' : ''}`}
+                      onClick={() => {
+                        setMeasure(opt.label);
+                        setIsMeasureOpen(false);
+                      }}
+                    >
+                      {opt.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Export Excel Button */}
+            <button className="export-excel-btn" onClick={handleExportExcel}>
+              Xuất excel
+            </button>
+
+            {/* Chart Type Toggles (Bar | Line | Donut) */}
+            <div className="chart-type-toggles">
+              <button
+                className={`chart-type-btn ${chartType === 'bar' ? 'active' : ''}`}
+                onClick={() => setChartType('bar')}
+                title="Biểu đồ cột"
+              >
+                <BarChart2 size={16} />
+              </button>
+              <button
+                className={`chart-type-btn ${chartType === 'line' ? 'active' : ''}`}
+                onClick={() => setChartType('line')}
+                title="Biểu đồ đường"
+              >
+                <Activity size={16} />
+              </button>
+              <button
+                className={`chart-type-btn ${chartType === 'donut' ? 'active' : ''}`}
+                onClick={() => setChartType('donut')}
+                title="Biểu đồ tròn (Donut)"
+              >
+                <PieChartIcon size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <div className="action-bar-right">
+            <button className="save-report-btn" onClick={handleSave}>
+              <Save size={16} />
+              <span>Lưu</span>
+            </button>
           </div>
         </div>
+
+        {/* Content Body depending on ViewMode */}
+        {viewMode === 'chart' && (
+          <div className="analysis-chart-viewport">
+            {chartType === 'donut' && (
+              <div className="donut-chart-layout">
+                {/* Left Side: Donut Chart */}
+                <div className="donut-graphic-wrapper">
+                  <ResponsiveContainer width={360} height={360}>
+                    <PieChart>
+                      <Pie
+                        data={INITIAL_CHART_DATA}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={80}
+                        outerRadius={155}
+                        paddingAngle={0}
+                        dataKey="count"
+                        stroke="#ffffff"
+                        strokeWidth={2}
+                      >
+                        {INITIAL_CHART_DATA.map((entry) => (
+                          <Cell key={`cell-${entry.id}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip content={<CustomDonutTooltip />} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Right Side: Exact Legend Table */}
+                <div className="donut-legend-wrapper">
+                  <div className="donut-legend-list">
+                    {INITIAL_CHART_DATA.map((item) => (
+                      <div key={item.id} className="donut-legend-item">
+                        <div className="legend-indicator-text">
+                          <span
+                            className="legend-color-dot"
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <span className="legend-label">{item.name}</span>
+                        </div>
+                        <span className="legend-percentage">{item.percent}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {chartType === 'bar' && (
+              <div className="bar-chart-layout">
+                <ResponsiveContainer width="100%" height={380}>
+                  <BarChart data={INITIAL_CHART_DATA} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} interval={0} />
+                    <YAxis tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <RechartsTooltip content={<CustomDonutTooltip />} />
+                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                      {INITIAL_CHART_DATA.map((entry) => (
+                        <Cell key={`bar-${entry.id}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {chartType === 'line' && (
+              <div className="line-chart-layout">
+                <ResponsiveContainer width="100%" height={380}>
+                  <LineChart data={INITIAL_CHART_DATA} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 12, fill: '#64748b' }} />
+                    <RechartsTooltip content={<CustomDonutTooltip />} />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#EE0033"
+                      strokeWidth={3}
+                      dot={{ r: 6, fill: '#EE0033', strokeWidth: 2, stroke: '#fff' }}
+                      activeDot={{ r: 8 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        )}
+
+        {viewMode === 'pivot' && (
+          <div className="analysis-table-viewport">
+            <table className="report-pivot-table">
+              <thead>
+                <tr>
+                  <th>Giai đoạn \ Tháng</th>
+                  <th>04/2026</th>
+                  <th>05/2026</th>
+                  <th>06/2026</th>
+                  <th>07/2026</th>
+                  <th>Tổng cộng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="row-header">Mới</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>20 (20%)</td>
+                  <td className="subtotal">20</td>
+                </tr>
+                <tr>
+                  <td className="row-header">Đủ điều kiện</td>
+                  <td>4 (4%)</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td className="subtotal">4</td>
+                </tr>
+                <tr>
+                  <td className="row-header">Đề xuất</td>
+                  <td>-</td>
+                  <td>16 (16%)</td>
+                  <td>60 (60%)</td>
+                  <td>-</td>
+                  <td className="subtotal">76</td>
+                </tr>
+                <tr className="total-row">
+                  <td className="row-header">Tổng cộng</td>
+                  <td>4 (4%)</td>
+                  <td>16 (16%)</td>
+                  <td>60 (60%)</td>
+                  <td>20 (20%)</td>
+                  <td className="grand-total">100 (100%)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {viewMode === 'list' && (
+          <div className="analysis-table-viewport">
+            <table className="report-list-table">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Tên báo cáo / Phân loại</th>
+                  <th>Giai đoạn</th>
+                  <th>Thời gian</th>
+                  <th>Số lượng</th>
+                  <th>Tỷ lệ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {INITIAL_CHART_DATA.map((item, index) => (
+                  <tr key={item.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <span className="table-item-badge" style={{ borderColor: item.color, color: item.color }}>
+                        {item.name}
+                      </span>
+                    </td>
+                    <td>{item.stage}</td>
+                    <td>{item.month}</td>
+                    <td><strong>{item.count}</strong></td>
+                    <td><strong>{item.percent}%</strong></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

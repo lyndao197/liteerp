@@ -29,12 +29,14 @@ import OrderForm from './components/OrderForm';
 import GoalList from './components/GoalList';
 import GoalForm from './components/GoalForm';
 import GoalResultList from './components/GoalResultList';
+import Dashboard from './components/Dashboard';
 import PersonalDashboard from './components/PersonalDashboard';
 import InboundBillingList from './components/InboundBillingList';
 import InboundBillingForm from './components/InboundBillingForm';
 import OutboundBillingList from './components/OutboundBillingList';
 import OutboundBillingForm from './components/OutboundBillingForm';
 import ReportDashboard from './components/ReportDashboard';
+import RevenueReportDashboard from './components/RevenueReportDashboard';
 import UserList from './components/UserList';
 import UserForm from './components/UserForm';
 import RoleList from './components/RoleList';
@@ -78,8 +80,11 @@ function AppRoutes() {
         <Header />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<OpportunityBoard />} />
-            <Route path="/dashboard" element={<PersonalDashboard />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/home" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard/overview" element={<Dashboard />} />
+            <Route path="/dashboard/personal" element={<PersonalDashboard />} />
             <Route path="/lead/new" element={<LeadForm />} />
             <Route path="/lead/edit/:id" element={<LeadForm />} />
             <Route path="/opportunity" element={<OpportunityBoard />} />
@@ -127,6 +132,7 @@ function AppRoutes() {
             <Route path="/billing/out/new" element={<OutboundBillingForm />} />
             <Route path="/billing/out/edit/:id" element={<OutboundBillingForm />} />
             <Route path="/reports" element={<ReportDashboard />} />
+            <Route path="/reports/revenue" element={<RevenueReportDashboard />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/user/new" element={<UserForm />} />
             <Route path="/user/edit/:id" element={<UserForm />} />

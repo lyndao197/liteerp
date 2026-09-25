@@ -3,6 +3,7 @@ import './Sidebar.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { mockStore } from '../utils/mockStore';
 import {
+  Home,
   LayoutDashboard,
   Target,
   Users,
@@ -29,15 +30,131 @@ import {
   Briefcase,
   FileSliders,
   ClipboardCheck,
-  AlertCircle
+  AlertCircle,
+  Calendar,
+  PieChart
 } from 'lucide-react';
+
+const REPORT_OBJECT_BRANCHES = [
+  {
+    id: 'opp',
+    title: 'Cơ hội bán hàng',
+    subtitle: 'Phân tích giai đoạn & chuyển đổi cơ hội',
+    badge: 'CRM'
+  },
+  {
+    id: 'lead',
+    title: 'Lead tiềm năng',
+    subtitle: 'Phân tích nguồn & chất lượng lead',
+    badge: 'LEAD'
+  },
+  {
+    id: 'customer',
+    title: 'Khách hàng',
+    subtitle: 'Phân tích nhóm & cơ cấu khách hàng',
+    badge: 'KH'
+  },
+  {
+    id: 'contract',
+    title: 'Hợp đồng',
+    subtitle: 'Phân tích tiến độ & giá trị thực hiện HĐ',
+    badge: 'HĐ'
+  },
+  {
+    id: 'order',
+    title: 'Đơn hàng',
+    subtitle: 'Phân tích số lượng & doanh số đơn hàng',
+    badge: 'ĐH'
+  }
+];
+
+const REVENUE_SUB_BRANCHES = [
+  {
+    id: 'month',
+    title: '1. Phân tích theo tháng',
+    subtitle: 'Kết quả tháng so với các mốc liên quan',
+    badge: 4,
+    icon: BarChart2,
+    color: '#2563eb'
+  },
+  {
+    id: 'quarter',
+    title: '2. Phân tích theo quý',
+    subtitle: 'Lũy kế, ước Quý và so sánh',
+    badge: 5,
+    icon: Calendar,
+    color: '#10b981'
+  },
+  {
+    id: 'year',
+    title: '3. Phân tích theo năm',
+    subtitle: 'Lũy kế, ước năm và so sánh',
+    badge: 4,
+    icon: Calendar,
+    color: '#f59e0b'
+  },
+  {
+    id: 'trend',
+    title: '4. Xu hướng doanh thu từng tháng',
+    subtitle: 'So với năm trước và kế hoạch',
+    badge: 2,
+    icon: TrendingUp,
+    color: '#8b5cf6'
+  },
+  {
+    id: 'spdv',
+    title: '5. Doanh thu theo nhóm SPDV',
+    subtitle: 'Cơ cấu thực hiện và kế hoạch',
+    badge: 5,
+    icon: PieChart,
+    color: '#ef4444'
+  },
+  {
+    id: 'unit',
+    title: '6. Doanh thu theo đơn vị',
+    subtitle: 'Cơ cấu và so sánh theo đơn vị',
+    badge: 4,
+    icon: Users,
+    color: '#0284c7'
+  },
+  {
+    id: 'plan_progress',
+    title: '7. Chuyển dịch DT ngoài và DT quốc tế',
+    subtitle: 'Cơ cấu DT nội bộ - ngoài TĐ & DT trong nước - quốc tế',
+    badge: 4,
+    icon: Target,
+    color: '#dc2626'
+  }
+];
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isHomeActive = location.pathname === '/dashboard' || location.pathname === '/home' || location.pathname.startsWith('/dashboard');
+  const [homeOpen, setHomeOpen] = useState(isHomeActive);
   const [billingOpen, setBillingOpen] = useState(location.pathname.includes('/billing'));
   const [contractsOpen, setContractsOpen] = useState(location.pathname.includes('/contracts'));
   const [goalsOpen, setGoalsOpen] = useState(location.pathname.startsWith('/goals') || location.pathname.startsWith('/goal'));
+  const [revenueOpen, setRevenueOpen] = useState(location.pathname.startsWith('/reports/revenue'));
+  const [reportsOpen, setReportsOpen] = useState(location.pathname === '/reports' || (location.pathname.startsWith('/reports') && !location.pathname.startsWith('/reports/revenue')));
+
+  useEffect(() => {
+    if (location.pathname === '/dashboard' || location.pathname === '/home' || location.pathname.startsWith('/dashboard')) {
+      setHomeOpen(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/reports/revenue')) {
+      setRevenueOpen(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/reports' || (location.pathname.startsWith('/reports') && !location.pathname.startsWith('/reports/revenue'))) {
+      setReportsOpen(true);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (location.pathname.startsWith('/goal') || location.pathname.startsWith('/goals')) {
@@ -66,6 +183,7 @@ function Sidebar() {
   const isGroupResultActive = location.pathname === '/goals/results' && (location.search.includes('tab=doanh_thu_tap_doan') || location.search.includes('tab=san_luong_tap_doan') || !location.search.includes('tab='));
   const isInternalPlanActive = (location.pathname === '/goals' && location.search.includes('type=internal')) || (location.pathname.startsWith('/goal/') && editingGoalPlanType === 'Kế hoạch nội bộ');
   const isInternalResultActive = location.pathname === '/goals/results' && (location.search.includes('tab=doanh_thu_noi_bo') || location.search.includes('tab=san_luong_noi_bo'));
+  const isReportsActive = location.pathname === '/reports' || (location.pathname.startsWith('/reports') && !location.pathname.startsWith('/reports/revenue'));
 
   return (
     <aside className="sidebar">
@@ -86,11 +204,46 @@ function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {/* Independent Home Page */}
-        <div className={`nav-item ${location.pathname === '/dashboard' ? 'active' : ''}`} onClick={() => navigate('/dashboard')} style={{ marginBottom: '8px' }}>
-          <LayoutDashboard size={20} />
-          <span>Trang chủ</span>
-          <span className="mvp-badge">MVP</span>
+        {/* Nhánh Trang chủ */}
+        <div className="nav-group" style={{ marginBottom: '8px' }}>
+          <div
+            className={`nav-item ${isHomeActive ? 'active' : ''}`}
+            onClick={() => {
+              if (!homeOpen) {
+                setHomeOpen(true);
+                navigate('/dashboard');
+              } else {
+                setHomeOpen(false);
+              }
+            }}
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Home size={20} />
+              <span>Trang chủ</span>
+            </div>
+            {homeOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          </div>
+          {homeOpen && (
+            <div style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
+              <div
+                className={`nav-item ${location.pathname === '/dashboard' || location.pathname === '/dashboard/overview' || location.pathname === '/home' ? 'active' : ''}`}
+                onClick={() => navigate('/dashboard')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 20px' }}
+              >
+                <LayoutDashboard size={15} />
+                <span>Dashboard Tổng quan</span>
+              </div>
+              <div
+                className={`nav-item ${location.pathname === '/dashboard/personal' ? 'active' : ''}`}
+                onClick={() => navigate('/dashboard/personal')}
+                style={{ fontSize: '13px', height: '32px', padding: '6px 20px' }}
+              >
+                <Users size={15} />
+                <span>Dashboard cá nhân</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Section 1 */}
@@ -100,8 +253,7 @@ function Sidebar() {
           </div>
           <div className={`nav-item ${location.pathname === '/activities' ? 'active' : ''}`} onClick={() => navigate('/activities')}>
             <Kanban size={20} />
-            <span>Quản lý công việc</span>
-            <span className="mvp-badge">MVP</span>
+            <span>Quản lý tiếp xúc khách hàng</span>
           </div>
           {/* Goals - Collapsible */}
           <div
@@ -112,7 +264,6 @@ function Sidebar() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Target size={20} />
               <span>Quản lý mục tiêu doanh số</span>
-              <span className="mvp-badge">MVP</span>
             </div>
             {goalsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
@@ -150,6 +301,113 @@ function Sidebar() {
                 <BarChart2 size={14} />
                 <span>Kết quả nội bộ</span>
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Section: Báo cáo & Phân tích */}
+        <div className="nav-group">
+          <div className="group-title">
+            <span>BÁO CÁO & PHÂN TÍCH</span>
+          </div>
+
+          {/* Report Dashboard */}
+          <div
+            className={`nav-item ${isReportsActive ? 'active' : ''}`}
+            onClick={() => {
+              if (!reportsOpen) {
+                setReportsOpen(true);
+                navigate('/reports?object=opp');
+              } else {
+                setReportsOpen(false);
+              }
+            }}
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <BarChart2 size={20} />
+              <span>Report Dashboard</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="sidebar-group-count-badge">5</span>
+              {reportsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </div>
+          </div>
+          {reportsOpen && (
+            <div className="sidebar-chart-group-container">
+              <div className="sidebar-chart-group-header">Đối tượng phân tích</div>
+              {REPORT_OBJECT_BRANCHES.map((sub) => {
+                const searchParams = new URLSearchParams(location.search);
+                const currentObj = searchParams.get('object') || 'opp';
+                const isSubActive = isReportsActive && currentObj === sub.id;
+                return (
+                  <div
+                    key={sub.id}
+                    className={`sidebar-chart-item ${isSubActive ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/reports?object=${sub.id}`);
+                    }}
+                  >
+                    <div className="sidebar-chart-info">
+                      <div className="sidebar-chart-title-row">
+                        <span className="sidebar-chart-title">{sub.title}</span>
+                        <span className="sidebar-chart-badge">{sub.badge}</span>
+                      </div>
+                      <span className="sidebar-chart-subtitle">{sub.subtitle}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Revenue Report - Separate Branch */}
+          <div
+            className={`nav-item ${location.pathname.startsWith('/reports/revenue') ? 'active' : ''}`}
+            onClick={() => {
+              if (!revenueOpen) {
+                setRevenueOpen(true);
+                navigate('/reports/revenue?view=month');
+              } else {
+                setRevenueOpen(false);
+              }
+            }}
+            style={{ justifyContent: 'space-between' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <TrendingUp size={20} />
+              <span>Báo cáo doanh thu</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="sidebar-group-count-badge">7</span>
+              {revenueOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </div>
+          </div>
+          {revenueOpen && (
+            <div className="sidebar-chart-group-container">
+              <div className="sidebar-chart-group-header">Nhóm biểu đồ</div>
+              {REVENUE_SUB_BRANCHES.map((sub) => {
+                const searchParams = new URLSearchParams(location.search);
+                const currentView = searchParams.get('view') || 'month';
+                const isSubActive =
+                  location.pathname === '/reports/revenue' && currentView === sub.id;
+                return (
+                  <div
+                    key={sub.id}
+                    className={`sidebar-chart-item ${isSubActive ? 'active' : ''}`}
+                    onClick={() => navigate(`/reports/revenue?view=${sub.id}`)}
+                  >
+                    <div className="sidebar-chart-info">
+                      <div className="sidebar-chart-title-row">
+                        <span className="sidebar-chart-title">{sub.title}</span>
+                        <span className="sidebar-chart-badge">{sub.badge}</span>
+                      </div>
+                      <span className="sidebar-chart-subtitle">{sub.subtitle}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -360,17 +618,6 @@ function Sidebar() {
           </div>
         </div>
 
-        {/* Section 7 */}
-        <div className="nav-group">
-          <div className="group-title">
-            <span>BÁO CÁO DASHBOARD</span>
-          </div>
-          <div className={`nav-item ${location.pathname === '/reports' ? 'active' : ''}`} onClick={() => navigate('/reports')}>
-            <BarChart size={20} />
-            <span>Báo cáo Dashboard</span>
-            <span className="mvp-badge">MVP</span>
-          </div>
-        </div>
 
         {/* Footer Logo Section */}
         <div style={{ padding: '24px 20px', marginTop: 'auto', borderTop: '1px solid #f1f5f9' }}>
