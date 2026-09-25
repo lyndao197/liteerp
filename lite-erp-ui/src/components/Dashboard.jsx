@@ -2045,7 +2045,7 @@ const Dashboard = () => {
   if (currentScreen === 'revenue_breakdown') {
     return (
       <div className="exec-dashboard-page revenue-breakdown-subscreen">
-        {/* TOP NAVIGATION / BREADCRUMB BAR */}
+        {/* TOP NAVIGATION & FILTER BAR */}
         <div className="breakdown-screen-nav-bar">
           <button
             className="breakdown-back-btn"
@@ -2053,60 +2053,17 @@ const Dashboard = () => {
               setCurrentScreen('main');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            title="Quay về Dashboard chính"
+            title="Quay về Dashboard điều hành"
           >
             <ArrowLeft size={18} />
             <span>Quay lại Dashboard điều hành</span>
           </button>
 
-          <div className="breakdown-nav-meta">
-            <span className="breakdown-nav-badge">Báo cáo phân rã cơ cấu Tổng doanh thu</span>
-            <span className="breakdown-nav-period">Tháng {monthNum}/{selectedYear}</span>
-          </div>
-        </div>
+          <h2 className="breakdown-nav-page-title">
+            Chi tiết 4 biểu đồ cơ cấu doanh thu
+          </h2>
 
-        {/* HEADER HERO BANNER */}
-        <div className="exec-header-banner breakdown-screen-hero">
-          <div className="exec-header-top-row">
-            <div className="exec-title-group">
-              <div className="breakdown-parent-ref">
-                <span className="parent-ref-dot"></span>
-                <span>Chỉ tiêu mẹ: <strong>Tổng doanh thu ({kpis.totalRevenue.value.toLocaleString('vi-VN')} triệu đ)</strong></span>
-              </div>
-              <h1 className="exec-main-title" style={{ marginTop: '6px' }}>
-                Chi tiết 4 biểu đồ cơ cấu doanh thu
-              </h1>
-              <p className="exec-subtitle">
-                Phân bổ toàn bộ doanh thu theo 2 trục độc lập: Quan hệ Tập đoàn (Nội bộ / Ngoài TĐ) và Thị trường địa lý (Trong nước / Quốc tế)
-              </p>
-            </div>
-
-            <div className="breakdown-hero-formulas">
-              <div className="hero-formula-card">
-                <div className="hfc-label">Trục 1: Quan hệ Tập đoàn</div>
-                <div className="hfc-math">
-                  <span className="hfc-comp text-slate">DT nội bộ: <strong>{kpis.internalRevenue.value.toLocaleString('vi-VN')}</strong></span>
-                  <span className="hfc-op">+</span>
-                  <span className="hfc-comp text-red">DT ngoài TĐ: <strong>{kpis.externalRevenue.value.toLocaleString('vi-VN')}</strong></span>
-                  <span className="hfc-op">=</span>
-                  <span className="hfc-sum"><strong>{kpis.totalRevenue.value.toLocaleString('vi-VN')}</strong> tr.đ</span>
-                </div>
-              </div>
-              <div className="hero-formula-card">
-                <div className="hfc-label">Trục 2: Thị trường địa lý</div>
-                <div className="hfc-math">
-                  <span className="hfc-comp text-blue">DT trong nước: <strong>{kpis.domesticRevenue.value.toLocaleString('vi-VN')}</strong></span>
-                  <span className="hfc-op">+</span>
-                  <span className="hfc-comp text-orange">DT quốc tế: <strong>{kpis.globalRevenue.value.toLocaleString('vi-VN')}</strong></span>
-                  <span className="hfc-op">=</span>
-                  <span className="hfc-sum"><strong>{kpis.totalRevenue.value.toLocaleString('vi-VN')}</strong> tr.đ</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Clean Filter Selectors inside breakdown screen */}
-          <div className="exec-clean-filters-bar" style={{ marginTop: '14px' }}>
+          <div className="exec-clean-filters-bar" style={{ margin: 0, padding: 0 }}>
             <div className="exec-filters-group">
               <div className="clean-filter-item">
                 <span className="clean-filter-label">Năm</span>
@@ -2143,18 +2100,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* 4 BIỂU ĐỒ CƠ CẤU (2 DÒNG x 2 CỘT) */}
-        <div className="breakdown-charts-section">
-          {/* NHÓM 1: CƠ CẤU QUAN HỆ TẬP ĐOÀN */}
-          <div className="breakdown-group-header">
-            <div className="breakdown-group-title">
-              <span className="group-title-dot internal"></span>
-              <h3>1. Cơ cấu Doanh thu theo quan hệ Tập đoàn</h3>
-            </div>
-            <span className="breakdown-group-note">DT nội bộ + DT ngoài Tập đoàn = 100% Tổng doanh thu</span>
-          </div>
-
-          <div className="exec-kpis-top-grid">
+        {/* 4 BIỂU ĐỒ DOANH THU (MỖI BIỂU ĐỒ Ở 1 DÒNG, KÈM BẢNG TABLE SỐ LIỆU TƯƠNG ỨNG) */}
+        <div className="breakdown-single-column-list">
+          {/* DÒNG 1: DOANH THU NỘI BỘ */}
+          <div className="breakdown-card-row">
             <ExecutiveGaugeMasterCard
               index={2}
               id="chart-screen-internal"
@@ -2162,6 +2111,10 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
             />
+          </div>
+
+          {/* DÒNG 2: DOANH THU NGOÀI TẬP ĐOÀN */}
+          <div className="breakdown-card-row">
             <ExecutiveGaugeMasterCard
               index={3}
               id="chart-screen-external"
@@ -2171,16 +2124,8 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* NHÓM 2: CƠ CẤU THỊ TRƯỜNG ĐỊA LÝ */}
-          <div className="breakdown-group-header" style={{ marginTop: '28px' }}>
-            <div className="breakdown-group-title">
-              <span className="group-title-dot domestic"></span>
-              <h3>2. Cơ cấu Doanh thu theo thị trường địa lý</h3>
-            </div>
-            <span className="breakdown-group-note">DT trong nước + DT quốc tế = 100% Tổng doanh thu</span>
-          </div>
-
-          <div className="exec-kpis-top-grid">
+          {/* DÒNG 3: DOANH THU TRONG NƯỚC */}
+          <div className="breakdown-card-row">
             <ExecutiveGaugeMasterCard
               index={9}
               id="chart-screen-domestic"
@@ -2188,6 +2133,10 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
             />
+          </div>
+
+          {/* DÒNG 4: DOANH THU QUỐC TẾ */}
+          <div className="breakdown-card-row">
             <ExecutiveGaugeMasterCard
               index={4}
               id="chart-screen-global"
@@ -2196,20 +2145,20 @@ const Dashboard = () => {
               data={data}
             />
           </div>
+        </div>
 
-          {/* BOTTOM RETURN BAR */}
-          <div className="breakdown-screen-bottom-bar">
-            <button
-              className="breakdown-back-btn large"
-              onClick={() => {
-                setCurrentScreen('main');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            >
-              <ArrowLeft size={18} />
-              <span>Quay lại Dashboard điều hành</span>
-            </button>
-          </div>
+        {/* BOTTOM RETURN BAR */}
+        <div className="breakdown-screen-bottom-bar">
+          <button
+            className="breakdown-back-btn large"
+            onClick={() => {
+              setCurrentScreen('main');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            <ArrowLeft size={18} />
+            <span>Quay lại Dashboard điều hành</span>
+          </button>
         </div>
       </div>
     );
