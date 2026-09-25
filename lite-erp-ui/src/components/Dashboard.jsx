@@ -1032,8 +1032,8 @@ const RainbowSpeedometer = ({
   id = 'rainbow-speedo'
 }) => {
   const cx = 150;
-  const cy = 114;
-  const r = 88;
+  const cy = 110;
+  const r = 84;
   const strokeWidth = 14;
 
   const arcPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
@@ -1041,17 +1041,17 @@ const RainbowSpeedometer = ({
   
   // Angle: 0% is PI (180 deg, left), 100% is 0 (0 deg, right)
   const needleAngle = Math.PI - (clampedRate / 100) * Math.PI;
-  const needleLength = 72;
+  const needleLength = 68;
   const tipX = cx + needleLength * Math.cos(needleAngle);
   const tipY = cy - needleLength * Math.sin(needleAngle);
 
   const ticks = [
-    { label: '0%', angleDeg: 180, rOffset: 13 },
-    { label: '20%', angleDeg: 144, rOffset: 13 },
-    { label: '40%', angleDeg: 108, rOffset: 13 },
-    { label: '60%', angleDeg: 72, rOffset: 13 },
-    { label: '80%', angleDeg: 36, rOffset: 13 },
-    { label: '100%', angleDeg: 0, rOffset: 13 },
+    { label: '0%', angleDeg: 180, rOffset: 16, anchor: 'end', dy: 4 },
+    { label: '20%', angleDeg: 144, rOffset: 15, anchor: 'end', dy: 2 },
+    { label: '40%', angleDeg: 108, rOffset: 14, anchor: 'middle', dy: 0 },
+    { label: '60%', angleDeg: 72, rOffset: 14, anchor: 'middle', dy: 0 },
+    { label: '80%', angleDeg: 36, rOffset: 15, anchor: 'start', dy: 2 },
+    { label: '100%', angleDeg: 0, rOffset: 16, anchor: 'start', dy: 4 },
   ];
 
   const formatNum = (n) => {
@@ -1060,20 +1060,17 @@ const RainbowSpeedometer = ({
 
   return (
     <div className="tr-rainbow-gauge-wrapper">
-      <svg width="100%" height="auto" viewBox="0 0 300 166" className="tr-rainbow-svg">
+      <svg width="100%" height="auto" viewBox="0 0 300 156" className="tr-rainbow-svg">
         <defs>
           <linearGradient id={`rainbow-grad-${id}`} x1="0%" y1="100%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ef4444" />
-            <stop offset="16%" stopColor="#f97316" />
-            <stop offset="34%" stopColor="#eab308" />
+            <stop offset="18%" stopColor="#f97316" />
+            <stop offset="36%" stopColor="#eab308" />
             <stop offset="52%" stopColor="#22c55e" />
             <stop offset="70%" stopColor="#06b6d4" />
             <stop offset="86%" stopColor="#3b82f6" />
             <stop offset="100%" stopColor="#8b5cf6" />
           </linearGradient>
-          <filter id={`rainbow-shadow-${id}`} x="-10%" y="-10%" width="120%" height="120%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.08" />
-          </filter>
         </defs>
 
         {/* Rainbow Arc */}
@@ -1083,25 +1080,21 @@ const RainbowSpeedometer = ({
           stroke={`url(#rainbow-grad-${id})`}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          filter={`url(#rainbow-shadow-${id})`}
         />
 
         {/* Ticks along arc */}
         {ticks.map((t, idx) => {
           const rad = (t.angleDeg * Math.PI) / 180;
           const tx = cx + (r + t.rOffset) * Math.cos(rad);
-          const ty = cy - (r + t.rOffset) * Math.sin(rad);
-          let anchor = 'middle';
-          if (idx === 0) anchor = 'end';
-          if (idx === ticks.length - 1) anchor = 'start';
+          const ty = cy - (r + t.rOffset) * Math.sin(rad) + t.dy;
 
           return (
             <text
               key={idx}
               x={tx}
-              y={ty + 3}
-              textAnchor={anchor}
-              fontSize="10"
+              y={ty}
+              textAnchor={t.anchor}
+              fontSize="11"
               fontWeight="600"
               fill="#64748b"
             >
@@ -1113,9 +1106,9 @@ const RainbowSpeedometer = ({
         {/* Center Rate Text (above needle pivot) */}
         <text
           x={cx}
-          y={cy - 30}
+          y={cy - 24}
           textAnchor="middle"
-          fontSize="26"
+          fontSize="28"
           fontWeight="800"
           fill="#0f172a"
         >
@@ -1128,18 +1121,18 @@ const RainbowSpeedometer = ({
           y1={cy}
           x2={tipX}
           y2={tipY}
-          stroke="#f97316"
-          strokeWidth="3"
+          stroke="#ea580c"
+          strokeWidth="3.5"
           strokeLinecap="round"
         />
 
         {/* Pivot Hub */}
-        <circle cx={cx} cy={cy} r="6" fill="#ffffff" stroke="#f97316" strokeWidth="3" />
+        <circle cx={cx} cy={cy} r="6.5" fill="#ffffff" stroke="#ea580c" strokeWidth="3.5" />
 
         {/* Bottom Realized / Plan Text below Hub */}
         <text
           x={cx}
-          y={cy + 22}
+          y={cy + 24}
           textAnchor="middle"
           fontSize="14.5"
           fontWeight="800"
@@ -1800,42 +1793,50 @@ const ExecutiveGaugeMasterCard = ({
 
       {/* Top Section: Metrics + Rainbow Gauge */}
       <div className="tr-top-section">
-        {/* Left Column: Number & Comparisons */}
-        <div className="tr-left-metrics-col">
-          <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
+        {/* Left Column: Number & Side-by-side Comparisons */}
+        <div className="tr-left-metrics-panel">
+          {/* Main Metric Box */}
+          <div className="tr-metric-main-box">
+            <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
 
-          <div className="tr-main-value-row">
-            <span className="tr-big-value">
-              {typeof cfg.actual === 'number' ? cfg.actual.toLocaleString('vi-VN') : cfg.actual}
+            <div className="tr-main-value-row">
+              <span className="tr-big-value">
+                {typeof cfg.actual === 'number' ? cfg.actual.toLocaleString('vi-VN') : cfg.actual}
+              </span>
+              {cfg.unit !== '%' && <span className="tr-value-unit">{cfg.unit}</span>}
+            </div>
+
+            <div className="tr-plan-subline">
+              <span className="tr-plan-label">KH tháng:</span>
+              <strong>{typeof cfg.plan === 'number' ? cfg.plan.toLocaleString('vi-VN') : cfg.plan}{cfg.unit !== '%' ? ` ${cfg.unit}` : ''}</strong>
+              <span className="tr-subline-sep">|</span>
+              <span className="tr-plan-label">Đạt</span>
+              <strong className={cfg.rate >= 100 ? 'text-green' : 'text-red'}>{cfg.rate.toString().replace('.', ',')}%</strong>
+            </div>
+          </div>
+
+          {/* Compare Col 1: So tháng trước (T-1) */}
+          <div className="tr-metric-compare-col">
+            <span className="tr-compare-col-label">So T{prevMonthNum}</span>
+            <div className={`tr-compare-col-value ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
+              <span className="tr-compare-col-arrow">{cfg.diffPrevIsNeg ? '▼' : '▲'}</span>
+              <span className="tr-compare-col-num">{cfg.diffPrevVal}</span>
+            </div>
+            <span className={`tr-compare-col-pct ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
+              ({cfg.pctPrev})
             </span>
-            {cfg.unit !== '%' && <span className="tr-value-unit">{cfg.unit}</span>}
           </div>
 
-          <div className="tr-plan-subline">
-            KH tháng: <strong>{typeof cfg.plan === 'number' ? cfg.plan.toLocaleString('vi-VN') : cfg.plan}{cfg.unit !== '%' ? ` ${cfg.unit}` : ''}</strong>
-            <span className="tr-subline-sep">|</span>
-            Đạt <strong className={cfg.rate >= 100 ? 'text-green' : 'text-red'}>{cfg.rate.toString().replace('.', ',')}%</strong>
-          </div>
-
-          {/* Comparison Section */}
-          <div className="tr-comparison-lines">
-            <div className={`tr-compare-line ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
-              <span className="tr-compare-prefix">So T{prevMonthNum}:</span>
-              <span className="tr-compare-stat">
-                <span className="tr-compare-arrow">{cfg.diffPrevIsNeg ? '▼' : '▲'}</span>
-                <span className="tr-compare-val">{cfg.diffPrevVal}</span>
-                <span className="tr-compare-pct">({cfg.pctPrev})</span>
-              </span>
+          {/* Compare Col 2: So cùng kỳ năm trước */}
+          <div className="tr-metric-compare-col">
+            <span className="tr-compare-col-label">So cùng kỳ T{monthNum}/{samePeriodYear}</span>
+            <div className={`tr-compare-col-value ${cfg.diffYearIsNeg ? 'negative' : 'positive'}`}>
+              <span className="tr-compare-col-arrow">{cfg.diffYearIsNeg ? '▼' : '▲'}</span>
+              <span className="tr-compare-col-num">{cfg.diffYearVal}</span>
             </div>
-
-            <div className={`tr-compare-line ${cfg.diffYearIsNeg ? 'negative' : 'positive'}`}>
-              <span className="tr-compare-prefix">So cùng kỳ T{monthNum}/{samePeriodYear}:</span>
-              <span className="tr-compare-stat">
-                <span className="tr-compare-arrow">{cfg.diffYearIsNeg ? '▼' : '▲'}</span>
-                <span className="tr-compare-val">{cfg.diffYearVal}</span>
-                <span className="tr-compare-pct">({cfg.pctYear})</span>
-              </span>
-            </div>
+            <span className={`tr-compare-col-pct ${cfg.diffYearIsNeg ? 'negative' : 'positive'}`}>
+              ({cfg.pctYear})
+            </span>
           </div>
         </div>
 
