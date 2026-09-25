@@ -2103,75 +2103,37 @@
   transform: rotate(180deg);
 }
 
-.tr-expand-drilldown-bar {
+.tr-drilldown-footer-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border: 1px dashed #cbd5e1;
-  border-radius: 12px;
-  margin-top: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
-.tr-expand-drilldown-bar:hover {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-color: #93c5fd;
-  border-style: solid;
-}
-
-.tr-expand-drilldown-bar.active {
-  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
-  border-color: #3b82f6;
-  border-style: solid;
-}
-
-.drilldown-bar-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.drilldown-icon {
-  color: #2563eb;
-  flex-shrink: 0;
-}
-
-.drilldown-text {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.drilldown-chevron {
-  color: #64748b;
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.drilldown-chevron.rotated {
-  transform: rotate(180deg);
-  color: #2563eb;
-}
-
-.drilldown-action-cta {
+.tr-btn-view-detail {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: #2563eb;
   color: #ffffff;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 8px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
+  border: none;
+  cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
 }
 
-.tr-expand-drilldown-bar:hover .drilldown-action-cta {
+.tr-btn-view-detail:hover {
   background: #1d4ed8;
-  transform: translateX(2px);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.35);
+}
+
+.tr-btn-view-detail:active {
+  transform: translateY(0);
 }
 
 /* ==========================================================================

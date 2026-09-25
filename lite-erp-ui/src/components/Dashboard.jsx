@@ -1628,20 +1628,6 @@ const ExecutiveGaugeMasterCard = ({
         </div>
 
         <div className="tr-header-right">
-          {index === 1 && onOpenDetailScreen && (
-            <button
-              className="tr-breakdown-toggle-pill"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetailScreen();
-              }}
-              title="Xem thêm 4 biểu đồ chi tiết (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)"
-            >
-              <Layers size={13} />
-              <span>Xem thêm 4 biểu đồ chi tiết</span>
-              <ArrowRight size={13} />
-            </button>
-          )}
           <span className="tr-unit-text">{cfg.unitHeader}</span>
           <button
             className="tr-action-btn"
@@ -1822,26 +1808,21 @@ const ExecutiveGaugeMasterCard = ({
         </div>
       </div>
 
-      {/* Bottom Drilldown Action Bar for Total Revenue */}
+      {/* Bottom Drilldown Action Button for Total Revenue */}
       {index === 1 && onOpenDetailScreen && (
-        <div
-          className="tr-expand-drilldown-bar"
-          onClick={(e) => {
-            e.stopPropagation();
-            onOpenDetailScreen();
-          }}
-          title="Bấm để mở màn hình chi tiết 4 biểu đồ cơ cấu"
-        >
-          <div className="drilldown-bar-content">
-            <Layers size={16} className="drilldown-icon" />
-            <span className="drilldown-text">
-              Bấm để xem màn hình chi tiết 4 biểu đồ cơ cấu (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)
-            </span>
-          </div>
-          <div className="drilldown-action-cta">
+        <div className="tr-drilldown-footer-row">
+          <button
+            type="button"
+            className="tr-btn-view-detail"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetailScreen();
+            }}
+            title="Xem chi tiết 4 biểu đồ cơ cấu"
+          >
             <span>Xem chi tiết</span>
-            <ArrowRight size={15} />
-          </div>
+            <ArrowRight size={14} />
+          </button>
         </div>
       )}
     </div>
