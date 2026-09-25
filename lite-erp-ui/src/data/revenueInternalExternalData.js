@@ -17,8 +17,8 @@ export const INTERNAL_EXTERNAL_DATA = {
       formattedTotal: '389,9',
       unit: 'Triệu đồng',
       slices: [
-        { name: 'DT ngoài Tập đoàn', percent: 67.4, formattedPercent: '67,4%', color: '#EE0033', value: 262.8 },
-        { name: 'DT nội bộ', percent: 32.6, formattedPercent: '32,6%', color: '#64748b', value: 127.1 }
+        { name: 'DT ngoài Tập đoàn', percent: 67.4, formattedPercent: '67,4%', color: '#EE0033', value: 262.7 },
+        { name: 'DT nội bộ', percent: 32.6, formattedPercent: '32,6%', color: '#64748b', value: 127.2 }
       ]
     },
     thQuarter: {
@@ -27,8 +27,8 @@ export const INTERNAL_EXTERNAL_DATA = {
       formattedTotal: '775,0',
       unit: 'Triệu đồng',
       slices: [
-        { name: 'DT ngoài Tập đoàn', percent: 67.7, formattedPercent: '67,7%', color: '#EE0033', value: 524.7 },
-        { name: 'DT nội bộ', percent: 32.3, formattedPercent: '32,3%', color: '#64748b', value: 250.3 }
+        { name: 'DT ngoài Tập đoàn', percent: 67.7, formattedPercent: '67,7%', color: '#EE0033', value: 525.0 },
+        { name: 'DT nội bộ', percent: 32.3, formattedPercent: '32,3%', color: '#64748b', value: 250.0 }
       ]
     },
     thYear: {
@@ -37,8 +37,8 @@ export const INTERNAL_EXTERNAL_DATA = {
       formattedTotal: '2.976,3',
       unit: 'Triệu đồng',
       slices: [
-        { name: 'DT ngoài Tập đoàn', percent: 68.0, formattedPercent: '68,0%', color: '#EE0033', value: 2023.9 },
-        { name: 'DT nội bộ', percent: 32.0, formattedPercent: '32,0%', color: '#64748b', value: 952.4 }
+        { name: 'DT ngoài Tập đoàn', percent: 68.0, formattedPercent: '68,0%', color: '#EE0033', value: 2022.8 },
+        { name: 'DT nội bộ', percent: 32.0, formattedPercent: '32,0%', color: '#64748b', value: 953.5 }
       ]
     },
 
@@ -155,8 +155,8 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       formattedTotal: '389,9',
       unit: 'tỷ đ',
       slices: [
-        { name: 'DT trong nước', percent: 89.8, formattedPercent: '89,8%', color: '#0284c7', value: 350.1 },
-        { name: 'DT quốc tế', percent: 10.2, formattedPercent: '10,2%', color: '#ea580c', value: 39.8 }
+        { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 347.1 },
+        { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 42.8 }
       ]
     },
     thQuarter: {
@@ -187,8 +187,8 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       formattedTotal: '414,0',
       unit: 'tỷ đ',
       slices: [
-        { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 364.3 },
-        { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 49.7 }
+        { name: 'DT trong nước', percent: 89.1, formattedPercent: '89,1%', color: '#0284c7', value: 369.0 },
+        { name: 'DT quốc tế', percent: 10.9, formattedPercent: '10,9%', color: '#ea580c', value: 45.0 }
       ]
     },
     khQuarter: {
@@ -207,8 +207,8 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       formattedTotal: '4.968,1',
       unit: 'tỷ đ',
       slices: [
-        { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 4371.9 },
-        { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 596.2 }
+        { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 4421.6 },
+        { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 546.5 }
       ]
     }
   },

@@ -10,7 +10,7 @@ import {
   PieChart as PieIcon, BarChart2, CheckCircle2, AlertCircle,
   DollarSign, Award, Users, FileText, Smile, Target, Sparkles,
   Layers, ArrowUpRight, ArrowDownRight, Activity, Globe,
-  Building2, Percent, Briefcase, Compass, Info, Maximize2, MoreVertical, Clock
+  Building2, Landmark, Percent, Briefcase, Compass, Info, Maximize2, MoreVertical, Clock
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import {
@@ -112,6 +112,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         profitMargin: { value: 12.5, plan: 12.1, rate: 103.3, diffPrev: 0.1, percentPrev: 0.8, diffYear: 0.4, percentYear: 3.3, unit: '%' },
         internalRevenue: { value: 127.2, plan: 124.2, rate: 102.4, diffPrev: 4.4, percentPrev: 3.6, diffYear: 4.3, percentYear: 3.5, unit: 'Triệu đồng' },
         externalRevenue: { value: 262.7, plan: 289.8, rate: 90.6, diffPrev: 0.4, percentPrev: 0.2, diffYear: 21.3, percentYear: 8.8, unit: 'Triệu đồng' },
+        domesticRevenue: { value: 347.1, plan: 369.0, rate: 94.1, diffPrev: 3.6, percentPrev: 1.0, diffYear: 19.0, percentYear: 5.8, unit: 'Triệu đồng' },
         globalRevenue: { value: 42.8, plan: 45.0, rate: 95.1, diffPrev: 1.2, percentPrev: 2.9, diffYear: 6.6, percentYear: 18.2, unit: 'Triệu đồng' },
         customerCount: { value: 1248, plan: 1170, rate: 106.7, diffPrev: 48, percentPrev: 4.0, diffYear: 182, percentYear: 17.1, unit: 'KH' },
         contractCount: { value: 856, plan: 820, rate: 104.4, diffPrev: 74, percentPrev: 9.5, diffYear: 114, percentYear: 15.4, unit: 'HĐ' },
@@ -154,6 +155,19 @@ const MONTHLY_EXECUTIVE_DATA = {
           { period: 'Quý III', actual: 525.0, plan: 872.2, rate: 60.2, growth: 11.6, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 2022.8, plan: 2130.2, rate: 95.0, growth: 17.5, isUp: true },
           { period: 'Năm 2026', actual: 2022.8, plan: 3477.7, rate: 58.2, growth: null, isUp: null }
+        ]
+      },
+      domestic: {
+        actual: 347.1,
+        plan: 369.0,
+        rate: 94.1,
+        vsPrev: { value: 3.6, percent: 1.0, isUp: true },
+        vsLastYear: { value: 19.0, percent: 5.8, isUp: true },
+        table: [
+          { period: 'T8/2026', actual: 347.1, plan: 369.0, rate: 94.1, growth: 5.8, isUp: true },
+          { period: 'Quý III', actual: 692.9, plan: 1096.5, rate: 63.2, growth: 7.8, isUp: true },
+          { period: 'Luỹ kế năm 2026', actual: 2663.8, plan: 2713.1, rate: 98.2, growth: 12.0, isUp: true },
+          { period: 'Năm 2026', actual: 2663.8, plan: 4421.6, rate: 60.2, growth: null, isUp: null }
         ]
       },
       global: {
@@ -219,6 +233,10 @@ function getMonthData(m, y = '2026') {
   const pGlobal = +(pTotal * 0.11).toFixed(1);
   const rGlobal = +((tGlobal / pGlobal) * 100).toFixed(1);
 
+  const tDomestic = +(tTotal - tGlobal).toFixed(1);
+  const pDomestic = +(pTotal - pGlobal).toFixed(1);
+  const rDomestic = +((tDomestic / pDomestic) * 100).toFixed(1);
+
   const profit = +(tTotal * 0.125).toFixed(1);
   const pProfit = +(pTotal * 0.121).toFixed(1);
   const rProfit = +((profit / pProfit) * 100).toFixed(1);
@@ -239,6 +257,7 @@ function getMonthData(m, y = '2026') {
       profitMargin: { value: ros, plan: pRos, rate: +((ros / pRos) * 100).toFixed(1), diffPrev: 0.1, percentPrev: 0.8, diffYear: 0.3, percentYear: 2.5, unit: '%' },
       internalRevenue: { value: tInt, plan: pInt, rate: rInt, diffPrev: +(tInt * 0.03).toFixed(1), percentPrev: 3.1, diffYear: +(tInt * 0.035).toFixed(1), percentYear: 3.4, unit: 'Triệu đồng' },
       externalRevenue: { value: tExt, plan: pExt, rate: rExt, diffPrev: +(tExt * 0.01).toFixed(1), percentPrev: 0.8, diffYear: +(tExt * 0.08).toFixed(1), percentYear: 8.2, unit: 'Triệu đồng' },
+      domesticRevenue: { value: tDomestic, plan: pDomestic, rate: rDomestic, diffPrev: +(tDomestic * 0.01).toFixed(1), percentPrev: 1.0, diffYear: +(tDomestic * 0.055).toFixed(1), percentYear: 5.8, unit: 'Triệu đồng' },
       globalRevenue: { value: tGlobal, plan: pGlobal, rate: rGlobal, diffPrev: +(tGlobal * 0.03).toFixed(1), percentPrev: 3.0, diffYear: +(tGlobal * 0.15).toFixed(1), percentYear: 15.0, unit: 'Triệu đồng' },
       customerCount: { value: Math.round(1248 * (0.9 + m * 0.02) * yearScale), plan: Math.round(1170 * (0.9 + m * 0.02) * yearScale), rate: 106.7, diffPrev: 35 + m, percentPrev: 3.2, diffYear: 150 + m * 4, percentYear: 14.5, unit: 'KH' },
       contractCount: { value: contracts, plan: pContracts, rate: +((contracts / pContracts) * 100).toFixed(1), diffPrev: 50 + m, percentPrev: 6.5, diffYear: 90 + m * 3, percentYear: 12.0, unit: 'HĐ' },
@@ -281,6 +300,19 @@ function getMonthData(m, y = '2026') {
         { period: `Quý ${quarterMap[m]}`, actual: +(tExt * 1.9).toFixed(1), plan: +(pExt * 3).toFixed(1), rate: 61.2, growth: 11.2, isUp: true },
         { period: `Luỹ kế năm ${y}`, actual: +(tExt * m * 0.94).toFixed(1), plan: +(pExt * m).toFixed(1), rate: 94.0, growth: 16.8, isUp: true },
         { period: `Năm ${y}`, actual: +(tExt * m * 0.94).toFixed(1), plan: +(3477.7 * yearScale).toFixed(1), rate: 57.5, growth: null, isUp: null }
+      ]
+    },
+    domestic: {
+      actual: tDomestic,
+      plan: pDomestic,
+      rate: rDomestic,
+      vsPrev: { value: +(tDomestic * 0.01).toFixed(1), percent: 1.0, isUp: true },
+      vsLastYear: { value: +(tDomestic * 0.055).toFixed(1), percent: 5.8, isUp: true },
+      table: [
+        { period: `T${m}/${y}`, actual: tDomestic, plan: pDomestic, rate: rDomestic, growth: 5.8, isUp: true },
+        { period: `Quý ${quarterMap[m]}`, actual: +(tDomestic * 1.95).toFixed(1), plan: +(pDomestic * 3).toFixed(1), rate: 63.2, growth: 7.8, isUp: true },
+        { period: `Luỹ kế năm ${y}`, actual: +(tDomestic * m * 0.95).toFixed(1), plan: +(pDomestic * m).toFixed(1), rate: 98.2, growth: 12.0, isUp: true },
+        { period: `Năm ${y}`, actual: +(tDomestic * m * 0.95).toFixed(1), plan: +(4421.6 * yearScale).toFixed(1), rate: 60.2, growth: null, isUp: null }
       ]
     },
     global: {
@@ -1290,6 +1322,52 @@ const ExecutiveGaugeMasterCard = ({
           avgNeeded: '41.875'
         };
       }
+      case 9: { // 9. Doanh thu trong nước
+        const d = data?.domestic || {};
+        const actual = isDefaultT8 ? 347100 : Math.round((d.actual || 347.1) * 1000);
+        const plan = isDefaultT8 ? 369000 : Math.round((d.plan || 369.0) * 1000);
+        const rate = isDefaultT8 ? 94.1 : (d.rate || 94.1);
+        const rawDiffPrev = isDefaultT8 ? 3.6 : (data?.kpis?.domesticRevenue?.diffPrev ?? 3.6);
+        const rawPctPrev = isDefaultT8 ? 1.0 : (data?.kpis?.domesticRevenue?.percentPrev ?? 1.0);
+        const rawDiffYear = isDefaultT8 ? 19.0 : (data?.kpis?.domesticRevenue?.diffYear ?? 19.0);
+        const rawPctYear = isDefaultT8 ? 5.8 : (data?.kpis?.domesticRevenue?.percentYear ?? 5.8);
+        const diffPrevVal = formatDiffVal(rawDiffPrev);
+        const pctPrev = formatDiffPct(rawPctPrev);
+        const diffPrevIsNeg = rawDiffPrev < 0;
+        const diffYearVal = formatDiffVal(rawDiffYear);
+        const pctYear = formatDiffPct(rawPctYear);
+        const diffYearIsNeg = rawDiffYear < 0;
+
+        return {
+          title: 'Doanh thu trong nước',
+          icon: Landmark,
+          iconBg: '#e0f2fe',
+          iconColor: '#0284c7',
+          unit: 'triệu đ',
+          unitHeader: 'Đơn vị: triệu đ',
+          infoText: 'Doanh thu cung cấp sản phẩm dịch vụ tại thị trường trong nước (Trong nước + Quốc tế = Tổng doanh thu).',
+          actual,
+          plan,
+          rate,
+          diffPrevVal,
+          pctPrev,
+          diffPrevIsNeg,
+          diffYearVal,
+          pctYear,
+          diffYearIsNeg,
+          tableRows: [
+            { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 5,8%', isHighlight: true },
+            { period: `Quý III/${selectedYear}`, actualPlan: '692.900 / 1.096.500', rate: '63,2%', rateNum: 63.2, growth: '▲ 7,8%', isHighlight: false },
+            { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.663.800 / 2.713.100', rate: '98,2%', rateNum: 98.2, growth: '▲ 12,0%', isHighlight: false }
+          ],
+          qForecast: '1.027.500',
+          qRate: '93,7%',
+          yForecast: '3.984.500',
+          yRate: '90,1%',
+          yGrowth: '▲ +2,5% so CK',
+          avgNeeded: '456.125'
+        };
+      }
       case 5: { // 5. Số lượng khách hàng mới
         const d = data?.customers || {};
         const actual = isDefaultT8 ? 1248 : (d.actual || 1248);
@@ -1841,24 +1919,34 @@ const Dashboard = () => {
 
   // Chart 15 & 16: Donut structure data
   const internalExternalSlices = useMemo(() => {
-    if (INTERNAL_EXTERNAL_DATA[selectedYear] && INTERNAL_EXTERNAL_DATA[selectedYear].thMonth) {
+    if (monthNum === 8 && INTERNAL_EXTERNAL_DATA[selectedYear] && INTERNAL_EXTERNAL_DATA[selectedYear].thMonth) {
       return INTERNAL_EXTERNAL_DATA[selectedYear].thMonth.slices;
     }
+    const tot = +(kpis.totalRevenue.value || 389.9);
+    const intVal = +(kpis.internalRevenue.value || 127.2);
+    const extVal = +(tot - intVal).toFixed(1);
+    const extPct = +((extVal / tot) * 100).toFixed(1);
+    const intPct = +(100 - extPct).toFixed(1);
     return [
-      { name: 'DT ngoài Tập đoàn', percent: 67.4, color: '#EE0033', value: +(kpis.externalRevenue.value).toFixed(1) },
-      { name: 'DT nội bộ', percent: 32.6, color: '#64748b', value: +(kpis.internalRevenue.value).toFixed(1) }
+      { name: 'DT ngoài Tập đoàn', percent: extPct, color: '#EE0033', value: extVal },
+      { name: 'DT nội bộ', percent: intPct, color: '#64748b', value: intVal }
     ];
-  }, [selectedYear, kpis]);
+  }, [selectedYear, monthNum, kpis]);
 
   const domesticGlobalSlices = useMemo(() => {
-    if (DOMESTIC_INTERNATIONAL_DATA[selectedYear] && DOMESTIC_INTERNATIONAL_DATA[selectedYear].thMonth) {
+    if (monthNum === 8 && DOMESTIC_INTERNATIONAL_DATA[selectedYear] && DOMESTIC_INTERNATIONAL_DATA[selectedYear].thMonth) {
       return DOMESTIC_INTERNATIONAL_DATA[selectedYear].thMonth.slices;
     }
+    const tot = +(kpis.totalRevenue.value || 389.9);
+    const globVal = +(kpis.globalRevenue.value || 42.8);
+    const domVal = +(tot - globVal).toFixed(1);
+    const domPct = +((domVal / tot) * 100).toFixed(1);
+    const globPct = +(100 - domPct).toFixed(1);
     return [
-      { name: 'DT trong nước', percent: 89.8, color: '#0284c7', value: +(kpis.totalRevenue.value - kpis.globalRevenue.value).toFixed(1) },
-      { name: 'DT quốc tế', percent: 10.2, color: '#ea580c', value: +(kpis.globalRevenue.value).toFixed(1) }
+      { name: 'DT trong nước', percent: domPct, color: '#0284c7', value: domVal },
+      { name: 'DT quốc tế', percent: globPct, color: '#ea580c', value: globVal }
     ];
-  }, [selectedYear, kpis]);
+  }, [selectedYear, monthNum, kpis]);
 
   // Chart 17: SPDV structure
   const spdvItems = useMemo(() => {
@@ -1977,21 +2065,25 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* ================= 6 CHỈ TIÊU TIẾN ĐỘ ĐIỀU HÀNH (MỖI DÒNG 2 BIỂU ĐỒ) ================= */}
+      {/* ================= CHỈ TIÊU TIẾN ĐỘ ĐIỀU HÀNH ================= */}
       <div className="exec-section-header">
         <h2 className="exec-section-heading">Chỉ tiêu tiến độ điều hành</h2>
         <span className="exec-section-tag">Tháng {monthNum}/{selectedYear}</span>
       </div>
 
       <div className="exec-kpis-top-grid">
-        {/* DÒNG 1: Tổng doanh thu & Doanh thu nội bộ */}
-        <ExecutiveGaugeMasterCard
-          index={1}
-          id="chart-total-progress"
-          monthNum={monthNum}
-          selectedYear={selectedYear}
-          data={data}
-        />
+        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ) */}
+        <div className="exec-kpi-full-span">
+          <ExecutiveGaugeMasterCard
+            index={1}
+            id="chart-total-progress"
+            monthNum={monthNum}
+            selectedYear={selectedYear}
+            data={data}
+          />
+        </div>
+
+        {/* DÒNG 2: CẶP CƠ CẤU KHÁCH HÀNG (NỘI BỘ + NGOÀI TẬP ĐOÀN = TỔNG DOANH THU) */}
         <ExecutiveGaugeMasterCard
           index={2}
           id="chart-internal-progress"
@@ -1999,11 +2091,18 @@ const Dashboard = () => {
           selectedYear={selectedYear}
           data={data}
         />
-
-        {/* DÒNG 2: Doanh thu ngoài Tập đoàn & Doanh thu quốc tế */}
         <ExecutiveGaugeMasterCard
           index={3}
           id="chart-external-progress"
+          monthNum={monthNum}
+          selectedYear={selectedYear}
+          data={data}
+        />
+
+        {/* DÒNG 3: CẶP CƠ CẤU THỊ TRƯỜNG (TRONG NƯỚC + QUỐC TẾ = TỔNG DOANH THU) */}
+        <ExecutiveGaugeMasterCard
+          index={9}
+          id="chart-domestic-progress"
           monthNum={monthNum}
           selectedYear={selectedYear}
           data={data}
@@ -2016,7 +2115,7 @@ const Dashboard = () => {
           data={data}
         />
 
-        {/* DÒNG 3: Số lượng khách hàng mới & Số lượng hợp đồng ký mới */}
+        {/* DÒNG 4: CẶP PHÁT TRIỂN KHÁCH HÀNG & HỢP ĐỒNG KÝ MỚI */}
         <ExecutiveGaugeMasterCard
           index={5}
           id="chart-customers-progress"
