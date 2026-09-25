@@ -1611,9 +1611,9 @@ const ExecutiveGaugeMasterCard = ({
 
   return (
     <div
-      className={`tr-master-card ${isFullscreen ? 'fullscreen-overlay' : ''} ${isClickable ? 'clickable-card' : ''} ${isExpanded ? 'card-expanded' : ''}`}
+      className={`tr-master-card ${isFullscreen ? 'fullscreen-overlay' : ''} ${isClickable ? 'clickable-card' : ''}`}
       id={id || `chart-metric-${index}`}
-      onClick={isClickable && onToggleExpand ? onToggleExpand : undefined}
+      onClick={isClickable && onOpenDetailScreen ? onOpenDetailScreen : undefined}
     >
       {/* Card Header */}
       <div className="tr-header">
