@@ -1181,10 +1181,6 @@ const ExecutiveGaugeMasterCard = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showMonthlyTable, setShowMonthlyTable] = useState(false);
-  const [tableActiveTab, setTableActiveTab] = useState('customer'); // 'customer' or 'summary'
-  const [customerFilter, setCustomerFilter] = useState('all');
-  const [customerSearch, setCustomerSearch] = useState('');
-  const [onlyNewCustomer, setOnlyNewCustomer] = useState(false);
 
   const isDefaultT8 = monthNum === 8 && selectedYear === '2026';
   const prevMonthNum = monthNum - 1 === 0 ? 12 : monthNum - 1;
@@ -1737,43 +1733,16 @@ const ExecutiveGaugeMasterCard = ({
     }
   }, [index, isDefaultT8, monthNum, selectedYear, data]);
 
-  // Extract unique customers for filtering
-  const uniqueCustomers = useMemo(() => {
-    if (!cfg.customerRows) return [];
-    return Array.from(new Set(cfg.customerRows.map(r => r.customerName)));
-  }, [cfg.customerRows]);
-
-  // Filtered customer rows based on selected customer, search query, and new customer toggle
-  const filteredCustomerRows = useMemo(() => {
-    if (!cfg.customerRows) return [];
-    return cfg.customerRows.filter(r => {
-      if (customerFilter !== 'all' && r.customerName !== customerFilter) {
-        return false;
-      }
-      if (onlyNewCustomer && !r.isNewCustomer) {
-        return false;
-      }
-      if (customerSearch.trim()) {
-        const q = customerSearch.trim().toLowerCase();
-        const matchName = (r.customerName || '').toLowerCase().includes(q);
-        const matchGroup = (r.customerGroup || '').toLowerCase().includes(q);
-        const matchSpdv = (r.spdvName || '').toLowerCase().includes(q);
-        const matchSpdvGroup = (r.spdvGroup || '').toLowerCase().includes(q);
-        if (!matchName && !matchGroup && !matchSpdv && !matchSpdvGroup) return false;
-      }
-      return true;
-    });
-  }, [cfg.customerRows, customerFilter, onlyNewCustomer, customerSearch]);
-
   const customerTotals = useMemo(() => {
-    if (!filteredCustomerRows.length) return { kh: 0, uocTh: 0, th: 0, diff: 0, rate: 0 };
-    const kh = filteredCustomerRows.reduce((acc, r) => acc + (r.kh || 0), 0);
-    const uocTh = filteredCustomerRows.reduce((acc, r) => acc + (r.uocTh || 0), 0);
-    const th = filteredCustomerRows.reduce((acc, r) => acc + (r.th || 0), 0);
+    const rows = cfg.customerRows || [];
+    if (!rows.length) return { kh: 0, uocTh: 0, th: 0, diff: 0, rate: 0 };
+    const kh = rows.reduce((acc, r) => acc + (r.kh || 0), 0);
+    const uocTh = rows.reduce((acc, r) => acc + (r.uocTh || 0), 0);
+    const th = rows.reduce((acc, r) => acc + (r.th || 0), 0);
     const diff = th - kh;
     const rate = kh > 0 ? +( (th / kh) * 100 ).toFixed(1) : 0;
     return { kh, uocTh, th, diff, rate };
-  }, [filteredCustomerRows]);
+  }, [cfg.customerRows]);
 
   const IconComponent = cfg.icon;
 
@@ -1897,350 +1866,109 @@ const ExecutiveGaugeMasterCard = ({
 
       {/* Middle Section: Detailed Table when isDetailScreen, otherwise Standard Table */}
       {isDetailScreen ? (
-        <div className="tr-full-detail-table-panel">
-          {/* Header Row: Title + Unit + View Toggle Tabs */}
-          <div className="detail-table-header-row">
-            <div className="detail-table-title-group">
-              <span className="detail-table-heading">
-                {tableActiveTab === 'customer'
-                  ? `Bảng số liệu chi tiết theo Khách hàng & SPDV – ${cfg.title}`
-                  : `Bảng tổng hợp theo kỳ báo cáo – ${cfg.title}`}
-              </span>
-              {cfg.sharePct && (
-                <span className="detail-table-share-badge">
-                  Tỷ trọng tháng {monthNum}: <strong>{cfg.sharePct}%</strong> Tổng DT
-                </span>
-              )}
-            </div>
-
-            <div className="detail-table-actions-right">
-              <div className="detail-view-tabs">
-                <button
-                  type="button"
-                  className={`detail-tab-btn ${tableActiveTab === 'customer' ? 'active' : ''}`}
-                  onClick={() => setTableActiveTab('customer')}
-                >
-                  <Users size={13} />
-                  <span>Theo khách hàng & SPDV</span>
-                </button>
-                <button
-                  type="button"
-                  className={`detail-tab-btn ${tableActiveTab === 'summary' ? 'active' : ''}`}
-                  onClick={() => setTableActiveTab('summary')}
-                >
-                  <Calendar size={13} />
-                  <span>Tổng hợp theo kỳ</span>
-                </button>
-              </div>
-              <span className="detail-table-unit-tag">Đơn vị: triệu đồng</span>
-            </div>
-          </div>
-
-          {/* Customer Filter Toolbar (Available when viewing customer table) */}
-          {tableActiveTab === 'customer' && cfg.customerRows && cfg.customerRows.length > 0 && (
-            <div className="detail-customer-filter-toolbar">
-              <div className="cust-filter-item">
-                <label className="cust-filter-label">
-                  <Filter size={13} />
-                  <span>Lọc theo khách hàng:</span>
-                </label>
-                <div className="cust-select-wrapper">
-                  <select
-                    className="cust-select-input"
-                    value={customerFilter}
-                    onChange={(e) => setCustomerFilter(e.target.value)}
-                  >
-                    <option value="all">Tất cả khách hàng ({uniqueCustomers.length})</option>
-                    {uniqueCustomers.map((custName) => (
-                      <option key={custName} value={custName}>{custName}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={13} className="cust-chevron" />
-                </div>
-              </div>
-
-              <div className="cust-search-item">
-                <Search size={14} className="cust-search-icon" />
-                <input
-                  type="text"
-                  className="cust-search-input"
-                  placeholder="Tìm khách hàng, nhóm SPDV, tên SPDV..."
-                  value={customerSearch}
-                  onChange={(e) => setCustomerSearch(e.target.value)}
-                />
-                {customerSearch && (
-                  <button
-                    type="button"
-                    className="cust-search-clear"
-                    onClick={() => setCustomerSearch('')}
-                    title="Xóa tìm kiếm"
-                  >
-                    <X size={13} />
-                  </button>
+        <div className="tr-full-detail-table-panel plain-table-container">
+          <div className="detail-table-responsive-box">
+            <table className="tr-executive-detailed-table cust-matrix-style">
+              <thead>
+                <tr>
+                  <th rowSpan={2} className="th-left col-cust-group">Nhóm khách hàng</th>
+                  <th rowSpan={2} className="th-left col-cust-name">Tên khách hàng</th>
+                  <th rowSpan={2} className="th-center col-cust-new" title="Khách hàng mới">KH Mới</th>
+                  <th rowSpan={2} className="th-left col-spdv-group">Nhóm SPDV</th>
+                  <th rowSpan={2} className="th-left col-spdv-name">Tên SPDV</th>
+                  <th colSpan={5} className="th-center group-header-perf">
+                    Thực hiện tháng {monthNum}/{selectedYear}
+                  </th>
+                  <th rowSpan={2} className="th-center col-share">Tỷ trọng</th>
+                </tr>
+                <tr>
+                  <th className="th-right col-num">KH</th>
+                  <th className="th-right col-num col-uoc-th" style={{ color: '#ea580c' }}>Ước TH</th>
+                  <th className="th-right col-num">TH</th>
+                  <th className="th-right col-num">+/- so KH</th>
+                  <th className="th-center col-rate">% HTKH</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cfg.customerRows && cfg.customerRows.length > 0 ? (
+                  cfg.customerRows.map((r, rIdx) => {
+                    const diffVal = r.diff;
+                    const diffFormatted = (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN');
+                    return (
+                      <tr key={r.id || rIdx}>
+                        <td className="td-left text-muted-small" title={r.customerGroup}>
+                          {r.customerGroup}
+                        </td>
+                        <td className="td-left text-strong-name" title={r.customerName}>
+                          <strong>{r.customerName}</strong>
+                        </td>
+                        <td className="td-center">
+                          <div className={`matrix-cust-checkbox-wrap ${r.isNewCustomer ? 'checked' : ''}`}>
+                            {r.isNewCustomer && <Check size={11} strokeWidth={3} />}
+                          </div>
+                        </td>
+                        <td className="td-left text-spdv-group">{r.spdvGroup}</td>
+                        <td className="td-left text-spdv-name">
+                          <strong>{r.spdvName}</strong>
+                        </td>
+                        <td className="td-right num-cell">{r.kh.toLocaleString('vi-VN')}</td>
+                        <td className="td-right num-cell text-orange font-bold">
+                          {r.uocTh.toLocaleString('vi-VN')}
+                        </td>
+                        <td className="td-right num-cell font-bold text-dark">
+                          {r.th.toLocaleString('vi-VN')}
+                        </td>
+                        <td className={`td-right num-cell ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
+                          <strong>{diffFormatted}</strong>
+                        </td>
+                        <td className="td-center">
+                          <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                            {r.rate}%
+                          </span>
+                        </td>
+                        <td className="td-center">
+                          <span className="share-cell-tag">{r.share}</span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={11} className="cust-empty-state">
+                      Chưa có dữ liệu chi tiết khách hàng.
+                    </td>
+                  </tr>
                 )}
-              </div>
-
-              <label className="cust-new-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={onlyNewCustomer}
-                  onChange={(e) => setOnlyNewCustomer(e.target.checked)}
-                />
-                <span>Chỉ KH mới</span>
-              </label>
-
-              {(customerFilter !== 'all' || customerSearch !== '' || onlyNewCustomer) && (
-                <button
-                  type="button"
-                  className="cust-reset-filter-btn"
-                  onClick={() => {
-                    setCustomerFilter('all');
-                    setCustomerSearch('');
-                    setOnlyNewCustomer(false);
-                  }}
-                >
-                  <RefreshCw size={12} />
-                  <span>Bỏ lọc</span>
-                </button>
-              )}
-
-              <div className="cust-row-count-badge">
-                Hiển thị <strong>{filteredCustomerRows.length}</strong> / {cfg.customerRows.length} dòng
-              </div>
-            </div>
-          )}
-
-          {/* TABLE CONTENT */}
-          {tableActiveTab === 'customer' && cfg.customerRows && cfg.customerRows.length > 0 ? (
-            /* Table 1: Theo Khách Hàng & SPDV (Exact match with user's screenshot) */
-            <div className="detail-table-responsive-box">
-              <table className="tr-executive-detailed-table cust-matrix-style">
-                <thead>
-                  <tr>
-                    <th rowSpan={2} className="th-left col-cust-group">Nhóm khách hàng</th>
-                    <th rowSpan={2} className="th-left col-cust-name">Tên khách hàng</th>
-                    <th rowSpan={2} className="th-center col-cust-new" title="Khách hàng mới">KH Mới</th>
-                    <th rowSpan={2} className="th-left col-spdv-group">Nhóm SPDV</th>
-                    <th rowSpan={2} className="th-left col-spdv-name">Tên SPDV</th>
-                    <th colSpan={5} className="th-center group-header-perf">
-                      Kế hoạch & Thực hiện tháng {monthNum}/{selectedYear}
-                    </th>
-                    <th rowSpan={2} className="th-center col-share">Tỷ trọng</th>
-                  </tr>
-                  <tr>
-                    <th className="th-right col-num">KH</th>
-                    <th className="th-right col-num col-uoc-th" style={{ color: '#ea580c' }}>Ước TH</th>
-                    <th className="th-right col-num">TH</th>
-                    <th className="th-right col-num">+/- so KH</th>
-                    <th className="th-center col-rate">% HTKH</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredCustomerRows.length > 0 ? (
-                    filteredCustomerRows.map((r, rIdx) => {
-                      const diffVal = r.diff;
-                      const diffFormatted = (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN');
-                      return (
-                        <tr key={r.id || rIdx}>
-                          <td className="td-left text-muted-small" title={r.customerGroup}>
-                            {r.customerGroup}
-                          </td>
-                          <td className="td-left text-strong-name" title={r.customerName}>
-                            <strong>{r.customerName}</strong>
-                          </td>
-                          <td className="td-center">
-                            <div className={`matrix-cust-checkbox-wrap ${r.isNewCustomer ? 'checked' : ''}`}>
-                              {r.isNewCustomer && <Check size={11} strokeWidth={3} />}
-                            </div>
-                          </td>
-                          <td className="td-left text-spdv-group">{r.spdvGroup}</td>
-                          <td className="td-left text-spdv-name">
-                            <strong>{r.spdvName}</strong>
-                          </td>
-                          <td className="td-right num-cell">{r.kh.toLocaleString('vi-VN')}</td>
-                          <td className="td-right num-cell text-orange font-bold">
-                            {r.uocTh.toLocaleString('vi-VN')}
-                          </td>
-                          <td className="td-right num-cell font-bold text-dark">
-                            {r.th.toLocaleString('vi-VN')}
-                          </td>
-                          <td className={`td-right num-cell ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
-                            <strong>{diffFormatted}</strong>
-                          </td>
-                          <td className="td-center">
-                            <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
-                              {r.rate}%
-                            </span>
-                          </td>
-                          <td className="td-center">
-                            <span className="share-cell-tag">{r.share}</span>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={11} className="cust-empty-state">
-                        Không tìm thấy khách hàng / SPDV phù hợp với bộ lọc.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-                <tfoot>
-                  <tr className="tr-row-footer-total">
-                    <td colSpan={5} className="td-left font-bold footer-label-cell">
-                      Tổng cộng ({filteredCustomerRows.length} dòng SPDV)
-                    </td>
-                    <td className="td-right font-bold num-cell">
-                      {customerTotals.kh.toLocaleString('vi-VN')}
-                    </td>
-                    <td className="td-right font-bold text-orange num-cell">
-                      {customerTotals.uocTh.toLocaleString('vi-VN')}
-                    </td>
-                    <td className="td-right font-bold text-dark num-cell">
-                      {customerTotals.th.toLocaleString('vi-VN')}
-                    </td>
-                    <td className={`td-right font-bold num-cell ${customerTotals.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                      {(customerTotals.diff >= 0 ? '+' : '') + customerTotals.diff.toLocaleString('vi-VN')}
-                    </td>
-                    <td className="td-center">
-                      <span className={`detail-rate-pill ${customerTotals.rate >= 100 ? 'rate-green' : (customerTotals.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
-                        {customerTotals.rate}%
-                      </span>
-                    </td>
-                    <td className="td-center font-bold">
-                      <span className="share-cell-tag total">100%</span>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          ) : (
-            /* Table 2: Tổng hợp theo Kỳ báo cáo */
-            <>
-              <div className="detail-table-responsive-box">
-                <table className="tr-executive-detailed-table">
-                  <thead>
-                    <tr>
-                      <th className="th-left">Kỳ báo cáo</th>
-                      <th className="th-right">Thực hiện (TH)</th>
-                      <th className="th-right">Kế hoạch (KH)</th>
-                      <th className="th-center">% Hoàn thành</th>
-                      <th className="th-right">Chênh lệch (TH - KH)</th>
-                      <th className="th-center">So cùng kỳ (%)</th>
-                      <th className="th-center">So tháng trước (%)</th>
-                      <th className="th-center">Tỷ trọng / Tổng DT</th>
-                      <th className="th-center">Đánh giá</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(cfg.detailedRows || []).map((r, rIdx) => {
-                      const diffVal = r.diff;
-                      const diffFormatted = diffVal !== null && diffVal !== undefined
-                        ? (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN')
-                        : '—';
-                      return (
-                        <tr key={rIdx} className={r.isHighlight ? 'tr-row-current-highlight' : ''}>
-                          <td className="td-left">
-                            <strong>{r.period}</strong>
-                          </td>
-                          <td className="td-right num-strong">
-                            {typeof r.actual === 'number' ? r.actual.toLocaleString('vi-VN') : (r.actual || '—')}
-                          </td>
-                          <td className="td-right">
-                            {typeof r.plan === 'number' ? r.plan.toLocaleString('vi-VN') : (r.plan || '—')}
-                          </td>
-                          <td className="td-center">
-                            <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
-                              {r.rate !== null && r.rate !== undefined ? `${r.rate.toString().replace('.', ',')}%` : '—'}
-                            </span>
-                          </td>
-                          <td className={`td-right ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
-                            <strong>{diffFormatted}</strong>
-                          </td>
-                          <td className="td-center">
-                            <span className={r.growthYear?.includes('▲') ? 'text-green' : (r.growthYear?.includes('▼') ? 'text-red' : 'text-slate')}>
-                              {r.growthYear || '—'}
-                            </span>
-                          </td>
-                          <td className="td-center">
-                            <span className={r.growthPrev?.includes('▲') ? 'text-green' : (r.growthPrev?.includes('▼') ? 'text-red' : 'text-slate')}>
-                              {r.growthPrev || '—'}
-                            </span>
-                          </td>
-                          <td className="td-center">
-                            <span className="share-cell-tag">{r.share || '—'}</span>
-                          </td>
-                          <td className="td-center">
-                            <span className={`status-badge-eval ${r.statusType || 'neutral'}`}>
-                              {r.status || '—'}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Expandable Monthly History Toggle (T1 -> T12) */}
-              {cfg.monthlyList && cfg.monthlyList.length > 0 && (
-                <div className="detail-monthly-expand-wrap">
-                  <button
-                    type="button"
-                    className="detail-monthly-toggle-btn"
-                    onClick={() => setShowMonthlyTable(prev => !prev)}
-                  >
-                    <span>{showMonthlyTable ? 'Thu gọn' : 'Xem thêm'} bảng số liệu chi tiết từng tháng (T1 → T12)</span>
-                    {showMonthlyTable ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                  </button>
-
-                  {showMonthlyTable && (
-                    <div className="detail-monthly-table-box animate-fade-in">
-                      <table className="tr-executive-detailed-table mini">
-                        <thead>
-                          <tr>
-                            <th className="th-left">Tháng</th>
-                            <th className="th-right">Thực hiện (TH)</th>
-                            <th className="th-right">Kế hoạch (KH)</th>
-                            <th className="th-center">% Hoàn thành</th>
-                            <th className="th-right">Chênh lệch</th>
-                            <th className="th-center">So cùng kỳ (%)</th>
-                            <th className="th-center">Tỷ trọng / Tổng DT</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cfg.monthlyList.map((mItem, mIdx) => (
-                            <tr key={mIdx} className={mItem.monthNum === monthNum ? 'tr-row-current-highlight' : ''}>
-                              <td className="td-left"><strong>{mItem.monthName}</strong></td>
-                              <td className="td-right num-strong">{mItem.actual !== null ? mItem.actual.toLocaleString('vi-VN') : '—'}</td>
-                              <td className="td-right">{mItem.plan !== null ? mItem.plan.toLocaleString('vi-VN') : '—'}</td>
-                              <td className="td-center">
-                                {mItem.rate !== null ? (
-                                  <span className={`detail-rate-pill small ${mItem.rate >= 100 ? 'rate-green' : 'rate-red'}`}>
-                                    {mItem.rate}%
-                                  </span>
-                                ) : '—'}
-                              </td>
-                              <td className="td-right">
-                                {mItem.diff !== null ? (
-                                  <span className={mItem.diff >= 0 ? 'text-green' : 'text-red'}>
-                                    {(mItem.diff >= 0 ? '+' : '') + mItem.diff.toLocaleString('vi-VN')}
-                                  </span>
-                                ) : '—'}
-                              </td>
-                              <td className="td-center">{mItem.growth || '—'}</td>
-                              <td className="td-center">{mItem.share || '—'}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+              </tbody>
+              <tfoot>
+                <tr className="tr-row-footer-total">
+                  <td colSpan={5} className="td-left font-bold footer-label-cell">
+                    Tổng cộng ({(cfg.customerRows || []).length} dòng SPDV)
+                  </td>
+                  <td className="td-right font-bold num-cell">
+                    {customerTotals.kh.toLocaleString('vi-VN')}
+                  </td>
+                  <td className="td-right font-bold text-orange num-cell">
+                    {customerTotals.uocTh.toLocaleString('vi-VN')}
+                  </td>
+                  <td className="td-right font-bold text-dark num-cell">
+                    {customerTotals.th.toLocaleString('vi-VN')}
+                  </td>
+                  <td className={`td-right font-bold num-cell ${customerTotals.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {(customerTotals.diff >= 0 ? '+' : '') + customerTotals.diff.toLocaleString('vi-VN')}
+                  </td>
+                  <td className="td-center">
+                    <span className={`detail-rate-pill ${customerTotals.rate >= 100 ? 'rate-green' : (customerTotals.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                      {customerTotals.rate}%
+                    </span>
+                  </td>
+                  <td className="td-center font-bold">
+                    <span className="share-cell-tag total">100%</span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       ) : (
         /* Standard Breakdown Table for Main Dashboard */
