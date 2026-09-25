@@ -1174,10 +1174,12 @@ const ExecutiveGaugeMasterCard = ({
   selectedYear = '2026',
   data = {},
   isClickable = false,
-  onOpenDetailScreen
+  onOpenDetailScreen,
+  isDetailScreen = false
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showMonthlyTable, setShowMonthlyTable] = useState(false);
 
   const isDefaultT8 = monthNum === 8 && selectedYear === '2026';
   const prevMonthNum = monthNum - 1 === 0 ? 12 : monthNum - 1;
@@ -1219,10 +1221,31 @@ const ExecutiveGaugeMasterCard = ({
           diffYearVal,
           pctYear,
           diffYearIsNeg,
+          sharePct: 32.6,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 3,5%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '250.000 / 373.800', rate: '66,9%', rateNum: 66.9, growth: '▲ 4,2%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '953.500 / 912.900', rate: '104,4%', rateNum: 104.4, growth: '▲ 6,8%', isHighlight: false }
+          ],
+          detailedRows: [
+            { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +3,5%', growthPrev: '▲ +3,6%', share: '32,6%', status: 'Vượt KH', statusType: 'success' },
+            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 250000, plan: 373800, rate: 66.9, diff: -123800, growthYear: '▲ +4,2%', growthPrev: '▲ +4,0%', share: '32,3%', status: 'Đạt tiến độ', statusType: 'warning' },
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 953500, plan: 912900, rate: 104.4, diff: 40600, growthYear: '▲ +6,8%', growthPrev: '—', share: '32,0%', status: 'Vượt KH', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 953500, plan: 1490400, rate: 64.0, diff: -536900, growthYear: '▲ +4,1%', growthPrev: '—', share: '30,0%', status: 'Tiến độ tốt', statusType: 'success' }
+          ],
+          monthlyList: [
+            { monthName: 'Tháng 1', monthNum: 1, actual: 102800, plan: 100500, rate: 102.3, diff: 2300, growth: '▲ +3,1%', share: '32,6%' },
+            { monthName: 'Tháng 2', monthNum: 2, actual: 97100, plan: 95000, rate: 102.2, diff: 2100, growth: '▲ +3,2%', share: '32,6%' },
+            { monthName: 'Tháng 3', monthNum: 3, actual: 124700, plan: 121000, rate: 103.1, diff: 3700, growth: '▲ +3,8%', share: '32,6%' },
+            { monthName: 'Tháng 4', monthNum: 4, actual: 110900, plan: 108000, rate: 102.7, diff: 2900, growth: '▲ +3,4%', share: '32,6%' },
+            { monthName: 'Tháng 5', monthNum: 5, actual: 119000, plan: 116000, rate: 102.6, diff: 3000, growth: '▲ +3,5%', share: '32,6%' },
+            { monthName: 'Tháng 6', monthNum: 6, actual: 133700, plan: 130000, rate: 102.8, diff: 3700, growth: '▲ +3,9%', share: '32,6%' },
+            { monthName: 'Tháng 7', monthNum: 7, actual: 122800, plan: 120000, rate: 102.3, diff: 2800, growth: '▲ +3,4%', share: '32,6%' },
+            { monthName: 'Tháng 8', monthNum: 8, actual: 127200, plan: 124200, rate: 102.4, diff: 3000, growth: '▲ +3,5%', share: '32,6%' },
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 129600, rate: null, diff: null, growth: '—', share: '30,0%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 131000, rate: null, diff: null, growth: '—', share: '30,0%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 132000, rate: null, diff: null, growth: '—', share: '30,0%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 134900, rate: null, diff: null, growth: '—', share: '30,0%' }
           ],
           qForecast: '375.000',
           qRate: '100,3%',
@@ -1265,10 +1288,31 @@ const ExecutiveGaugeMasterCard = ({
           diffYearVal,
           pctYear,
           diffYearIsNeg,
+          sharePct: 67.4,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 8,8%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '525.000 / 872.200', rate: '60,2%', rateNum: 60.2, growth: '▲ 11,6%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.022.800 / 2.130.200', rate: '95,0%', rateNum: 95.0, growth: '▲ 17,5%', isHighlight: false }
+          ],
+          detailedRows: [
+            { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +8,8%', growthPrev: '▲ +0,2%', share: '67,4%', status: 'Cần tăng tốc', statusType: 'warning' },
+            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 525000, plan: 872200, rate: 60.2, diff: -347200, growthYear: '▲ +11,6%', growthPrev: '▲ +9,5%', share: '67,7%', status: 'Cần tăng tốc', statusType: 'warning' },
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2022800, plan: 2130200, rate: 95.0, diff: -107400, growthYear: '▲ +17,5%', growthPrev: '—', share: '68,0%', status: 'Bám sát KH', statusType: 'warning' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2022800, plan: 3477700, rate: 58.2, diff: -1454900, growthYear: '▲ +7,4%', growthPrev: '—', share: '70,0%', status: 'Tập trung Q4', statusType: 'warning' }
+          ],
+          monthlyList: [
+            { monthName: 'Tháng 1', monthNum: 1, actual: 212600, plan: 234500, rate: 90.7, diff: -21900, growth: '▲ +7,2%', share: '67,4%' },
+            { monthName: 'Tháng 2', monthNum: 2, actual: 200900, plan: 225000, rate: 89.3, diff: -24100, growth: '▲ +6,8%', share: '67,4%' },
+            { monthName: 'Tháng 3', monthNum: 3, actual: 257800, plan: 284000, rate: 90.8, diff: -26200, growth: '▲ +8,5%', share: '67,4%' },
+            { monthName: 'Tháng 4', monthNum: 4, actual: 229300, plan: 252000, rate: 91.0, diff: -22700, growth: '▲ +8,1%', share: '67,4%' },
+            { monthName: 'Tháng 5', monthNum: 5, actual: 246000, plan: 271000, rate: 90.8, diff: -25000, growth: '▲ +8,3%', share: '67,4%' },
+            { monthName: 'Tháng 6', monthNum: 6, actual: 276500, plan: 304000, rate: 91.0, diff: -27500, growth: '▲ +9,0%', share: '67,4%' },
+            { monthName: 'Tháng 7', monthNum: 7, actual: 262300, plan: 289000, rate: 90.8, diff: -26700, growth: '▲ +8,7%', share: '67,4%' },
+            { monthName: 'Tháng 8', monthNum: 8, actual: 262700, plan: 289800, rate: 90.6, diff: -27100, growth: '▲ +8,8%', share: '67,4%' },
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 292600, rate: null, diff: null, growth: '—', share: '70,0%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 345000, rate: null, diff: null, growth: '—', share: '70,0%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 350000, rate: null, diff: null, growth: '—', share: '70,0%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 359900, rate: null, diff: null, growth: '—', share: '70,0%' }
           ],
           qForecast: '787.500',
           qRate: '90,3%',
@@ -1311,10 +1355,31 @@ const ExecutiveGaugeMasterCard = ({
           diffYearVal,
           pctYear,
           diffYearIsNeg,
+          sharePct: 11.0,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 18,2%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '82.100 / 149.500', rate: '54,9%', rateNum: 54.9, growth: '▲ 16,5%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '312.500 / 330.000', rate: '94,7%', rateNum: 94.7, growth: '▲ 19,4%', isHighlight: false }
+          ],
+          detailedRows: [
+            { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +18,2%', growthPrev: '▲ +2,9%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
+            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 82100, plan: 149500, rate: 54.9, diff: -67400, growthYear: '▲ +16,5%', growthPrev: '▲ +12,0%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 312500, plan: 330000, rate: 94.7, diff: -17500, growthYear: '▲ +19,4%', growthPrev: '—', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 312500, plan: 540100, rate: 57.9, diff: -227600, growthYear: '▲ +15,2%', growthPrev: '—', share: '10,9%', status: 'Tăng trưởng tốt', statusType: 'success' }
+          ],
+          monthlyList: [
+            { monthName: 'Tháng 1', monthNum: 1, actual: 34700, plan: 36800, rate: 94.3, diff: -2100, growth: '▲ +17,5%', share: '11,0%' },
+            { monthName: 'Tháng 2', monthNum: 2, actual: 32800, plan: 34500, rate: 95.1, diff: -1700, growth: '▲ +17,8%', share: '11,0%' },
+            { monthName: 'Tháng 3', monthNum: 3, actual: 42100, plan: 44000, rate: 95.7, diff: -1900, growth: '▲ +18,5%', share: '11,0%' },
+            { monthName: 'Tháng 4', monthNum: 4, actual: 37400, plan: 39500, rate: 94.7, diff: -2100, growth: '▲ +18,0%', share: '11,0%' },
+            { monthName: 'Tháng 5', monthNum: 5, actual: 40150, plan: 42300, rate: 94.9, diff: -2150, growth: '▲ +18,1%', share: '11,0%' },
+            { monthName: 'Tháng 6', monthNum: 6, actual: 45120, plan: 47400, rate: 95.2, diff: -2280, growth: '▲ +19,0%', share: '11,0%' },
+            { monthName: 'Tháng 7', monthNum: 7, actual: 39300, plan: 41500, rate: 94.7, diff: -2200, growth: '▲ +17,9%', share: '11,0%' },
+            { monthName: 'Tháng 8', monthNum: 8, actual: 42800, plan: 45000, rate: 95.1, diff: -2200, growth: '▲ +18,2%', share: '11,0%' },
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 63000, rate: null, diff: null, growth: '—', share: '10,9%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 70000, rate: null, diff: null, growth: '—', share: '10,9%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 70000, rate: null, diff: null, growth: '—', share: '10,9%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 70100, rate: null, diff: null, growth: '—', share: '10,9%' }
           ],
           qForecast: '135.000',
           qRate: '90,3%',
@@ -1357,10 +1422,31 @@ const ExecutiveGaugeMasterCard = ({
           diffYearVal,
           pctYear,
           diffYearIsNeg,
+          sharePct: 89.0,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 5,8%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '692.900 / 1.096.500', rate: '63,2%', rateNum: 63.2, growth: '▲ 7,8%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.663.800 / 2.713.100', rate: '98,2%', rateNum: 98.2, growth: '▲ 12,0%', isHighlight: false }
+          ],
+          detailedRows: [
+            { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +5,8%', growthPrev: '▲ +1,0%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
+            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 690000, plan: 1110000, rate: 62.2, diff: -420000, growthYear: '▲ +8,2%', growthPrev: '▲ +7,8%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2650000, plan: 2710000, rate: 97.8, diff: -60000, growthYear: '▲ +12,5%', growthPrev: '—', share: '89,0%', status: 'Hoàn thành tốt', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2650000, plan: 4428000, rate: 59.8, diff: -1778000, growthYear: '▲ +5,8%', growthPrev: '—', share: '89,1%', status: 'Bám sát KH', statusType: 'success' }
+          ],
+          monthlyList: [
+            { monthName: 'Tháng 1', monthNum: 1, actual: 280700, plan: 298200, rate: 94.1, diff: -17500, growth: '▲ +5,1%', share: '89,0%' },
+            { monthName: 'Tháng 2', monthNum: 2, actual: 265200, plan: 285500, rate: 92.9, diff: -20300, growth: '▲ +4,9%', share: '89,0%' },
+            { monthName: 'Tháng 3', monthNum: 3, actual: 340400, plan: 361000, rate: 94.3, diff: -20600, growth: '▲ +5,7%', share: '89,0%' },
+            { monthName: 'Tháng 4', monthNum: 4, actual: 302800, plan: 320500, rate: 94.5, diff: -17700, growth: '▲ +5,4%', share: '89,0%' },
+            { monthName: 'Tháng 5', monthNum: 5, actual: 324850, plan: 344700, rate: 94.2, diff: -19850, growth: '▲ +5,5%', share: '89,0%' },
+            { monthName: 'Tháng 6', monthNum: 6, actual: 365080, plan: 386600, rate: 94.4, diff: -21520, growth: '▲ +6,0%', share: '89,0%' },
+            { monthName: 'Tháng 7', monthNum: 7, actual: 345800, plan: 367500, rate: 94.1, diff: -21700, growth: '▲ +5,6%', share: '89,0%' },
+            { monthName: 'Tháng 8', monthNum: 8, actual: 347100, plan: 369000, rate: 94.1, diff: -21900, growth: '▲ +5,8%', share: '89,0%' },
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 359200, rate: null, diff: null, growth: '—', share: '89,1%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 406000, rate: null, diff: null, growth: '—', share: '89,1%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 412000, rate: null, diff: null, growth: '—', share: '89,1%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 424700, rate: null, diff: null, growth: '—', share: '89,1%' }
           ],
           qForecast: '1.027.500',
           qRate: '93,7%',
@@ -1727,35 +1813,174 @@ const ExecutiveGaugeMasterCard = ({
         </div>
       </div>
 
-      {/* Middle Section: Breakdown Table */}
-      <div className="tr-table-wrap">
-        <table className="tr-breakdown-table">
-          <thead>
-            <tr>
-              <th className="th-period">Kỳ</th>
-              <th className="th-actual-plan">TH / KH</th>
-              <th className="th-rate">% hoàn thành</th>
-              <th className="th-growth">So cùng kỳ (%)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cfg.tableRows.map((row, idx) => (
-              <tr key={idx} className={row.isHighlight ? 'tr-row-highlight' : ''}>
-                <td className="td-period"><strong>{row.period}</strong></td>
-                <td className="td-actual-plan">{row.actualPlan}</td>
-                <td className="td-rate">
-                  <span className={row.rateNum >= 100 ? 'tr-rate-green' : 'tr-rate-red'}>
-                    {row.rate}
-                  </span>
-                </td>
-                <td className="td-growth">
-                  <span className="tr-growth-green">{row.growth}</span>
-                </td>
+      {/* Middle Section: Detailed Table when isDetailScreen, otherwise Standard Table */}
+      {isDetailScreen ? (
+        <div className="tr-full-detail-table-panel">
+          <div className="detail-table-header-row">
+            <div className="detail-table-title-group">
+              <span className="detail-table-heading">Bảng số liệu chi tiết – {cfg.title}</span>
+              {cfg.sharePct && (
+                <span className="detail-table-share-badge">
+                  Tỷ trọng tháng {monthNum}: <strong>{cfg.sharePct}%</strong> Tổng DT
+                </span>
+              )}
+            </div>
+            <span className="detail-table-unit-tag">Đơn vị: triệu đồng</span>
+          </div>
+
+          <div className="detail-table-responsive-box">
+            <table className="tr-executive-detailed-table">
+              <thead>
+                <tr>
+                  <th className="th-left">Kỳ báo cáo</th>
+                  <th className="th-right">Thực hiện (TH)</th>
+                  <th className="th-right">Kế hoạch (KH)</th>
+                  <th className="th-center">% Hoàn thành</th>
+                  <th className="th-right">Chênh lệch (TH - KH)</th>
+                  <th className="th-center">So cùng kỳ (%)</th>
+                  <th className="th-center">So tháng trước (%)</th>
+                  <th className="th-center">Tỷ trọng / Tổng DT</th>
+                  <th className="th-center">Đánh giá</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(cfg.detailedRows || []).map((r, rIdx) => {
+                  const diffVal = r.diff;
+                  const diffFormatted = diffVal !== null && diffVal !== undefined
+                    ? (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN')
+                    : '—';
+                  return (
+                    <tr key={rIdx} className={r.isHighlight ? 'tr-row-current-highlight' : ''}>
+                      <td className="td-left">
+                        <strong>{r.period}</strong>
+                      </td>
+                      <td className="td-right num-strong">
+                        {typeof r.actual === 'number' ? r.actual.toLocaleString('vi-VN') : (r.actual || '—')}
+                      </td>
+                      <td className="td-right">
+                        {typeof r.plan === 'number' ? r.plan.toLocaleString('vi-VN') : (r.plan || '—')}
+                      </td>
+                      <td className="td-center">
+                        <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                          {r.rate !== null && r.rate !== undefined ? `${r.rate.toString().replace('.', ',')}%` : '—'}
+                        </span>
+                      </td>
+                      <td className={`td-right ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
+                        <strong>{diffFormatted}</strong>
+                      </td>
+                      <td className="td-center">
+                        <span className={r.growthYear?.includes('▲') ? 'text-green' : (r.growthYear?.includes('▼') ? 'text-red' : 'text-slate')}>
+                          {r.growthYear || '—'}
+                        </span>
+                      </td>
+                      <td className="td-center">
+                        <span className={r.growthPrev?.includes('▲') ? 'text-green' : (r.growthPrev?.includes('▼') ? 'text-red' : 'text-slate')}>
+                          {r.growthPrev || '—'}
+                        </span>
+                      </td>
+                      <td className="td-center">
+                        <span className="share-cell-tag">{r.share || '—'}</span>
+                      </td>
+                      <td className="td-center">
+                        <span className={`status-badge-eval ${r.statusType || 'neutral'}`}>
+                          {r.status || '—'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Expandable Monthly History Toggle (T1 -> T12) */}
+          {cfg.monthlyList && cfg.monthlyList.length > 0 && (
+            <div className="detail-monthly-expand-wrap">
+              <button
+                type="button"
+                className="detail-monthly-toggle-btn"
+                onClick={() => setShowMonthlyTable(prev => !prev)}
+              >
+                <span>{showMonthlyTable ? 'Thu gọn' : 'Xem thêm'} bảng số liệu chi tiết từng tháng (T1 → T12)</span>
+                {showMonthlyTable ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              </button>
+
+              {showMonthlyTable && (
+                <div className="detail-monthly-table-box animate-fade-in">
+                  <table className="tr-executive-detailed-table mini">
+                    <thead>
+                      <tr>
+                        <th className="th-left">Tháng</th>
+                        <th className="th-right">Thực hiện (TH)</th>
+                        <th className="th-right">Kế hoạch (KH)</th>
+                        <th className="th-center">% Hoàn thành</th>
+                        <th className="th-right">Chênh lệch</th>
+                        <th className="th-center">So cùng kỳ (%)</th>
+                        <th className="th-center">Tỷ trọng / Tổng DT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cfg.monthlyList.map((mItem, mIdx) => (
+                        <tr key={mIdx} className={mItem.monthNum === monthNum ? 'tr-row-current-highlight' : ''}>
+                          <td className="td-left"><strong>{mItem.monthName}</strong></td>
+                          <td className="td-right num-strong">{mItem.actual !== null ? mItem.actual.toLocaleString('vi-VN') : '—'}</td>
+                          <td className="td-right">{mItem.plan !== null ? mItem.plan.toLocaleString('vi-VN') : '—'}</td>
+                          <td className="td-center">
+                            {mItem.rate !== null ? (
+                              <span className={`detail-rate-pill small ${mItem.rate >= 100 ? 'rate-green' : 'rate-red'}`}>
+                                {mItem.rate}%
+                              </span>
+                            ) : '—'}
+                          </td>
+                          <td className="td-right">
+                            {mItem.diff !== null ? (
+                              <span className={mItem.diff >= 0 ? 'text-green' : 'text-red'}>
+                                {(mItem.diff >= 0 ? '+' : '') + mItem.diff.toLocaleString('vi-VN')}
+                              </span>
+                            ) : '—'}
+                          </td>
+                          <td className="td-center">{mItem.growth || '—'}</td>
+                          <td className="td-center">{mItem.share || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Standard Breakdown Table for Main Dashboard */
+        <div className="tr-table-wrap">
+          <table className="tr-breakdown-table">
+            <thead>
+              <tr>
+                <th className="th-period">Kỳ</th>
+                <th className="th-actual-plan">TH / KH</th>
+                <th className="th-rate">% hoàn thành</th>
+                <th className="th-growth">So cùng kỳ (%)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {cfg.tableRows.map((row, idx) => (
+                <tr key={idx} className={row.isHighlight ? 'tr-row-highlight' : ''}>
+                  <td className="td-period"><strong>{row.period}</strong></td>
+                  <td className="td-actual-plan">{row.actualPlan}</td>
+                  <td className="td-rate">
+                    <span className={row.rateNum >= 100 ? 'tr-rate-green' : 'tr-rate-red'}>
+                      {row.rate}
+                    </span>
+                  </td>
+                  <td className="td-growth">
+                    <span className="tr-growth-green">{row.growth}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Bottom Section: 3 Forecast / Target Summary Cards */}
       <div className="tr-bottom-summary-cards">
@@ -2110,6 +2335,7 @@ const Dashboard = () => {
               monthNum={monthNum}
               selectedYear={selectedYear}
               data={data}
+              isDetailScreen={true}
             />
           </div>
 
@@ -2121,6 +2347,7 @@ const Dashboard = () => {
               monthNum={monthNum}
               selectedYear={selectedYear}
               data={data}
+              isDetailScreen={true}
             />
           </div>
 
@@ -2132,6 +2359,7 @@ const Dashboard = () => {
               monthNum={monthNum}
               selectedYear={selectedYear}
               data={data}
+              isDetailScreen={true}
             />
           </div>
 
@@ -2143,6 +2371,7 @@ const Dashboard = () => {
               monthNum={monthNum}
               selectedYear={selectedYear}
               data={data}
+              isDetailScreen={true}
             />
           </div>
         </div>
