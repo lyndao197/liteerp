@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   TrendingUp, TrendingDown, Calendar, RefreshCw,
-  FileSpreadsheet, ArrowUp, ArrowDown, ChevronDown, ChevronUp, ChevronRight,
+  FileSpreadsheet, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ChevronDown, ChevronUp, ChevronRight,
   PieChart as PieIcon, BarChart2, CheckCircle2, AlertCircle,
   DollarSign, Award, Users, FileText, Smile, Target, Sparkles,
   Layers, ArrowUpRight, ArrowDownRight, Activity, Globe,
@@ -1174,8 +1174,7 @@ const ExecutiveGaugeMasterCard = ({
   selectedYear = '2026',
   data = {},
   isClickable = false,
-  isExpanded = false,
-  onToggleExpand
+  onOpenDetailScreen
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -1629,18 +1628,18 @@ const ExecutiveGaugeMasterCard = ({
         </div>
 
         <div className="tr-header-right">
-          {index === 1 && onToggleExpand && (
+          {index === 1 && onOpenDetailScreen && (
             <button
-              className={`tr-breakdown-toggle-pill ${isExpanded ? 'active' : ''}`}
+              className="tr-breakdown-toggle-pill"
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleExpand();
+                onOpenDetailScreen();
               }}
-              title={isExpanded ? 'Thu gọn 4 biểu đồ cơ cấu' : 'Xem 4 biểu đồ cơ cấu tương ứng'}
+              title="Xem thêm 4 biểu đồ chi tiết (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)"
             >
               <Layers size={13} />
-              <span>{isExpanded ? 'Thu gọn 4 biểu đồ' : 'Xem 4 biểu đồ cơ cấu'}</span>
-              <ChevronDown size={14} className={`tr-pill-chevron ${isExpanded ? 'rotated' : ''}`} />
+              <span>Xem thêm 4 biểu đồ chi tiết</span>
+              <ArrowRight size={13} />
             </button>
           )}
           <span className="tr-unit-text">{cfg.unitHeader}</span>
@@ -1824,23 +1823,25 @@ const ExecutiveGaugeMasterCard = ({
       </div>
 
       {/* Bottom Drilldown Action Bar for Total Revenue */}
-      {index === 1 && onToggleExpand && (
+      {index === 1 && onOpenDetailScreen && (
         <div
-          className={`tr-expand-drilldown-bar ${isExpanded ? 'active' : ''}`}
+          className="tr-expand-drilldown-bar"
           onClick={(e) => {
             e.stopPropagation();
-            onToggleExpand();
+            onOpenDetailScreen();
           }}
+          title="Bấm để mở màn hình chi tiết 4 biểu đồ cơ cấu"
         >
           <div className="drilldown-bar-content">
             <Layers size={16} className="drilldown-icon" />
             <span className="drilldown-text">
-              {isExpanded
-                ? 'Đang mở 4 biểu đồ cơ cấu phân rã — Bấm để thu gọn'
-                : 'Bấm vào biểu đồ để xem 4 biểu đồ cơ cấu tương ứng (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)'}
+              Bấm để xem màn hình chi tiết 4 biểu đồ cơ cấu (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)
             </span>
           </div>
-          <ChevronDown size={16} className={`drilldown-chevron ${isExpanded ? 'rotated' : ''}`} />
+          <div className="drilldown-action-cta">
+            <span>Xem chi tiết</span>
+            <ArrowRight size={15} />
+          </div>
         </div>
       )}
     </div>
@@ -1930,7 +1931,7 @@ const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState('Tháng 8');
   const [isExporting, setIsExporting] = useState(false);
   const [trendMetric, setTrendMetric] = useState('revenue');
-  const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState('main'); // 'main' | 'revenue_breakdown'
 
   // Parse active month number (1..12)
   const monthNum = useMemo(() => {
@@ -2059,6 +2060,180 @@ const Dashboard = () => {
     }
   };
 
+  // Separate Screen: Chi tiết 4 biểu đồ cơ cấu doanh thu
+  if (currentScreen === 'revenue_breakdown') {
+    return (
+      <div className="exec-dashboard-page revenue-breakdown-subscreen">
+        {/* TOP NAVIGATION / BREADCRUMB BAR */}
+        <div className="breakdown-screen-nav-bar">
+          <button
+            className="breakdown-back-btn"
+            onClick={() => {
+              setCurrentScreen('main');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            title="Quay về Dashboard chính"
+          >
+            <ArrowLeft size={18} />
+            <span>Quay lại Dashboard điều hành</span>
+          </button>
+
+          <div className="breakdown-nav-meta">
+            <span className="breakdown-nav-badge">Báo cáo phân rã cơ cấu Tổng doanh thu</span>
+            <span className="breakdown-nav-period">Tháng {monthNum}/{selectedYear}</span>
+          </div>
+        </div>
+
+        {/* HEADER HERO BANNER */}
+        <div className="exec-header-banner breakdown-screen-hero">
+          <div className="exec-header-top-row">
+            <div className="exec-title-group">
+              <div className="breakdown-parent-ref">
+                <span className="parent-ref-dot"></span>
+                <span>Chỉ tiêu mẹ: <strong>Tổng doanh thu ({kpis.totalRevenue.value.toLocaleString('vi-VN')} triệu đ)</strong></span>
+              </div>
+              <h1 className="exec-main-title" style={{ marginTop: '6px' }}>
+                Chi tiết 4 biểu đồ cơ cấu doanh thu
+              </h1>
+              <p className="exec-subtitle">
+                Phân bổ toàn bộ doanh thu theo 2 trục độc lập: Quan hệ Tập đoàn (Nội bộ / Ngoài TĐ) và Thị trường địa lý (Trong nước / Quốc tế)
+              </p>
+            </div>
+
+            <div className="breakdown-hero-formulas">
+              <div className="hero-formula-card">
+                <div className="hfc-label">Trục 1: Quan hệ Tập đoàn</div>
+                <div className="hfc-math">
+                  <span className="hfc-comp text-slate">DT nội bộ: <strong>{kpis.internalRevenue.value.toLocaleString('vi-VN')}</strong></span>
+                  <span className="hfc-op">+</span>
+                  <span className="hfc-comp text-red">DT ngoài TĐ: <strong>{kpis.externalRevenue.value.toLocaleString('vi-VN')}</strong></span>
+                  <span className="hfc-op">=</span>
+                  <span className="hfc-sum"><strong>{kpis.totalRevenue.value.toLocaleString('vi-VN')}</strong> tr.đ</span>
+                </div>
+              </div>
+              <div className="hero-formula-card">
+                <div className="hfc-label">Trục 2: Thị trường địa lý</div>
+                <div className="hfc-math">
+                  <span className="hfc-comp text-blue">DT trong nước: <strong>{kpis.domesticRevenue.value.toLocaleString('vi-VN')}</strong></span>
+                  <span className="hfc-op">+</span>
+                  <span className="hfc-comp text-orange">DT quốc tế: <strong>{kpis.globalRevenue.value.toLocaleString('vi-VN')}</strong></span>
+                  <span className="hfc-op">=</span>
+                  <span className="hfc-sum"><strong>{kpis.totalRevenue.value.toLocaleString('vi-VN')}</strong> tr.đ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Clean Filter Selectors inside breakdown screen */}
+          <div className="exec-clean-filters-bar" style={{ marginTop: '14px' }}>
+            <div className="exec-filters-group">
+              <div className="clean-filter-item">
+                <span className="clean-filter-label">Năm</span>
+                <div className="clean-select-wrapper">
+                  <select
+                    className="clean-filter-select"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                  >
+                    {YEAR_OPTIONS.map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="clean-select-chevron" />
+                </div>
+              </div>
+
+              <div className="clean-filter-item">
+                <span className="clean-filter-label">Tháng</span>
+                <div className="clean-select-wrapper">
+                  <select
+                    className="clean-filter-select"
+                    value={selectedMonth}
+                    onChange={(e) => handleMonthChange(e.target.value)}
+                  >
+                    {MONTH_OPTIONS.map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="clean-select-chevron" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 4 BIỂU ĐỒ CƠ CẤU (2 DÒNG x 2 CỘT) */}
+        <div className="breakdown-charts-section">
+          {/* NHÓM 1: CƠ CẤU QUAN HỆ TẬP ĐOÀN */}
+          <div className="breakdown-group-header">
+            <div className="breakdown-group-title">
+              <span className="group-title-dot internal"></span>
+              <h3>1. Cơ cấu Doanh thu theo quan hệ Tập đoàn</h3>
+            </div>
+            <span className="breakdown-group-note">DT nội bộ + DT ngoài Tập đoàn = 100% Tổng doanh thu</span>
+          </div>
+
+          <div className="exec-kpis-top-grid">
+            <ExecutiveGaugeMasterCard
+              index={2}
+              id="chart-screen-internal"
+              monthNum={monthNum}
+              selectedYear={selectedYear}
+              data={data}
+            />
+            <ExecutiveGaugeMasterCard
+              index={3}
+              id="chart-screen-external"
+              monthNum={monthNum}
+              selectedYear={selectedYear}
+              data={data}
+            />
+          </div>
+
+          {/* NHÓM 2: CƠ CẤU THỊ TRƯỜNG ĐỊA LÝ */}
+          <div className="breakdown-group-header" style={{ marginTop: '28px' }}>
+            <div className="breakdown-group-title">
+              <span className="group-title-dot domestic"></span>
+              <h3>2. Cơ cấu Doanh thu theo thị trường địa lý</h3>
+            </div>
+            <span className="breakdown-group-note">DT trong nước + DT quốc tế = 100% Tổng doanh thu</span>
+          </div>
+
+          <div className="exec-kpis-top-grid">
+            <ExecutiveGaugeMasterCard
+              index={9}
+              id="chart-screen-domestic"
+              monthNum={monthNum}
+              selectedYear={selectedYear}
+              data={data}
+            />
+            <ExecutiveGaugeMasterCard
+              index={4}
+              id="chart-screen-global"
+              monthNum={monthNum}
+              selectedYear={selectedYear}
+              data={data}
+            />
+          </div>
+
+          {/* BOTTOM RETURN BAR */}
+          <div className="breakdown-screen-bottom-bar">
+            <button
+              className="breakdown-back-btn large"
+              onClick={() => {
+                setCurrentScreen('main');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              <ArrowLeft size={18} />
+              <span>Quay lại Dashboard điều hành</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="exec-dashboard-page">
       {/* ================= HEADER BANNER ================= */}
@@ -2121,7 +2296,7 @@ const Dashboard = () => {
       </div>
 
       <div className="exec-kpis-top-grid">
-        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ - BẤM VÀO ĐỂ MỞ 4 BIỂU ĐỒ CƠ CẤU) */}
+        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ - BẤM VÀO ĐỂ SANG MÀN HÌNH 4 BIỂU ĐỒ CHI TIẾT) */}
         <div className="exec-kpi-full-span">
           <ExecutiveGaugeMasterCard
             index={1}
@@ -2130,70 +2305,12 @@ const Dashboard = () => {
             selectedYear={selectedYear}
             data={data}
             isClickable={true}
-            isExpanded={showRevenueBreakdown}
-            onToggleExpand={() => setShowRevenueBreakdown(prev => !prev)}
+            onOpenDetailScreen={() => {
+              setCurrentScreen('revenue_breakdown');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         </div>
-
-        {/* 4 BIỂU ĐỒ CƠ CẤU PHÂN RÃ (CHỈ HIỆN KHI BẤM VÀO BIỂU ĐỒ TỔNG DOANH THU) */}
-        {showRevenueBreakdown && (
-          <div className="exec-revenue-breakdown-wrapper animate-slide-down">
-            <div className="exec-breakdown-header-bar">
-              <div className="exec-breakdown-title-group">
-                <span className="breakdown-tag-badge">Chi tiết 4 biểu đồ phân rã Tổng doanh thu</span>
-                <div className="breakdown-formula-tags">
-                  <span className="formula-tag">
-                    <strong>Nhóm 1:</strong> DT nội bộ (127.200) + DT ngoài TĐ (262.700) = 389.900 tr.đ
-                  </span>
-                  <span className="formula-tag">
-                    <strong>Nhóm 2:</strong> DT trong nước (347.100) + DT quốc tế (42.800) = 389.900 tr.đ
-                  </span>
-                </div>
-              </div>
-              <button
-                className="exec-breakdown-collapse-btn"
-                onClick={() => setShowRevenueBreakdown(false)}
-                title="Đóng 4 biểu đồ chi tiết"
-              >
-                <ChevronUp size={15} /> Thu gọn 4 biểu đồ
-              </button>
-            </div>
-
-            <div className="exec-kpis-breakdown-grid">
-              {/* DÒNG 1: CẶP CƠ CẤU KHÁCH HÀNG (NỘI BỘ + NGOÀI TẬP ĐOÀN = TỔNG DOANH THU) */}
-              <ExecutiveGaugeMasterCard
-                index={2}
-                id="chart-internal-progress"
-                monthNum={monthNum}
-                selectedYear={selectedYear}
-                data={data}
-              />
-              <ExecutiveGaugeMasterCard
-                index={3}
-                id="chart-external-progress"
-                monthNum={monthNum}
-                selectedYear={selectedYear}
-                data={data}
-              />
-
-              {/* DÒNG 2: CẶP CƠ CẤU THỊ TRƯỜNG (TRONG NƯỚC + QUỐC TẾ = TỔNG DOANH THU) */}
-              <ExecutiveGaugeMasterCard
-                index={9}
-                id="chart-domestic-progress"
-                monthNum={monthNum}
-                selectedYear={selectedYear}
-                data={data}
-              />
-              <ExecutiveGaugeMasterCard
-                index={4}
-                id="chart-global-progress"
-                monthNum={monthNum}
-                selectedYear={selectedYear}
-                data={data}
-              />
-            </div>
-          </div>
-        )}
 
         {/* DÒNG 2: CẶP PHÁT TRIỂN KHÁCH HÀNG & HỢP ĐỒNG KÝ MỚI */}
         <ExecutiveGaugeMasterCard
