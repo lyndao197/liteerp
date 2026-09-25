@@ -2465,36 +2465,6 @@ const Dashboard = () => {
     return MONTHLY_TREND_FULL.slice(0, monthNum);
   }, [monthNum]);
 
-  // Chart 15 & 16: Donut structure data
-  const internalExternalSlices = useMemo(() => {
-    if (monthNum === 8 && INTERNAL_EXTERNAL_DATA[selectedYear] && INTERNAL_EXTERNAL_DATA[selectedYear].thMonth) {
-      return INTERNAL_EXTERNAL_DATA[selectedYear].thMonth.slices;
-    }
-    const tot = +(kpis.totalRevenue.value || 389.9);
-    const intVal = +(kpis.internalRevenue.value || 127.2);
-    const extVal = +(tot - intVal).toFixed(1);
-    const extPct = +((extVal / tot) * 100).toFixed(1);
-    const intPct = +(100 - extPct).toFixed(1);
-    return [
-      { name: 'DT ngoài Tập đoàn', percent: extPct, color: '#EE0033', value: extVal },
-      { name: 'DT nội bộ', percent: intPct, color: '#64748b', value: intVal }
-    ];
-  }, [selectedYear, monthNum, kpis]);
-
-  const domesticGlobalSlices = useMemo(() => {
-    if (monthNum === 8 && DOMESTIC_INTERNATIONAL_DATA[selectedYear] && DOMESTIC_INTERNATIONAL_DATA[selectedYear].thMonth) {
-      return DOMESTIC_INTERNATIONAL_DATA[selectedYear].thMonth.slices;
-    }
-    const tot = +(kpis.totalRevenue.value || 389.9);
-    const globVal = +(kpis.globalRevenue.value || 42.8);
-    const domVal = +(tot - globVal).toFixed(1);
-    const domPct = +((domVal / tot) * 100).toFixed(1);
-    const globPct = +(100 - domPct).toFixed(1);
-    return [
-      { name: 'DT trong nước', percent: domPct, color: '#0284c7', value: domVal },
-      { name: 'DT quốc tế', percent: globPct, color: '#ea580c', value: globVal }
-    ];
-  }, [selectedYear, monthNum, kpis]);
 
   // Chart 17: SPDV structure
   const spdvItems = useMemo(() => {
@@ -3058,63 +3028,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-
-        {/* ROW 2: CẶP CƠ CẤU DOANH THU */}
-        <div className="exec-charts-pair-row">
-          {/* CƠ CẤU DT NỘI BỘ / DT NGOÀI TẬP ĐOÀN */}
-          <div className="exec-card">
-            <div className="tr-header" style={{ marginBottom: '14px' }}>
-              <div className="tr-header-left">
-                <div className="tr-header-icon-box" style={{ background: '#fef2f2' }}>
-                  <PieIcon size={20} color="#EE0033" strokeWidth={2.5} />
-                </div>
-                <h3 className="tr-header-title" style={{ fontWeight: 800 }}>Cơ cấu DT nội bộ / DT ngoài Tập đoàn</h3>
-                <div
-                  className="tr-info-btn"
-                  title="Tỷ trọng doanh thu nội bộ và ngoài Tập đoàn"
-                >
-                  <Info size={17} color="#64748b" />
-                </div>
-              </div>
-              <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
-            </div>
-
-            <div className="exec-donut-card-body">
-              <ExecutiveDonutChart
-                slices={internalExternalSlices}
-                total={kpis.totalRevenue.value}
-                unit="Triệu đồng"
-              />
-            </div>
-          </div>
-
-          {/* CƠ CẤU DT TRONG NƯỚC / DT QUỐC TẾ */}
-          <div className="exec-card">
-            <div className="tr-header" style={{ marginBottom: '14px' }}>
-              <div className="tr-header-left">
-                <div className="tr-header-icon-box" style={{ background: '#f0fdf4' }}>
-                  <Globe size={20} color="#059669" strokeWidth={2.5} />
-                </div>
-                <h3 className="tr-header-title" style={{ fontWeight: 800 }}>Cơ cấu DT trong nước / DT quốc tế</h3>
-                <div
-                  className="tr-info-btn"
-                  title="Tỷ trọng doanh thu từ thị trường trong nước và quốc tế"
-                >
-                  <Info size={17} color="#64748b" />
-                </div>
-              </div>
-              <div className="tr-period-badge">Tháng {monthNum}/{selectedYear}</div>
-            </div>
-
-            <div className="exec-donut-card-body">
-              <ExecutiveDonutChart
-                slices={domesticGlobalSlices}
-                total={kpis.totalRevenue.value}
-                unit="Triệu đồng"
-              />
-            </div>
-          </div>
-        </div>
 
         {/* ROW 3: CẶP PHÂN BỔ DOANH THU */}
         <div className="exec-charts-pair-row">
