@@ -1940,7 +1940,7 @@ const ExecutiveGaugeMasterCard = ({
               <tfoot>
                 <tr className="tr-row-footer-total">
                   <td colSpan={5} className="td-left font-bold footer-label-cell">
-                    Tổng cộng ({(cfg.customerRows || []).length} dòng SPDV)
+                    Tổng cộng
                   </td>
                   <td className="td-right font-bold num-cell">
                     {customerTotals.kh.toLocaleString('vi-VN')}
