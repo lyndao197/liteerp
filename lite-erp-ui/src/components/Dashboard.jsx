@@ -10,7 +10,8 @@ import {
   PieChart as PieIcon, BarChart2, CheckCircle2, AlertCircle,
   DollarSign, Award, Users, FileText, Smile, Target, Sparkles,
   Layers, ArrowUpRight, ArrowDownRight, Activity, Globe,
-  Building2, Landmark, Percent, Briefcase, Compass, Info, Maximize2, MoreVertical, Clock
+  Building2, Landmark, Percent, Briefcase, Compass, Info, Maximize2, MoreVertical, Clock,
+  Search, Check, Filter, X
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import {
@@ -1180,6 +1181,10 @@ const ExecutiveGaugeMasterCard = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [showMonthlyTable, setShowMonthlyTable] = useState(false);
+  const [tableActiveTab, setTableActiveTab] = useState('customer'); // 'customer' or 'summary'
+  const [customerFilter, setCustomerFilter] = useState('all');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [onlyNewCustomer, setOnlyNewCustomer] = useState(false);
 
   const isDefaultT8 = monthNum === 8 && selectedYear === '2026';
   const prevMonthNum = monthNum - 1 === 0 ? 12 : monthNum - 1;
@@ -1222,6 +1227,14 @@ const ExecutiveGaugeMasterCard = ({
           pctYear,
           diffYearIsNeg,
           sharePct: 32.6,
+          customerRows: [
+            { id: 'NB-01', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Công ty A (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'DV CC outsourcing', spdvName: 'Dịch vụ FO', kh: 32000, uocTh: 33500, th: 33200, diff: 1200, rate: 103.8, share: '26,1%' },
+            { id: 'NB-02', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Công ty A (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'DV CC outsourcing', spdvName: 'Dịch vụ Tổng đài', kh: 28500, uocTh: 29200, th: 29000, diff: 500, rate: 101.8, share: '22,8%' },
+            { id: 'NB-03', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Tổng công ty B (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'ERP Customization', kh: 22000, uocTh: 23000, th: 22800, diff: 800, rate: 103.6, share: '17,9%' },
+            { id: 'NB-04', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Tổng công ty B (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'SaaS Platform', kh: 14500, uocTh: 15000, th: 14900, diff: 400, rate: 102.8, share: '11,7%' },
+            { id: 'NB-05', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Viettel Telecom (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 16200, uocTh: 16500, th: 16400, diff: 200, rate: 101.2, share: '12,9%' },
+            { id: 'NB-06', customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài', customerName: 'Viettel Global (Nội bộ nước ngoài)', isNewCustomer: false, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'Dịch vụ Cloud', kh: 11000, uocTh: 11200, th: 10900, diff: -100, rate: 99.1, share: '8,6%' }
+          ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 3,5%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '250.000 / 373.800', rate: '66,9%', rateNum: 66.9, growth: '▲ 4,2%', isHighlight: false },
@@ -1289,6 +1302,17 @@ const ExecutiveGaugeMasterCard = ({
           pctYear,
           diffYearIsNeg,
           sharePct: 67.4,
+          customerRows: [
+            { id: 'NG-01', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 48000, uocTh: 44500, th: 43800, diff: -4200, rate: 91.3, share: '16,7%' },
+            { id: 'NG-02', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Singtel International', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'AI Chatbot', kh: 28500, uocTh: 27200, th: 26800, diff: -1700, rate: 94.0, share: '10,2%' },
+            { id: 'NG-03', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'SaaS Platform', kh: 35500, uocTh: 33000, th: 32400, diff: -3100, rate: 91.3, share: '12,3%' },
+            { id: 'NG-04', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Singtel International', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'Loyalty App', kh: 14500, uocTh: 14000, th: 13800, diff: -700, rate: 95.2, share: '5,3%' },
+            { id: 'NG-05', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'Smart City Solution', kh: 42000, uocTh: 39000, th: 38600, diff: -3400, rate: 91.9, share: '14,7%' },
+            { id: 'NG-06', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Singtel International', isNewCustomer: false, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'ERP Customization', kh: 18000, uocTh: 17500, th: 17200, diff: -800, rate: 95.6, share: '6,5%' },
+            { id: 'NG-07', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn FPT', isNewCustomer: true, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'ERP Customization', kh: 45800, uocTh: 42000, th: 41500, diff: -4300, rate: 90.6, share: '15,8%' },
+            { id: 'NG-08', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn Hòa Phát', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 32500, uocTh: 30500, th: 30200, diff: -2300, rate: 92.9, share: '11,5%' },
+            { id: 'NG-09', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Toyota Motor VN', isNewCustomer: true, spdvGroup: 'Giải pháp, Platform', spdvName: 'AI Chatbot', kh: 25000, uocTh: 18800, th: 18400, diff: -6600, rate: 73.6, share: '7,0%' }
+          ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 8,8%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '525.000 / 872.200', rate: '60,2%', rateNum: 60.2, growth: '▲ 11,6%', isHighlight: false },
@@ -1356,6 +1380,12 @@ const ExecutiveGaugeMasterCard = ({
           pctYear,
           diffYearIsNeg,
           sharePct: 11.0,
+          customerRows: [
+            { id: 'QT-01', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Singtel International', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'AI Chatbot', kh: 14000, uocTh: 13500, th: 13400, diff: -600, rate: 95.7, share: '31,3%' },
+            { id: 'QT-02', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Singtel International', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'Loyalty App', kh: 11000, uocTh: 10600, th: 10500, diff: -500, rate: 95.5, share: '24,5%' },
+            { id: 'QT-03', customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài', customerName: 'Viettel Global (Nội bộ nước ngoài)', isNewCustomer: false, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'Dịch vụ Cloud', kh: 11000, uocTh: 11200, th: 10900, diff: -100, rate: 99.1, share: '25,5%' },
+            { id: 'QT-04', customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài', customerName: 'Toyota Motor VN', isNewCustomer: true, spdvGroup: 'Giải pháp, Platform', spdvName: 'AI Chatbot', kh: 9000, uocTh: 8200, th: 8000, diff: -1000, rate: 88.9, share: '18,7%' }
+          ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 18,2%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '82.100 / 149.500', rate: '54,9%', rateNum: 54.9, growth: '▲ 16,5%', isHighlight: false },
@@ -1423,6 +1453,20 @@ const ExecutiveGaugeMasterCard = ({
           pctYear,
           diffYearIsNeg,
           sharePct: 89.0,
+          customerRows: [
+            { id: 'TN-01', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 48000, uocTh: 44500, th: 43800, diff: -4200, rate: 91.3, share: '12,6%' },
+            { id: 'TN-02', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'SaaS Platform', kh: 35500, uocTh: 33000, th: 32400, diff: -3100, rate: 91.3, share: '9,3%' },
+            { id: 'TN-03', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Sungroup (Tập đoàn Sun)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'Smart City Solution', kh: 42000, uocTh: 39000, th: 38600, diff: -3400, rate: 91.9, share: '11,1%' },
+            { id: 'TN-04', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Công ty A (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'DV CC outsourcing', spdvName: 'Dịch vụ FO', kh: 32000, uocTh: 33500, th: 33200, diff: 1200, rate: 103.8, share: '9,6%' },
+            { id: 'TN-05', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Công ty A (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'DV CC outsourcing', spdvName: 'Dịch vụ Tổng đài', kh: 28500, uocTh: 29200, th: 29000, diff: 500, rate: 101.8, share: '8,4%' },
+            { id: 'TN-06', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Tổng công ty B (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'ERP Customization', kh: 22000, uocTh: 23000, th: 22800, diff: 800, rate: 103.6, share: '6,6%' },
+            { id: 'TN-07', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Tổng công ty B (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'SaaS Platform', kh: 14500, uocTh: 15000, th: 14900, diff: 400, rate: 102.8, share: '4,3%' },
+            { id: 'TN-08', customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước', customerName: 'Viettel Telecom (Nội bộ VN)', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 16200, uocTh: 16500, th: 16400, diff: 200, rate: 101.2, share: '4,7%' },
+            { id: 'TN-09', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn FPT', isNewCustomer: true, spdvGroup: 'Tích hợp Hệ thống', spdvName: 'ERP Customization', kh: 45800, uocTh: 42000, th: 41500, diff: -4300, rate: 90.6, share: '12,0%' },
+            { id: 'TN-10', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn Hòa Phát', isNewCustomer: false, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 32500, uocTh: 30500, th: 30200, diff: -2300, rate: 92.9, share: '8,7%' },
+            { id: 'TN-11', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn Masan', isNewCustomer: false, spdvGroup: 'Dịch vụ Phần mềm', spdvName: 'Smart City Solution', kh: 33000, uocTh: 31000, th: 30600, diff: -2400, rate: 92.7, share: '8,8%' },
+            { id: 'TN-12', customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước', customerName: 'Tập đoàn Vingroup', isNewCustomer: true, spdvGroup: 'Giải pháp, Platform', spdvName: 'OmniX CRM', kh: 19000, uocTh: 14000, th: 13700, diff: -5300, rate: 72.1, share: '3,9%' }
+          ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 5,8%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '692.900 / 1.096.500', rate: '63,2%', rateNum: 63.2, growth: '▲ 7,8%', isHighlight: false },
@@ -1693,6 +1737,44 @@ const ExecutiveGaugeMasterCard = ({
     }
   }, [index, isDefaultT8, monthNum, selectedYear, data]);
 
+  // Extract unique customers for filtering
+  const uniqueCustomers = useMemo(() => {
+    if (!cfg.customerRows) return [];
+    return Array.from(new Set(cfg.customerRows.map(r => r.customerName)));
+  }, [cfg.customerRows]);
+
+  // Filtered customer rows based on selected customer, search query, and new customer toggle
+  const filteredCustomerRows = useMemo(() => {
+    if (!cfg.customerRows) return [];
+    return cfg.customerRows.filter(r => {
+      if (customerFilter !== 'all' && r.customerName !== customerFilter) {
+        return false;
+      }
+      if (onlyNewCustomer && !r.isNewCustomer) {
+        return false;
+      }
+      if (customerSearch.trim()) {
+        const q = customerSearch.trim().toLowerCase();
+        const matchName = (r.customerName || '').toLowerCase().includes(q);
+        const matchGroup = (r.customerGroup || '').toLowerCase().includes(q);
+        const matchSpdv = (r.spdvName || '').toLowerCase().includes(q);
+        const matchSpdvGroup = (r.spdvGroup || '').toLowerCase().includes(q);
+        if (!matchName && !matchGroup && !matchSpdv && !matchSpdvGroup) return false;
+      }
+      return true;
+    });
+  }, [cfg.customerRows, customerFilter, onlyNewCustomer, customerSearch]);
+
+  const customerTotals = useMemo(() => {
+    if (!filteredCustomerRows.length) return { kh: 0, uocTh: 0, th: 0, diff: 0, rate: 0 };
+    const kh = filteredCustomerRows.reduce((acc, r) => acc + (r.kh || 0), 0);
+    const uocTh = filteredCustomerRows.reduce((acc, r) => acc + (r.uocTh || 0), 0);
+    const th = filteredCustomerRows.reduce((acc, r) => acc + (r.th || 0), 0);
+    const diff = th - kh;
+    const rate = kh > 0 ? +( (th / kh) * 100 ).toFixed(1) : 0;
+    return { kh, uocTh, th, diff, rate };
+  }, [filteredCustomerRows]);
+
   const IconComponent = cfg.icon;
 
   return (
@@ -1816,138 +1898,348 @@ const ExecutiveGaugeMasterCard = ({
       {/* Middle Section: Detailed Table when isDetailScreen, otherwise Standard Table */}
       {isDetailScreen ? (
         <div className="tr-full-detail-table-panel">
+          {/* Header Row: Title + Unit + View Toggle Tabs */}
           <div className="detail-table-header-row">
             <div className="detail-table-title-group">
-              <span className="detail-table-heading">Bảng số liệu chi tiết – {cfg.title}</span>
+              <span className="detail-table-heading">
+                {tableActiveTab === 'customer'
+                  ? `Bảng số liệu chi tiết theo Khách hàng & SPDV – ${cfg.title}`
+                  : `Bảng tổng hợp theo kỳ báo cáo – ${cfg.title}`}
+              </span>
               {cfg.sharePct && (
                 <span className="detail-table-share-badge">
                   Tỷ trọng tháng {monthNum}: <strong>{cfg.sharePct}%</strong> Tổng DT
                 </span>
               )}
             </div>
-            <span className="detail-table-unit-tag">Đơn vị: triệu đồng</span>
+
+            <div className="detail-table-actions-right">
+              <div className="detail-view-tabs">
+                <button
+                  type="button"
+                  className={`detail-tab-btn ${tableActiveTab === 'customer' ? 'active' : ''}`}
+                  onClick={() => setTableActiveTab('customer')}
+                >
+                  <Users size={13} />
+                  <span>Theo khách hàng & SPDV</span>
+                </button>
+                <button
+                  type="button"
+                  className={`detail-tab-btn ${tableActiveTab === 'summary' ? 'active' : ''}`}
+                  onClick={() => setTableActiveTab('summary')}
+                >
+                  <Calendar size={13} />
+                  <span>Tổng hợp theo kỳ</span>
+                </button>
+              </div>
+              <span className="detail-table-unit-tag">Đơn vị: triệu đồng</span>
+            </div>
           </div>
 
-          <div className="detail-table-responsive-box">
-            <table className="tr-executive-detailed-table">
-              <thead>
-                <tr>
-                  <th className="th-left">Kỳ báo cáo</th>
-                  <th className="th-right">Thực hiện (TH)</th>
-                  <th className="th-right">Kế hoạch (KH)</th>
-                  <th className="th-center">% Hoàn thành</th>
-                  <th className="th-right">Chênh lệch (TH - KH)</th>
-                  <th className="th-center">So cùng kỳ (%)</th>
-                  <th className="th-center">So tháng trước (%)</th>
-                  <th className="th-center">Tỷ trọng / Tổng DT</th>
-                  <th className="th-center">Đánh giá</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(cfg.detailedRows || []).map((r, rIdx) => {
-                  const diffVal = r.diff;
-                  const diffFormatted = diffVal !== null && diffVal !== undefined
-                    ? (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN')
-                    : '—';
-                  return (
-                    <tr key={rIdx} className={r.isHighlight ? 'tr-row-current-highlight' : ''}>
-                      <td className="td-left">
-                        <strong>{r.period}</strong>
-                      </td>
-                      <td className="td-right num-strong">
-                        {typeof r.actual === 'number' ? r.actual.toLocaleString('vi-VN') : (r.actual || '—')}
-                      </td>
-                      <td className="td-right">
-                        {typeof r.plan === 'number' ? r.plan.toLocaleString('vi-VN') : (r.plan || '—')}
-                      </td>
-                      <td className="td-center">
-                        <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
-                          {r.rate !== null && r.rate !== undefined ? `${r.rate.toString().replace('.', ',')}%` : '—'}
-                        </span>
-                      </td>
-                      <td className={`td-right ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
-                        <strong>{diffFormatted}</strong>
-                      </td>
-                      <td className="td-center">
-                        <span className={r.growthYear?.includes('▲') ? 'text-green' : (r.growthYear?.includes('▼') ? 'text-red' : 'text-slate')}>
-                          {r.growthYear || '—'}
-                        </span>
-                      </td>
-                      <td className="td-center">
-                        <span className={r.growthPrev?.includes('▲') ? 'text-green' : (r.growthPrev?.includes('▼') ? 'text-red' : 'text-slate')}>
-                          {r.growthPrev || '—'}
-                        </span>
-                      </td>
-                      <td className="td-center">
-                        <span className="share-cell-tag">{r.share || '—'}</span>
-                      </td>
-                      <td className="td-center">
-                        <span className={`status-badge-eval ${r.statusType || 'neutral'}`}>
-                          {r.status || '—'}
-                        </span>
+          {/* Customer Filter Toolbar (Available when viewing customer table) */}
+          {tableActiveTab === 'customer' && cfg.customerRows && cfg.customerRows.length > 0 && (
+            <div className="detail-customer-filter-toolbar">
+              <div className="cust-filter-item">
+                <label className="cust-filter-label">
+                  <Filter size={13} />
+                  <span>Lọc theo khách hàng:</span>
+                </label>
+                <div className="cust-select-wrapper">
+                  <select
+                    className="cust-select-input"
+                    value={customerFilter}
+                    onChange={(e) => setCustomerFilter(e.target.value)}
+                  >
+                    <option value="all">Tất cả khách hàng ({uniqueCustomers.length})</option>
+                    {uniqueCustomers.map((custName) => (
+                      <option key={custName} value={custName}>{custName}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={13} className="cust-chevron" />
+                </div>
+              </div>
+
+              <div className="cust-search-item">
+                <Search size={14} className="cust-search-icon" />
+                <input
+                  type="text"
+                  className="cust-search-input"
+                  placeholder="Tìm khách hàng, nhóm SPDV, tên SPDV..."
+                  value={customerSearch}
+                  onChange={(e) => setCustomerSearch(e.target.value)}
+                />
+                {customerSearch && (
+                  <button
+                    type="button"
+                    className="cust-search-clear"
+                    onClick={() => setCustomerSearch('')}
+                    title="Xóa tìm kiếm"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
+
+              <label className="cust-new-checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={onlyNewCustomer}
+                  onChange={(e) => setOnlyNewCustomer(e.target.checked)}
+                />
+                <span>Chỉ KH mới</span>
+              </label>
+
+              {(customerFilter !== 'all' || customerSearch !== '' || onlyNewCustomer) && (
+                <button
+                  type="button"
+                  className="cust-reset-filter-btn"
+                  onClick={() => {
+                    setCustomerFilter('all');
+                    setCustomerSearch('');
+                    setOnlyNewCustomer(false);
+                  }}
+                >
+                  <RefreshCw size={12} />
+                  <span>Bỏ lọc</span>
+                </button>
+              )}
+
+              <div className="cust-row-count-badge">
+                Hiển thị <strong>{filteredCustomerRows.length}</strong> / {cfg.customerRows.length} dòng
+              </div>
+            </div>
+          )}
+
+          {/* TABLE CONTENT */}
+          {tableActiveTab === 'customer' && cfg.customerRows && cfg.customerRows.length > 0 ? (
+            /* Table 1: Theo Khách Hàng & SPDV (Exact match with user's screenshot) */
+            <div className="detail-table-responsive-box">
+              <table className="tr-executive-detailed-table cust-matrix-style">
+                <thead>
+                  <tr>
+                    <th rowSpan={2} className="th-left col-cust-group">Nhóm khách hàng</th>
+                    <th rowSpan={2} className="th-left col-cust-name">Tên khách hàng</th>
+                    <th rowSpan={2} className="th-center col-cust-new" title="Khách hàng mới">KH Mới</th>
+                    <th rowSpan={2} className="th-left col-spdv-group">Nhóm SPDV</th>
+                    <th rowSpan={2} className="th-left col-spdv-name">Tên SPDV</th>
+                    <th colSpan={5} className="th-center group-header-perf">
+                      Kế hoạch & Thực hiện tháng {monthNum}/{selectedYear}
+                    </th>
+                    <th rowSpan={2} className="th-center col-share">Tỷ trọng</th>
+                  </tr>
+                  <tr>
+                    <th className="th-right col-num">KH</th>
+                    <th className="th-right col-num col-uoc-th" style={{ color: '#ea580c' }}>Ước TH</th>
+                    <th className="th-right col-num">TH</th>
+                    <th className="th-right col-num">+/- so KH</th>
+                    <th className="th-center col-rate">% HTKH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCustomerRows.length > 0 ? (
+                    filteredCustomerRows.map((r, rIdx) => {
+                      const diffVal = r.diff;
+                      const diffFormatted = (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN');
+                      return (
+                        <tr key={r.id || rIdx}>
+                          <td className="td-left text-muted-small" title={r.customerGroup}>
+                            {r.customerGroup}
+                          </td>
+                          <td className="td-left text-strong-name" title={r.customerName}>
+                            <strong>{r.customerName}</strong>
+                          </td>
+                          <td className="td-center">
+                            <div className={`matrix-cust-checkbox-wrap ${r.isNewCustomer ? 'checked' : ''}`}>
+                              {r.isNewCustomer && <Check size={11} strokeWidth={3} />}
+                            </div>
+                          </td>
+                          <td className="td-left text-spdv-group">{r.spdvGroup}</td>
+                          <td className="td-left text-spdv-name">
+                            <strong>{r.spdvName}</strong>
+                          </td>
+                          <td className="td-right num-cell">{r.kh.toLocaleString('vi-VN')}</td>
+                          <td className="td-right num-cell text-orange font-bold">
+                            {r.uocTh.toLocaleString('vi-VN')}
+                          </td>
+                          <td className="td-right num-cell font-bold text-dark">
+                            {r.th.toLocaleString('vi-VN')}
+                          </td>
+                          <td className={`td-right num-cell ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
+                            <strong>{diffFormatted}</strong>
+                          </td>
+                          <td className="td-center">
+                            <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                              {r.rate}%
+                            </span>
+                          </td>
+                          <td className="td-center">
+                            <span className="share-cell-tag">{r.share}</span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={11} className="cust-empty-state">
+                        Không tìm thấy khách hàng / SPDV phù hợp với bộ lọc.
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Expandable Monthly History Toggle (T1 -> T12) */}
-          {cfg.monthlyList && cfg.monthlyList.length > 0 && (
-            <div className="detail-monthly-expand-wrap">
-              <button
-                type="button"
-                className="detail-monthly-toggle-btn"
-                onClick={() => setShowMonthlyTable(prev => !prev)}
-              >
-                <span>{showMonthlyTable ? 'Thu gọn' : 'Xem thêm'} bảng số liệu chi tiết từng tháng (T1 → T12)</span>
-                {showMonthlyTable ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-              </button>
-
-              {showMonthlyTable && (
-                <div className="detail-monthly-table-box animate-fade-in">
-                  <table className="tr-executive-detailed-table mini">
-                    <thead>
-                      <tr>
-                        <th className="th-left">Tháng</th>
-                        <th className="th-right">Thực hiện (TH)</th>
-                        <th className="th-right">Kế hoạch (KH)</th>
-                        <th className="th-center">% Hoàn thành</th>
-                        <th className="th-right">Chênh lệch</th>
-                        <th className="th-center">So cùng kỳ (%)</th>
-                        <th className="th-center">Tỷ trọng / Tổng DT</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {cfg.monthlyList.map((mItem, mIdx) => (
-                        <tr key={mIdx} className={mItem.monthNum === monthNum ? 'tr-row-current-highlight' : ''}>
-                          <td className="td-left"><strong>{mItem.monthName}</strong></td>
-                          <td className="td-right num-strong">{mItem.actual !== null ? mItem.actual.toLocaleString('vi-VN') : '—'}</td>
-                          <td className="td-right">{mItem.plan !== null ? mItem.plan.toLocaleString('vi-VN') : '—'}</td>
-                          <td className="td-center">
-                            {mItem.rate !== null ? (
-                              <span className={`detail-rate-pill small ${mItem.rate >= 100 ? 'rate-green' : 'rate-red'}`}>
-                                {mItem.rate}%
-                              </span>
-                            ) : '—'}
+                  )}
+                </tbody>
+                <tfoot>
+                  <tr className="tr-row-footer-total">
+                    <td colSpan={5} className="td-left font-bold footer-label-cell">
+                      Tổng cộng ({filteredCustomerRows.length} dòng SPDV)
+                    </td>
+                    <td className="td-right font-bold num-cell">
+                      {customerTotals.kh.toLocaleString('vi-VN')}
+                    </td>
+                    <td className="td-right font-bold text-orange num-cell">
+                      {customerTotals.uocTh.toLocaleString('vi-VN')}
+                    </td>
+                    <td className="td-right font-bold text-dark num-cell">
+                      {customerTotals.th.toLocaleString('vi-VN')}
+                    </td>
+                    <td className={`td-right font-bold num-cell ${customerTotals.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {(customerTotals.diff >= 0 ? '+' : '') + customerTotals.diff.toLocaleString('vi-VN')}
+                    </td>
+                    <td className="td-center">
+                      <span className={`detail-rate-pill ${customerTotals.rate >= 100 ? 'rate-green' : (customerTotals.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                        {customerTotals.rate}%
+                      </span>
+                    </td>
+                    <td className="td-center font-bold">
+                      <span className="share-cell-tag total">100%</span>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          ) : (
+            /* Table 2: Tổng hợp theo Kỳ báo cáo */
+            <>
+              <div className="detail-table-responsive-box">
+                <table className="tr-executive-detailed-table">
+                  <thead>
+                    <tr>
+                      <th className="th-left">Kỳ báo cáo</th>
+                      <th className="th-right">Thực hiện (TH)</th>
+                      <th className="th-right">Kế hoạch (KH)</th>
+                      <th className="th-center">% Hoàn thành</th>
+                      <th className="th-right">Chênh lệch (TH - KH)</th>
+                      <th className="th-center">So cùng kỳ (%)</th>
+                      <th className="th-center">So tháng trước (%)</th>
+                      <th className="th-center">Tỷ trọng / Tổng DT</th>
+                      <th className="th-center">Đánh giá</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(cfg.detailedRows || []).map((r, rIdx) => {
+                      const diffVal = r.diff;
+                      const diffFormatted = diffVal !== null && diffVal !== undefined
+                        ? (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN')
+                        : '—';
+                      return (
+                        <tr key={rIdx} className={r.isHighlight ? 'tr-row-current-highlight' : ''}>
+                          <td className="td-left">
+                            <strong>{r.period}</strong>
+                          </td>
+                          <td className="td-right num-strong">
+                            {typeof r.actual === 'number' ? r.actual.toLocaleString('vi-VN') : (r.actual || '—')}
                           </td>
                           <td className="td-right">
-                            {mItem.diff !== null ? (
-                              <span className={mItem.diff >= 0 ? 'text-green' : 'text-red'}>
-                                {(mItem.diff >= 0 ? '+' : '') + mItem.diff.toLocaleString('vi-VN')}
-                              </span>
-                            ) : '—'}
+                            {typeof r.plan === 'number' ? r.plan.toLocaleString('vi-VN') : (r.plan || '—')}
                           </td>
-                          <td className="td-center">{mItem.growth || '—'}</td>
-                          <td className="td-center">{mItem.share || '—'}</td>
+                          <td className="td-center">
+                            <span className={`detail-rate-pill ${r.rate >= 100 ? 'rate-green' : (r.rate >= 90 ? 'rate-amber' : 'rate-red')}`}>
+                              {r.rate !== null && r.rate !== undefined ? `${r.rate.toString().replace('.', ',')}%` : '—'}
+                            </span>
+                          </td>
+                          <td className={`td-right ${diffVal >= 0 ? 'text-green' : 'text-red'}`}>
+                            <strong>{diffFormatted}</strong>
+                          </td>
+                          <td className="td-center">
+                            <span className={r.growthYear?.includes('▲') ? 'text-green' : (r.growthYear?.includes('▼') ? 'text-red' : 'text-slate')}>
+                              {r.growthYear || '—'}
+                            </span>
+                          </td>
+                          <td className="td-center">
+                            <span className={r.growthPrev?.includes('▲') ? 'text-green' : (r.growthPrev?.includes('▼') ? 'text-red' : 'text-slate')}>
+                              {r.growthPrev || '—'}
+                            </span>
+                          </td>
+                          <td className="td-center">
+                            <span className="share-cell-tag">{r.share || '—'}</span>
+                          </td>
+                          <td className="td-center">
+                            <span className={`status-badge-eval ${r.statusType || 'neutral'}`}>
+                              {r.status || '—'}
+                            </span>
+                          </td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Expandable Monthly History Toggle (T1 -> T12) */}
+              {cfg.monthlyList && cfg.monthlyList.length > 0 && (
+                <div className="detail-monthly-expand-wrap">
+                  <button
+                    type="button"
+                    className="detail-monthly-toggle-btn"
+                    onClick={() => setShowMonthlyTable(prev => !prev)}
+                  >
+                    <span>{showMonthlyTable ? 'Thu gọn' : 'Xem thêm'} bảng số liệu chi tiết từng tháng (T1 → T12)</span>
+                    {showMonthlyTable ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                  </button>
+
+                  {showMonthlyTable && (
+                    <div className="detail-monthly-table-box animate-fade-in">
+                      <table className="tr-executive-detailed-table mini">
+                        <thead>
+                          <tr>
+                            <th className="th-left">Tháng</th>
+                            <th className="th-right">Thực hiện (TH)</th>
+                            <th className="th-right">Kế hoạch (KH)</th>
+                            <th className="th-center">% Hoàn thành</th>
+                            <th className="th-right">Chênh lệch</th>
+                            <th className="th-center">So cùng kỳ (%)</th>
+                            <th className="th-center">Tỷ trọng / Tổng DT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cfg.monthlyList.map((mItem, mIdx) => (
+                            <tr key={mIdx} className={mItem.monthNum === monthNum ? 'tr-row-current-highlight' : ''}>
+                              <td className="td-left"><strong>{mItem.monthName}</strong></td>
+                              <td className="td-right num-strong">{mItem.actual !== null ? mItem.actual.toLocaleString('vi-VN') : '—'}</td>
+                              <td className="td-right">{mItem.plan !== null ? mItem.plan.toLocaleString('vi-VN') : '—'}</td>
+                              <td className="td-center">
+                                {mItem.rate !== null ? (
+                                  <span className={`detail-rate-pill small ${mItem.rate >= 100 ? 'rate-green' : 'rate-red'}`}>
+                                    {mItem.rate}%
+                                  </span>
+                                ) : '—'}
+                              </td>
+                              <td className="td-right">
+                                {mItem.diff !== null ? (
+                                  <span className={mItem.diff >= 0 ? 'text-green' : 'text-red'}>
+                                    {(mItem.diff >= 0 ? '+' : '') + mItem.diff.toLocaleString('vi-VN')}
+                                  </span>
+                                ) : '—'}
+                              </td>
+                              <td className="td-center">{mItem.growth || '—'}</td>
+                              <td className="td-center">{mItem.share || '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       ) : (
