@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   TrendingUp, TrendingDown, Calendar, RefreshCw,
-  FileSpreadsheet, ArrowUp, ArrowDown, ChevronDown, ChevronRight,
+  FileSpreadsheet, ArrowUp, ArrowDown, ChevronDown, ChevronUp, ChevronRight,
   PieChart as PieIcon, BarChart2, CheckCircle2, AlertCircle,
   DollarSign, Award, Users, FileText, Smile, Target, Sparkles,
   Layers, ArrowUpRight, ArrowDownRight, Activity, Globe,
@@ -1172,7 +1172,10 @@ const ExecutiveGaugeMasterCard = ({
   id,
   monthNum = 8,
   selectedYear = '2026',
-  data = {}
+  data = {},
+  isClickable = false,
+  isExpanded = false,
+  onToggleExpand
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -1608,7 +1611,11 @@ const ExecutiveGaugeMasterCard = ({
   const IconComponent = cfg.icon;
 
   return (
-    <div className={`tr-master-card ${isFullscreen ? 'fullscreen-overlay' : ''}`} id={id || `chart-metric-${index}`}>
+    <div
+      className={`tr-master-card ${isFullscreen ? 'fullscreen-overlay' : ''} ${isClickable ? 'clickable-card' : ''} ${isExpanded ? 'card-expanded' : ''}`}
+      id={id || `chart-metric-${index}`}
+      onClick={isClickable && onToggleExpand ? onToggleExpand : undefined}
+    >
       {/* Card Header */}
       <div className="tr-header">
         <div className="tr-header-left">
@@ -1616,16 +1623,33 @@ const ExecutiveGaugeMasterCard = ({
             <IconComponent size={20} color={cfg.iconColor} strokeWidth={2.5} />
           </div>
           <h3 className="tr-header-title">{cfg.title}</h3>
-          <div className="tr-info-btn" title={cfg.infoText}>
+          <div className="tr-info-btn" title={cfg.infoText} onClick={(e) => e.stopPropagation()}>
             <Info size={17} color="#64748b" />
           </div>
         </div>
 
         <div className="tr-header-right">
+          {index === 1 && onToggleExpand && (
+            <button
+              className={`tr-breakdown-toggle-pill ${isExpanded ? 'active' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleExpand();
+              }}
+              title={isExpanded ? 'Thu gọn 4 biểu đồ cơ cấu' : 'Xem 4 biểu đồ cơ cấu tương ứng'}
+            >
+              <Layers size={13} />
+              <span>{isExpanded ? 'Thu gọn 4 biểu đồ' : 'Xem 4 biểu đồ cơ cấu'}</span>
+              <ChevronDown size={14} className={`tr-pill-chevron ${isExpanded ? 'rotated' : ''}`} />
+            </button>
+          )}
           <span className="tr-unit-text">{cfg.unitHeader}</span>
           <button
             className="tr-action-btn"
-            onClick={() => setIsFullscreen(!isFullscreen)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsFullscreen(!isFullscreen);
+            }}
             title={isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'}
           >
             <Maximize2 size={17} />
@@ -1633,13 +1657,16 @@ const ExecutiveGaugeMasterCard = ({
           <div style={{ position: 'relative' }}>
             <button
               className="tr-action-btn"
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
               title="Tùy chọn"
             >
               <MoreVertical size={17} />
             </button>
             {showMenu && (
-              <div className="tr-menu-dropdown">
+              <div className="tr-menu-dropdown" onClick={(e) => e.stopPropagation()}>
                 <button onClick={() => setShowMenu(false)}>Sao chép số liệu</button>
                 <button onClick={() => setShowMenu(false)}>Xuất biểu đồ PNG</button>
                 <button onClick={() => setShowMenu(false)}>In báo cáo</button>
@@ -1795,6 +1822,27 @@ const ExecutiveGaugeMasterCard = ({
           </div>
         </div>
       </div>
+
+      {/* Bottom Drilldown Action Bar for Total Revenue */}
+      {index === 1 && onToggleExpand && (
+        <div
+          className={`tr-expand-drilldown-bar ${isExpanded ? 'active' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand();
+          }}
+        >
+          <div className="drilldown-bar-content">
+            <Layers size={16} className="drilldown-icon" />
+            <span className="drilldown-text">
+              {isExpanded
+                ? 'Đang mở 4 biểu đồ cơ cấu phân rã — Bấm để thu gọn'
+                : 'Bấm vào biểu đồ để xem 4 biểu đồ cơ cấu tương ứng (Nội bộ, Ngoài TĐ, Trong nước, Quốc tế)'}
+            </span>
+          </div>
+          <ChevronDown size={16} className={`drilldown-chevron ${isExpanded ? 'rotated' : ''}`} />
+        </div>
+      )}
     </div>
   );
 };
@@ -1882,6 +1930,7 @@ const Dashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState('Tháng 8');
   const [isExporting, setIsExporting] = useState(false);
   const [trendMetric, setTrendMetric] = useState('revenue');
+  const [showRevenueBreakdown, setShowRevenueBreakdown] = useState(false);
 
   // Parse active month number (1..12)
   const monthNum = useMemo(() => {
@@ -2072,7 +2121,7 @@ const Dashboard = () => {
       </div>
 
       <div className="exec-kpis-top-grid">
-        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ) */}
+        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ - BẤM VÀO ĐỂ MỞ 4 BIỂU ĐỒ CƠ CẤU) */}
         <div className="exec-kpi-full-span">
           <ExecutiveGaugeMasterCard
             index={1}
@@ -2080,42 +2129,73 @@ const Dashboard = () => {
             monthNum={monthNum}
             selectedYear={selectedYear}
             data={data}
+            isClickable={true}
+            isExpanded={showRevenueBreakdown}
+            onToggleExpand={() => setShowRevenueBreakdown(prev => !prev)}
           />
         </div>
 
-        {/* DÒNG 2: CẶP CƠ CẤU KHÁCH HÀNG (NỘI BỘ + NGOÀI TẬP ĐOÀN = TỔNG DOANH THU) */}
-        <ExecutiveGaugeMasterCard
-          index={2}
-          id="chart-internal-progress"
-          monthNum={monthNum}
-          selectedYear={selectedYear}
-          data={data}
-        />
-        <ExecutiveGaugeMasterCard
-          index={3}
-          id="chart-external-progress"
-          monthNum={monthNum}
-          selectedYear={selectedYear}
-          data={data}
-        />
+        {/* 4 BIỂU ĐỒ CƠ CẤU PHÂN RÃ (CHỈ HIỆN KHI BẤM VÀO BIỂU ĐỒ TỔNG DOANH THU) */}
+        {showRevenueBreakdown && (
+          <div className="exec-revenue-breakdown-wrapper animate-slide-down">
+            <div className="exec-breakdown-header-bar">
+              <div className="exec-breakdown-title-group">
+                <span className="breakdown-tag-badge">Chi tiết 4 biểu đồ phân rã Tổng doanh thu</span>
+                <div className="breakdown-formula-tags">
+                  <span className="formula-tag">
+                    <strong>Nhóm 1:</strong> DT nội bộ (127.200) + DT ngoài TĐ (262.700) = 389.900 tr.đ
+                  </span>
+                  <span className="formula-tag">
+                    <strong>Nhóm 2:</strong> DT trong nước (347.100) + DT quốc tế (42.800) = 389.900 tr.đ
+                  </span>
+                </div>
+              </div>
+              <button
+                className="exec-breakdown-collapse-btn"
+                onClick={() => setShowRevenueBreakdown(false)}
+                title="Đóng 4 biểu đồ chi tiết"
+              >
+                <ChevronUp size={15} /> Thu gọn 4 biểu đồ
+              </button>
+            </div>
 
-        {/* DÒNG 3: CẶP CƠ CẤU THỊ TRƯỜNG (TRONG NƯỚC + QUỐC TẾ = TỔNG DOANH THU) */}
-        <ExecutiveGaugeMasterCard
-          index={9}
-          id="chart-domestic-progress"
-          monthNum={monthNum}
-          selectedYear={selectedYear}
-          data={data}
-        />
-        <ExecutiveGaugeMasterCard
-          index={4}
-          id="chart-global-progress"
-          monthNum={monthNum}
-          selectedYear={selectedYear}
-          data={data}
-        />
+            <div className="exec-kpis-breakdown-grid">
+              {/* DÒNG 1: CẶP CƠ CẤU KHÁCH HÀNG (NỘI BỘ + NGOÀI TẬP ĐOÀN = TỔNG DOANH THU) */}
+              <ExecutiveGaugeMasterCard
+                index={2}
+                id="chart-internal-progress"
+                monthNum={monthNum}
+                selectedYear={selectedYear}
+                data={data}
+              />
+              <ExecutiveGaugeMasterCard
+                index={3}
+                id="chart-external-progress"
+                monthNum={monthNum}
+                selectedYear={selectedYear}
+                data={data}
+              />
 
-        {/* DÒNG 4: CẶP PHÁT TRIỂN KHÁCH HÀNG & HỢP ĐỒNG KÝ MỚI */}
+              {/* DÒNG 2: CẶP CƠ CẤU THỊ TRƯỜNG (TRONG NƯỚC + QUỐC TẾ = TỔNG DOANH THU) */}
+              <ExecutiveGaugeMasterCard
+                index={9}
+                id="chart-domestic-progress"
+                monthNum={monthNum}
+                selectedYear={selectedYear}
+                data={data}
+              />
+              <ExecutiveGaugeMasterCard
+                index={4}
+                id="chart-global-progress"
+                monthNum={monthNum}
+                selectedYear={selectedYear}
+                data={data}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* DÒNG 2: CẶP PHÁT TRIỂN KHÁCH HÀNG & HỢP ĐỒNG KÝ MỚI */}
         <ExecutiveGaugeMasterCard
           index={5}
           id="chart-customers-progress"

@@ -955,8 +955,112 @@
   width: 100%;
 }
 
+.exec-revenue-breakdown-wrapper {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  padding: 18px 20px;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 18px -2px rgba(0, 0, 0, 0.04);
+  animation: breakdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes breakdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.exec-breakdown-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.exec-breakdown-title-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.breakdown-tag-badge {
+  background: #2563eb;
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.breakdown-formula-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formula-tag {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.formula-tag strong {
+  color: #0f172a;
+}
+
+.exec-breakdown-collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exec-breakdown-collapse-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.exec-kpis-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
 @media (max-width: 1024px) {
-  .exec-kpis-top-grid {
+  .exec-kpis-top-grid,
+  .exec-kpis-breakdown-grid {
     grid-template-columns: 1fr;
     gap: 18px;
   }
@@ -1942,6 +2046,114 @@
   transition: all 0.25s ease;
   height: 100%;
   box-sizing: border-box;
+}
+
+.tr-master-card.clickable-card {
+  cursor: pointer;
+  border: 1.5px solid #cbd5e1;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tr-master-card.clickable-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 10px 30px -4px rgba(37, 99, 235, 0.12);
+  transform: translateY(-2px);
+}
+
+.tr-master-card.clickable-card.card-expanded {
+  border-color: #2563eb;
+  box-shadow: 0 8px 24px -2px rgba(37, 99, 235, 0.15);
+}
+
+.tr-breakdown-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tr-breakdown-toggle-pill:hover {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.tr-breakdown-toggle-pill.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.tr-pill-chevron {
+  transition: transform 0.2s ease;
+}
+
+.tr-pill-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.tr-expand-drilldown-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  margin-top: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tr-expand-drilldown-bar:hover {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #93c5fd;
+  border-style: solid;
+}
+
+.tr-expand-drilldown-bar.active {
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+  border-color: #3b82f6;
+  border-style: solid;
+}
+
+.drilldown-bar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drilldown-icon {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.drilldown-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.drilldown-chevron {
+  color: #64748b;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.drilldown-chevron.rotated {
+  transform: rotate(180deg);
+  color: #2563eb;
 }
 
 .tr-master-card.fullscreen-overlay {
