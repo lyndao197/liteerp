@@ -1055,6 +1055,7 @@ const RainbowSpeedometer = ({
   ];
 
   const formatNum = (n) => {
+    if (typeof n === 'string') return n;
     return Number(n).toLocaleString('vi-VN');
   };
 
@@ -1660,8 +1661,6 @@ const ExecutiveGaugeMasterCard = ({
           diffYearVal,
           pctYear,
           diffYearIsNeg,
-          gaugeType: 'ring',
-          ringVal: 10.0,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual} / ${plan}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 0,1%', isHighlight: true },
             { period: `Quý III/${selectedYear}`, actualPlan: '9,8% / 9,5%', rate: '103,2%', rateNum: 103.2, growth: '▲ 0,3%', isHighlight: false },
@@ -2473,11 +2472,8 @@ const Dashboard = () => {
           selectedYear={selectedYear}
           data={data}
         />
-      </div>
 
-      {/* ================= CẶP BIỂU ĐỒ HIỆU QUẢ KINH DOANH: LỢI NHUẬN & TỶ SUẤT ================= */}
-      <div className="profit-margin-pair-row">
-        {/* CARD 1: LỢI NHUẬN TRƯỚC THUẾ (Biểu đồ la bàn đồng bộ) */}
+        {/* DÒNG 3: CẶP HIỆU QUẢ KINH DOANH: LỢI NHUẬN TRƯỚC THUẾ & TỶ SUẤT LỢI NHUẬN / DOANH THU */}
         <ExecutiveGaugeMasterCard
           index={7}
           id="profit-tax-card-anchor"
@@ -2485,8 +2481,6 @@ const Dashboard = () => {
           selectedYear={selectedYear}
           data={data}
         />
-
-        {/* CARD 2: TỶ SUẤT LỢI NHUẬN / DOANH THU (Đồng bộ master card) */}
         <ExecutiveGaugeMasterCard
           index={8}
           id="profit-margin-card-anchor"

@@ -2360,23 +2360,22 @@
   color: #0f172a;
 }
 
-/* Top Section */
-/* Top Section */
+/* Top Section - Base styles for 2-cards-per-row grid */
 .tr-top-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   margin-bottom: 6px;
 }
 
 .tr-metric-main-box {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 170px;
+  min-width: 130px;
 }
 
 .tr-period-badge {
@@ -2384,41 +2383,41 @@
   align-self: flex-start;
   background: #eff6ff;
   color: #2563eb;
-  padding: 3px 10px;
+  padding: 2.5px 8px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .tr-main-value-row {
   display: flex;
   align-items: baseline;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 
 .tr-big-value {
-  font-size: 34px;
+  font-size: 26px;
   font-weight: 800;
   color: #0f172a;
-  letter-spacing: -0.6px;
+  letter-spacing: -0.4px;
   line-height: 1;
 }
 
 .tr-value-unit {
-  font-size: 14.5px;
+  font-size: 12.5px;
   font-weight: 500;
   color: #64748b;
   white-space: nowrap;
 }
 
 .tr-plan-subline {
-  font-size: 12.5px;
+  font-size: 11.5px;
   color: #64748b;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   white-space: nowrap;
 }
 
@@ -2433,7 +2432,7 @@
 }
 
 .tr-subline-sep {
-  margin: 0 4px;
+  margin: 0 3px;
   color: #cbd5e1;
 }
 
@@ -2447,7 +2446,7 @@
 
 /* Center Comparison Container */
 .tr-middle-compare-wrap {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2461,14 +2460,14 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 3px;
-  padding: 0 20px;
+  gap: 2px;
+  padding: 0 10px;
   border-left: 1px solid #f1f5f9;
   white-space: nowrap;
 }
 
 .tr-compare-col-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: #64748b;
   white-space: nowrap;
@@ -2480,7 +2479,7 @@
   display: inline-flex;
   align-items: baseline;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   white-space: nowrap;
   line-height: 1.2;
 }
@@ -2494,30 +2493,30 @@
 }
 
 .tr-compare-col-arrow {
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1;
 }
 
 .tr-compare-col-num {
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 
 .tr-compare-col-pct {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   margin-left: 2px;
 }
 
 /* Right Gauge Box */
 .tr-right-gauge-col {
-  flex: 0 0 290px;
-  max-width: 310px;
+  flex: 0 0 205px;
+  max-width: 215px;
   background: #f8fafc;
   border: 1px solid #f1f5f9;
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2536,14 +2535,100 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 6px 0;
+  padding: 4px 0;
 }
 
 .tr-rainbow-svg {
   width: 100%;
-  max-width: 275px;
+  max-width: 195px;
   height: auto;
   display: block;
+}
+
+/* Specific larger layout for full-span cards (Tổng doanh thu, sub-screen full width rows) */
+.exec-kpi-full-span .tr-top-section,
+.breakdown-card-row .tr-top-section {
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.exec-kpi-full-span .tr-metric-main-box,
+.breakdown-card-row .tr-metric-main-box {
+  min-width: 180px;
+  flex: 1 1 0;
+}
+
+.exec-kpi-full-span .tr-period-badge,
+.breakdown-card-row .tr-period-badge {
+  font-size: 12px;
+  padding: 3px 10px;
+  margin-bottom: 8px;
+}
+
+.exec-kpi-full-span .tr-main-value-row,
+.breakdown-card-row .tr-main-value-row {
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.exec-kpi-full-span .tr-big-value,
+.breakdown-card-row .tr-big-value {
+  font-size: 34px;
+  letter-spacing: -0.6px;
+}
+
+.exec-kpi-full-span .tr-value-unit,
+.breakdown-card-row .tr-value-unit {
+  font-size: 14.5px;
+}
+
+.exec-kpi-full-span .tr-plan-subline,
+.breakdown-card-row .tr-plan-subline {
+  font-size: 12.5px;
+  gap: 4px;
+}
+
+.exec-kpi-full-span .tr-middle-compare-wrap,
+.breakdown-card-row .tr-middle-compare-wrap {
+  flex: 1 1 0;
+}
+
+.exec-kpi-full-span .tr-metric-compare-col,
+.breakdown-card-row .tr-metric-compare-col {
+  padding: 0 20px;
+  gap: 3px;
+}
+
+.exec-kpi-full-span .tr-compare-col-label,
+.breakdown-card-row .tr-compare-col-label {
+  font-size: 12px;
+}
+
+.exec-kpi-full-span .tr-compare-col-arrow,
+.breakdown-card-row .tr-compare-col-arrow {
+  font-size: 13px;
+}
+
+.exec-kpi-full-span .tr-compare-col-num,
+.breakdown-card-row .tr-compare-col-num {
+  font-size: 20px;
+}
+
+.exec-kpi-full-span .tr-compare-col-pct,
+.breakdown-card-row .tr-compare-col-pct {
+  font-size: 13px;
+}
+
+.exec-kpi-full-span .tr-right-gauge-col,
+.breakdown-card-row .tr-right-gauge-col {
+  flex: 0 0 290px;
+  max-width: 310px;
+  padding: 10px 14px;
+}
+
+.exec-kpi-full-span .tr-rainbow-svg,
+.breakdown-card-row .tr-rainbow-svg {
+  max-width: 275px;
 }
 
 /* Middle Breakdown Table */
