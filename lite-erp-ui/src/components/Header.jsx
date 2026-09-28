@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
-import { Bell, BriefcaseBusiness, Building2, Mail, Phone, Shield, Smartphone, X, Laptop } from 'lucide-react';
+import { Bell, BriefcaseBusiness, Building2, Mail, Phone, Shield, Smartphone, X, Laptop, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { mockStore } from '../utils/mockStore';
 
-function Header() {
+function Header({ isSidebarOpen = true, onToggleSidebar }) {
   const navigate = useNavigate();
   const currentUserId = 'USR-001';
   const DEPARTMENT_OPTIONS = [
@@ -153,6 +153,19 @@ function Header() {
   return (
     <>
       <header className="top-header">
+        <div className="header-left">
+          {onToggleSidebar && (
+            <button
+              type="button"
+              className="sidebar-toggle-btn"
+              onClick={onToggleSidebar}
+              title={isSidebarOpen ? 'Ẩn thanh menu' : 'Hiện thanh menu'}
+              aria-label="Toggle sidebar"
+            >
+              {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
+            </button>
+          )}
+        </div>
         <div className="header-spacer"></div>
         <div className="header-actions">
           <div className="notification-icon">

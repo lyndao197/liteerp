@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -64,6 +64,22 @@ function AppRoutes() {
   const location = useLocation();
   const isAuthPage = ['/activate', '/reset-password'].includes(location.pathname);
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const saved = localStorage.getItem('sidebar_open');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => {
+      const next = !prev;
+      localStorage.setItem('sidebar_open', String(next));
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 300);
+      return next;
+    });
+  };
+
   if (isAuthPage) {
     return (
       <Routes>
@@ -74,10 +90,10 @@ function AppRoutes() {
   }
 
   return (
-    <div className="layout">
-      <Sidebar />
+    <div className={`layout ${!isSidebarOpen ? 'sidebar-collapsed' : ''}`}>
+      <Sidebar isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} />
       <div className="main-wrapper">
-        <Header />
+        <Header isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} />
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Dashboard />} />

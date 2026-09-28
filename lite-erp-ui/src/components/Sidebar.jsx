@@ -32,7 +32,8 @@ import {
   ClipboardCheck,
   AlertCircle,
   Calendar,
-  PieChart
+  PieChart,
+  PanelLeftClose
 } from 'lucide-react';
 
 const REPORT_OBJECT_BRANCHES = [
@@ -127,7 +128,7 @@ const REVENUE_SUB_BRANCHES = [
   }
 ];
 
-function Sidebar() {
+function Sidebar({ isSidebarOpen = true, onToggleSidebar }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomeActive = location.pathname === '/dashboard' || location.pathname === '/home' || location.pathname.startsWith('/dashboard');
@@ -186,21 +187,34 @@ function Sidebar() {
   const isReportsActive = location.pathname === '/reports' || (location.pathname.startsWith('/reports') && !location.pathname.startsWith('/reports/revenue'));
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-logo" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ width: '36px', height: '36px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#EE0033" fillOpacity="0.1"/>
-            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="#EE0033"/>
-            <circle cx="12" cy="4" r="2.5" fill="#EE0033"/>
-            <circle cx="4.5" cy="16" r="2.5" fill="#EE0033"/>
-            <circle cx="19.5" cy="16" r="2.5" fill="#EE0033"/>
-          </svg>
+    <aside className={`sidebar ${!isSidebarOpen ? 'collapsed' : ''}`}>
+      <div className="sidebar-logo">
+        <div className="sidebar-logo-brand" onClick={() => navigate('/dashboard')}>
+          <div style={{ width: '36px', height: '36px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#EE0033" fillOpacity="0.1"/>
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="#EE0033"/>
+              <circle cx="12" cy="4" r="2.5" fill="#EE0033"/>
+              <circle cx="4.5" cy="16" r="2.5" fill="#EE0033"/>
+              <circle cx="19.5" cy="16" r="2.5" fill="#EE0033"/>
+            </svg>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', fontStyle: 'normal', lineHeight: '1' }}>
+            <span style={{ fontSize: '18px', fontWeight: '900', color: '#EE0033', letterSpacing: '-1px', fontFamily: 'Arial Black, sans-serif', marginRight: '2px' }}>x</span>
+            <span style={{ fontSize: '30px', fontWeight: '900', color: '#000', letterSpacing: '-1.5px', fontFamily: 'Arial Black, sans-serif' }}>ERP</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'baseline', fontStyle: 'normal', lineHeight: '1' }}>
-          <span style={{ fontSize: '18px', fontWeight: '900', color: '#EE0033', letterSpacing: '-1px', fontFamily: 'Arial Black, sans-serif', marginRight: '2px' }}>x</span>
-          <span style={{ fontSize: '30px', fontWeight: '900', color: '#000', letterSpacing: '-1.5px', fontFamily: 'Arial Black, sans-serif' }}>ERP</span>
-        </div>
+        {onToggleSidebar && (
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={onToggleSidebar}
+            title="Ẩn thanh menu"
+            aria-label="Thu gọn sidebar"
+          >
+            <PanelLeftClose size={18} />
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav">

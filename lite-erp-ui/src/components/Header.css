@@ -8,6 +8,38 @@
   padding: 0 24px;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background-color: #F8FAFC;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+  border-color: #CBD5E1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-toggle-btn:active {
+  transform: scale(0.96);
+}
+
 .header-spacer {
   flex: 1;
 }
