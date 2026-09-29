@@ -33,7 +33,8 @@ import {
   AlertCircle,
   Calendar,
   PieChart,
-  PanelLeftClose
+  PanelLeftClose,
+  Wallet
 } from 'lucide-react';
 
 const REPORT_OBJECT_BRANCHES = [
@@ -125,6 +126,14 @@ const REVENUE_SUB_BRANCHES = [
     badge: 4,
     icon: Target,
     color: '#dc2626'
+  },
+  {
+    id: 'debt',
+    title: '8. Báo cáo công nợ',
+    subtitle: 'Phân tích tuổi nợ và thu hồi công nợ',
+    badge: 5,
+    icon: Wallet,
+    color: '#059669'
   }
 ];
 
@@ -394,7 +403,7 @@ function Sidebar({ isSidebarOpen = true, onToggleSidebar }) {
               <span>Báo cáo doanh thu</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="sidebar-group-count-badge">7</span>
+              <span className="sidebar-group-count-badge">8</span>
               {revenueOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
             </div>
           </div>

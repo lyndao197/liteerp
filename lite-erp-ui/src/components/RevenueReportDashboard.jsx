@@ -8,7 +8,7 @@ import {
   BarChart2, Activity, PieChart as PieChartIcon, AreaChart as AreaIcon,
   Save, Grid, List, Check, Download, TrendingUp, TrendingDown,
   Building, DollarSign, Calendar, Filter, Search, RefreshCw, Layers, ShieldCheck,
-  Users, Target, Award, Clock, ArrowLeft, HelpCircle
+  Users, Target, Award, Clock, ArrowLeft, HelpCircle, Wallet
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
@@ -34,6 +34,14 @@ import {
   DOMESTIC_INTERNATIONAL_CATEGORIES,
   DOMESTIC_INTERNATIONAL_DATA
 } from '../data/revenueInternalExternalData';
+import DebtComparisonChart from './DebtComparisonChart';
+import {
+  DEBT_SUMMARY_METRICS,
+  DEBT_AGING_DATA,
+  DEBT_BY_CUSTOMER_GROUP,
+  DEBT_MONTHLY_RECOVERY,
+  DEBT_TOP_CUSTOMERS
+} from '../data/revenueDebtData';
 
 // 7 Sub-branch groups matching the requested design
 const REVENUE_SUB_BRANCHES = [
@@ -92,6 +100,14 @@ const REVENUE_SUB_BRANCHES = [
     badge: 4,
     icon: Target,
     color: '#dc2626'
+  },
+  {
+    id: 'debt',
+    title: '8. Báo cáo công nợ',
+    subtitle: 'Tổng quan công nợ phải thu, phải trả và tuổi nợ',
+    badge: 5,
+    icon: Wallet,
+    color: '#059669'
   }
 ];
 
@@ -273,6 +289,14 @@ const RevenueReportDashboard = () => {
     c11Rat: true,
     c12Val: true,
     c12Rat: true
+  });
+
+  const [debtVisibleCards, setDebtVisibleCards] = useState({
+    c1Aging: true,
+    c2Ratio: true,
+    c3Group: true,
+    c4Recovery: true,
+    c5Table: true
   });
 
   // Toast
@@ -2872,6 +2896,91 @@ const RevenueReportDashboard = () => {
           XLSX.writeFile(wb, `Bao_Cao_Chuyen_Dich_DT_Ngoai_Va_Quoc_Te_${selectedYear}_(${activeCharts.length}_Bieu_Do).xlsx`);
           showToast(`Đã xuất Excel: ${activeCharts.length} biểu đồ (${activeCharts.length} Sheet) thành công!`);
         }
+      } else if (currentView === 'debt') {
+        const wb = XLSX.utils.book_new();
+
+        // Sheet 1: Phân tích tuổi nợ
+        const agingRows = [
+          ['BÁO CÁO CÔNG NỢ - PHÂN TÍCH TUỔI NỢ (AR AGING)'],
+          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+          [],
+          ['STT', 'Tuổi nợ', 'Số dư thực tế (Tỷ đồng)', 'Định mức / Kế hoạch', 'Tỷ trọng (%)', 'Mức độ rủi ro'],
+          ...DEBT_AGING_DATA.map((item, idx) => [
+            idx + 1,
+            item.range,
+            item.amount,
+            item.khAmount,
+            `${item.percent}%`,
+            item.riskLevel
+          ]),
+          ['', 'TỔNG CỘNG', DEBT_SUMMARY_METRICS.totalReceivable, 1247.0, '100.0%', '']
+        ];
+        const ws1 = XLSX.utils.aoa_to_sheet(agingRows);
+        ws1['!cols'] = [{ wch: 6 }, { wch: 25 }, { wch: 24 }, { wch: 22 }, { wch: 15 }, { wch: 18 }];
+        XLSX.utils.book_append_sheet(wb, ws1, 'Phan_Tich_Tuoi_No');
+
+        // Sheet 2: Công nợ theo nhóm đối tượng
+        const groupRows = [
+          ['CÔNG NỢ THEO NHÓM ĐỐI TƯỢNG KHÁCH HÀNG'],
+          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+          [],
+          ['STT', 'Nhóm đối tượng', 'Tổng nợ phải thu', 'Trong hạn', 'Quá hạn', 'Tỷ lệ quá hạn (%)'],
+          ...DEBT_BY_CUSTOMER_GROUP.map((item, idx) => [
+            idx + 1,
+            item.groupName,
+            item.receivable,
+            item.inTerm,
+            item.overdue,
+            `${item.overdueRatio}%`
+          ])
+        ];
+        const ws2 = XLSX.utils.aoa_to_sheet(groupRows);
+        ws2['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 20 }, { wch: 16 }, { wch: 16 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, ws2, 'Nhom_Doi_Tuong');
+
+        // Sheet 3: Tiến độ thu hồi nợ từng tháng
+        const recRows = [
+          ['TIẾN ĐỘ THU HỒI CÔNG NỢ TỪNG THÁNG'],
+          [`Năm ${selectedYear} (Đơn vị: Tỷ đồng)`],
+          [],
+          ['Tháng', 'Thực hiện thu hồi', 'Kế hoạch thu hồi', 'Tỷ lệ đạt (%)', 'Thu hồi nợ quá hạn'],
+          ...DEBT_MONTHLY_RECOVERY.map(item => [
+            item.month,
+            item.actual,
+            item.plan,
+            item.rate,
+            item.overdueRecovery
+          ])
+        ];
+        const ws3 = XLSX.utils.aoa_to_sheet(recRows);
+        ws3['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 18 }, { wch: 22 }];
+        XLSX.utils.book_append_sheet(wb, ws3, 'Tien_Do_Thu_Hoi');
+
+        // Sheet 4: Top khách hàng công nợ
+        const custRows = [
+          ['DANH SÁCH TOP KHÁCH HÀNG SỐ DƯ CÔNG NỢ LỚN'],
+          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+          [],
+          ['STT', 'Mã KH', 'Tên khách hàng', 'Phân nhóm', 'Tổng nợ (Tỷ)', 'Trong hạn', 'Quá hạn', 'DSO (ngày)', 'Trạng thái', 'Hành động xử lý'],
+          ...DEBT_TOP_CUSTOMERS.map(c => [
+            c.stt,
+            c.code,
+            c.name,
+            c.group,
+            c.totalDebt,
+            c.inTerm,
+            c.overdue,
+            c.dso,
+            c.status,
+            c.action
+          ])
+        ];
+        const ws4 = XLSX.utils.aoa_to_sheet(custRows);
+        ws4['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 42 }, { wch: 20 }, { wch: 15 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 38 }];
+        XLSX.utils.book_append_sheet(wb, ws4, 'Top_Khach_Hang');
+
+        XLSX.writeFile(wb, `Bao_Cao_Cong_No_${selectedYear}_${selectedMonth}.xlsx`);
+        showToast('Đã xuất file Excel Báo cáo công nợ (4 Sheet) thành công!');
       } else {
         const wb = XLSX.utils.book_new();
         // Sheet 1: Tổng hợp theo dòng
@@ -2970,6 +3079,9 @@ const RevenueReportDashboard = () => {
                currentView === 'month' ? `Báo cáo doanh thu ${selectedMonth}/${selectedYear}` :
                currentView === 'trend' ? `Xu hướng doanh thu từng tháng năm ${selectedYear}` :
                currentView === 'spdv' ? 'Doanh thu thực hiện và kế hoạch theo nhóm SPDV' :
+               currentView === 'unit' ? 'Doanh thu theo đơn vị' :
+               currentView === 'plan_progress' ? 'Chuyển dịch doanh thu ngoài và doanh thu quốc tế' :
+               currentView === 'debt' ? `Báo cáo công nợ năm ${selectedYear}` :
                'Báo cáo doanh thu'}
             </h1>
             <span className="revenue-tag-pill">
@@ -2979,7 +3091,9 @@ const RevenueReportDashboard = () => {
                currentView === 'trend' ? `Năm ${selectedYear}` :
                currentView === 'spdv' ? `${selectedMonth}/${selectedYear}` :
                currentView === 'unit' ? `${selectedMonth}/${selectedYear}` :
-               'DT ngoài & QT'}
+               currentView === 'plan_progress' ? `${selectedMonth}/${selectedYear}` :
+               currentView === 'debt' ? `${selectedMonth}/${selectedYear}` :
+               'Công nợ'}
             </span>
           </div>
         </div>
@@ -3068,6 +3182,16 @@ const RevenueReportDashboard = () => {
             setSelectedMonth={setSelectedMonth}
             visibleCards={inExVisibleCards}
             onVisibleCardsChange={setInExVisibleCards}
+          />
+        ) : currentView === 'debt' ? (
+          /* Nhánh 8: Báo cáo công nợ */
+          <DebtComparisonChart
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+            selectedMonth={selectedMonth}
+            setSelectedMonth={setSelectedMonth}
+            visibleCards={debtVisibleCards}
+            onVisibleCardsChange={setDebtVisibleCards}
           />
         ) : (
             <>
