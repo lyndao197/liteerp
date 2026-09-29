@@ -5,6 +5,7 @@ import {
   YEAR_CUMULATIVE_DATA,
   YEAR_PLAN_FULL_DATA,
   YEAR_ESTIMATE_DATA,
+  YEAR_ESTIMATE_PREV_DATA,
   CUMULATIVE_MONTH_OPTIONS
 } from '../data/revenueYearData';
 import { explainLegend, explainCategory } from '../utils/reportAbbreviations';
@@ -514,14 +515,20 @@ export default function YearComparisonChart({
   const [hoveredC12Val, setHoveredC12Val] = useState(null);
   const [hoveredC12Rat, setHoveredC12Rat] = useState(null);
 
-  // Independent collapse state for each subcard (6 subcards)
+  // Hover states for Biểu đồ 13
+  const [hoveredC13Val, setHoveredC13Val] = useState(null);
+  const [hoveredC13Rat, setHoveredC13Rat] = useState(null);
+
+  // Independent collapse state for each subcard (8 subcards)
   const [internalVisibleCards, setInternalVisibleCards] = useState({
     c10Val: true,
     c10Rat: true,
     c11Val: true,
     c11Rat: true,
     c12Val: true,
-    c12Rat: true
+    c12Rat: true,
+    c13Val: true,
+    c13Rat: true
   });
 
   const visibleCards = propVisibleCards || internalVisibleCards;
@@ -547,7 +554,9 @@ export default function YearComparisonChart({
       c11Val: nextState,
       c11Rat: nextState,
       c12Val: nextState,
-      c12Rat: nextState
+      c12Rat: nextState,
+      c13Val: nextState,
+      c13Rat: nextState
     });
   };
 
@@ -567,6 +576,12 @@ export default function YearComparisonChart({
   const currentEstimateData = YEAR_ESTIMATE_DATA[selectedCumulativeMonth] || YEAR_ESTIMATE_DATA['Lũy kế 8 tháng'];
   const chart12Values = currentEstimateData.values;
   const chart12Ratios = currentEstimateData.ratios;
+
+  // Data for Biểu đồ 13 (Ước kết quả năm so với kết quả năm trước)
+  const prevYear = (parseInt(selectedYear, 10) - 1).toString();
+  const currentEstimatePrevData = YEAR_ESTIMATE_PREV_DATA[selectedCumulativeMonth] || YEAR_ESTIMATE_PREV_DATA['Lũy kế 8 tháng'];
+  const chart13Values = currentEstimatePrevData.values;
+  const chart13Ratios = currentEstimatePrevData.ratios;
 
   return (
     <div className="month-charts-stack">
@@ -699,6 +714,39 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC12Rat}
           isVisible={visibleCards.c12Rat}
           onToggle={() => toggleCard('c12Rat')}
+        />
+      </div>
+
+      {/* DÒNG 4 (2 BIỂU ĐỒ): BIỂU ĐỒ 13 - ƯỚC KẾT QUẢ NĂM SO VỚI KẾT QUẢ NĂM TRƯỚC */}
+      <div className="month-row-grid" style={{ marginTop: '16px' }}>
+        <YearValueCard
+          title={`Ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`}
+          tag="Hàng 4 - Khu 1"
+          primaryLegend={`Ước ${selectedYear}`}
+          secondaryLegend={`TH ${prevYear}`}
+          data={chart13Values}
+          maxVal={5000}
+          yTicks={[0, 1000, 2000, 3000, 4000, 5000]}
+          unitLabel="Tỷ đồng"
+          rateLabel={`% so với TH ${prevYear}`}
+          hoveredItem={hoveredC13Val}
+          setHoveredItem={setHoveredC13Val}
+          isVisible={visibleCards.c13Val}
+          onToggle={() => toggleCard('c13Val')}
+        />
+
+        <YearRatioCard
+          title={`Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`}
+          tag="Hàng 4 - Khu 2"
+          primaryLegend={`Ước ${selectedYear}`}
+          secondaryLegend={`TH ${prevYear}`}
+          data={chart13Ratios}
+          maxVal={80}
+          yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+          hoveredItem={hoveredC13Rat}
+          setHoveredItem={setHoveredC13Rat}
+          isVisible={visibleCards.c13Rat}
+          onToggle={() => toggleCard('c13Rat')}
         />
       </div>
     </div>

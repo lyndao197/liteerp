@@ -64,7 +64,7 @@ const REVENUE_SUB_BRANCHES = [
     id: 'year',
     title: '3. Phân tích theo năm',
     subtitle: 'Lũy kế, ước năm và so sánh',
-    badge: 6,
+    badge: 8,
     icon: Calendar,
     color: '#f59e0b'
   },
