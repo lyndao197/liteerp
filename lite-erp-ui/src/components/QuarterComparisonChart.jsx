@@ -7,7 +7,8 @@ import {
   QUARTER_CUMULATIVE_DATA,
   QUARTER_ESTIMATE_DATA,
   QUARTER_PREV_DATA,
-  QUARTER_SAME_PERIOD_DATA
+  QUARTER_SAME_PERIOD_DATA,
+  QUARTER_NEXT_PLAN_DATA
 } from '../data/revenueQuarterData';
 
 // Helper to format numbers with comma as decimal separator
@@ -28,7 +29,10 @@ function QuarterValueCard({
   hoveredItem,
   setHoveredItem,
   isVisible = true,
-  onToggle
+  onToggle,
+  maxVal = 1400,
+  yTicks = [0, 200, 400, 600, 800, 1000, 1200, 1400],
+  unitLabel = 'Triệu đồng'
 }) {
   const svgWidth = 540;
   const svgHeight = 280;
@@ -37,8 +41,6 @@ function QuarterValueCard({
   const chartTop = 32;
   const chartBottom = 222;
   const chartHeight = chartBottom - chartTop; // 190px
-  const maxVal = 1400;
-  const yTicks = [0, 200, 400, 600, 800, 1000, 1200, 1400];
   const xCenters = data.length === 5
     ? [101, 193, 285, 377, 469]
     : (data.length === 4
@@ -95,7 +97,7 @@ function QuarterValueCard({
               textAnchor="middle"
               className="axis-title"
             >
-              Triệu đồng
+              {unitLabel}
             </text>
             <line
               x1={chartLeft}
@@ -136,7 +138,7 @@ function QuarterValueCard({
 
               // Normalized values for Quarter
               const val1 = item.lk !== undefined ? item.lk : item.uoc;
-              const val2 = item.kh !== undefined ? item.kh : (item.thPrev !== undefined ? item.thPrev : item.thSamePeriod);
+              const val2 = item.kh !== undefined ? item.kh : (item.thPrev !== undefined ? item.thPrev : (item.thSamePeriod !== undefined ? item.thSamePeriod : item.khNext));
 
               const hasTh = val1 !== null && val1 !== undefined && val1 !== '';
               const hasKh = val2 !== null && val2 !== undefined && val2 !== '';
@@ -240,15 +242,15 @@ function QuarterValueCard({
                 <span>{primaryLegend}:</span>
                 <strong>
                   {formatVal(hoveredItem.lk !== undefined ? hoveredItem.lk : hoveredItem.uoc)}{' '}
-                  {hoveredItem.unit || 'Triệu đồng'}
+                  {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
               <div className="tooltip-stat-row">
                 <span className="tooltip-dot gray"></span>
                 <span>{secondaryLegend}:</span>
                 <strong>
-                  {formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : (hoveredItem.thPrev !== undefined ? hoveredItem.thPrev : hoveredItem.thSamePeriod))}{' '}
-                  {hoveredItem.unit || 'Triệu đồng'}
+                  {formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : (hoveredItem.thPrev !== undefined ? hoveredItem.thPrev : (hoveredItem.thSamePeriod !== undefined ? hoveredItem.thSamePeriod : hoveredItem.khNext)))}{' '}
+                  {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
               {hoveredItem.rate && hoveredItem.rate !== '-' && (
@@ -387,7 +389,7 @@ function QuarterRatioCard({
 
               // Normalized values for Quarter ratios
               const val1 = item.lk !== undefined ? item.lk : item.uoc;
-              const val2 = item.kh !== undefined ? item.kh : (item.thPrev !== undefined ? item.thPrev : item.thSamePeriod);
+              const val2 = item.kh !== undefined ? item.kh : (item.thPrev !== undefined ? item.thPrev : (item.thSamePeriod !== undefined ? item.thSamePeriod : item.khNext));
 
               const hasTh = val1 !== null && val1 !== undefined && val1 !== '';
               const hasKh = val2 !== null && val2 !== undefined && val2 !== '';
@@ -497,7 +499,7 @@ function QuarterRatioCard({
                 <span className="tooltip-dot gray"></span>
                 <span>{secondaryLegend}:</span>
                 <strong>
-                  {formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : (hoveredItem.thPrev !== undefined ? hoveredItem.thPrev : hoveredItem.thSamePeriod))}%
+                  {formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : (hoveredItem.thPrev !== undefined ? hoveredItem.thPrev : (hoveredItem.thSamePeriod !== undefined ? hoveredItem.thSamePeriod : hoveredItem.khNext)))}%
                 </strong>
               </div>
               {hoveredItem.diff && hoveredItem.diff !== '-' && (
@@ -535,8 +537,10 @@ export default function QuarterComparisonChart({
   const [hoveredItem7Rat, setHoveredItem7Rat] = useState(null);
   const [hoveredItem8Val, setHoveredItem8Val] = useState(null);
   const [hoveredItem8Rat, setHoveredItem8Rat] = useState(null);
+  const [hoveredItem9Val, setHoveredItem9Val] = useState(null);
+  const [hoveredItem9Rat, setHoveredItem9Rat] = useState(null);
 
-  // Visibility state for each subcard (Khu 1 and Khu 2 of Rows 1..4)
+  // Visibility state for each subcard (Khu 1 and Khu 2 of Rows 1..5)
   const [internalVisibleMap, setInternalVisibleMap] = useState({
     r1_val: true,
     r1_rat: true,
@@ -545,7 +549,9 @@ export default function QuarterComparisonChart({
     r3_val: true,
     r3_rat: true,
     r4_val: true,
-    r4_rat: true
+    r4_rat: true,
+    r5_val: true,
+    r5_rat: true
   });
 
   const visibleMap = propVisibleMap || internalVisibleMap;
@@ -571,7 +577,9 @@ export default function QuarterComparisonChart({
       r3_val: nextState,
       r3_rat: nextState,
       r4_val: nextState,
-      r4_rat: nextState
+      r4_rat: nextState,
+      r5_val: nextState,
+      r5_rat: nextState
     });
   };
 
@@ -599,6 +607,14 @@ export default function QuarterComparisonChart({
   const quarterSamePeriodData = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý III'];
   const chart8Values = quarterSamePeriodData.values;
   const chart8Ratios = quarterSamePeriodData.ratios;
+
+  // Data for Row 5 (Biểu đồ 9: Ước kết quả Quý so với kế hoạch Quý tiếp theo)
+  const quarterNextPlanData = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý III'];
+  const nextQuarterCode = quarterNextPlanData.nextQuarterCode || 'Q4';
+  const nextQuarterName = quarterNextPlanData.nextQuarterName || 'Quý IV';
+  const nextQuarterYear = selectedQuarter === 'Quý IV' ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
+  const chart9Values = quarterNextPlanData.values;
+  const chart9Ratios = quarterNextPlanData.ratios;
 
   return (
     <div className="month-charts-stack">
@@ -757,6 +773,39 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem8Rat}
           isVisible={visibleMap.r4_rat}
           onToggle={() => toggleSubcard('r4_rat')}
+          maxVal={80}
+          yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+        />
+      </div>
+
+      {/* ============================================================================== */}
+      {/* HÀNG 5: ƯỚC KẾT QUẢ QUÝ SO VỚI KẾ HOẠCH QUÝ TIẾP THEO (BIỂU ĐỒ 9)             */}
+      {/* ============================================================================== */}
+      <div className="month-row-grid">
+        <QuarterValueCard
+          title={`Ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`}
+          tag="Hàng 5 - Khu 1"
+          primaryLegend={`Ước ${quarterCode}`}
+          secondaryLegend={`KH ${nextQuarterCode}`}
+          data={chart9Values}
+          hoveredItem={hoveredItem9Val}
+          setHoveredItem={setHoveredItem9Val}
+          isVisible={visibleMap.r5_val}
+          onToggle={() => toggleSubcard('r5_val')}
+          maxVal={1750}
+          yTicks={[0, 250, 500, 750, 1000, 1250, 1500, 1750]}
+          unitLabel="Tỷ đồng"
+        />
+        <QuarterRatioCard
+          title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`}
+          tag="Hàng 5 - Khu 2"
+          primaryLegend={`Ước ${quarterCode}`}
+          secondaryLegend={`KH ${nextQuarterCode}`}
+          data={chart9Ratios}
+          hoveredItem={hoveredItem9Rat}
+          setHoveredItem={setHoveredItem9Rat}
+          isVisible={visibleMap.r5_rat}
+          onToggle={() => toggleSubcard('r5_rat')}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
         />
