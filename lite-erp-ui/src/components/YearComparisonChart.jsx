@@ -669,21 +669,8 @@ export default function YearComparisonChart({
         />
       </div>
 
-      {/* SECTION HEADER: BIỂU ĐỒ 12 */}
-      <div className="year-section-title-wrap" style={{ marginTop: '24px', marginBottom: '12px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>
-          Biểu đồ 12. Ước kết quả năm so với kế hoạch năm
-        </h2>
-        <div style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>
-          Cơ sở so sánh:{' '}
-          <span style={{ color: '#e11d48' }}>
-            Ước {selectedYear} = TB(T1–{shortCode}) × 12 – KH {selectedYear}
-          </span>
-        </div>
-      </div>
-
       {/* DÒNG 3 (2 BIỂU ĐỒ): BIỂU ĐỒ 12 - ƯỚC KẾT QUẢ NĂM SO VỚI KẾ HOẠCH NĂM */}
-      <div className="month-row-grid">
+      <div className="month-row-grid" style={{ marginTop: '16px' }}>
         <YearValueCard
           title={`Ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
           tag="Hàng 3 - Khu 1"
