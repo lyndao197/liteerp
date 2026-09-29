@@ -55,7 +55,7 @@ function QuarterValueCard({
         onClick={!isVisible ? onToggle : undefined}
         style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
       >
-        <h3 className="month-subcard-title">{title}</h3>
+        <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
           {onToggle && (
@@ -306,7 +306,7 @@ function QuarterRatioCard({
         onClick={!isVisible ? onToggle : undefined}
         style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
       >
-        <h3 className="month-subcard-title">{title}</h3>
+        <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
           {onToggle && (
@@ -653,7 +653,7 @@ export default function QuarterComparisonChart({
       {/* ============================================================================== */}
       <div className="month-row-grid">
         <QuarterValueCard
-          title={`Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`}
+          title={`Lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 1"
           primaryLegend={`LK ${quarterCode}`}
           secondaryLegend={`KH ${quarterCode}`}
@@ -664,7 +664,7 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r1_val')}
         />
         <QuarterRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 2"
           primaryLegend={`LK ${quarterCode}`}
           secondaryLegend={`KH ${quarterCode}`}
@@ -681,7 +681,7 @@ export default function QuarterComparisonChart({
       {/* ============================================================================== */}
       <div className="month-row-grid">
         <QuarterValueCard
-          title={`Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`}
+          title={`Ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 1"
           primaryLegend={`Ước ${quarterCode}`}
           secondaryLegend={`KH ${quarterCode}`}
@@ -692,7 +692,7 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r2_val')}
         />
         <QuarterRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 2"
           primaryLegend={`Ước ${quarterCode}`}
           secondaryLegend={`KH ${quarterCode}`}
@@ -709,7 +709,7 @@ export default function QuarterComparisonChart({
       {/* ============================================================================== */}
       <div className="month-row-grid">
         <QuarterValueCard
-          title={`Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQuarterName}/${prevYear}`}
+          title={`Ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`}
           tag="Hàng 3 - Khu 1"
           primaryLegend={`Ước ${quarterCode}`}
           secondaryLegend={`TH ${prevQuarterCode}`}
@@ -720,7 +720,7 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r3_val')}
         />
         <QuarterRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`}
           tag="Hàng 3 - Khu 2"
           primaryLegend={`Ước ${quarterCode}`}
           secondaryLegend={`TH ${prevQuarterCode}`}
@@ -737,7 +737,7 @@ export default function QuarterComparisonChart({
       {/* ============================================================================== */}
       <div className="month-row-grid">
         <QuarterValueCard
-          title={`Ước kết quả ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`}
+          title={`Ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`}
           tag="Hàng 4 - Khu 1"
           primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
           secondaryLegend={`TH ${quarterCode}/${prevYearNum}`}
@@ -748,7 +748,7 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r4_val')}
         />
         <QuarterRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`}
           tag="Hàng 4 - Khu 2"
           primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
           secondaryLegend={`TH ${quarterCode}/${prevYearNum}`}
