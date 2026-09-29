@@ -3082,17 +3082,6 @@ const RevenueReportDashboard = () => {
                currentView === 'debt' ? `Báo cáo công nợ năm ${selectedYear}` :
                'Báo cáo doanh thu'}
             </h1>
-            <span className="revenue-tag-pill">
-              {currentView === 'month' ? `${selectedMonth}/${selectedYear}` :
-               currentView === 'quarter' ? `${selectedQuarter}/${selectedYear}` :
-               currentView === 'year' ? `Năm ${selectedYear}` :
-               currentView === 'trend' ? `Năm ${selectedYear}` :
-               currentView === 'spdv' ? `${selectedMonth}/${selectedYear}` :
-               currentView === 'unit' ? `${selectedMonth}/${selectedYear}` :
-               currentView === 'plan_progress' ? `${selectedMonth}/${selectedYear}` :
-               currentView === 'debt' ? `${selectedMonth}/${selectedYear}` :
-               'Công nợ'}
-            </span>
           </div>
         </div>
 
