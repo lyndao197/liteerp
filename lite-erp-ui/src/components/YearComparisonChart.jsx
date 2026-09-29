@@ -608,7 +608,7 @@ export default function YearComparisonChart({
       {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 10 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH LŨY KẾ NĂM */}
       <div className="month-row-grid">
         <YearValueCard
-          title={`Lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
+          title={`Lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`}
           tag="Hàng 1 - Khu 1"
           primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
@@ -623,7 +623,7 @@ export default function YearComparisonChart({
         />
 
         <YearRatioCard
-          title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
+          title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`}
           tag="Hàng 1 - Khu 2"
           primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
