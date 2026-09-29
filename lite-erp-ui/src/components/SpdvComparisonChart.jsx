@@ -231,70 +231,21 @@ function SpdvSubcard({
           >
             {tag}
           </span>
-          <button
-            type="button"
-            className="chart-view-toggle-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '26px',
-              height: '26px',
-              padding: 0,
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            {isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
-          </button>
-          <button
-            type="button"
-            className="chart-view-toggle-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '26px',
-              height: '26px',
-              padding: 0,
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            {isVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
         </div>
       </div>
 
-      {isVisible && (
-        <div
-          className="spdv-subcard-body"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '100%',
-            marginTop: '12px',
-            paddingTop: '8px',
-            borderTop: '1px solid #f1f5f9'
-          }}
-        >
+      <div
+        className="spdv-subcard-body"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+          marginTop: '12px',
+          paddingTop: '8px',
+          borderTop: '1px solid #f1f5f9'
+        }}
+      >
           <SingleDonut
             chart={chart}
             centerLabel={centerLabel}
@@ -313,13 +264,9 @@ function SpdvSubcard({
                 <span>Giá trị:</span>
                 <strong>{hoveredSlice.value} Triệu đồng</strong>
               </div>
-              <div className="tooltip-glossary-hint">
-                <div>• <strong>SPDV</strong>: Sản phẩm - Dịch vụ</div>
-              </div>
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -425,19 +372,8 @@ export default function SpdvComparisonChart({
 
   return (
     <div className="month-charts-stack">
-      {/* Top Filter Bar: View all toggle + Năm [ 2026 ⌄ ]   Tháng [ Tháng 8 ⌄ ] */}
+      {/* Top Filter Bar: Năm [ 2026 ⌄ ]   Tháng [ Tháng 8 ⌄ ] */}
       <div className="month-top-filter-bar">
-        {/* Toggle All Button */}
-        <button
-          type="button"
-          className={`chart-view-all-btn ${!isAllVisible ? 'is-collapsed' : ''}`}
-          onClick={toggleAll}
-          title={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-          aria-label={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-        >
-          {isAllVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
         <div className="clean-filter-item">
           <span className="clean-filter-label">Năm</span>
           <div className="clean-select-wrapper">

@@ -81,17 +81,6 @@ export default function DebtComparisonChart({
     <div className="month-charts-stack">
       {/* Top Filter Bar */}
       <div className="month-top-filter-bar">
-        {/* Toggle All Button */}
-        <button
-          type="button"
-          className={`chart-view-all-btn ${!isAllVisible ? 'is-collapsed' : ''}`}
-          onClick={toggleAll}
-          title={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-          aria-label={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-        >
-          {isAllVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
         {/* Filter Năm */}
         <div className="clean-filter-item">
           <span className="clean-filter-label">Năm</span>
@@ -242,33 +231,17 @@ export default function DebtComparisonChart({
       {/* DÒNG 1: PHÂN TÍCH TUỔI NỢ & TỶ TRỌNG CƠ CẤU */}
       <div className="month-row-grid">
         {/* SUBCARD 1: GIÁ TRỊ CÔNG NỢ THEO TUỔI NỢ */}
-        <div className={`month-subcard ${!visibleCards.c1Aging ? 'is-collapsed' : ''}`}>
-          <div
-            className="month-subcard-header"
-            onClick={!visibleCards.c1Aging ? () => toggleCard('c1Aging') : undefined}
-            style={!visibleCards.c1Aging ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-          >
+        <div className="month-subcard">
+          <div className="month-subcard-header">
             <h3 className="month-subcard-title" title="Phân tích số dư công nợ phải thu theo tuổi nợ">
               Số dư công nợ phải thu theo tuổi nợ (AR Aging)
             </h3>
             <div className="month-subcard-header-actions">
               <span className="month-subcard-tag">Hàng 1 - Khu 1</span>
-              <button
-                type="button"
-                className={`chart-view-toggle-btn ${!visibleCards.c1Aging ? 'is-collapsed' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleCard('c1Aging');
-                }}
-                title={visibleCards.c1Aging ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              >
-                {visibleCards.c1Aging ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-              </button>
             </div>
           </div>
 
-          {visibleCards.c1Aging && (
-            <div className="month-subcard-svg-wrap">
+          <div className="month-subcard-svg-wrap">
               <svg viewBox="0 0 540 280" className="month-subcard-svg">
                 {/* Legends */}
                 <g transform="translate(380, 8)">
@@ -408,38 +381,21 @@ export default function DebtComparisonChart({
                 </div>
               )}
             </div>
-          )}
         </div>
 
         {/* SUBCARD 2: TỶ TRỌNG CƠ CẤU TUỔI NỢ */}
-        <div className={`month-subcard ${!visibleCards.c2Ratio ? 'is-collapsed' : ''}`}>
-          <div
-            className="month-subcard-header"
-            onClick={!visibleCards.c2Ratio ? () => toggleCard('c2Ratio') : undefined}
-            style={!visibleCards.c2Ratio ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-          >
+        <div className="month-subcard">
+          <div className="month-subcard-header">
             <h3 className="month-subcard-title" title="Tỷ trọng cơ cấu nợ và cảnh báo rủi ro">
               Tỷ trọng cơ cấu nợ & Mức độ kiểm soát rủi ro
             </h3>
             <div className="month-subcard-header-actions">
               <span className="month-subcard-tag">Hàng 1 - Khu 2</span>
-              <button
-                type="button"
-                className={`chart-view-toggle-btn ${!visibleCards.c2Ratio ? 'is-collapsed' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleCard('c2Ratio');
-                }}
-                title={visibleCards.c2Ratio ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              >
-                {visibleCards.c2Ratio ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-              </button>
             </div>
           </div>
 
-          {visibleCards.c2Ratio && (
-            <div className="month-subcard-svg-wrap">
-              <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px', height: '248px', boxSizing: 'border-box', justifyContent: 'center' }}>
+          <div className="month-subcard-svg-wrap">
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px', height: '248px', boxSizing: 'border-box', justifyContent: 'center' }}>
                 {DEBT_AGING_DATA.map((item) => (
                   <div key={item.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12.5px' }}>
@@ -475,41 +431,24 @@ export default function DebtComparisonChart({
                 ))}
               </div>
             </div>
-          )}
         </div>
       </div>
 
       {/* DÒNG 2: CÔNG NỢ THEO NHÓM ĐỐI TƯỢNG & TIẾN ĐỘ THU HỒI */}
       <div className="month-row-grid" style={{ marginTop: '16px' }}>
         {/* SUBCARD 3: CÔNG NỢ THEO NHÓM ĐỐI TƯỢNG */}
-        <div className={`month-subcard ${!visibleCards.c3Group ? 'is-collapsed' : ''}`}>
-          <div
-            className="month-subcard-header"
-            onClick={!visibleCards.c3Group ? () => toggleCard('c3Group') : undefined}
-            style={!visibleCards.c3Group ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-          >
+        <div className="month-subcard">
+          <div className="month-subcard-header">
             <h3 className="month-subcard-title" title="Cơ cấu công nợ theo 3 nhóm đối tượng khách hàng">
               Công nợ phải thu theo nhóm đối tượng khách hàng
             </h3>
             <div className="month-subcard-header-actions">
               <span className="month-subcard-tag">Hàng 2 - Khu 1</span>
-              <button
-                type="button"
-                className={`chart-view-toggle-btn ${!visibleCards.c3Group ? 'is-collapsed' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleCard('c3Group');
-                }}
-                title={visibleCards.c3Group ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              >
-                {visibleCards.c3Group ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-              </button>
             </div>
           </div>
 
-          {visibleCards.c3Group && (
-            <div className="month-subcard-svg-wrap">
-              <svg viewBox="0 0 540 280" className="month-subcard-svg">
+          <div className="month-subcard-svg-wrap">
+            <svg viewBox="0 0 540 280" className="month-subcard-svg">
                 {/* Legends */}
                 <g transform="translate(360, 8)">
                   <g>
@@ -643,38 +582,21 @@ export default function DebtComparisonChart({
                 </div>
               )}
             </div>
-          )}
         </div>
 
         {/* SUBCARD 4: TIẾN ĐỘ THU HỒI CÔNG NỢ TỪNG THÁNG */}
-        <div className={`month-subcard ${!visibleCards.c4Recovery ? 'is-collapsed' : ''}`}>
-          <div
-            className="month-subcard-header"
-            onClick={!visibleCards.c4Recovery ? () => toggleCard('c4Recovery') : undefined}
-            style={!visibleCards.c4Recovery ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-          >
+        <div className="month-subcard">
+          <div className="month-subcard-header">
             <h3 className="month-subcard-title" title="Tiến độ thu hồi công nợ các tháng so với kế hoạch">
               Tiến độ thu hồi công nợ từng tháng trong năm {selectedYear}
             </h3>
             <div className="month-subcard-header-actions">
               <span className="month-subcard-tag">Hàng 2 - Khu 2</span>
-              <button
-                type="button"
-                className={`chart-view-toggle-btn ${!visibleCards.c4Recovery ? 'is-collapsed' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleCard('c4Recovery');
-                }}
-                title={visibleCards.c4Recovery ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              >
-                {visibleCards.c4Recovery ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-              </button>
             </div>
           </div>
 
-          {visibleCards.c4Recovery && (
-            <div className="month-subcard-svg-wrap">
-              <svg viewBox="0 0 540 280" className="month-subcard-svg">
+          <div className="month-subcard-svg-wrap">
+            <svg viewBox="0 0 540 280" className="month-subcard-svg">
                 {/* Legends */}
                 <g transform="translate(370, 8)">
                   <g>
@@ -775,17 +697,12 @@ export default function DebtComparisonChart({
                 </div>
               )}
             </div>
-          )}
         </div>
       </div>
 
       {/* DÒNG 3: BẢNG CHI TIẾT CÔNG NỢ THEO KHÁCH HÀNG / ĐỐI TÁC */}
-      <div className={`month-subcard ${!visibleCards.c5Table ? 'is-collapsed' : ''}`} style={{ marginTop: '16px' }}>
-        <div
-          className="month-subcard-header"
-          onClick={!visibleCards.c5Table ? () => toggleCard('c5Table') : undefined}
-          style={!visibleCards.c5Table ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-        >
+      <div className="month-subcard" style={{ marginTop: '16px' }}>
+        <div className="month-subcard-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <h3 className="month-subcard-title">
               Bảng chi tiết top khách hàng có số dư công nợ lớn
@@ -794,22 +711,10 @@ export default function DebtComparisonChart({
           </div>
           <div className="month-subcard-header-actions">
             <span className="month-subcard-tag">Hàng 3 - Bảng số liệu</span>
-            <button
-              type="button"
-              className={`chart-view-toggle-btn ${!visibleCards.c5Table ? 'is-collapsed' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleCard('c5Table');
-              }}
-              title={visibleCards.c5Table ? 'Thu gọn bảng' : 'Mở rộng bảng'}
-            >
-              {visibleCards.c5Table ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
           </div>
         </div>
 
-        {visibleCards.c5Table && (
-          <div style={{ overflowX: 'auto', padding: '0 4px 12px 4px' }}>
+        <div style={{ overflowX: 'auto', padding: '0 4px 12px 4px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
@@ -883,7 +788,6 @@ export default function DebtComparisonChart({
               </tbody>
             </table>
           </div>
-        )}
       </div>
     </div>
   );

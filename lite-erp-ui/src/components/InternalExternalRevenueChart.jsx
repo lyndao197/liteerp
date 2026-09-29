@@ -165,11 +165,11 @@ function InternalExternalSubcard({
 }) {
   return (
     <div
-      className={`month-subcard spdv-card-item ${!isVisible ? 'is-collapsed' : ''}`}
+      className="month-subcard spdv-card-item"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        padding: isVisible ? '14px 16px' : '10px 14px',
+        padding: '14px 16px',
         transition: 'all 0.2s ease',
         backgroundColor: '#ffffff',
         border: '1px solid #e2e8f0',
@@ -179,9 +179,7 @@ function InternalExternalSubcard({
     >
       <div
         className="month-subcard-header"
-        onClick={onToggle}
         style={{
-          cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -231,63 +229,14 @@ function InternalExternalSubcard({
           >
             {tag}
           </span>
-          <button
-            type="button"
-            className="chart-view-toggle-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '26px',
-              height: '26px',
-              padding: 0,
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            {isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
-          </button>
-          <button
-            type="button"
-            className="chart-view-toggle-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '26px',
-              height: '26px',
-              padding: 0,
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              cursor: 'pointer'
-            }}
-          >
-            {isVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
         </div>
       </div>
 
-      {isVisible && (
-        <div
-          className="spdv-subcard-body"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
+      <div
+        className="spdv-subcard-body"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
             marginTop: '12px',
@@ -315,7 +264,6 @@ function InternalExternalSubcard({
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -432,19 +380,8 @@ export default function InternalExternalRevenueChart({
 
   return (
     <div className="month-charts-stack">
-      {/* Top Filter Bar: View all toggle + Năm [ 2026 ⌄ ]   Tháng [ Tháng 8 ⌄ ] */}
+      {/* Top Filter Bar: Năm [ 2026 ⌄ ]   Tháng [ Tháng 8 ⌄ ] */}
       <div className="month-top-filter-bar">
-        {/* Toggle All Button */}
-        <button
-          type="button"
-          className={`chart-view-all-btn ${!isAllVisible ? 'is-collapsed' : ''}`}
-          onClick={toggleAll}
-          title={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-          aria-label={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-        >
-          {isAllVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
         <div className="clean-filter-item">
           <span className="clean-filter-label">Năm</span>
           <div className="clean-select-wrapper">
@@ -526,31 +463,11 @@ export default function InternalExternalRevenueChart({
             >
               Biểu đồ 25 – 26
             </span>
-            <button
-              type="button"
-              onClick={() => setSection1Open(!section1Open)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '28px',
-                height: '28px',
-                borderRadius: '6px',
-                border: '1px solid #e2e8f0',
-                backgroundColor: '#ffffff',
-                color: '#64748b',
-                cursor: 'pointer'
-              }}
-              title={section1Open ? 'Thu gọn phân đoạn' : 'Mở rộng phân đoạn'}
-            >
-              {section1Open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
           </div>
         </div>
 
         {/* Section Subcards Grid */}
-        {section1Open && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {/* DÒNG 1: THÁNG */}
             <div className="month-row-grid">
               <InternalExternalSubcard
@@ -629,7 +546,6 @@ export default function InternalExternalRevenueChart({
               />
             </div>
           </div>
-        )}
       </div>
 
       {/* ========================================================
@@ -682,31 +598,11 @@ export default function InternalExternalRevenueChart({
             >
               Biểu đồ 27 – 28
             </span>
-            <button
-              type="button"
-              onClick={() => setSection2Open(!section2Open)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '28px',
-                height: '28px',
-                borderRadius: '6px',
-                border: '1px solid #e2e8f0',
-                backgroundColor: '#ffffff',
-                color: '#64748b',
-                cursor: 'pointer'
-              }}
-              title={section2Open ? 'Thu gọn phân đoạn' : 'Mở rộng phân đoạn'}
-            >
-              {section2Open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
           </div>
         </div>
 
         {/* Section Subcards Grid */}
-        {section2Open && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {/* DÒNG 1: THÁNG */}
             <div className="month-row-grid">
               <InternalExternalSubcard
@@ -785,7 +681,6 @@ export default function InternalExternalRevenueChart({
               />
             </div>
           </div>
-        )}
       </div>
 
       {/* ========================================================

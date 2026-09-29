@@ -14,7 +14,6 @@ import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import html2canvas from 'html2canvas';
 import './RevenueReportDashboard.css';
-import AbbreviationsModal from './AbbreviationsModal';
 import MonthComparisonChart from './MonthComparisonChart';
 import QuarterComparisonChart from './QuarterComparisonChart';
 import { MONTHLY_PLAN_DATA, MONTH_PREV_DATA, MONTH_LAST_YEAR_DATA, MONTH_NEXT_PLAN_DATA } from '../data/revenueMonthData';
@@ -218,7 +217,6 @@ const RevenueReportDashboard = () => {
   const [selectedCumulativeMonth, setSelectedCumulativeMonth] = useState('Lũy kế 8 tháng');
   const [selectedStream, setSelectedStream] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [isAbbrModalOpen, setIsAbbrModalOpen] = useState(false);
 
   // View States
   const [viewMode, setViewMode] = useState('chart'); // 'chart' | 'pivot' | 'list'
@@ -3099,16 +3097,6 @@ const RevenueReportDashboard = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button
-            type="button"
-            className="clean-abbr-help-btn"
-            onClick={() => setIsAbbrModalOpen(true)}
-            title="Bấm để xem giải thích các chữ viết tắt trên biểu đồ (TH, KH, LK, Ước, TĐ...)"
-          >
-            <HelpCircle size={15} />
-            <span>Giải thích viết tắt</span>
-          </button>
-
           <button className="clean-export-excel-btn" onClick={handleExportExcel}>
             Xuất Excel
           </button>
@@ -3373,7 +3361,6 @@ const RevenueReportDashboard = () => {
           </div>
         </>
       )}
-      <AbbreviationsModal isOpen={isAbbrModalOpen} onClose={() => setIsAbbrModalOpen(false)} />
     </div>
   </div>
 );

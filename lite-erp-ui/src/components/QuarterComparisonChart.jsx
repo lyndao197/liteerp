@@ -52,34 +52,15 @@ function QuarterValueCard({
   const legendX = (primaryLegend.length > 8 || secondaryLegend.length > 8) ? 412 : 445;
 
   return (
-    <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
-      <div
-        className="month-subcard-header"
-        onClick={!isVisible ? onToggle : undefined}
-        style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-      >
+    <div className="month-subcard">
+      <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
-          {onToggle && (
-            <button
-              type="button"
-              className={`chart-view-toggle-btn ${!isVisible ? 'is-collapsed' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-              }}
-              title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            >
-              {isVisible ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
-          )}
         </div>
       </div>
 
-      {isVisible && (
-        <div className="month-subcard-svg-wrap">
+      <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
             <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
@@ -271,14 +252,9 @@ function QuarterValueCard({
                   </strong>
                 </div>
               )}
-              <div className="tooltip-glossary-hint">
-                <div>• <strong>{primaryLegend}</strong>: {explainLegend(primaryLegend)}</div>
-                <div>• <strong>{secondaryLegend}</strong>: {explainLegend(secondaryLegend)}</div>
-              </div>
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -316,34 +292,15 @@ function QuarterRatioCard({
   const legendX = (primaryLegend.length > 8 || secondaryLegend.length > 8) ? 412 : 445;
 
   return (
-    <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
-      <div
-        className="month-subcard-header"
-        onClick={!isVisible ? onToggle : undefined}
-        style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-      >
+    <div className="month-subcard">
+      <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
-          {onToggle && (
-            <button
-              type="button"
-              className={`chart-view-toggle-btn ${!isVisible ? 'is-collapsed' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-              }}
-              title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            >
-              {isVisible ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
-          )}
         </div>
       </div>
 
-      {isVisible && (
-        <div className="month-subcard-svg-wrap">
+      <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
             <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
@@ -533,15 +490,9 @@ function QuarterRatioCard({
                   </strong>
                 </div>
               )}
-              <div className="tooltip-glossary-hint">
-                <div>• <strong>{primaryLegend}</strong>: {explainLegend(primaryLegend)}</div>
-                <div>• <strong>{secondaryLegend}</strong>: {explainLegend(secondaryLegend)}</div>
-                <div>• <strong>đ.%</strong>: Điểm phần trăm chênh lệch</div>
-              </div>
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -646,19 +597,8 @@ export default function QuarterComparisonChart({
 
   return (
     <div className="month-charts-stack">
-      {/* Top Filter Bar: View all toggle + Năm [ 2026 ⌄ ]   Quý [ Quý III ⌄ ] */}
+      {/* Top Filter Bar: Năm [ 2026 ⌄ ]   Quý [ Quý III ⌄ ] */}
       <div className="month-top-filter-bar">
-        {/* Toggle All Button */}
-        <button
-          type="button"
-          className={`chart-view-all-btn ${!isAllVisible ? 'is-collapsed' : ''}`}
-          onClick={toggleAll}
-          title={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-          aria-label={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-        >
-          {isAllVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
         <div className="clean-filter-item">
           <span className="clean-filter-label">Năm</span>
           <div className="clean-select-wrapper">

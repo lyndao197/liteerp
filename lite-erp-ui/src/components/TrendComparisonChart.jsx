@@ -53,12 +53,8 @@ function TrendPrevYearCard({
   const hoveredData = hoveredIdx !== null ? data[hoveredIdx] : null;
 
   return (
-    <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
-      <div
-        className="month-subcard-header"
-        onClick={!isVisible ? onToggle : undefined}
-        style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-      >
+    <div className="month-subcard">
+      <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
           title={`Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
@@ -67,25 +63,10 @@ function TrendPrevYearCard({
         </h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">Hàng 1 - Khu 1</span>
-          {onToggle && (
-            <button
-              type="button"
-              className={`chart-view-toggle-btn ${!isVisible ? 'is-collapsed' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-              }}
-              title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            >
-              {isVisible ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
-          )}
         </div>
       </div>
 
-      {isVisible && (
-        <div className="month-subcard-svg-wrap" style={{ position: 'relative' }}>
+      <div className="month-subcard-svg-wrap" style={{ position: 'relative' }}>
           <svg
             viewBox={`0 0 ${svgWidth} ${svgHeight}`}
             className="month-subcard-svg"
@@ -343,7 +324,6 @@ function TrendPrevYearCard({
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -387,12 +367,8 @@ function TrendPlanCard({
   const hoveredData = hoveredIdx !== null ? data[hoveredIdx] : null;
 
   return (
-    <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
-      <div
-        className="month-subcard-header"
-        onClick={!isVisible ? onToggle : undefined}
-        style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
-      >
+    <div className="month-subcard">
+      <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
           title={`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
@@ -401,25 +377,10 @@ function TrendPlanCard({
         </h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">Hàng 1 - Khu 2</span>
-          {onToggle && (
-            <button
-              type="button"
-              className={`chart-view-toggle-btn ${!isVisible ? 'is-collapsed' : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggle();
-              }}
-              title={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-              aria-label={isVisible ? 'Thu gọn biểu đồ' : 'Mở rộng biểu đồ'}
-            >
-              {isVisible ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
-          )}
         </div>
       </div>
 
-      {isVisible && (
-        <div className="month-subcard-svg-wrap" style={{ position: 'relative' }}>
+      <div className="month-subcard-svg-wrap" style={{ position: 'relative' }}>
           <svg
             viewBox={`0 0 ${svgWidth} ${svgHeight}`}
             className="month-subcard-svg"
@@ -671,7 +632,6 @@ function TrendPlanCard({
             </div>
           )}
         </div>
-      )}
     </div>
   );
 }
@@ -714,19 +674,8 @@ export default function TrendComparisonChart({
 
   return (
     <div className="month-charts-stack">
-      {/* Top Filter Bar: View all toggle + Năm [ 2026 ⌄ ] */}
+      {/* Top Filter Bar: Năm [ 2026 ⌄ ] */}
       <div className="month-top-filter-bar">
-        {/* Toggle All Button */}
-        <button
-          type="button"
-          className={`chart-view-all-btn ${!isAllVisible ? 'is-collapsed' : ''}`}
-          onClick={toggleAll}
-          title={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-          aria-label={isAllVisible ? 'Thu gọn tất cả biểu đồ' : 'Mở rộng tất cả biểu đồ'}
-        >
-          {isAllVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-
         <div className="clean-filter-item">
           <span className="clean-filter-label">Năm</span>
           <div className="clean-select-wrapper">
