@@ -51,7 +51,7 @@ function YearValueCard({
         onClick={!isVisible ? onToggle : undefined}
         style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
       >
-        <h3 className="month-subcard-title">{title}</h3>
+        <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
           {onToggle && (
@@ -299,7 +299,7 @@ function YearRatioCard({
         onClick={!isVisible ? onToggle : undefined}
         style={!isVisible ? { cursor: 'pointer', marginBottom: 0 } : undefined}
       >
-        <h3 className="month-subcard-title">{title}</h3>
+        <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">{tag}</span>
           {onToggle && (
@@ -619,7 +619,7 @@ export default function YearComparisonChart({
       {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 10 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH LŨY KẾ NĂM */}
       <div className="month-row-grid">
         <YearValueCard
-          title={`Biểu đồ 10. Lũy kế năm ${selectedYear} so với kế hoạch lũy kế năm ${selectedYear}`}
+          title={`Lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
           tag="Hàng 1 - Khu 1"
           primaryLegend={`LK ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
@@ -634,7 +634,7 @@ export default function YearComparisonChart({
         />
 
         <YearRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
           tag="Hàng 1 - Khu 2"
           primaryLegend={`LK ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
@@ -651,7 +651,7 @@ export default function YearComparisonChart({
       {/* DÒNG 2 (2 BIỂU ĐỒ): BIỂU ĐỒ 11 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH CẢ NĂM */}
       <div className="month-row-grid" style={{ marginTop: '16px' }}>
         <YearValueCard
-          title={`Biểu đồ 11. Lũy kế năm ${selectedYear} so với kế hoạch cả năm ${selectedYear}`}
+          title={`Lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 1"
           primaryLegend={`LK ${shortCode}`}
           secondaryLegend="KH năm"
@@ -666,7 +666,7 @@ export default function YearComparisonChart({
         />
 
         <YearRatioCard
-          title="Tỷ suất / tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 2"
           primaryLegend={`LK ${shortCode}`}
           secondaryLegend="KH năm"
