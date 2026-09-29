@@ -54,17 +54,16 @@ export function explainLegend(legend) {
     const q = s.replace('KH LK', '').trim();
     return `Kế hoạch Lũy kế Quý ${q.replace('Q', '')}`;
   }
-  if (s.startsWith('Ước Q')) {
-    const q = s.replace('Ước', '').trim();
-    return `Ước tính thực hiện ${q.includes('/') ? `Quý ${q.replace('Q', '')}` : `Quý ${q.replace('Q', '')}`}`;
+  if (s.startsWith('Ước')) {
+    const rest = s.replace('Ước', '').trim();
+    if (rest.startsWith('Q')) {
+      return `Ước tính thực hiện ${rest.includes('/') ? `Quý ${rest.replace('Q', '')}` : `Quý ${rest.replace('Q', '')}`}`;
+    }
+    return `Ước tính thực hiện ${rest ? `năm ${rest}` : 'cả năm'}`.trim();
   }
-  if (s.startsWith('KH Q')) {
-    const q = s.replace('KH', '').trim();
-    return `Kế hoạch Quý ${q.replace('Q', '')}`;
-  }
-  if (s.startsWith('TH Q')) {
-    const q = s.replace('TH', '').trim();
-    return `Thực hiện ${q.includes('/') ? `Quý ${q.replace('Q', '')} (Cùng kỳ năm trước)` : `Quý ${q.replace('Q', '')}`}`;
+  if (s.startsWith('KH') && /^\d{4}$/.test(s.replace('KH', '').trim())) {
+    const yr = s.replace('KH', '').trim();
+    return `Kế hoạch năm ${yr}`;
   }
 
   return s;

@@ -20,7 +20,7 @@ import QuarterComparisonChart from './QuarterComparisonChart';
 import { MONTHLY_PLAN_DATA, MONTH_PREV_DATA, MONTH_LAST_YEAR_DATA, MONTH_NEXT_PLAN_DATA } from '../data/revenueMonthData';
 import { QUARTER_CUMULATIVE_DATA, QUARTER_ESTIMATE_DATA, QUARTER_PREV_DATA, QUARTER_SAME_PERIOD_DATA, QUARTER_NEXT_PLAN_DATA } from '../data/revenueQuarterData';
 import YearComparisonChart from './YearComparisonChart';
-import { YEAR_CUMULATIVE_DATA, YEAR_PLAN_FULL_DATA } from '../data/revenueYearData';
+import { YEAR_CUMULATIVE_DATA, YEAR_PLAN_FULL_DATA, YEAR_ESTIMATE_DATA } from '../data/revenueYearData';
 import TrendComparisonChart from './TrendComparisonChart';
 import { MONTH_TREND_DATA } from '../data/revenueTrendData';
 import SpdvComparisonChart from './SpdvComparisonChart';
@@ -57,7 +57,7 @@ const REVENUE_SUB_BRANCHES = [
     id: 'year',
     title: '3. Phân tích theo năm',
     subtitle: 'Lũy kế, ước năm và so sánh',
-    badge: 4,
+    badge: 6,
     icon: Calendar,
     color: '#f59e0b'
   },
@@ -270,7 +270,9 @@ const RevenueReportDashboard = () => {
     c10Val: true,
     c10Rat: true,
     c11Val: true,
-    c11Rat: true
+    c11Rat: true,
+    c12Val: true,
+    c12Rat: true
   });
 
   // Toast
@@ -1974,6 +1976,7 @@ const RevenueReportDashboard = () => {
       } else if (currentView === 'year') {
         const currentYearData = YEAR_CUMULATIVE_DATA[selectedCumulativeMonth] || YEAR_CUMULATIVE_DATA['Lũy kế 8 tháng'];
         const currentPlanFullData = YEAR_PLAN_FULL_DATA[selectedCumulativeMonth] || YEAR_PLAN_FULL_DATA['Lũy kế 8 tháng'];
+        const currentEstimateData = YEAR_ESTIMATE_DATA[selectedCumulativeMonth] || YEAR_ESTIMATE_DATA['Lũy kế 8 tháng'];
         const shortCode = currentYearData.shortCode || '8T';
         const monthText = currentYearData.monthText || '8 tháng';
 
@@ -2003,6 +2006,19 @@ const RevenueReportDashboard = () => {
             rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế TH (${shortCode})`, 'Kế hoạch năm', 'Chênh lệch điểm %'],
             rRows: currentPlanFullData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.lk}%`, `${item.khYear}%`, item.diff]),
             data: currentPlanFullData
+          },
+          {
+            key: 'c12',
+            isVisible: yearVisibleCards.c12Val || yearVisibleCards.c12Rat,
+            cardIndex: 2,
+            chartType: 12,
+            sheetName: 'BieuDo_12_Uoc_vs_KH_Nam',
+            chartTitle: `Biểu đồ 12. Ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (Ước - KH)', 'Tỷ lệ hoàn thành (%)'],
+            vRows: currentEstimateData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.kh, Number((item.uoc - item.kh).toFixed(1)), item.rate]),
+            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch điểm %'],
+            rRows: currentEstimateData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.kh}%`, item.diff]),
+            data: currentEstimateData
           }
         ];
 
