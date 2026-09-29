@@ -710,7 +710,7 @@ export default function MonthComparisonChart({
           onToggle={() => toggleSubcard('r1_val')}
         />
         <MonthRatioCard
-          title="Tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}`}
           tag="Hàng 1 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
           secondaryLegend={`KH ${shortMonth}`}
@@ -740,7 +740,7 @@ export default function MonthComparisonChart({
           onToggle={() => toggleSubcard('r2_val')}
         />
         <MonthRatioCard
-          title="Tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`}
           tag="Hàng 2 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
           secondaryLegend={`TH ${prevShortMonth}`}
@@ -770,7 +770,7 @@ export default function MonthComparisonChart({
           onToggle={() => toggleSubcard('r3_val')}
         />
         <MonthRatioCard
-          title="Tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với cùng kỳ ${shortMonth}/${lastYear}`}
           tag="Hàng 3 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
           secondaryLegend={`TH ${shortMonth}/${lastYear}`}
@@ -800,7 +800,7 @@ export default function MonthComparisonChart({
           onToggle={() => toggleSubcard('r4_val')}
         />
         <MonthRatioCard
-          title="Tỷ trọng (chênh lệch điểm %)"
+          title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`}
           tag="Hàng 4 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
           secondaryLegend={`KH ${nextShortMonth}`}
