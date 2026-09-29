@@ -6,6 +6,7 @@ import {
   YEAR_PLAN_FULL_DATA,
   CUMULATIVE_MONTH_OPTIONS
 } from '../data/revenueYearData';
+import { explainLegend, explainCategory } from '../utils/reportAbbreviations';
 
 // Helper to format numbers with comma as decimal separator
 const formatVal = (val) => {
@@ -76,12 +77,18 @@ function YearValueCard({
         <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform={`translate(${legendX}, 8)`}>
-              <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
-              <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+            <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
+              <g>
+                <title>{explainLegend(primaryLegend)}</title>
+                <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
+                <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+              </g>
 
-              <rect x={0} y={16} width={12} height={12} fill="#94a3b8" rx={1} />
-              <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+              <g transform="translate(0, 16)">
+                <title>{explainLegend(secondaryLegend)}</title>
+                <rect x={0} y={0} width={12} height={12} fill="#94a3b8" rx={1} />
+                <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+              </g>
             </g>
 
             {/* Left Y Axis Title & Ticks */}
@@ -147,17 +154,20 @@ function YearValueCard({
               return (
                 <g key={`y-val-group-${item.id}`}>
                   {/* Category X Labels */}
-                  {item.lines.map((line, lIdx) => (
-                    <text
-                      key={`y-val-lbl-${item.id}-${lIdx}`}
-                      x={centerX}
-                      y={chartBottom + 16 + lIdx * 14}
-                      textAnchor="middle"
-                      className="category-x-label"
-                    >
-                      {line}
-                    </text>
-                  ))}
+                  <g style={{ cursor: 'help' }}>
+                    <title>{explainCategory(item.name)}</title>
+                    {item.lines.map((line, lIdx) => (
+                      <text
+                        key={`y-val-lbl-${item.id}-${lIdx}`}
+                        x={centerX}
+                        y={chartBottom + 16 + lIdx * 14}
+                        textAnchor="middle"
+                        className="category-x-label"
+                      >
+                        {line}
+                      </text>
+                    ))}
+                  </g>
 
                   <g
                     className="chart-bar-group"
@@ -255,6 +265,10 @@ function YearValueCard({
                   </strong>
                 </div>
               )}
+              <div className="tooltip-glossary-hint">
+                <div>• <strong>{primaryLegend}</strong>: {explainLegend(primaryLegend)}</div>
+                <div>• <strong>{secondaryLegend}</strong>: {explainLegend(secondaryLegend)}</div>
+              </div>
             </div>
           )}
         </div>
@@ -325,12 +339,18 @@ function YearRatioCard({
         <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform={`translate(${legendX}, 8)`}>
-              <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
-              <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+            <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
+              <g>
+                <title>{explainLegend(primaryLegend)}</title>
+                <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
+                <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+              </g>
 
-              <rect x={0} y={16} width={12} height={12} fill="#94a3b8" rx={1} />
-              <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+              <g transform="translate(0, 16)">
+                <title>{explainLegend(secondaryLegend)}</title>
+                <rect x={0} y={16} width={12} height={12} fill="#94a3b8" rx={1} />
+                <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+              </g>
             </g>
 
             {/* Left Y Axis Title & Ticks */}
@@ -396,17 +416,20 @@ function YearRatioCard({
               return (
                 <g key={`y-ratio-group-${item.id}`}>
                   {/* Category X Labels */}
-                  {item.lines.map((line, lIdx) => (
-                    <text
-                      key={`y-ratio-lbl-${item.id}-${lIdx}`}
-                      x={centerX}
-                      y={chartBottom + 16 + lIdx * 14}
-                      textAnchor="middle"
-                      className="category-x-label"
-                    >
-                      {line}
-                    </text>
-                  ))}
+                  <g style={{ cursor: 'help' }}>
+                    <title>{explainCategory(item.name)}</title>
+                    {item.lines.map((line, lIdx) => (
+                      <text
+                        key={`y-ratio-lbl-${item.id}-${lIdx}`}
+                        x={centerX}
+                        y={chartBottom + 16 + lIdx * 14}
+                        textAnchor="middle"
+                        className="category-x-label"
+                      >
+                        {line}
+                      </text>
+                    ))}
+                  </g>
 
                   <g
                     className="chart-bar-group"
@@ -498,6 +521,11 @@ function YearRatioCard({
                   </strong>
                 </div>
               )}
+              <div className="tooltip-glossary-hint">
+                <div>• <strong>{primaryLegend}</strong>: {explainLegend(primaryLegend)}</div>
+                <div>• <strong>{secondaryLegend}</strong>: {explainLegend(secondaryLegend)}</div>
+                <div>• <strong>đ.%</strong>: Điểm phần trăm chênh lệch</div>
+              </div>
             </div>
           )}
         </div>

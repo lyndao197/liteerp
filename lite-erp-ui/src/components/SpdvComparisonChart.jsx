@@ -313,6 +313,9 @@ function SpdvSubcard({
                 <span>Giá trị:</span>
                 <strong>{hoveredSlice.value} Triệu đồng</strong>
               </div>
+              <div className="tooltip-glossary-hint">
+                <div>• <strong>SPDV</strong>: Sản phẩm - Dịch vụ</div>
+              </div>
             </div>
           )}
         </div>
