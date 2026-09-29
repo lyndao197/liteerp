@@ -189,3 +189,124 @@ export const SPDV_STRUCTURE_DATA = {
     }
   }
 };
+
+// ==============================================================================
+// DỮ LIỆU BIỂU ĐỒ 18: DOANH THU 6 NHÓM SPDV SO VỚI KẾ HOẠCH
+// 3 Cột: Tháng (TH vs KH) | Quý (Ước vs KH) | Năm (Ước vs KH)
+// ==============================================================================
+export const SPDV_BAR_COMPARISON_DATA = {
+  '2026': {
+    'Tháng 8': {
+      monthTitle: 'Tháng 8/2026',
+      monthLegendTh: 'TH T8',
+      monthLegendKh: 'KH T8',
+      monthMax: 120,
+      monthTicks: [0, 20, 40, 60, 80, 100, 120],
+      monthItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 103.0, kh: 112.0, rate: '92%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 84.5, kh: 82.8, rate: '102%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', th: 74.0, kh: 84.1, rate: '88%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 57.1, kh: 62.1, rate: '92%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 44.6, kh: 45.5, rate: '98%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 28.1, kh: 29.0, rate: '97%', isRatePositive: false }
+      ],
+      quarterTitle: 'Quý III/2026',
+      quarterLegendTh: 'Ước Q3',
+      quarterLegendKh: 'KH Q3',
+      quarterMax: 400,
+      quarterTicks: [0, 100, 200, 300, 400],
+      quarterItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 315.8, kh: 336.0, rate: '94%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 245.0, kh: 250.0, rate: '98%', isRatePositive: false },
+        { id: 'dvs', name: 'Dịch vụ số', th: 220.7, kh: 248.0, rate: '89%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 169.3, kh: 186.0, rate: '91%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 127.8, kh: 136.0, rate: '94%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 82.6, kh: 87.0, rate: '95%', isRatePositive: false }
+      ],
+      yearTitle: 'Năm 2026',
+      yearLegendTh: 'Ước 2026',
+      yearLegendKh: 'KH 2026',
+      yearMax: 1500,
+      yearTicks: [0, 250, 500, 750, 1000, 1250, 1500],
+      yearItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 1210.0, kh: 1344.0, rate: '90%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 945.0, kh: 995.0, rate: '95%', isRatePositive: false },
+        { id: 'dvs', name: 'Dịch vụ số', th: 846.0, kh: 995.0, rate: '85%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 655.0, kh: 744.0, rate: '88%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 490.0, kh: 544.0, rate: '90%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 315.0, kh: 346.0, rate: '91%', isRatePositive: false }
+      ]
+    }
+  },
+  '2025': {
+    'Tháng 8': {
+      monthTitle: 'Tháng 8/2025',
+      monthLegendTh: 'TH T8',
+      monthLegendKh: 'KH T8',
+      monthMax: 120,
+      monthTicks: [0, 20, 40, 60, 80, 100, 120],
+      monthItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 94.7, kh: 102.6, rate: '92%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 80.2, kh: 76.0, rate: '106%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', th: 69.2, kh: 76.0, rate: '91%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 54.7, kh: 57.0, rate: '96%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 40.1, kh: 41.8, rate: '96%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 25.5, kh: 26.6, rate: '96%', isRatePositive: false }
+      ],
+      quarterTitle: 'Quý III/2025',
+      quarterLegendTh: 'Ước Q3',
+      quarterLegendKh: 'KH Q3',
+      quarterMax: 400,
+      quarterTicks: [0, 100, 200, 300, 400],
+      quarterItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 285.0, kh: 310.5, rate: '92%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 228.0, kh: 230.0, rate: '99%', isRatePositive: false },
+        { id: 'dvs', name: 'Dịch vụ số', th: 205.0, kh: 230.0, rate: '89%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 156.0, kh: 172.5, rate: '90%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 118.0, kh: 126.5, rate: '93%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 75.0, kh: 80.5, rate: '93%', isRatePositive: false }
+      ],
+      yearTitle: 'Năm 2025',
+      yearLegendTh: 'Ước 2025',
+      yearLegendKh: 'KH 2025',
+      yearMax: 1500,
+      yearTicks: [0, 250, 500, 750, 1000, 1250, 1500],
+      yearItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', th: 1100.0, kh: 1215.0, rate: '91%', isRatePositive: false },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', th: 860.0, kh: 900.0, rate: '96%', isRatePositive: false },
+        { id: 'dvs', name: 'Dịch vụ số', th: 770.0, kh: 900.0, rate: '86%', isRatePositive: false },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', th: 595.0, kh: 675.0, rate: '88%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', th: 445.0, kh: 495.0, rate: '90%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', th: 285.0, kh: 315.0, rate: '90%', isRatePositive: false }
+      ]
+    }
+  }
+};
+
+export const getSpdvBarComparisonData = (year = '2026', month = 'Tháng 8') => {
+  const defaultYear = '2026';
+  const defaultMonth = 'Tháng 8';
+  const yearData = SPDV_BAR_COMPARISON_DATA[year] || SPDV_BAR_COMPARISON_DATA[defaultYear];
+  if (yearData && yearData[month]) {
+    return yearData[month];
+  }
+
+  // Base fallback with dynamically adapted labels
+  const base = (yearData && yearData[defaultMonth]) || SPDV_BAR_COMPARISON_DATA[defaultYear][defaultMonth];
+  const mNum = parseInt(month?.match(/\d+/)?.[0] || '8', 10);
+  const qNum = Math.ceil(mNum / 3);
+  const qRoman = ['I', 'II', 'III', 'IV'][qNum - 1] || 'III';
+
+  return {
+    ...base,
+    monthTitle: `Tháng ${mNum}/${year}`,
+    monthLegendTh: `TH T${mNum}`,
+    monthLegendKh: `KH T${mNum}`,
+    quarterTitle: `Quý ${qRoman}/${year}`,
+    quarterLegendTh: `Ước Q${qNum}`,
+    quarterLegendKh: `KH Q${qNum}`,
+    yearTitle: `Năm ${year}`,
+    yearLegendTh: `Ước ${year}`,
+    yearLegendKh: `KH ${year}`
+  };
+};

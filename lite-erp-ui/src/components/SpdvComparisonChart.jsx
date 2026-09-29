@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA } from '../data/revenueSpdvData';
+import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -144,7 +144,7 @@ function SpdvSubcard({
   hoveredSlice,
   setHoveredSlice,
   cardKey,
-  isVisible = false,
+  isVisible = true,
   onToggle
 }) {
   return (
@@ -271,6 +271,458 @@ function SpdvSubcard({
   );
 }
 
+// Single Bar Column (Tháng, Quý, Năm) for Biểu đồ 18
+function SpdvBarColumn({
+  colKey,
+  title,
+  legendTh,
+  legendKh,
+  maxVal,
+  ticks,
+  items,
+  hoveredItem,
+  setHoveredItem
+}) {
+  const svgWidth = 390;
+  const svgHeight = 220;
+  const chartLeft = 106;
+  const chartRight = 310;
+  const chartWidth = chartRight - chartLeft; // 204px
+  const rateX = 384;
+  const axisY = 176;
+
+  return (
+    <div
+      className="spdv-bar-col-card"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '14px 16px',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+      }}
+    >
+      {/* Column Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          marginBottom: '10px',
+          gap: '8px'
+        }}
+      >
+        <div>
+          <div style={{ fontSize: '13.5px', fontWeight: '700', color: '#0f172a' }}>{title}</div>
+          <div style={{ fontSize: '11px', color: '#64748b' }}>Đơn vị: Tỷ đồng</div>
+        </div>
+
+        {/* Legend */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span
+              style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '2px',
+                backgroundColor: '#1e3a5f',
+                flexShrink: 0
+              }}
+            />
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#334155' }}>{legendTh}</span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span
+              style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '2px',
+                backgroundColor: '#9fb8d2',
+                flexShrink: 0
+              }}
+            />
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#334155' }}>{legendKh}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* SVG Chart */}
+      <div style={{ width: '100%', overflow: 'visible' }}>
+        <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}>
+          {items.map((item, idx) => {
+            const rowY = 8 + idx * 27;
+            const thWidth = Math.max(2, (item.th / maxVal) * chartWidth);
+            const khWidth = Math.max(2, (item.kh / maxVal) * chartWidth);
+            const isHovered = hoveredItem && hoveredItem.colKey === colKey && hoveredItem.categoryId === item.id;
+
+            return (
+              <g
+                key={`spdv-bar-row-${colKey}-${item.id}`}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => {
+                  setHoveredItem({
+                    colKey,
+                    colTitle: title,
+                    categoryId: item.id,
+                    categoryName: item.name,
+                    th: item.th,
+                    kh: item.kh,
+                    rate: item.rate,
+                    isRatePositive: item.isRatePositive,
+                    legendTh,
+                    legendKh
+                  });
+                }}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                {/* Background hover highlight */}
+                <rect
+                  x={2}
+                  y={rowY - 2}
+                  width={svgWidth - 4}
+                  height={25}
+                  rx={4}
+                  fill={isHovered ? 'rgba(37, 99, 235, 0.07)' : 'transparent'}
+                />
+
+                {/* Category Name */}
+                <text
+                  x={chartLeft - 6}
+                  y={rowY + 12}
+                  textAnchor="end"
+                  style={{
+                    fontSize: '10.5px',
+                    fontWeight: isHovered ? '700' : '600',
+                    fill: isHovered ? '#1e3a8a' : '#334155'
+                  }}
+                >
+                  {item.name}
+                </text>
+
+                {/* Bar 1: TH / Ước (Dark Navy) */}
+                <rect
+                  x={chartLeft}
+                  y={rowY}
+                  width={thWidth}
+                  height={8.5}
+                  fill="#1e3a5f"
+                  rx={1}
+                />
+                <text
+                  x={chartLeft + thWidth + 4}
+                  y={rowY + 7.5}
+                  style={{
+                    fontSize: '9px',
+                    fontWeight: '700',
+                    fill: '#0f172a'
+                  }}
+                >
+                  {item.th.toFixed(1)}
+                </text>
+
+                {/* Bar 2: KH (Light Steel Blue) */}
+                <rect
+                  x={chartLeft}
+                  y={rowY + 10.5}
+                  width={khWidth}
+                  height={8.5}
+                  fill="#9fb8d2"
+                  rx={1}
+                />
+                <text
+                  x={chartLeft + khWidth + 4}
+                  y={rowY + 18}
+                  style={{
+                    fontSize: '9px',
+                    fontWeight: '600',
+                    fill: '#475569'
+                  }}
+                >
+                  {item.kh.toFixed(1)}
+                </text>
+
+                {/* Rate: % Hoàn thành */}
+                <text
+                  x={rateX}
+                  y={rowY + 13}
+                  textAnchor="end"
+                  style={{
+                    fontSize: '11.5px',
+                    fontWeight: '700',
+                    fill: item.isRatePositive ? '#15803d' : '#dc2626'
+                  }}
+                >
+                  {item.rate}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Left vertical Y axis */}
+          <line
+            x1={chartLeft}
+            y1={4}
+            x2={chartLeft}
+            y2={axisY}
+            stroke="#64748b"
+            strokeWidth={1}
+          />
+
+          {/* Horizontal X axis */}
+          <line
+            x1={chartLeft}
+            y1={axisY}
+            x2={chartRight}
+            y2={axisY}
+            stroke="#64748b"
+            strokeWidth={1}
+          />
+
+          {/* Ticks on X axis */}
+          {ticks.map((tick) => {
+            const tx = chartLeft + (tick / maxVal) * chartWidth;
+            return (
+              <g key={`spdv-tick-${colKey}-${tick}`}>
+                <line
+                  x1={tx}
+                  y1={axisY}
+                  x2={tx}
+                  y2={axisY + 4}
+                  stroke="#64748b"
+                  strokeWidth={1}
+                />
+                <text
+                  x={tx}
+                  y={axisY + 14}
+                  textAnchor="middle"
+                  style={{
+                    fontSize: '9px',
+                    fill: '#64748b',
+                    fontWeight: '500'
+                  }}
+                >
+                  {tick}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Unit label at bottom right */}
+          <text
+            x={chartRight}
+            y={axisY + 28}
+            textAnchor="end"
+            style={{
+              fontSize: '9.5px',
+              fontStyle: 'italic',
+              fill: '#64748b'
+            }}
+          >
+            Tỷ đồng
+          </text>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// Biểu đồ 18: Doanh thu 6 nhóm SPDV so với kế hoạch
+function SpdvBarComparisonCard({
+  barData,
+  hoveredBarItem,
+  setHoveredBarItem,
+  isVisible = true
+}) {
+  return (
+    <div
+      className="month-subcard"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '16px 20px',
+        marginTop: '16px',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '10px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+      }}
+    >
+      {/* Header */}
+      <div
+        className="month-subcard-header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          margin: 0,
+          userSelect: 'none'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
+          <span
+            style={{
+              width: '4px',
+              height: '32px',
+              borderRadius: '2px',
+              backgroundColor: '#2563eb',
+              flexShrink: 0
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+            <h3
+              style={{
+                fontSize: '13.5px',
+                fontWeight: '700',
+                color: '#0f172a',
+                margin: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              Biểu đồ 18. Doanh thu 6 nhóm SPDV so với kế hoạch
+            </h3>
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: '500',
+                color: '#64748b',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              Cơ sở so sánh: Tháng: {barData.monthLegendTh} – {barData.monthLegendKh} | Quý: {barData.quarterLegendTh} – {barData.quarterLegendKh} | Năm: {barData.yearLegendTh} – {barData.yearLegendKh}
+            </span>
+          </div>
+        </div>
+
+        <div className="month-subcard-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <span
+            style={{
+              fontSize: '11.5px',
+              fontWeight: '600',
+              color: '#475569',
+              backgroundColor: '#f1f5f9',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Biểu đồ 18
+          </span>
+        </div>
+      </div>
+
+      {/* Subheading note matching screenshot */}
+      <div
+        style={{
+          fontSize: '12.5px',
+          fontWeight: '600',
+          color: '#475569',
+          fontStyle: 'italic',
+          marginTop: '12px',
+          marginBottom: '12px',
+          paddingLeft: '14px'
+        }}
+      >
+        Biểu đồ 18. Doanh thu 6 nhóm SPDV so với kế hoạch (số %: mức hoàn thành)
+      </div>
+
+      {/* 3 Columns Grid */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '16px',
+          width: '100%'
+        }}
+      >
+        <SpdvBarColumn
+          colKey="month"
+          title={barData.monthTitle}
+          legendTh={barData.monthLegendTh}
+          legendKh={barData.monthLegendKh}
+          maxVal={barData.monthMax}
+          ticks={barData.monthTicks}
+          items={barData.monthItems}
+          hoveredItem={hoveredBarItem}
+          setHoveredItem={setHoveredBarItem}
+        />
+        <SpdvBarColumn
+          colKey="quarter"
+          title={barData.quarterTitle}
+          legendTh={barData.quarterLegendTh}
+          legendKh={barData.quarterLegendKh}
+          maxVal={barData.quarterMax}
+          ticks={barData.quarterTicks}
+          items={barData.quarterItems}
+          hoveredItem={hoveredBarItem}
+          setHoveredItem={setHoveredBarItem}
+        />
+        <SpdvBarColumn
+          colKey="year"
+          title={barData.yearTitle}
+          legendTh={barData.yearLegendTh}
+          legendKh={barData.yearLegendKh}
+          maxVal={barData.yearMax}
+          ticks={barData.yearTicks}
+          items={barData.yearItems}
+          hoveredItem={hoveredBarItem}
+          setHoveredItem={setHoveredBarItem}
+        />
+      </div>
+
+      {/* Hover Tooltip Popup */}
+      {hoveredBarItem && (
+        <div
+          className="month-subcard-tooltip"
+          style={{
+            marginTop: '14px',
+            alignSelf: 'center',
+            minWidth: '280px',
+            padding: '10px 14px',
+            backgroundColor: '#0f172a',
+            color: '#ffffff',
+            borderRadius: '6px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            fontSize: '12px'
+          }}
+        >
+          <div style={{ fontWeight: '700', marginBottom: '6px', color: '#93c5fd' }}>
+            {hoveredBarItem.categoryName} ({hoveredBarItem.colTitle})
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+            <span>{hoveredBarItem.legendTh}:</span>
+            <strong>{hoveredBarItem.th.toFixed(1)} Tỷ đồng</strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+            <span>{hoveredBarItem.legendKh}:</span>
+            <strong>{hoveredBarItem.kh.toFixed(1)} Tỷ đồng</strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+            <span>Chênh lệch:</span>
+            <strong style={{ color: hoveredBarItem.th >= hoveredBarItem.kh ? '#4ade80' : '#f87171' }}>
+              {(hoveredBarItem.th - hoveredBarItem.kh) > 0 ? '+' : ''}
+              {(hoveredBarItem.th - hoveredBarItem.kh).toFixed(1)} Tỷ đồng
+            </strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #334155' }}>
+            <span>Mức hoàn thành:</span>
+            <strong style={{ color: hoveredBarItem.isRatePositive ? '#4ade80' : '#f87171' }}>
+              {hoveredBarItem.rate}
+            </strong>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function SpdvComparisonChart({
   selectedYear = '2026',
   setSelectedYear,
@@ -282,15 +734,17 @@ export default function SpdvComparisonChart({
   const [internalYear, setInternalYear] = useState('2026');
   const [internalMonth, setInternalMonth] = useState('Tháng 8');
   const [hoveredSlice, setHoveredSlice] = useState(null);
+  const [hoveredBarItem, setHoveredBarItem] = useState(null);
 
-  // Independent toggle states for each of the 6 subcards (default collapsed matching screenshot)
+  // Independent toggle states for each of the subcards (default open)
   const [internalVisibleCards, setInternalVisibleCards] = useState({
-    thMonth: false,
-    khMonth: false,
-    thQuarter: false,
-    khQuarter: false,
-    thYear: false,
-    khYear: false
+    thMonth: true,
+    khMonth: true,
+    thQuarter: true,
+    khQuarter: true,
+    thYear: true,
+    khYear: true,
+    chart18: true
   });
 
   const visibleCards = externalVisibleCards !== undefined ? externalVisibleCards : internalVisibleCards;
@@ -340,6 +794,7 @@ export default function SpdvComparisonChart({
   };
 
   const data = SPDV_STRUCTURE_DATA[activeYear] || SPDV_STRUCTURE_DATA['2026'];
+  const barData = getSpdvBarComparisonData(activeYear, activeMonth);
 
   // Calculate Quarter and Cumulative texts based on activeMonth
   const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
@@ -539,6 +994,14 @@ export default function SpdvComparisonChart({
           ))}
         </div>
       </div>
+
+      {/* BIỂU ĐỒ 18. DOANH THU 6 NHÓM SPDV SO VỚI KẾ HOẠCH */}
+      <SpdvBarComparisonCard
+        barData={barData}
+        hoveredBarItem={hoveredBarItem}
+        setHoveredBarItem={setHoveredBarItem}
+        isVisible={visibleCards.chart18 !== undefined ? visibleCards.chart18 : true}
+      />
     </div>
   );
 }

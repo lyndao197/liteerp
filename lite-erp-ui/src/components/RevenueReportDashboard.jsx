@@ -80,7 +80,7 @@ const REVENUE_SUB_BRANCHES = [
     id: 'spdv',
     title: '5. Doanh thu theo nhóm SPDV',
     subtitle: 'Cơ cấu doanh thu thực hiện và kế hoạch theo 6 nhóm SPDV',
-    badge: 2,
+    badge: 3,
     icon: PieChartIcon,
     color: '#ef4444'
   },
@@ -224,12 +224,13 @@ const RevenueReportDashboard = () => {
 
   // Card visibility state across sub-branches to control selective export
   const [spdvVisibleCards, setSpdvVisibleCards] = useState({
-    thMonth: false,
-    khMonth: false,
-    thQuarter: false,
-    khQuarter: false,
-    thYear: false,
-    khYear: false
+    thMonth: true,
+    khMonth: true,
+    thQuarter: true,
+    khQuarter: true,
+    thYear: true,
+    khYear: true,
+    chart18: true
   });
 
   const [inExVisibleCards, setInExVisibleCards] = useState({
@@ -3131,7 +3132,7 @@ const RevenueReportDashboard = () => {
             setSelectedYear={setSelectedYear}
           />
         ) : currentView === 'spdv' ? (
-          /* Cơ cấu theo nhóm SPDV: Renders Biểu đồ 16 & 17 */
+          /* Cơ cấu theo nhóm SPDV: Renders Biểu đồ 16, 17 & 18 */
           <SpdvComparisonChart
             selectedYear={selectedYear}
             setSelectedYear={setSelectedYear}
