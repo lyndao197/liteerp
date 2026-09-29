@@ -43,6 +43,7 @@ function YearValueCard({
     : [112, 226, 340, 454];
   const barWidth = data.length === 5 ? 13 : 14;
   const barGap = 2;
+  const legendX = (primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 420 : 435;
 
   return (
     <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
@@ -75,7 +76,7 @@ function YearValueCard({
         <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(435, 8)">
+            <g transform={`translate(${legendX}, 8)`}>
               <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
               <text x={16} y={10} className="legend-label">{primaryLegend}</text>
 
@@ -291,6 +292,7 @@ function YearRatioCard({
     : [210, 390];
   const barWidth = 15;
   const barGap = 2;
+  const legendX = (primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 420 : 435;
 
   return (
     <div className={`month-subcard ${!isVisible ? 'is-collapsed' : ''}`}>
@@ -323,7 +325,7 @@ function YearRatioCard({
         <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(435, 8)">
+            <g transform={`translate(${legendX}, 8)`}>
               <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
               <text x={16} y={10} className="legend-label">{primaryLegend}</text>
 
@@ -621,7 +623,7 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
           data={chart10Values}
           maxVal={3500}
@@ -636,7 +638,7 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH LK năm ${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend={`KH LK ${shortCode}`}
           data={chart10Ratios}
           maxVal={100}
@@ -653,7 +655,7 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 1"
-          primaryLegend={`LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend="KH năm"
           data={chart11Values}
           maxVal={6000}
@@ -668,7 +670,7 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 2"
-          primaryLegend={`LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}`}
           secondaryLegend="KH năm"
           data={chart11Ratios}
           maxVal={80}
