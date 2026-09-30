@@ -137,7 +137,56 @@ export default function RevenueChartDetailView({
 
   // Resolve current active chart label
   const currentChartObj = chartOptions.find(o => o.id === activeChartKey) || chartOptions[0];
-  const chartTitle = initialChartTitle || currentChartObj?.label || 'Bảng dữ liệu chi tiết';
+  const chartTitle = (activeChartKey === initialChartKey && initialChartTitle) ? initialChartTitle : (currentChartObj?.label || 'Bảng dữ liệu chi tiết');
+
+  // Month code computations for dynamic comparison headers
+  const monthNum = useMemo(() => {
+    return parseInt(selectedMonth.match(/\d+/)?.[0] || '8', 10);
+  }, [selectedMonth]);
+
+  const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
+  const prevYear = monthNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+  const nextMonthNum = monthNum === 12 ? 1 : monthNum + 1;
+  const nextYear = monthNum === 12 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
+  const lastYear = (parseInt(selectedYear, 10) - 1).toString();
+
+  // Dynamic header group title matching chart name
+  const comparisonGroupTitle = useMemo(() => {
+    if (activeBranchId !== 'month') return 'So với kế hoạch';
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
+      return `So với Tháng ${prevMonthNum}`;
+    }
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') {
+      return `So với cùng kỳ Tháng ${monthNum}`;
+    }
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
+      return `So với kế hoạch Tháng ${nextMonthNum}`;
+    }
+    return 'Thực hiện so với KH Tập đoàn';
+  }, [activeBranchId, activeChartKey, monthNum, prevMonthNum, nextMonthNum]);
+
+  // Dynamic sub-column labels
+  const targetColumnLabel = useMemo(() => {
+    if (activeBranchId !== 'month') return 'KH';
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `TH T${prevMonthNum}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'TH CK';
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `KH T${nextMonthNum}`;
+    return 'KH';
+  }, [activeBranchId, activeChartKey, prevMonthNum, nextMonthNum]);
+
+  const diffColumnLabel = useMemo(() => {
+    if (activeBranchId !== 'month') return 'KH';
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `T${prevMonthNum}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'CK';
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `T${nextMonthNum}`;
+    return 'KH';
+  }, [activeBranchId, activeChartKey, prevMonthNum, nextMonthNum]);
+
+  const rateSubLabel = useMemo(() => {
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'so CK';
+    return 'HTKH';
+  }, [activeChartKey, prevMonthNum]);
 
   // Check if current chart has estimate data (Ước)
   const hasEstimate = useMemo(() => {
@@ -400,8 +449,43 @@ export default function RevenueChartDetailView({
   // Filtered rows for Month branch (Customer & SPDV matrix)
   const filteredMonthRows = useMemo(() => {
     if (activeBranchId !== 'month') return [];
-    const rawRows = getCustomerSpdvMonthData(selectedMonth);
-    return rawRows.filter(row => {
+    const baseRows = getCustomerSpdvMonthData(selectedMonth);
+
+    let prevRows = null;
+    let nextRows = null;
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
+      prevRows = getCustomerSpdvMonthData(`Tháng ${prevMonthNum}`);
+    } else if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
+      nextRows = getCustomerSpdvMonthData(`Tháng ${nextMonthNum}`);
+    }
+
+    const processedRows = baseRows.map((item, idx) => {
+      let targetVal = item.kh;
+      if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
+        targetVal = prevRows ? (prevRows[idx]?.th || Math.round(item.th * 0.95)) : Math.round(item.th * 0.95);
+      } else if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') {
+        targetVal = Math.round(item.th * 0.9);
+      } else if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
+        targetVal = nextRows ? (nextRows[idx]?.kh || Math.round(item.kh * 1.05)) : Math.round(item.kh * 1.05);
+      }
+
+      const diff = item.th - targetVal;
+      const rateNum = targetVal > 0 ? Number(((item.th / targetVal) * 100).toFixed(1)) : 100;
+      const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+      const isPass = diff >= 0 || rateNum >= 100;
+
+      return {
+        ...item,
+        targetVal,
+        diff,
+        diffFormatted: (diff > 0 ? '+' : '') + diff,
+        rate,
+        rateNum,
+        isPass
+      };
+    });
+
+    return processedRows.filter(row => {
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q ||
         row.customerGroup.toLowerCase().includes(q) ||
@@ -413,22 +497,22 @@ export default function RevenueChartDetailView({
       if (statusFilter === 'fail') return row.isPass === false;
       return true;
     });
-  }, [activeBranchId, selectedMonth, searchQuery, statusFilter]);
+  }, [activeBranchId, selectedMonth, searchQuery, statusFilter, activeChartKey, prevMonthNum, nextMonthNum]);
 
   // Totals for Month branch matching user screenshot structure
   const monthTotals = useMemo(() => {
-    const allRows = getCustomerSpdvMonthData(selectedMonth);
-    const targetRows = (searchQuery || statusFilter !== 'all') ? filteredMonthRows : allRows;
+    const targetRows = filteredMonthRows;
 
     const calcGroup = (rows) => {
-      const sumKh = rows.reduce((acc, r) => acc + (r.kh || 0), 0);
-      const sumUocTh = rows.reduce((acc, r) => acc + (r.uocTh || Math.round(((r.kh || 0) + (r.th || 0)) / 2)), 0);
+      const sumTarget = rows.reduce((acc, r) => acc + (r.targetVal !== undefined ? r.targetVal : (r.kh || 0)), 0);
+      const sumUocTh = rows.reduce((acc, r) => acc + (r.uocTh || Math.round(((r.targetVal || r.kh || 0) + (r.th || 0)) / 2)), 0);
       const sumTh = rows.reduce((acc, r) => acc + (r.th || 0), 0);
-      const diff = sumTh - sumKh;
-      const rateNum = sumKh > 0 ? Number(((sumTh / sumKh) * 100).toFixed(1)) : 100;
+      const diff = sumTh - sumTarget;
+      const rateNum = sumTarget > 0 ? Number(((sumTh / sumTarget) * 100).toFixed(1)) : 100;
       const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
       return {
-        kh: sumKh,
+        kh: sumTarget,
+        targetVal: sumTarget,
         uocTh: sumUocTh,
         th: sumTh,
         diff,
@@ -447,7 +531,7 @@ export default function RevenueChartDetailView({
       internal: calcGroup(internalRows),
       total: calcGroup(targetRows)
     };
-  }, [selectedMonth, searchQuery, statusFilter, filteredMonthRows]);
+  }, [filteredMonthRows]);
 
   // Filtered rows by search and status for non-month branches
   const filteredRows = useMemo(() => {
@@ -738,7 +822,7 @@ export default function RevenueChartDetailView({
                 Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span>
               </h3>
               <span className="table-row-count-badge">
-                {filteredRows.length} dòng
+                {activeBranchId === 'month' ? filteredMonthRows.length : filteredRows.length} dòng
               </span>
             </div>
 
@@ -762,7 +846,7 @@ export default function RevenueChartDetailView({
                   className={`filter-chip-btn ${statusFilter === 'all' ? 'active' : ''}`}
                   onClick={() => setStatusFilter('all')}
                 >
-                  Tất cả ({tableData.rows.length})
+                  Tất cả ({activeBranchId === 'month' ? (getCustomerSpdvMonthData(selectedMonth)?.length || 9) : tableData.rows.length})
                 </button>
                 <button
                   type="button"
@@ -801,10 +885,10 @@ export default function RevenueChartDetailView({
                   <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{selectedMonth}</th>
                 </tr>
                 <tr>
-                  <th colSpan={hasEstimate ? 5 : 4} className="th-plan-group">Thực hiện so với KH Tập đoàn</th>
+                  <th colSpan={hasEstimate ? 5 : 4} className="th-plan-group">{comparisonGroupTitle}</th>
                 </tr>
                 <tr className="th-sub-row">
-                  <th className="th-sub-kh">KH</th>
+                  <th className="th-sub-kh">{targetColumnLabel}</th>
                   {hasEstimate && (
                     <th className="th-sub-uoc">
                       <span className="th-sub-uoc-line">Ước</span>
@@ -815,11 +899,11 @@ export default function RevenueChartDetailView({
                   <th className="th-sub-diff">
                     <span className="th-sub-line">+/-</span>
                     <span className="th-sub-line">so</span>
-                    <span className="th-sub-line">KH</span>
+                    <span className="th-sub-line">{diffColumnLabel}</span>
                   </th>
                   <th className="th-sub-rate">
                     <span className="th-sub-line">%</span>
-                    <span className="th-sub-line">HTKH</span>
+                    <span className="th-sub-line">{rateSubLabel}</span>
                   </th>
                 </tr>
               </thead>
@@ -831,10 +915,10 @@ export default function RevenueChartDetailView({
                       <td className="td-customer-name font-semibold">{row.customerName}</td>
                       <td className="td-spdv-group">{row.spdvGroup}</td>
                       <td className="td-spdv-name">{row.spdvName}</td>
-                      <td className="td-kh text-right">{row.kh}</td>
+                      <td className="td-kh text-right">{row.targetVal !== undefined ? row.targetVal : row.kh}</td>
                       {hasEstimate && (
                         <td className="td-uoc-th text-right font-medium text-orange">
-                          {row.uocTh !== undefined ? row.uocTh : Math.round(((row.kh || 0) + (row.th || 0)) / 2)}
+                          {row.uocTh !== undefined ? row.uocTh : Math.round(((row.targetVal || row.kh || 0) + (row.th || 0)) / 2)}
                         </td>
                       )}
                       <td className="td-th text-right font-medium">{row.th}</td>
