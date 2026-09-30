@@ -150,43 +150,43 @@ export default function RevenueChartDetailView({
   const nextYear = monthNum === 12 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
   const lastYear = (parseInt(selectedYear, 10) - 1).toString();
 
-  // Dynamic header group title matching chart name
+  // Dynamic header group title matching chart name with year
   const comparisonGroupTitle = useMemo(() => {
     if (activeBranchId !== 'month') return 'So với kế hoạch';
     if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
-      return `So với Tháng ${prevMonthNum}`;
+      return `So với Tháng ${prevMonthNum}/${prevYear}`;
     }
     if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') {
-      return `So với cùng kỳ Tháng ${monthNum}`;
+      return `So với cùng kỳ Tháng ${monthNum}/${lastYear}`;
     }
     if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
-      return `So với kế hoạch Tháng ${nextMonthNum}`;
+      return `So với kế hoạch Tháng ${nextMonthNum}/${nextYear}`;
     }
     return 'Thực hiện so với KH Tập đoàn';
-  }, [activeBranchId, activeChartKey, monthNum, prevMonthNum, nextMonthNum]);
+  }, [activeBranchId, activeChartKey, monthNum, prevMonthNum, prevYear, nextMonthNum, nextYear, lastYear]);
 
-  // Dynamic sub-column labels
+  // Dynamic sub-column labels with year
   const targetColumnLabel = useMemo(() => {
     if (activeBranchId !== 'month') return 'KH';
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `TH T${prevMonthNum}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'TH CK';
-    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `KH T${nextMonthNum}`;
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `TH T${prevMonthNum}/${prevYear}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `TH T${monthNum}/${lastYear}`;
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `KH T${nextMonthNum}/${nextYear}`;
     return 'KH';
-  }, [activeBranchId, activeChartKey, prevMonthNum, nextMonthNum]);
+  }, [activeBranchId, activeChartKey, prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear]);
 
   const diffColumnLabel = useMemo(() => {
     if (activeBranchId !== 'month') return 'KH';
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `T${prevMonthNum}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'CK';
-    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `T${nextMonthNum}`;
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `T${prevMonthNum}/${prevYear}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `T${monthNum}/${lastYear}`;
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `T${nextMonthNum}/${nextYear}`;
     return 'KH';
-  }, [activeBranchId, activeChartKey, prevMonthNum, nextMonthNum]);
+  }, [activeBranchId, activeChartKey, prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear]);
 
   const rateSubLabel = useMemo(() => {
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return 'so CK';
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}/${prevYear}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `so T${monthNum}/${lastYear}`;
     return 'HTKH';
-  }, [activeChartKey, prevMonthNum]);
+  }, [activeChartKey, prevMonthNum, prevYear, monthNum, lastYear]);
 
   // Check if current chart has estimate data (Ước)
   const hasEstimate = useMemo(() => {
@@ -882,7 +882,7 @@ export default function RevenueChartDetailView({
                   <th rowSpan={3} className="th-customer-name">Tên khách hàng</th>
                   <th rowSpan={3} className="th-spdv-group">Nhóm SPDV</th>
                   <th rowSpan={3} className="th-spdv-name">Tên SPDV</th>
-                  <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{selectedMonth}</th>
+                  <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{selectedMonth}/{selectedYear}</th>
                 </tr>
                 <tr>
                   <th colSpan={hasEstimate ? 5 : 4} className="th-plan-group">{comparisonGroupTitle}</th>

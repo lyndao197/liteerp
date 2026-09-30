@@ -1179,6 +1179,7 @@ const ExecutiveGaugeMasterCard = ({
 
   const isDefaultT8 = monthNum === 8 && selectedYear === '2026';
   const prevMonthNum = monthNum - 1 === 0 ? 12 : monthNum - 1;
+  const prevYear = monthNum - 1 === 0 ? +selectedYear - 1 : selectedYear;
   const samePeriodYear = +selectedYear - 1;
   const monthsLeft = 12 - monthNum > 0 ? 12 - monthNum : 4;
 
@@ -1817,7 +1818,7 @@ const ExecutiveGaugeMasterCard = ({
         <div className="tr-middle-compare-wrap">
           {/* Compare Col 1: So tháng trước (T-1) */}
           <div className="tr-metric-compare-col">
-            <span className="tr-compare-col-label">So T{prevMonthNum}</span>
+            <span className="tr-compare-col-label">So T{prevMonthNum}/{prevYear}</span>
             <div className={`tr-compare-col-value ${cfg.diffPrevIsNeg ? 'negative' : 'positive'}`}>
               <span className="tr-compare-col-arrow">{cfg.diffPrevIsNeg ? '▼' : '▲'}</span>
               <span className="tr-compare-col-num">{cfg.diffPrevVal}</span>

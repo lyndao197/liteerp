@@ -58,7 +58,7 @@ function MonthValueCard({
       <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(445, 8)" style={{ cursor: 'help' }}>
+            <g transform="translate(425, 8)" style={{ cursor: 'help' }}>
               <g>
                 <title>{explainLegend(primaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
@@ -339,7 +339,7 @@ function MonthRatioCard({
       <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(445, 8)" style={{ cursor: 'help' }}>
+            <g transform="translate(425, 8)" style={{ cursor: 'help' }}>
               <g>
                 <title>{explainLegend(primaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
@@ -751,7 +751,7 @@ export default function MonthComparisonChart({
           title={`Kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`}
           tag="Hàng 2 - Khu 1"
           primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`TH ${prevShortMonth}`}
+          secondaryLegend={`TH ${prevShortMonth}/${prevYear}`}
           data={chart2Values}
           isBlank={isBlank}
           hoveredItem={hoveredItem2Val}
@@ -767,7 +767,7 @@ export default function MonthComparisonChart({
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`}
           tag="Hàng 2 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`TH ${prevShortMonth}`}
+          secondaryLegend={`TH ${prevShortMonth}/${prevYear}`}
           data={chart2Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem2Rat}
@@ -819,7 +819,7 @@ export default function MonthComparisonChart({
           title={`Kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`}
           tag="Hàng 4 - Khu 1"
           primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`KH ${nextShortMonth}`}
+          secondaryLegend={`KH ${nextShortMonth}/${nextYear}`}
           data={chart4Values}
           isBlank={isBlank}
           hoveredItem={hoveredItem4Val}
@@ -835,7 +835,7 @@ export default function MonthComparisonChart({
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`}
           tag="Hàng 4 - Khu 2"
           primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`KH ${nextShortMonth}`}
+          secondaryLegend={`KH ${nextShortMonth}/${nextYear}`}
           data={chart4Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem4Rat}
