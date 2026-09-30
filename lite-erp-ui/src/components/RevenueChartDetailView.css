@@ -539,7 +539,7 @@
   border-collapse: collapse;
   font-size: 13.5px;
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: none;
 }
 
 .chart-detail-month-table thead th {

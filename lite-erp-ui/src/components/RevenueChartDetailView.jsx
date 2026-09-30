@@ -699,86 +699,58 @@ export default function RevenueChartDetailView({
       {/* 2. TABLE CONTROLS & MAIN DATA TABLE (ONLY TABLE REMAINS)                 */}
       {/* ========================================================================= */}
       <div className="chart-detail-table-card">
-        <div className="chart-detail-table-header">
-          <div className="table-header-title-box">
-            {activeBranchId === 'month' && (
-              <button
-                type="button"
-                className="chart-detail-back-btn"
-                onClick={onBack}
-                title="Quay lại nhóm biểu đồ"
-                style={{ marginRight: '8px' }}
-              >
-                <ArrowLeft size={15} />
-                <span>Quay lại</span>
-              </button>
-            )}
-            <TableProperties size={18} color="#e11d48" />
-            <h3 className="table-header-title">
-              {activeBranchId === 'month' ? (
-                <>Thực hiện so với kế hoạch Tập đoàn</>
-              ) : (
-                <>Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span></>
-              )}
-            </h3>
-            <span className="table-row-count-badge">
-              {activeBranchId === 'month' ? `${filteredMonthRows.length} dòng` : `${filteredRows.length} dòng`}
-            </span>
-          </div>
-
-          <div className="table-header-actions">
-            {/* Search Input */}
-            <div className="table-search-box">
-              <Search size={14} className="search-icon" />
-              <input
-                type="text"
-                placeholder={activeBranchId === 'month' ? 'Tìm khách hàng, SPDV...' : 'Tìm kiếm chỉ tiêu...'}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="table-search-input"
-              />
+        {activeBranchId !== 'month' && (
+          <div className="chart-detail-table-header">
+            <div className="table-header-title-box">
+              <TableProperties size={18} color="#e11d48" />
+              <h3 className="table-header-title">
+                Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span>
+              </h3>
+              <span className="table-row-count-badge">
+                {filteredRows.length} dòng
+              </span>
             </div>
 
-            {/* Filter Buttons */}
-            <div className="table-filter-group">
-              <button
-                type="button"
-                className={`filter-chip-btn ${statusFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('all')}
-              >
-                Tất cả ({activeBranchId === 'month' ? (getCustomerSpdvMonthData(selectedMonth) || []).length : tableData.rows.length})
-              </button>
-              <button
-                type="button"
-                className={`filter-chip-btn ${statusFilter === 'pass' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('pass')}
-              >
-                Đạt ≥ 100%
-              </button>
-              <button
-                type="button"
-                className={`filter-chip-btn ${statusFilter === 'fail' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('fail')}
-              >
-                Chưa đạt &lt; 100%
-              </button>
-            </div>
+            <div className="table-header-actions">
+              {/* Search Input */}
+              <div className="table-search-box">
+                <Search size={14} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm chỉ tiêu..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="table-search-input"
+                />
+              </div>
 
-            {/* Export Excel Button in Month branch header */}
-            {activeBranchId === 'month' && (
-              <button
-                type="button"
-                className="chart-detail-export-btn"
-                onClick={handleExportTableExcel}
-                title="Xuất bảng dữ liệu chi tiết ra file Excel"
-                style={{ padding: '6px 14px', fontSize: '12.5px' }}
-              >
-                <Download size={14} />
-                <span>Xuất Excel</span>
-              </button>
-            )}
+              {/* Filter Buttons */}
+              <div className="table-filter-group">
+                <button
+                  type="button"
+                  className={`filter-chip-btn ${statusFilter === 'all' ? 'active' : ''}`}
+                  onClick={() => setStatusFilter('all')}
+                >
+                  Tất cả ({tableData.rows.length})
+                </button>
+                <button
+                  type="button"
+                  className={`filter-chip-btn ${statusFilter === 'pass' ? 'active' : ''}`}
+                  onClick={() => setStatusFilter('pass')}
+                >
+                  Đạt ≥ 100%
+                </button>
+                <button
+                  type="button"
+                  className={`filter-chip-btn ${statusFilter === 'fail' ? 'active' : ''}`}
+                  onClick={() => setStatusFilter('fail')}
+                >
+                  Chưa đạt &lt; 100%
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ========================================================================= */}
         {/* 4. MAIN DATA TABLE                                                        */}
@@ -1006,25 +978,27 @@ export default function RevenueChartDetailView({
       {/* ========================================================================= */}
       {/* 5. BOTTOM ACTIONS                                                         */}
       {/* ========================================================================= */}
-      <div className="chart-detail-bottom-bar">
-        <button
-          type="button"
-          className="chart-detail-back-btn large"
-          onClick={onBack}
-        >
-          <ArrowLeft size={16} />
-          <span>Quay lại nhóm biểu đồ</span>
-        </button>
+      {activeBranchId !== 'month' && (
+        <div className="chart-detail-bottom-bar">
+          <button
+            type="button"
+            className="chart-detail-back-btn large"
+            onClick={onBack}
+          >
+            <ArrowLeft size={16} />
+            <span>Quay lại nhóm biểu đồ</span>
+          </button>
 
-        <button
-          type="button"
-          className="chart-detail-export-btn large"
-          onClick={handleExportTableExcel}
-        >
-          <Download size={16} />
-          <span>Tải bảng dữ liệu chi tiết (.xlsx)</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            className="chart-detail-export-btn large"
+            onClick={handleExportTableExcel}
+          >
+            <Download size={16} />
+            <span>Tải bảng dữ liệu chi tiết (.xlsx)</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
