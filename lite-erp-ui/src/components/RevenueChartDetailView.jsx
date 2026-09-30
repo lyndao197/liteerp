@@ -121,7 +121,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 110,
     baseTh: 100,
     baseUoc: 105,
-    type: 'internal'
+    type: 'internal',
+    isInternational: false
   },
   {
     id: 'row-2',
@@ -132,7 +133,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 50,
     baseTh: 55,
     baseUoc: 52,
-    type: 'internal'
+    type: 'internal',
+    isInternational: false
   },
   {
     id: 'row-3',
@@ -143,7 +145,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 30,
     baseTh: 25,
     baseUoc: 27,
-    type: 'internal'
+    type: 'internal',
+    isInternational: false
   },
   {
     id: 'row-4',
@@ -154,7 +157,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 45,
     baseTh: 46,
     baseUoc: 45,
-    type: 'internal'
+    type: 'internal',
+    isInternational: false
   },
   {
     id: 'row-5',
@@ -165,7 +169,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 75,
     baseTh: 70,
     baseUoc: 72,
-    type: 'internal'
+    type: 'internal',
+    isInternational: true
   },
   {
     id: 'row-6',
@@ -176,7 +181,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 55,
     baseTh: 50,
     baseUoc: 52,
-    type: 'internal'
+    type: 'internal',
+    isInternational: true
   },
   {
     id: 'row-7',
@@ -187,7 +193,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 40,
     baseTh: 38,
     baseUoc: 39,
-    type: 'internal'
+    type: 'internal',
+    isInternational: true
   },
   // 8-15: Khách hàng ngoài Tập đoàn (External)
   {
@@ -199,7 +206,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 160,
     baseTh: 150,
     baseUoc: 155,
-    type: 'external'
+    type: 'external',
+    isInternational: false
   },
   {
     id: 'row-9',
@@ -210,7 +218,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 110,
     baseTh: 100,
     baseUoc: 105,
-    type: 'external'
+    type: 'external',
+    isInternational: false
   },
   {
     id: 'row-10',
@@ -221,7 +230,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 90,
     baseTh: 85,
     baseUoc: 88,
-    type: 'external'
+    type: 'external',
+    isInternational: false
   },
   {
     id: 'row-11',
@@ -232,7 +242,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 85,
     baseTh: 90,
     baseUoc: 88,
-    type: 'external'
+    type: 'external',
+    isInternational: false
   },
   {
     id: 'row-12',
@@ -243,7 +254,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 50,
     baseTh: 48,
     baseUoc: 49,
-    type: 'external'
+    type: 'external',
+    isInternational: false
   },
   {
     id: 'row-13',
@@ -254,7 +266,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 95,
     baseTh: 90,
     baseUoc: 92,
-    type: 'external'
+    type: 'external',
+    isInternational: true
   },
   {
     id: 'row-14',
@@ -265,7 +278,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 55,
     baseTh: 50,
     baseUoc: 52,
-    type: 'external'
+    type: 'external',
+    isInternational: true
   },
   {
     id: 'row-15',
@@ -276,7 +290,8 @@ const CUSTOMER_SPDV_MASTER_DATA = [
     baseKh: 60,
     baseTh: 62,
     baseUoc: 61,
-    type: 'external'
+    type: 'external',
+    isInternational: true
   }
 ];
 
@@ -1030,10 +1045,12 @@ export default function RevenueChartDetailView({
 
     const externalRows = targetRows.filter(r => r.type === 'external');
     const internalRows = targetRows.filter(r => r.type === 'internal');
+    const internationalRows = targetRows.filter(r => r.isInternational || r.customerGroup?.includes('nước ngoài'));
 
     return {
       external: calcGroup(externalRows),
       internal: calcGroup(internalRows),
+      international: calcGroup(internationalRows),
       total: calcGroup(targetRows)
     };
   }, [filteredMatrixRows, hasEstimate]);
@@ -1156,6 +1173,7 @@ export default function RevenueChartDetailView({
 
         exportRows.push(buildSummaryExport('Tổng doanh thu ngoài Tập đoàn', matrixTotals.external));
         exportRows.push(buildSummaryExport('Tổng doanh thu nội bộ', matrixTotals.internal));
+        exportRows.push(buildSummaryExport('Tổng doanh thu quốc tế', matrixTotals.international));
         exportRows.push(buildSummaryExport('Tổng doanh thu', matrixTotals.total));
 
         const ws = XLSX.utils.json_to_sheet(exportRows);
@@ -1479,7 +1497,25 @@ export default function RevenueChartDetailView({
                   </td>
                 </tr>
 
-                {/* Summary Row 3: Tổng doanh thu (Highlight blue background) */}
+                {/* Summary Row 3: Tổng doanh thu quốc tế */}
+                <tr className="month-summary-row row-international">
+                  <td colSpan={4} className="summary-title-cell font-bold">
+                    Tổng doanh thu quốc tế
+                  </td>
+                  <td className="td-kh text-right font-bold">{matrixTotals.international.kh}</td>
+                  {hasEstimate && (
+                    <td className="td-uoc-th text-right font-bold text-orange">{matrixTotals.international.uocTh}</td>
+                  )}
+                  <td className="td-th text-right font-bold">{matrixTotals.international.th}</td>
+                  <td className={`td-diff text-right font-bold ${matrixTotals.international.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.international.diffFormatted}
+                  </td>
+                  <td className={`td-rate text-right font-bold ${matrixTotals.international.isPass ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.international.rate}
+                  </td>
+                </tr>
+
+                {/* Summary Row 4: Tổng doanh thu (Highlight blue background) */}
                 <tr className="month-summary-row row-grand-total">
                   <td colSpan={4} className="summary-title-cell font-extrabold">
                     Tổng doanh thu

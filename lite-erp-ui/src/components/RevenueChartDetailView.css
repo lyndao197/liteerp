@@ -724,7 +724,8 @@
 }
 
 .chart-detail-month-table tfoot tr.row-external,
-.chart-detail-month-table tfoot tr.row-internal {
+.chart-detail-month-table tfoot tr.row-internal,
+.chart-detail-month-table tfoot tr.row-international {
   background-color: #ffffff;
 }
 
