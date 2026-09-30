@@ -424,7 +424,6 @@ function Sidebar({ isSidebarOpen = true, onToggleSidebar }) {
                     <div className="sidebar-chart-info">
                       <div className="sidebar-chart-title-row">
                         <span className="sidebar-chart-title">{sub.title}</span>
-                        <span className="sidebar-chart-badge">{sub.badge}</span>
                       </div>
                       <span className="sidebar-chart-subtitle">{sub.subtitle}</span>
                     </div>
