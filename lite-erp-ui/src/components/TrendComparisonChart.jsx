@@ -63,19 +63,6 @@ function TrendPrevYearCard({
           {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          {onOpenDetail && (
-            <button
-              className="subcard-detail-action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-              title="Xem danh sách chi tiết"
-            >
-              <TableProperties size={13} />
-              <span>Xem chi tiết</span>
-            </button>
-          )}
           <span className="month-subcard-tag">Hàng 1 - Khu 1</span>
         </div>
       </div>
@@ -338,6 +325,23 @@ function TrendPrevYearCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem danh sách chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <TableProperties size={13} />
+            <span>Xem chi tiết</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -391,19 +395,6 @@ function TrendPlanCard({
           {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          {onOpenDetail && (
-            <button
-              className="subcard-detail-action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-              title="Xem danh sách chi tiết"
-            >
-              <TableProperties size={13} />
-              <span>Xem chi tiết</span>
-            </button>
-          )}
           <span className="month-subcard-tag">Hàng 1 - Khu 2</span>
         </div>
       </div>
@@ -660,6 +651,23 @@ function TrendPlanCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem danh sách chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <TableProperties size={13} />
+            <span>Xem chi tiết</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

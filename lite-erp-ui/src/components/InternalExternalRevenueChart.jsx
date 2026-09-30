@@ -217,19 +217,7 @@ function InternalExternalSubcard({
         </div>
 
         <div className="month-subcard-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-          {onOpenDetail && (
-            <button
-              className="subcard-detail-action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-              title="Xem danh sách chi tiết"
-            >
-              <TableProperties size={13} />
-              <span>Xem chi tiết</span>
-            </button>
-          )}
+
           <span
             style={{
               fontSize: '11.5px',
@@ -278,6 +266,23 @@ function InternalExternalSubcard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem danh sách chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <TableProperties size={13} />
+            <span>Xem chi tiết</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

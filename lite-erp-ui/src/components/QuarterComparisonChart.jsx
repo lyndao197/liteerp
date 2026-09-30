@@ -57,19 +57,6 @@ function QuarterValueCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
-          {onOpenDetail && (
-            <button
-              className="subcard-detail-action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-              title="Xem danh sách chi tiết"
-            >
-              <TableProperties size={13} />
-              <span>Xem chi tiết</span>
-            </button>
-          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -269,6 +256,23 @@ function QuarterValueCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem danh sách chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <TableProperties size={13} />
+            <span>Xem chi tiết</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -311,19 +315,6 @@ function QuarterRatioCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
-          {onOpenDetail && (
-            <button
-              className="subcard-detail-action-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenDetail();
-              }}
-              title="Xem danh sách chi tiết"
-            >
-              <TableProperties size={13} />
-              <span>Xem chi tiết</span>
-            </button>
-          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -521,6 +512,23 @@ function QuarterRatioCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem danh sách chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <TableProperties size={13} />
+            <span>Xem chi tiết</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
