@@ -442,7 +442,8 @@ export default function RevenueChartDetailView({
       if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
         return `Lũy kế thực hiện so với KH cả năm ${selectedYear}`;
       }
-      return `Lũy kế TH so với KH lũy kế ${selectedCumulativeMonth}/${selectedYear}`;
+      const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
+      return `So với luỹ kế KH ${cleanMonth} ${selectedYear}`;
     }
 
     // Month branch
