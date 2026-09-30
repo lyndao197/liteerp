@@ -102,7 +102,7 @@ function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKe
                 dominantBaseline="central"
                 pointerEvents="none"
                 style={{
-                  fontSize: '11px',
+                  fontSize: slice.percent < 10 ? '9.5px' : '10.5px',
                   fontWeight: '700',
                   fill: '#ffffff',
                   textShadow: '0 1px 2px rgba(0,0,0,0.35)'
@@ -120,7 +120,7 @@ function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKe
           y={cy + 4}
           textAnchor="middle"
           style={{
-            fontSize: centerLabel && centerLabel.length > 10 ? '12.5px' : '14.5px',
+            fontSize: centerLabel && centerLabel.length > 10 ? '12px' : '13.5px',
             fontWeight: '800',
             fill: '#0f172a',
             letterSpacing: '-0.2px'
@@ -286,10 +286,10 @@ function SpdvBarSubcard({
 
   const svgWidth = 540;
   const svgHeight = 280;
-  const chartLeft = 125;
-  const chartRight = 475;
-  const chartWidth = chartRight - chartLeft; // 350px
-  const chartTop = 36;
+  const chartLeft = 112;
+  const chartRight = 392;
+  const chartWidth = chartRight - chartLeft; // 280px
+  const chartTop = 38;
   const chartBottom = 236;
 
   return (
@@ -308,17 +308,25 @@ function SpdvBarSubcard({
           onMouseLeave={() => setHoveredItem(null)}
         >
           {/* Top Legend */}
-          <g transform={`translate(${chartRight - 165}, 10)`}>
+          <g transform="translate(190, 10)">
             <rect x={0} y={1} width={12} height={9} fill="#e11d48" rx={1.5} />
-            <text x={16} y={9} style={{ fontSize: '11px', fontWeight: '600', fill: '#1e293b' }}>
+            <text x={16} y={9} style={{ fontSize: '10.5px', fontWeight: '600', fill: '#1e293b' }}>
               {legendTh}
             </text>
 
             <rect x={82} y={1} width={12} height={9} fill="#94a3b8" rx={1.5} />
-            <text x={98} y={9} style={{ fontSize: '11px', fontWeight: '600', fill: '#64748b' }}>
+            <text x={98} y={9} style={{ fontSize: '10.5px', fontWeight: '600', fill: '#64748b' }}>
               {legendKh}
             </text>
           </g>
+
+          {/* Top Headers for Values and Completion Rate columns */}
+          <text x="402" y="19" style={{ fontSize: '9.5px', fontWeight: '700', fill: '#64748b' }}>
+            Giá trị
+          </text>
+          <text x="532" y="19" textAnchor="end" style={{ fontSize: '9.5px', fontWeight: '700', fill: '#64748b' }}>
+            % Đạt
+          </text>
 
           {/* Left Y-Axis Baseline */}
           <line
@@ -355,9 +363,9 @@ function SpdvBarSubcard({
                 />
                 <text
                   x={x}
-                  y={chartBottom + 16}
+                  y={chartBottom + 14}
                   textAnchor="middle"
-                  style={{ fontSize: '10px', fontWeight: '500', fill: '#64748b' }}
+                  style={{ fontSize: '8.5px', fontWeight: '500', fill: '#64748b' }}
                 >
                   {tick}
                 </text>
@@ -368,16 +376,16 @@ function SpdvBarSubcard({
           {/* Unit text at bottom */}
           <text
             x={chartRight + 6}
-            y={chartBottom + 16}
+            y={chartBottom + 14}
             textAnchor="start"
-            style={{ fontSize: '10px', fontWeight: '600', fill: '#64748b' }}
+            style={{ fontSize: '9px', fontWeight: '600', fill: '#64748b' }}
           >
             Tỷ đ
           </text>
 
           {/* 6 Horizontal Bar Groups */}
           {items.map((item, idx) => {
-            const yRow = chartTop + idx * 31 + 12;
+            const yRow = chartTop + idx * 31 + 14;
             const thW = Math.max((item.th / maxVal) * chartWidth, 2);
             const khW = Math.max((item.kh / maxVal) * chartWidth, 2);
             const isHovered = hoveredItem?.id === item.id;
@@ -400,11 +408,12 @@ function SpdvBarSubcard({
 
                 {/* Category Name on Y-axis */}
                 <text
-                  x={chartLeft - 8}
-                  y={yRow + 4}
+                  x={chartLeft - 6}
+                  y={yRow + 1}
                   textAnchor="end"
+                  dominantBaseline="central"
                   style={{
-                    fontSize: '11px',
+                    fontSize: '10px',
                     fontWeight: isHovered ? '700' : '600',
                     fill: isHovered ? '#e11d48' : '#334155'
                   }}
@@ -415,7 +424,7 @@ function SpdvBarSubcard({
                 {/* TH Bar (Red #e11d48) */}
                 <rect
                   x={chartLeft}
-                  y={yRow - 9}
+                  y={yRow - 9.5}
                   width={thW}
                   height={8}
                   fill="#e11d48"
@@ -425,23 +434,11 @@ function SpdvBarSubcard({
                     opacity: isHovered ? 1 : 0.95
                   }}
                 />
-                {/* TH Value */}
-                <text
-                  x={chartLeft + thW + 4}
-                  y={yRow - 2}
-                  style={{
-                    fontSize: '9px',
-                    fontWeight: '700',
-                    fill: '#0f172a'
-                  }}
-                >
-                  {item.th.toFixed(1)}
-                </text>
 
                 {/* KH Bar (Slate Gray #94a3b8) */}
                 <rect
                   x={chartLeft}
-                  y={yRow + 1}
+                  y={yRow + 1.5}
                   width={khW}
                   height={8}
                   fill="#94a3b8"
@@ -451,27 +448,44 @@ function SpdvBarSubcard({
                     opacity: isHovered ? 1 : 0.85
                   }}
                 />
-                {/* KH Value */}
+
+                {/* TH Value in dedicated column */}
                 <text
-                  x={chartLeft + khW + 4}
-                  y={yRow + 8}
+                  x={402}
+                  y={yRow - 5.5}
+                  dominantBaseline="central"
                   style={{
-                    fontSize: '9px',
+                    fontSize: '8.5px',
+                    fontWeight: '700',
+                    fill: '#e11d48'
+                  }}
+                >
+                  TH: {item.th.toFixed(1)}
+                </text>
+
+                {/* KH Value in dedicated column */}
+                <text
+                  x={402}
+                  y={yRow + 5.5}
+                  dominantBaseline="central"
+                  style={{
+                    fontSize: '8.5px',
                     fontWeight: '600',
                     fill: '#64748b'
                   }}
                 >
-                  {item.kh.toFixed(1)}
+                  KH: {item.kh.toFixed(1)}
                 </text>
 
-                {/* % Rate Label on the right */}
+                {/* % Rate in dedicated column */}
                 <text
-                  x={chartRight + 6}
-                  y={yRow + 4}
-                  textAnchor="start"
+                  x={532}
+                  y={yRow + 0.5}
+                  dominantBaseline="central"
+                  textAnchor="end"
                   style={{
                     fontSize: '10.5px',
-                    fontWeight: '700',
+                    fontWeight: '800',
                     fill: item.isRatePositive ? '#15803d' : '#dc2626'
                   }}
                 >
