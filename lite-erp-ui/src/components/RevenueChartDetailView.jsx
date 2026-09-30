@@ -588,30 +588,30 @@ export default function RevenueChartDetailView({
       {/* ========================================================================= */}
       {/* 1. TOP NAVIGATION & CONTROLS BAR                                          */}
       {/* ========================================================================= */}
-      <div className="chart-detail-nav-bar">
-        <div className="chart-detail-nav-left">
-          <button
-            type="button"
-            className="chart-detail-back-btn"
-            onClick={onBack}
-            title="Quay lại giao diện biểu đồ"
-          >
-            <ArrowLeft size={16} />
-            <span>Quay lại nhóm biểu đồ</span>
-          </button>
+      {/* 1. TOP NAVIGATION & CONTROLS BAR (Hidden in Month branch per user request) */}
+      {/* ========================================================================= */}
+      {activeBranchId !== 'month' && (
+        <div className="chart-detail-nav-bar">
+          <div className="chart-detail-nav-left">
+            <button
+              type="button"
+              className="chart-detail-back-btn"
+              onClick={onBack}
+              title="Quay lại giao diện biểu đồ"
+            >
+              <ArrowLeft size={16} />
+              <span>Quay lại nhóm biểu đồ</span>
+            </button>
 
-          <div className="chart-detail-breadcrumb">
-            <span className="crumb-root">Báo cáo doanh thu</span>
-            <span className="crumb-divider">/</span>
-            <span className="crumb-active">
-              {activeBranchId === 'month' ? 'Thực hiện so với kế hoạch Tập đoàn' : chartTitle}
-            </span>
+            <div className="chart-detail-breadcrumb">
+              <span className="crumb-root">Báo cáo doanh thu</span>
+              <span className="crumb-divider">/</span>
+              <span className="crumb-active">{chartTitle}</span>
+            </div>
           </div>
-        </div>
 
-        <div className="chart-detail-nav-right">
-          {/* Quick Chart Switcher Dropdown (hide in month branch to keep clean) */}
-          {activeBranchId !== 'month' && (
+          <div className="chart-detail-nav-right">
+            {/* Quick Chart Switcher Dropdown */}
             <div className="clean-filter-item">
               <span className="clean-filter-label">Chọn biểu đồ</span>
               <div className="clean-select-wrapper" style={{ minWidth: '260px' }}>
@@ -627,73 +627,73 @@ export default function RevenueChartDetailView({
                 <ChevronDown size={14} className="clean-select-chevron" />
               </div>
             </div>
-          )}
 
-          {/* Time Filters */}
-          <div className="clean-filter-item">
-            <span className="clean-filter-label">Năm</span>
-            <div className="clean-select-wrapper">
-              <select
-                className="clean-filter-select"
-                value={selectedYear}
-                onChange={(e) => setSelectedYear && setSelectedYear(e.target.value)}
-              >
-                {YEAR_OPTIONS.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <ChevronDown size={14} className="clean-select-chevron" />
+            {/* Time Filters */}
+            <div className="clean-filter-item">
+              <span className="clean-filter-label">Năm</span>
+              <div className="clean-select-wrapper">
+                <select
+                  className="clean-filter-select"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear && setSelectedYear(e.target.value)}
+                >
+                  {YEAR_OPTIONS.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="clean-select-chevron" />
+              </div>
             </div>
+
+            {(activeBranchId === 'spdv' || activeBranchId === 'unit') && (
+              <div className="clean-filter-item">
+                <span className="clean-filter-label">Tháng</span>
+                <div className="clean-select-wrapper">
+                  <select
+                    className="clean-filter-select"
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth && setSelectedMonth(e.target.value)}
+                  >
+                    {MONTH_OPTIONS.map((m) => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="clean-select-chevron" />
+                </div>
+              </div>
+            )}
+
+            {activeBranchId === 'quarter' && (
+              <div className="clean-filter-item">
+                <span className="clean-filter-label">Quý</span>
+                <div className="clean-select-wrapper">
+                  <select
+                    className="clean-filter-select"
+                    value={selectedQuarter}
+                    onChange={(e) => setSelectedQuarter && setSelectedQuarter(e.target.value)}
+                  >
+                    {QUARTER_OPTIONS.map((q) => (
+                      <option key={q} value={q}>{q}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="clean-select-chevron" />
+                </div>
+              </div>
+            )}
+
+            {/* Export Excel Button */}
+            <button
+              type="button"
+              className="chart-detail-export-btn"
+              onClick={handleExportTableExcel}
+              title="Xuất bảng dữ liệu chi tiết ra file Excel"
+            >
+              <Download size={15} />
+              <span>Xuất Excel bảng này</span>
+            </button>
           </div>
-
-          {(activeBranchId === 'month' || activeBranchId === 'spdv' || activeBranchId === 'unit') && (
-            <div className="clean-filter-item">
-              <span className="clean-filter-label">Tháng</span>
-              <div className="clean-select-wrapper">
-                <select
-                  className="clean-filter-select"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth && setSelectedMonth(e.target.value)}
-                >
-                  {MONTH_OPTIONS.map((m) => (
-                    <option key={m} value={m}>{m}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="clean-select-chevron" />
-              </div>
-            </div>
-          )}
-
-          {activeBranchId === 'quarter' && (
-            <div className="clean-filter-item">
-              <span className="clean-filter-label">Quý</span>
-              <div className="clean-select-wrapper">
-                <select
-                  className="clean-filter-select"
-                  value={selectedQuarter}
-                  onChange={(e) => setSelectedQuarter && setSelectedQuarter(e.target.value)}
-                >
-                  {QUARTER_OPTIONS.map((q) => (
-                    <option key={q} value={q}>{q}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="clean-select-chevron" />
-              </div>
-            </div>
-          )}
-
-          {/* Export Excel Button */}
-          <button
-            type="button"
-            className="chart-detail-export-btn"
-            onClick={handleExportTableExcel}
-            title="Xuất bảng dữ liệu chi tiết ra file Excel"
-          >
-            <Download size={15} />
-            <span>Xuất Excel bảng này</span>
-          </button>
         </div>
-      </div>
+      )}
 
       {/* ========================================================================= */}
       {/* 2. TABLE CONTROLS & MAIN DATA TABLE (ONLY TABLE REMAINS)                 */}
@@ -701,6 +701,18 @@ export default function RevenueChartDetailView({
       <div className="chart-detail-table-card">
         <div className="chart-detail-table-header">
           <div className="table-header-title-box">
+            {activeBranchId === 'month' && (
+              <button
+                type="button"
+                className="chart-detail-back-btn"
+                onClick={onBack}
+                title="Quay lại nhóm biểu đồ"
+                style={{ marginRight: '8px' }}
+              >
+                <ArrowLeft size={15} />
+                <span>Quay lại</span>
+              </button>
+            )}
             <TableProperties size={18} color="#e11d48" />
             <h3 className="table-header-title">
               {activeBranchId === 'month' ? (
@@ -751,6 +763,20 @@ export default function RevenueChartDetailView({
                 Chưa đạt &lt; 100%
               </button>
             </div>
+
+            {/* Export Excel Button in Month branch header */}
+            {activeBranchId === 'month' && (
+              <button
+                type="button"
+                className="chart-detail-export-btn"
+                onClick={handleExportTableExcel}
+                title="Xuất bảng dữ liệu chi tiết ra file Excel"
+                style={{ padding: '6px 14px', fontSize: '12.5px' }}
+              >
+                <Download size={14} />
+                <span>Xuất Excel</span>
+              </button>
+            )}
           </div>
         </div>
 
