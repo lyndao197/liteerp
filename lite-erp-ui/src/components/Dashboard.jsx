@@ -2299,23 +2299,6 @@ const Dashboard = () => {
             Chi tiết 4 biểu đồ cơ cấu doanh thu
           </h2>
 
-          <button
-            type="button"
-            className="tr-btn-view-detail"
-            onClick={() => {
-              setDetailRecordInfo({
-                branchId: 'plan_progress',
-                chartTitle: `Danh sách bản ghi cơ cấu doanh thu ${selectedMonth}/${selectedYear}`
-              });
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            style={{ marginLeft: 'auto' }}
-            title="Xem toàn bộ danh sách bản ghi liên quan"
-          >
-            <span>Xem danh sách bản ghi liên quan</span>
-            <ArrowRight size={14} />
-          </button>
-
           <div className="exec-clean-filters-bar" style={{ margin: 0, padding: 0 }}>
             <div className="exec-filters-group">
               <div className="clean-filter-item">

@@ -3097,34 +3097,6 @@ const RevenueReportDashboard = () => {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {!detailChartInfo && (
-            <button
-              type="button"
-              className="clean-view-mode-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '8px 14px',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#2563eb',
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-              onClick={() => setDetailChartInfo({
-                branchId: currentView,
-                chartTitle: `Bảng dữ liệu chi tiết ${activeBranchInfo.title}`
-              })}
-              title="Xem toàn bộ số liệu chi tiết dưới dạng bảng danh sách"
-            >
-              <TableProperties size={15} />
-              <span>Xem bảng chi tiết</span>
-            </button>
-          )}
           <button className="clean-export-excel-btn" onClick={handleExportExcel}>
             Xuất Excel
           </button>
