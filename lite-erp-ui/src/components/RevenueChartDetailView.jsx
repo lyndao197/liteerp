@@ -109,6 +109,177 @@ const BRANCH_CHART_OPTIONS = {
   ]
 };
 
+// Master detailed dataset by Customer Group & SPDV (used across Month, Quarter, Year)
+const CUSTOMER_SPDV_MASTER_DATA = [
+  // 1-7: Khách hàng nội bộ (Internal)
+  {
+    id: 'row-1',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+    customerName: 'Tập đoàn Viettel',
+    spdvGroup: 'Viễn thông',
+    spdvName: 'FTTH',
+    baseKh: 110,
+    baseTh: 100,
+    baseUoc: 105,
+    type: 'internal'
+  },
+  {
+    id: 'row-2',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+    customerName: 'Tập đoàn Viettel',
+    spdvGroup: 'CNTT',
+    spdvName: 'Cloud',
+    baseKh: 50,
+    baseTh: 55,
+    baseUoc: 52,
+    type: 'internal'
+  },
+  {
+    id: 'row-3',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+    customerName: 'Tổng công ty X',
+    spdvGroup: 'Dịch vụ số',
+    spdvName: 'Giải pháp số',
+    baseKh: 30,
+    baseTh: 25,
+    baseUoc: 27,
+    type: 'internal'
+  },
+  {
+    id: 'row-4',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+    customerName: 'Tổng công ty Mạng lưới Viettel',
+    spdvGroup: 'Hạ tầng số',
+    spdvName: 'Kênh truyền dẫn',
+    baseKh: 45,
+    baseTh: 46,
+    baseUoc: 45,
+    type: 'internal'
+  },
+  {
+    id: 'row-5',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài',
+    customerName: 'Viettel Global',
+    spdvGroup: 'Viễn thông',
+    spdvName: 'Truyền dẫn',
+    baseKh: 75,
+    baseTh: 70,
+    baseUoc: 72,
+    type: 'internal'
+  },
+  {
+    id: 'row-6',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài',
+    customerName: 'Viettel Overseas',
+    spdvGroup: 'CNTT',
+    spdvName: 'Data Center',
+    baseKh: 55,
+    baseTh: 50,
+    baseUoc: 52,
+    type: 'internal'
+  },
+  {
+    id: 'row-7',
+    customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài',
+    customerName: 'Lumitel Burundi',
+    spdvGroup: 'Viễn thông',
+    spdvName: 'Roaming quốc tế',
+    baseKh: 40,
+    baseTh: 38,
+    baseUoc: 39,
+    type: 'internal'
+  },
+  // 8-15: Khách hàng ngoài Tập đoàn (External)
+  {
+    id: 'row-8',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+    customerName: 'Sungroup',
+    spdvGroup: 'Giải pháp, Dịch vụ CNTT',
+    spdvName: 'OmniX CRM',
+    baseKh: 160,
+    baseTh: 150,
+    baseUoc: 155,
+    type: 'external'
+  },
+  {
+    id: 'row-9',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+    customerName: 'FPT',
+    spdvGroup: 'Giải pháp, Dịch vụ CNTT',
+    spdvName: 'AI Chatbot',
+    baseKh: 110,
+    baseTh: 100,
+    baseUoc: 105,
+    type: 'external'
+  },
+  {
+    id: 'row-10',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+    customerName: 'Tập đoàn Vingroup (VinFast)',
+    spdvGroup: 'CNTT & IoT',
+    spdvName: 'Nền tảng Smart Mobility',
+    baseKh: 90,
+    baseTh: 85,
+    baseUoc: 88,
+    type: 'external'
+  },
+  {
+    id: 'row-11',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+    customerName: 'Ngân hàng Vietcombank',
+    spdvGroup: 'Dịch vụ số',
+    spdvName: 'Core Banking Integration',
+    baseKh: 85,
+    baseTh: 90,
+    baseUoc: 88,
+    type: 'external'
+  },
+  {
+    id: 'row-12',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+    customerName: 'Tập đoàn Masan',
+    spdvGroup: 'SaaS Platform',
+    spdvName: 'Supply Chain Analytics',
+    baseKh: 50,
+    baseTh: 48,
+    baseUoc: 49,
+    type: 'external'
+  },
+  {
+    id: 'row-13',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài',
+    customerName: 'Singtel International',
+    spdvGroup: 'Tích hợp Hệ thống',
+    spdvName: 'Loyalty App',
+    baseKh: 95,
+    baseTh: 90,
+    baseUoc: 92,
+    type: 'external'
+  },
+  {
+    id: 'row-14',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài',
+    customerName: 'SoftBank',
+    spdvGroup: 'SaaS Platform',
+    spdvName: 'ERP Custom',
+    baseKh: 55,
+    baseTh: 50,
+    baseUoc: 52,
+    type: 'external'
+  },
+  {
+    id: 'row-15',
+    customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài',
+    customerName: 'KDDI Corporation',
+    spdvGroup: 'Hạ tầng Cloud',
+    spdvName: 'Hybrid Cloud Gateway',
+    baseKh: 60,
+    baseTh: 62,
+    baseUoc: 61,
+    type: 'external'
+  }
+];
+
 export default function RevenueChartDetailView({
   initialBranchId = 'month',
   initialChartKey = 'chart1_val',
@@ -139,6 +310,9 @@ export default function RevenueChartDetailView({
   const currentChartObj = chartOptions.find(o => o.id === activeChartKey) || chartOptions[0];
   const chartTitle = (activeChartKey === initialChartKey && initialChartTitle) ? initialChartTitle : (currentChartObj?.label || 'Bảng dữ liệu chi tiết');
 
+  // Branch category helper
+  const isMatrixBranch = activeBranchId === 'month' || activeBranchId === 'quarter' || activeBranchId === 'year';
+
   // Month code computations for dynamic comparison headers
   const monthNum = useMemo(() => {
     return parseInt(selectedMonth.match(/\d+/)?.[0] || '8', 10);
@@ -150,9 +324,113 @@ export default function RevenueChartDetailView({
   const nextYear = monthNum === 12 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
   const lastYear = (parseInt(selectedYear, 10) - 1).toString();
 
-  // Dynamic header group title matching chart name with year
+  // Quarter code computations
+  const quarterNum = useMemo(() => {
+    if (selectedQuarter === 'Quý I') return 1;
+    if (selectedQuarter === 'Quý II') return 2;
+    if (selectedQuarter === 'Quý III') return 3;
+    if (selectedQuarter === 'Quý IV') return 4;
+    return 3;
+  }, [selectedQuarter]);
+
+  const quarterCode = `Q${quarterNum}`;
+  const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
+  const prevQuarterYear = quarterNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+  const prevQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][prevQuarterNum - 1];
+  const prevQuarterCode = `Q${prevQuarterNum}`;
+  const nextQuarterNum = quarterNum === 4 ? 1 : quarterNum + 1;
+  const nextQuarterYear = quarterNum === 4 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
+  const nextQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][nextQuarterNum - 1];
+  const nextQuarterCode = `Q${nextQuarterNum}`;
+
+  // Cumulative month code computations
+  const cumulativeShortCode = useMemo(() => {
+    const match = selectedCumulativeMonth?.match(/\d+/);
+    return match ? `${match[0]}T` : '8T';
+  }, [selectedCumulativeMonth]);
+
+  // Check if current chart has estimate data (Ước)
+  const hasEstimate = useMemo(() => {
+    const keyLower = (activeChartKey || '').toLowerCase();
+    const titleLower = (chartTitle || '').toLowerCase();
+    const labelLower = (currentChartObj?.label || '').toLowerCase();
+
+    // Cumulative and next-period charts never have estimate column
+    if (titleLower.includes('lũy kế') || labelLower.includes('lũy kế')) return false;
+    if (titleLower.includes('tiếp theo') || labelLower.includes('tiếp theo')) return false;
+
+    return (
+      keyLower.includes('est') ||
+      keyLower.includes('uoc') ||
+      keyLower === 'chart6_val' ||
+      keyLower === 'chart7_val' ||
+      keyLower === 'chart8_val' ||
+      keyLower === 'chart12' ||
+      keyLower === 'chart13' ||
+      keyLower === 'chart12_val' ||
+      keyLower === 'chart13_val' ||
+      titleLower.includes('ước') ||
+      labelLower.includes('ước')
+    );
+  }, [activeChartKey, chartTitle, currentChartObj]);
+
+  // Dynamic header 1: Period title
+  const periodHeaderTitle = useMemo(() => {
+    if (activeBranchId === 'quarter') {
+      return `${selectedQuarter}/${selectedYear}`;
+    }
+    if (activeBranchId === 'year') {
+      if (
+        activeChartKey === 'chart11' ||
+        activeChartKey === 'chart12' ||
+        activeChartKey === 'chart13' ||
+        activeChartKey === 'chart12_val' ||
+        activeChartKey === 'chart13_val' ||
+        chartTitle.includes('năm trước') ||
+        chartTitle.includes('kế hoạch năm')
+      ) {
+        return `Năm ${selectedYear}`;
+      }
+      return `${selectedCumulativeMonth}/${selectedYear}`;
+    }
+    return `${selectedMonth}/${selectedYear}`;
+  }, [activeBranchId, selectedQuarter, selectedYear, activeChartKey, chartTitle, selectedCumulativeMonth, selectedMonth]);
+
+  // Dynamic header 2: Comparison group title matching chart name with year
   const comparisonGroupTitle = useMemo(() => {
-    if (activeBranchId !== 'month') return 'So với kế hoạch';
+    if (activeBranchId === 'quarter') {
+      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+        return `Ước thực hiện so với TH ${prevQuarterName}/${prevQuarterYear}`;
+      }
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+        return `Ước thực hiện so với cùng kỳ ${selectedQuarter}/${lastYear}`;
+      }
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+        return `So với kế hoạch ${nextQuarterName}/${nextQuarterYear}`;
+      }
+      if (activeChartKey === 'chart5_est_val' || (activeChartKey === 'chart6_val' && chartTitle.includes('KH'))) {
+        return `Ước thực hiện so với KH ${selectedQuarter}/${selectedYear}`;
+      }
+      return `Lũy kế thực hiện so với KH ${selectedQuarter}/${selectedYear}`;
+    }
+
+    if (activeBranchId === 'year') {
+      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
+        return `Lũy kế TH so với cùng kỳ ${cumulativeShortCode}/${lastYear}`;
+      }
+      if (activeChartKey === 'chart11' || activeChartKey === 'chart12_val' || (chartTitle.includes('Ước') && chartTitle.includes('kế hoạch'))) {
+        return `Ước thực hiện cả năm so với KH năm ${selectedYear}`;
+      }
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || (chartTitle.includes('Ước') && chartTitle.includes('năm trước'))) {
+        return `Ước thực hiện năm so với TH năm ${lastYear}`;
+      }
+      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
+        return `Lũy kế thực hiện so với KH cả năm ${selectedYear}`;
+      }
+      return `Lũy kế TH so với KH lũy kế ${selectedCumulativeMonth}/${selectedYear}`;
+    }
+
+    // Month branch
     if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
       return `So với Tháng ${prevMonthNum}/${prevYear}`;
     }
@@ -163,43 +441,130 @@ export default function RevenueChartDetailView({
       return `So với kế hoạch Tháng ${nextMonthNum}/${nextYear}`;
     }
     return 'Thực hiện so với KH Tập đoàn';
-  }, [activeBranchId, activeChartKey, monthNum, prevMonthNum, prevYear, nextMonthNum, nextYear, lastYear]);
+  }, [
+    activeBranchId, activeChartKey, chartTitle,
+    monthNum, prevMonthNum, prevYear, nextMonthNum, nextYear, lastYear,
+    selectedQuarter, prevQuarterName, prevQuarterYear, nextQuarterName, nextQuarterYear,
+    selectedCumulativeMonth, cumulativeShortCode, selectedYear
+  ]);
 
   // Dynamic sub-column labels with year
   const targetColumnLabel = useMemo(() => {
-    if (activeBranchId !== 'month') return 'KH';
+    if (activeBranchId === 'quarter') {
+      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+        return `TH ${prevQuarterCode}/${prevQuarterYear}`;
+      }
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+        return `TH ${quarterCode}/${lastYear}`;
+      }
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+        return `KH ${nextQuarterCode}/${nextQuarterYear}`;
+      }
+      return `KH ${quarterCode}/${selectedYear}`;
+    }
+
+    if (activeBranchId === 'year') {
+      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
+        return `TH LK ${cumulativeShortCode}/${lastYear}`;
+      }
+      if (activeChartKey === 'chart11' || activeChartKey === 'chart12_val' || (chartTitle.includes('Ước') && chartTitle.includes('kế hoạch'))) {
+        return `KH Năm ${selectedYear}`;
+      }
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || (chartTitle.includes('Ước') && chartTitle.includes('năm trước'))) {
+        return `TH Năm ${lastYear}`;
+      }
+      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
+        return `KH Năm ${selectedYear}`;
+      }
+      return `KH LK ${cumulativeShortCode}/${selectedYear}`;
+    }
+
+    // Month branch
     if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `TH T${prevMonthNum}/${prevYear}`;
     if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `TH T${monthNum}/${lastYear}`;
     if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `KH T${nextMonthNum}/${nextYear}`;
     return 'KH';
-  }, [activeBranchId, activeChartKey, prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear]);
+  }, [
+    activeBranchId, activeChartKey, chartTitle,
+    prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear,
+    quarterCode, prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear, selectedYear,
+    cumulativeShortCode
+  ]);
 
   const diffColumnLabel = useMemo(() => {
-    if (activeBranchId !== 'month') return 'KH';
+    if (activeBranchId === 'quarter') {
+      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+        return `${prevQuarterCode}/${prevQuarterYear}`;
+      }
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+        return `CK ${lastYear}`;
+      }
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+        return `${nextQuarterCode}/${nextQuarterYear}`;
+      }
+      return `KH ${selectedYear}`;
+    }
+
+    if (activeBranchId === 'year') {
+      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
+        return `CK ${lastYear}`;
+      }
+      if (activeChartKey === 'chart11' || activeChartKey === 'chart12_val' || (chartTitle.includes('Ước') && chartTitle.includes('kế hoạch'))) {
+        return `KH Năm`;
+      }
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || (chartTitle.includes('Ước') && chartTitle.includes('năm trước'))) {
+        return `TH Năm ${lastYear}`;
+      }
+      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
+        return `KH Năm`;
+      }
+      return `KH LK`;
+    }
+
+    // Month branch
     if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `T${prevMonthNum}/${prevYear}`;
     if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `T${monthNum}/${lastYear}`;
     if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `T${nextMonthNum}/${nextYear}`;
     return 'KH';
-  }, [activeBranchId, activeChartKey, prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear]);
+  }, [
+    activeBranchId, activeChartKey, chartTitle,
+    prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear,
+    prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear, selectedYear
+  ]);
 
   const rateSubLabel = useMemo(() => {
+    if (activeBranchId === 'quarter') {
+      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+        return `so ${prevQuarterCode}/${prevQuarterYear}`;
+      }
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+        return `so CK ${lastYear}`;
+      }
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+        return `so ${nextQuarterCode}/${nextQuarterYear}`;
+      }
+      return 'HTKH';
+    }
+
+    if (activeBranchId === 'year') {
+      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
+        return `so CK ${lastYear}`;
+      }
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || (chartTitle.includes('Ước') && chartTitle.includes('năm trước'))) {
+        return `so TH ${lastYear}`;
+      }
+      return 'HTKH';
+    }
+
+    // Month branch
     if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}/${prevYear}`;
     if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `so T${monthNum}/${lastYear}`;
     return 'HTKH';
-  }, [activeChartKey, prevMonthNum, prevYear, monthNum, lastYear]);
-
-  // Check if current chart has estimate data (Ước)
-  const hasEstimate = useMemo(() => {
-    const keyLower = (activeChartKey || '').toLowerCase();
-    const titleLower = (chartTitle || '').toLowerCase();
-    const labelLower = (currentChartObj?.label || '').toLowerCase();
-    return (
-      keyLower.includes('est') ||
-      keyLower.includes('uoc') ||
-      titleLower.includes('ước') ||
-      labelLower.includes('ước')
-    );
-  }, [activeChartKey, chartTitle, currentChartObj]);
+  }, [
+    activeBranchId, activeChartKey, chartTitle,
+    prevMonthNum, prevYear, monthNum, lastYear,
+    prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear
+  ]);
 
   // Compute table dataset according to active branch and chart
   const tableData = useMemo(() => {
@@ -446,44 +811,179 @@ export default function RevenueChartDetailView({
     return { rows, defaultUnit, isRatio };
   }, [activeBranchId, activeChartKey, selectedYear, selectedMonth, selectedQuarter, selectedCumulativeMonth]);
 
-  // Filtered rows for Month branch (Customer & SPDV matrix)
-  const filteredMonthRows = useMemo(() => {
-    if (activeBranchId !== 'month') return [];
-    const baseRows = getCustomerSpdvMonthData(selectedMonth);
+  // Filtered rows for Matrix branches (Month, Quarter, Year) - Customer & SPDV matrix
+  const filteredMatrixRows = useMemo(() => {
+    if (!isMatrixBranch) return [];
 
-    let prevRows = null;
-    let nextRows = null;
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
-      prevRows = getCustomerSpdvMonthData(`Tháng ${prevMonthNum}`);
-    } else if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
-      nextRows = getCustomerSpdvMonthData(`Tháng ${nextMonthNum}`);
-    }
+    let processedRows = [];
 
-    const processedRows = baseRows.map((item, idx) => {
-      let targetVal = item.kh;
-      if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
-        targetVal = prevRows ? (prevRows[idx]?.th || Math.round(item.th * 0.95)) : Math.round(item.th * 0.95);
-      } else if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') {
-        targetVal = Math.round(item.th * 0.9);
-      } else if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
-        targetVal = nextRows ? (nextRows[idx]?.kh || Math.round(item.kh * 1.05)) : Math.round(item.kh * 1.05);
-      }
-
-      const diff = item.th - targetVal;
-      const rateNum = targetVal > 0 ? Number(((item.th / targetVal) * 100).toFixed(1)) : 100;
-      const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
-      const isPass = diff >= 0 || rateNum >= 100;
-
-      return {
-        ...item,
-        targetVal,
-        diff,
-        diffFormatted: (diff > 0 ? '+' : '') + diff,
-        rate,
-        rateNum,
-        isPass
+    if (activeBranchId === 'month') {
+      const monthFactors = {
+        'Tháng 1': 0.75, 'Tháng 2': 0.70, 'Tháng 3': 0.95,
+        'Tháng 4': 0.85, 'Tháng 5': 0.88, 'Tháng 6': 1.00,
+        'Tháng 7': 0.92, 'Tháng 8': 0.90, 'Tháng 9': 0.96,
+        'Tháng 10': 0.94, 'Tháng 11': 0.98, 'Tháng 12': 1.10
       };
-    });
+      const factor = monthFactors[selectedMonth] || 0.90;
+      const prevFactor = monthFactors[`Tháng ${prevMonthNum}`] || (factor * 0.95);
+      const nextFactor = monthFactors[`Tháng ${nextMonthNum}`] || (factor * 1.05);
+
+      processedRows = CUSTOMER_SPDV_MASTER_DATA.map((item, idx) => {
+        let scaledKh = item.baseKh;
+        let scaledTh = item.baseTh;
+        let scaledUoc = item.baseUoc;
+
+        if (selectedMonth !== 'Tháng 6') {
+          scaledKh = Math.round(item.baseKh * factor);
+          const thVariance = idx % 2 === 0 ? 0.93 : 0.97;
+          scaledTh = Math.round(scaledKh * thVariance);
+          scaledUoc = Math.round((scaledKh * 0.4) + (scaledTh * 0.6));
+        }
+
+        let targetVal = scaledKh;
+        if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') {
+          targetVal = Math.round(item.baseTh * prevFactor);
+        } else if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') {
+          targetVal = Math.round(scaledTh * 0.90);
+        } else if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') {
+          targetVal = Math.round(item.baseKh * nextFactor);
+        }
+
+        const diff = scaledTh - targetVal;
+        const rateNum = targetVal > 0 ? Number(((scaledTh / targetVal) * 100).toFixed(1)) : 100;
+        const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+        const isPass = diff >= 0 || rateNum >= 100;
+
+        return {
+          ...item,
+          id: `m-${selectedMonth}-${idx + 1}`,
+          kh: scaledKh,
+          uocTh: scaledUoc,
+          th: scaledTh,
+          targetVal,
+          diff,
+          diffFormatted: (diff > 0 ? '+' : '') + diff,
+          rate,
+          rateNum,
+          isPass
+        };
+      });
+    } else if (activeBranchId === 'quarter') {
+      const quarterFactors = {
+        'Quý I': 1.05,
+        'Quý II': 1.18,
+        'Quý III': 1.12,
+        'Quý IV': 1.30
+      };
+      const currentFactor = quarterFactors[selectedQuarter] || 1.12;
+      const prevQuarterFactor = quarterFactors[prevQuarterName] || 1.05;
+      const nextQuarterFactor = quarterFactors[nextQuarterName] || 1.25;
+
+      const isVsPrev = activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'));
+      const isVsSame = activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ');
+      const isVsNext = activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo');
+
+      processedRows = CUSTOMER_SPDV_MASTER_DATA.map((item, idx) => {
+        const scaledKh = Math.round(item.baseKh * currentFactor);
+        const thVariance = idx % 2 === 0 ? 0.94 : 0.98;
+        const scaledTh = Math.round(scaledKh * thVariance);
+        const scaledUoc = Math.round((scaledKh * 0.35) + (scaledTh * 0.65));
+
+        let targetVal = scaledKh;
+        if (isVsPrev) {
+          targetVal = Math.round(item.baseTh * prevQuarterFactor);
+        } else if (isVsSame) {
+          targetVal = Math.round(item.baseTh * currentFactor * 0.92);
+        } else if (isVsNext) {
+          targetVal = Math.round(item.baseKh * nextQuarterFactor);
+        }
+
+        const valueToCompare = hasEstimate ? scaledUoc : scaledTh;
+        const diff = valueToCompare - targetVal;
+        const rateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
+        const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+        const isPass = diff >= 0 || rateNum >= 100;
+
+        return {
+          ...item,
+          id: `q-${selectedQuarter}-${idx + 1}`,
+          kh: scaledKh,
+          uocTh: scaledUoc,
+          th: scaledTh,
+          targetVal,
+          diff,
+          diffFormatted: (diff > 0 ? '+' : '') + diff,
+          rate,
+          rateNum,
+          isPass
+        };
+      });
+    } else if (activeBranchId === 'year') {
+      const yearFactors = {
+        'Lũy kế 1 tháng': 0.40,
+        'Lũy kế 2 tháng': 0.80,
+        'Lũy kế 3 tháng': 1.25,
+        'Lũy kế 4 tháng': 1.65,
+        'Lũy kế 5 tháng': 2.10,
+        'Lũy kế 6 tháng': 2.55,
+        'Lũy kế 7 tháng': 2.95,
+        'Lũy kế 8 tháng': 3.40,
+        'Lũy kế 9 tháng': 3.85,
+        'Lũy kế 10 tháng': 4.25,
+        'Lũy kế 11 tháng': 4.65,
+        'Lũy kế cả năm (12T)': 5.10
+      };
+      const currentFactor = yearFactors[selectedCumulativeMonth] || 3.40;
+      const fullYearFactor = 5.10;
+
+      const isVsSame = activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ');
+      const isVsFullYearPlan = activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || (chartTitle.includes('cả năm') && !chartTitle.includes('Ước'));
+      const isEstVsFullPlan = activeChartKey === 'chart11' || activeChartKey === 'chart12_val' || (chartTitle.includes('Ước') && chartTitle.includes('kế hoạch'));
+      const isEstVsLastYear = activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || (chartTitle.includes('Ước') && chartTitle.includes('năm trước'));
+
+      processedRows = CUSTOMER_SPDV_MASTER_DATA.map((item, idx) => {
+        let scaledKh = Math.round(item.baseKh * currentFactor);
+        const thVariance = idx % 2 === 0 ? 0.95 : 0.99;
+        let scaledTh = Math.round(scaledKh * thVariance);
+        let scaledUoc = Math.round(item.baseKh * fullYearFactor * 1.02);
+
+        if (isEstVsFullPlan || isEstVsLastYear) {
+          scaledKh = Math.round(item.baseKh * fullYearFactor);
+          scaledTh = Math.round(scaledKh * 0.98);
+        }
+
+        let targetVal = scaledKh;
+        if (isVsSame) {
+          targetVal = Math.round(item.baseTh * currentFactor * 0.92);
+        } else if (isVsFullYearPlan) {
+          targetVal = Math.round(item.baseKh * fullYearFactor);
+        } else if (isEstVsFullPlan) {
+          targetVal = Math.round(item.baseKh * fullYearFactor);
+        } else if (isEstVsLastYear) {
+          targetVal = Math.round(item.baseTh * fullYearFactor * 0.90);
+        }
+
+        const valueToCompare = hasEstimate ? scaledUoc : scaledTh;
+        const diff = valueToCompare - targetVal;
+        const rateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
+        const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+        const isPass = diff >= 0 || rateNum >= 100;
+
+        return {
+          ...item,
+          id: `y-${selectedCumulativeMonth}-${idx + 1}`,
+          kh: scaledKh,
+          uocTh: scaledUoc,
+          th: scaledTh,
+          targetVal,
+          diff,
+          diffFormatted: (diff > 0 ? '+' : '') + diff,
+          rate,
+          rateNum,
+          isPass
+        };
+      });
+    }
 
     return processedRows.filter(row => {
       const q = searchQuery.toLowerCase().trim();
@@ -497,18 +997,23 @@ export default function RevenueChartDetailView({
       if (statusFilter === 'fail') return row.isPass === false;
       return true;
     });
-  }, [activeBranchId, selectedMonth, searchQuery, statusFilter, activeChartKey, prevMonthNum, nextMonthNum]);
+  }, [
+    isMatrixBranch, activeBranchId, selectedMonth, selectedQuarter, selectedCumulativeMonth,
+    searchQuery, statusFilter, activeChartKey, chartTitle,
+    prevMonthNum, nextMonthNum, prevQuarterName, nextQuarterName, hasEstimate
+  ]);
 
-  // Totals for Month branch matching user screenshot structure
-  const monthTotals = useMemo(() => {
-    const targetRows = filteredMonthRows;
+  // Totals for Matrix branches (Month, Quarter, Year) matching screenshot structure
+  const matrixTotals = useMemo(() => {
+    const targetRows = filteredMatrixRows;
 
     const calcGroup = (rows) => {
       const sumTarget = rows.reduce((acc, r) => acc + (r.targetVal !== undefined ? r.targetVal : (r.kh || 0)), 0);
       const sumUocTh = rows.reduce((acc, r) => acc + (r.uocTh || Math.round(((r.targetVal || r.kh || 0) + (r.th || 0)) / 2)), 0);
       const sumTh = rows.reduce((acc, r) => acc + (r.th || 0), 0);
-      const diff = sumTh - sumTarget;
-      const rateNum = sumTarget > 0 ? Number(((sumTh / sumTarget) * 100).toFixed(1)) : 100;
+      const valueToCompare = hasEstimate ? sumUocTh : sumTh;
+      const diff = valueToCompare - sumTarget;
+      const rateNum = sumTarget > 0 ? Number(((valueToCompare / sumTarget) * 100).toFixed(1)) : 100;
       const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
       return {
         kh: sumTarget,
@@ -531,9 +1036,9 @@ export default function RevenueChartDetailView({
       internal: calcGroup(internalRows),
       total: calcGroup(targetRows)
     };
-  }, [filteredMonthRows]);
+  }, [filteredMatrixRows, hasEstimate]);
 
-  // Filtered rows by search and status for non-month branches
+  // Filtered rows by search and status for non-matrix branches
   const filteredRows = useMemo(() => {
     return tableData.rows.filter(row => {
       const matchesSearch = row.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -553,20 +1058,20 @@ export default function RevenueChartDetailView({
     setCurrentPage(1);
   }, [activeBranchId, activeChartKey, selectedMonth, selectedYear, selectedQuarter, searchQuery, statusFilter]);
 
-  const totalRecords = activeBranchId === 'month' ? filteredMonthRows.length : filteredRows.length;
+  const totalRecords = isMatrixBranch ? filteredMatrixRows.length : filteredRows.length;
   const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
 
-  const paginatedMonthRows = useMemo(() => {
+  const paginatedMatrixRows = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return filteredMonthRows.slice(start, start + itemsPerPage);
-  }, [filteredMonthRows, currentPage, itemsPerPage]);
+    return filteredMatrixRows.slice(start, start + itemsPerPage);
+  }, [filteredMatrixRows, currentPage, itemsPerPage]);
 
   const paginatedRows = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredRows.slice(start, start + itemsPerPage);
   }, [filteredRows, currentPage, itemsPerPage]);
 
-  // Compute table totals for non-month branches
+  // Compute table totals for non-matrix branches
   const totals = useMemo(() => {
     let sumKh = 0;
     let sumTh = 0;
@@ -596,31 +1101,31 @@ export default function RevenueChartDetailView({
 
   // Unified KPI tiles totals depending on active branch
   const activeTotals = useMemo(() => {
-    if (activeBranchId === 'month') {
+    if (isMatrixBranch) {
       return {
-        sumTh: monthTotals.total.th,
-        sumKh: monthTotals.total.kh,
-        diffVal: monthTotals.total.diff,
-        diffFormatted: monthTotals.total.diffFormatted,
-        avgRate: monthTotals.total.rate,
-        rateNum: monthTotals.total.rateNum,
-        isPass: monthTotals.total.isPass
+        sumTh: matrixTotals.total.th,
+        sumKh: matrixTotals.total.kh,
+        diffVal: matrixTotals.total.diff,
+        diffFormatted: matrixTotals.total.diffFormatted,
+        avgRate: matrixTotals.total.rate,
+        rateNum: matrixTotals.total.rateNum,
+        isPass: matrixTotals.total.isPass
       };
     }
     return totals;
-  }, [activeBranchId, monthTotals, totals]);
+  }, [isMatrixBranch, matrixTotals, totals]);
 
   // Export table directly to Excel (.xlsx)
   const handleExportTableExcel = () => {
     try {
-      if (activeBranchId === 'month') {
-        const exportRows = filteredMonthRows.map(r => {
+      if (isMatrixBranch) {
+        const exportRows = filteredMatrixRows.map(r => {
           const rowObj = {
             'Nhóm khách hàng': r.customerGroup,
             'Tên khách hàng': r.customerName,
             'Nhóm SPDV': r.spdvGroup,
             'Tên SPDV': r.spdvName,
-            'KH': r.kh
+            'KH': r.targetVal !== undefined ? r.targetVal : r.kh
           };
           if (hasEstimate) {
             rowObj['Ước TH'] = r.uocTh;
@@ -649,14 +1154,15 @@ export default function RevenueChartDetailView({
           return summaryObj;
         };
 
-        exportRows.push(buildSummaryExport('Tổng doanh thu ngoài Tập đoàn', monthTotals.external));
-        exportRows.push(buildSummaryExport('Tổng doanh thu nội bộ', monthTotals.internal));
-        exportRows.push(buildSummaryExport('Tổng doanh thu', monthTotals.total));
+        exportRows.push(buildSummaryExport('Tổng doanh thu ngoài Tập đoàn', matrixTotals.external));
+        exportRows.push(buildSummaryExport('Tổng doanh thu nội bộ', matrixTotals.internal));
+        exportRows.push(buildSummaryExport('Tổng doanh thu', matrixTotals.total));
 
         const ws = XLSX.utils.json_to_sheet(exportRows);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Thuc_Hien_So_Voi_KH');
-        const cleanFileName = `Thuc_hien_so_voi_ke_hoach_Tap_doan_${selectedMonth}_${selectedYear}.xlsx`;
+        const periodClean = activeBranchId === 'quarter' ? selectedQuarter : (activeBranchId === 'year' ? selectedCumulativeMonth : selectedMonth);
+        const cleanFileName = `Bao_cao_chi_tiet_${periodClean}_${selectedYear}.xlsx`;
         XLSX.writeFile(wb, cleanFileName);
         return;
       }
@@ -701,11 +1207,9 @@ export default function RevenueChartDetailView({
   return (
     <div className="revenue-chart-detail-view-page">
       {/* ========================================================================= */}
-      {/* 1. TOP NAVIGATION & CONTROLS BAR                                          */}
+      {/* 1. TOP NAVIGATION & CONTROLS BAR (Hidden in Matrix branches: Month, Quarter, Year) */}
       {/* ========================================================================= */}
-      {/* 1. TOP NAVIGATION & CONTROLS BAR (Hidden in Month branch per user request) */}
-      {/* ========================================================================= */}
-      {activeBranchId !== 'month' && (
+      {!isMatrixBranch && (
         <div className="chart-detail-nav-bar">
           <div className="chart-detail-nav-left">
             <button
@@ -811,10 +1315,10 @@ export default function RevenueChartDetailView({
       )}
 
       {/* ========================================================================= */}
-      {/* 2. TABLE CONTROLS & MAIN DATA TABLE (ONLY TABLE REMAINS)                 */}
+      {/* 2. TABLE CONTROLS & MAIN DATA TABLE (ONLY TABLE REMAINS IN MATRIX VIEW)  */}
       {/* ========================================================================= */}
       <div className="chart-detail-table-card">
-        {activeBranchId !== 'month' && (
+        {!isMatrixBranch && (
           <div className="chart-detail-table-header">
             <div className="table-header-title-box">
               <TableProperties size={18} color="#e11d48" />
@@ -822,7 +1326,7 @@ export default function RevenueChartDetailView({
                 Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span>
               </h3>
               <span className="table-row-count-badge">
-                {activeBranchId === 'month' ? filteredMonthRows.length : filteredRows.length} dòng
+                {isMatrixBranch ? filteredMatrixRows.length : filteredRows.length} dòng
               </span>
             </div>
 
@@ -846,7 +1350,7 @@ export default function RevenueChartDetailView({
                   className={`filter-chip-btn ${statusFilter === 'all' ? 'active' : ''}`}
                   onClick={() => setStatusFilter('all')}
                 >
-                  Tất cả ({activeBranchId === 'month' ? (getCustomerSpdvMonthData(selectedMonth)?.length || 9) : tableData.rows.length})
+                  Tất cả ({isMatrixBranch ? filteredMatrixRows.length : tableData.rows.length})
                 </button>
                 <button
                   type="button"
@@ -871,9 +1375,9 @@ export default function RevenueChartDetailView({
         {/* 4. MAIN DATA TABLE                                                        */}
         {/* ========================================================================= */}
         <div className="chart-detail-table-wrapper">
-          {activeBranchId === 'month' ? (
+          {isMatrixBranch ? (
             /* ======================================================================= */
-            /* MONTH BRANCH TABLE: THỰC HIỆN SO VỚI KẾ HOẠCH TẬP ĐOÀN                  */
+            /* MATRIX TABLE: CUSTOMER & SPDV (MONTH, QUARTER, YEAR)                    */
             /* ======================================================================= */
             <table className="chart-detail-month-table">
               <thead>
@@ -882,7 +1386,7 @@ export default function RevenueChartDetailView({
                   <th rowSpan={3} className="th-customer-name">Tên khách hàng</th>
                   <th rowSpan={3} className="th-spdv-group">Nhóm SPDV</th>
                   <th rowSpan={3} className="th-spdv-name">Tên SPDV</th>
-                  <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{selectedMonth}/{selectedYear}</th>
+                  <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{periodHeaderTitle}</th>
                 </tr>
                 <tr>
                   <th colSpan={hasEstimate ? 5 : 4} className="th-plan-group">{comparisonGroupTitle}</th>
@@ -908,8 +1412,8 @@ export default function RevenueChartDetailView({
                 </tr>
               </thead>
               <tbody>
-                {paginatedMonthRows.length > 0 ? (
-                  paginatedMonthRows.map((row) => (
+                {paginatedMatrixRows.length > 0 ? (
+                  paginatedMatrixRows.map((row) => (
                     <tr key={row.id} className="month-data-row">
                       <td className="td-customer-group">{row.customerGroup}</td>
                       <td className="td-customer-name font-semibold">{row.customerName}</td>
@@ -944,16 +1448,16 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-bold">
                     Tổng doanh thu ngoài Tập đoàn
                   </td>
-                  <td className="td-kh text-right font-bold">{monthTotals.external.kh}</td>
+                  <td className="td-kh text-right font-bold">{matrixTotals.external.kh}</td>
                   {hasEstimate && (
-                    <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.external.uocTh}</td>
+                    <td className="td-uoc-th text-right font-bold text-orange">{matrixTotals.external.uocTh}</td>
                   )}
-                  <td className="td-th text-right font-bold">{monthTotals.external.th}</td>
-                  <td className={`td-diff text-right font-bold ${monthTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.external.diffFormatted}
+                  <td className="td-th text-right font-bold">{matrixTotals.external.th}</td>
+                  <td className={`td-diff text-right font-bold ${matrixTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.external.diffFormatted}
                   </td>
-                  <td className={`td-rate text-right font-bold ${monthTotals.external.isPass ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.external.rate}
+                  <td className={`td-rate text-right font-bold ${matrixTotals.external.isPass ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.external.rate}
                   </td>
                 </tr>
 
@@ -962,16 +1466,16 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-bold">
                     Tổng doanh thu nội bộ
                   </td>
-                  <td className="td-kh text-right font-bold">{monthTotals.internal.kh}</td>
+                  <td className="td-kh text-right font-bold">{matrixTotals.internal.kh}</td>
                   {hasEstimate && (
-                    <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.internal.uocTh}</td>
+                    <td className="td-uoc-th text-right font-bold text-orange">{matrixTotals.internal.uocTh}</td>
                   )}
-                  <td className="td-th text-right font-bold">{monthTotals.internal.th}</td>
-                  <td className={`td-diff text-right font-bold ${monthTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.internal.diffFormatted}
+                  <td className="td-th text-right font-bold">{matrixTotals.internal.th}</td>
+                  <td className={`td-diff text-right font-bold ${matrixTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.internal.diffFormatted}
                   </td>
-                  <td className={`td-rate text-right font-bold ${monthTotals.internal.isPass ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.internal.rate}
+                  <td className={`td-rate text-right font-bold ${matrixTotals.internal.isPass ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.internal.rate}
                   </td>
                 </tr>
 
@@ -980,16 +1484,16 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-extrabold">
                     Tổng doanh thu
                   </td>
-                  <td className="td-kh text-right font-extrabold">{monthTotals.total.kh}</td>
+                  <td className="td-kh text-right font-extrabold">{matrixTotals.total.kh}</td>
                   {hasEstimate && (
-                    <td className="td-uoc-th text-right font-extrabold text-orange">{monthTotals.total.uocTh}</td>
+                    <td className="td-uoc-th text-right font-extrabold text-orange">{matrixTotals.total.uocTh}</td>
                   )}
-                  <td className="td-th text-right font-extrabold">{monthTotals.total.th}</td>
-                  <td className={`td-diff text-right font-extrabold ${monthTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.total.diffFormatted}
+                  <td className="td-th text-right font-extrabold">{matrixTotals.total.th}</td>
+                  <td className={`td-diff text-right font-extrabold ${matrixTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.total.diffFormatted}
                   </td>
-                  <td className={`td-rate text-right font-extrabold ${monthTotals.total.isPass ? 'text-green' : 'text-red'}`}>
-                    {monthTotals.total.rate}
+                  <td className={`td-rate text-right font-extrabold ${matrixTotals.total.isPass ? 'text-green' : 'text-red'}`}>
+                    {matrixTotals.total.rate}
                   </td>
                 </tr>
               </tfoot>
@@ -1166,9 +1670,9 @@ export default function RevenueChartDetailView({
       </div>
 
       {/* ========================================================================= */}
-      {/* 5. BOTTOM ACTIONS                                                         */}
+      {/* 5. BOTTOM ACTIONS (Hidden in Matrix branches)                             */}
       {/* ========================================================================= */}
-      {activeBranchId !== 'month' && (
+      {!isMatrixBranch && (
         <div className="chart-detail-bottom-bar">
           <button
             type="button"

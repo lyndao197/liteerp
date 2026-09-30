@@ -50,7 +50,7 @@ function YearValueCard({
     : [112, 226, 340, 454];
   const barWidth = data.length === 5 ? 13 : 14;
   const barGap = 2;
-  const legendX = (primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 420 : 435;
+  const legendX = (primaryLegend?.length > 10 || secondaryLegend?.length > 10) ? 395 : ((primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 415 : 435);
 
   return (
     <div className="month-subcard">
@@ -308,7 +308,7 @@ function YearRatioCard({
     : [210, 390];
   const barWidth = 15;
   const barGap = 2;
-  const legendX = (primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 420 : 435;
+  const legendX = (primaryLegend?.length > 10 || secondaryLegend?.length > 10) ? 395 : ((primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 415 : 435);
 
   return (
     <div className="month-subcard">
@@ -662,8 +662,8 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`LK TH ${shortCode}`}
-          secondaryLegend={`KH LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}/${selectedYear}`}
+          secondaryLegend={`KH LK ${shortCode}/${selectedYear}`}
           data={chart10Values}
           maxVal={3500}
           yTicks={[0, 500, 1000, 1500, 2000, 2500, 3000, 3500]}
@@ -681,8 +681,8 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`LK TH ${shortCode}`}
-          secondaryLegend={`KH LK ${shortCode}`}
+          primaryLegend={`LK TH ${shortCode}/${selectedYear}`}
+          secondaryLegend={`KH LK ${shortCode}/${selectedYear}`}
           data={chart10Ratios}
           maxVal={100}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
@@ -702,8 +702,8 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 1"
-          primaryLegend={`LK TH ${shortCode}`}
-          secondaryLegend="KH năm"
+          primaryLegend={`LK TH ${shortCode}/${selectedYear}`}
+          secondaryLegend={`KH năm ${selectedYear}`}
           data={chart11Values}
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
@@ -721,8 +721,8 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 2"
-          primaryLegend={`LK TH ${shortCode}`}
-          secondaryLegend="KH năm"
+          primaryLegend={`LK TH ${shortCode}/${selectedYear}`}
+          secondaryLegend={`KH năm ${selectedYear}`}
           data={chart11Ratios}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}

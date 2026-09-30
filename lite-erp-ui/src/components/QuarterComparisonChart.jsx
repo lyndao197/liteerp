@@ -50,7 +50,7 @@ function QuarterValueCard({
       : data.map((_, i) => chartLeft + (chartRight - chartLeft) * ((i + 0.5) / data.length)));
   const barWidth = 14;
   const barGap = 2;
-  const legendX = (primaryLegend.length > 8 || secondaryLegend.length > 8) ? 412 : 445;
+  const legendX = (primaryLegend.length > 10 || secondaryLegend.length > 10) ? 395 : ((primaryLegend.length > 7 || secondaryLegend.length > 7) ? 415 : 445);
 
   return (
     <div className="month-subcard">
@@ -307,7 +307,7 @@ function QuarterRatioCard({
       : data.map((_, i) => chartLeft + (chartRight - chartLeft) * ((i + 0.5) / data.length)));
   const barWidth = 15;
   const barGap = 2;
-  const legendX = (primaryLegend.length > 8 || secondaryLegend.length > 8) ? 412 : 445;
+  const legendX = (primaryLegend.length > 10 || secondaryLegend.length > 10) ? 395 : ((primaryLegend.length > 7 || secondaryLegend.length > 7) ? 415 : 445);
 
   return (
     <div className="month-subcard">
@@ -658,8 +658,8 @@ export default function QuarterComparisonChart({
         <QuarterValueCard
           title={`Lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`LK ${quarterCode}`}
-          secondaryLegend={`KH ${quarterCode}`}
+          primaryLegend={`LK ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
           data={chart5Values}
           hoveredItem={hoveredItem5Val}
           setHoveredItem={setHoveredItem5Val}
@@ -673,8 +673,8 @@ export default function QuarterComparisonChart({
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`LK ${quarterCode}`}
-          secondaryLegend={`KH ${quarterCode}`}
+          primaryLegend={`LK ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
           data={chart5Ratios}
           hoveredItem={hoveredItem5Rat}
           setHoveredItem={setHoveredItem5Rat}
@@ -690,8 +690,8 @@ export default function QuarterComparisonChart({
         <QuarterValueCard
           title={`Ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 1"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`KH ${quarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
           data={chart6Values}
           hoveredItem={hoveredItem6Val}
           setHoveredItem={setHoveredItem6Val}
@@ -705,8 +705,8 @@ export default function QuarterComparisonChart({
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 2"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`KH ${quarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
           data={chart6Ratios}
           hoveredItem={hoveredItem6Rat}
           setHoveredItem={setHoveredItem6Rat}
@@ -722,8 +722,8 @@ export default function QuarterComparisonChart({
         <QuarterValueCard
           title={`Ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`}
           tag="Hàng 3 - Khu 1"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`TH ${prevQuarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`TH ${prevQuarterCode}/${prevYear}`}
           data={chart7Values}
           hoveredItem={hoveredItem7Val}
           setHoveredItem={setHoveredItem7Val}
@@ -737,8 +737,8 @@ export default function QuarterComparisonChart({
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`}
           tag="Hàng 3 - Khu 2"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`TH ${prevQuarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`TH ${prevQuarterCode}/${prevYear}`}
           data={chart7Ratios}
           hoveredItem={hoveredItem7Rat}
           setHoveredItem={setHoveredItem7Rat}
@@ -788,8 +788,8 @@ export default function QuarterComparisonChart({
         <QuarterValueCard
           title={`Ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`}
           tag="Hàng 5 - Khu 1"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`KH ${nextQuarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${nextQuarterCode}/${nextQuarterYear}`}
           data={chart9Values}
           hoveredItem={hoveredItem9Val}
           setHoveredItem={setHoveredItem9Val}
@@ -806,8 +806,8 @@ export default function QuarterComparisonChart({
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`}
           tag="Hàng 5 - Khu 2"
-          primaryLegend={`Ước ${quarterCode}`}
-          secondaryLegend={`KH ${nextQuarterCode}`}
+          primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
+          secondaryLegend={`KH ${nextQuarterCode}/${nextQuarterYear}`}
           data={chart9Ratios}
           hoveredItem={hoveredItem9Rat}
           setHoveredItem={setHoveredItem9Rat}
