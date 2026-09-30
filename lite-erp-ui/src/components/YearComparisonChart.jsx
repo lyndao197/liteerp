@@ -289,7 +289,6 @@ function YearRatioCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
-  onOpenDetail,
   maxVal = 100,
   yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
   primaryColor = '#e11d48',
@@ -507,23 +506,6 @@ function YearRatioCard({
             </div>
           )}
         </div>
-
-      {onOpenDetail && (
-        <div className="subcard-bottom-bar">
-          <button
-            type="button"
-            className="subcard-detail-action-btn"
-            title="Xem chi tiết"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDetail();
-            }}
-          >
-            <span>Xem chi tiết</span>
-            <ArrowRight size={14} />
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -690,10 +672,6 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC10Rat}
           isVisible={visibleCards.c10Rat}
           onToggle={() => toggleCard('c10Rat')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'chart10_rat',
-            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`
-          })}
         />
       </div>
 
@@ -730,10 +708,6 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC11Rat}
           isVisible={visibleCards.c11Rat}
           onToggle={() => toggleCard('c11Rat')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'chart11_rat',
-            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`
-          })}
         />
       </div>
 
@@ -771,10 +745,6 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC12Rat}
           isVisible={visibleCards.c12Rat}
           onToggle={() => toggleCard('c12Rat')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'chart12_rat',
-            chartTitle: `Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
-          })}
         />
       </div>
 
@@ -812,10 +782,6 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC13Rat}
           isVisible={visibleCards.c13Rat}
           onToggle={() => toggleCard('c13Rat')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'chart13_rat',
-            chartTitle: `Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`
-          })}
         />
       </div>
     </div>
