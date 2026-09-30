@@ -3096,11 +3096,13 @@ const RevenueReportDashboard = () => {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button className="clean-export-excel-btn" onClick={handleExportExcel}>
-            Xuất Excel
-          </button>
-        </div>
+        {!detailChartInfo && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button className="clean-export-excel-btn" onClick={handleExportExcel}>
+              Xuất Excel
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Content Area: Detail Table Screen OR Chart Subcards */}
