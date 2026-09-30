@@ -20,6 +20,7 @@ import {
 } from '../data/revenueInternalExternalData';
 import { SPDV_STRUCTURE_DATA } from '../data/revenueSpdvData';
 import { UNIT_STRUCTURE_DATA } from '../data/revenueUnitData';
+import RevenueChartDetailView from './RevenueChartDetailView';
 import './Dashboard.css';
 
 const YEAR_OPTIONS = ['2026', '2025', '2024'];
@@ -2049,8 +2050,8 @@ const ExecutiveGaugeMasterCard = ({
         </div>
       </div>
 
-      {/* Bottom Drilldown Action Button for Total Revenue */}
-      {index === 1 && onOpenDetailScreen && (
+      {/* Bottom Drilldown Action Button for Detail Records */}
+      {onOpenDetailScreen && (
         <div className="tr-drilldown-footer-row">
           <button
             type="button"
@@ -2059,7 +2060,7 @@ const ExecutiveGaugeMasterCard = ({
               e.stopPropagation();
               onOpenDetailScreen();
             }}
-            title="Xem chi tiết 4 biểu đồ cơ cấu"
+            title="Xem danh sách bản ghi liên quan"
           >
             <span>Xem chi tiết</span>
             <ArrowRight size={14} />
@@ -2154,6 +2155,7 @@ const Dashboard = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [trendMetric, setTrendMetric] = useState('revenue');
   const [currentScreen, setCurrentScreen] = useState('main'); // 'main' | 'revenue_breakdown'
+  const [detailRecordInfo, setDetailRecordInfo] = useState(null);
 
   // Parse active month number (1..12)
   const monthNum = useMemo(() => {
@@ -2252,6 +2254,29 @@ const Dashboard = () => {
     }
   };
 
+  // Separate Screen: Danh sách bản ghi chi tiết liên quan
+  if (detailRecordInfo) {
+    return (
+      <div className="exec-dashboard-page" style={{ padding: '20px' }}>
+        <RevenueChartDetailView
+          initialBranchId={detailRecordInfo.branchId || 'month'}
+          initialChartKey={detailRecordInfo.chartKey || 'chart1_val'}
+          initialChartTitle={detailRecordInfo.chartTitle || `Danh sách bản ghi doanh thu ${selectedMonth}/${selectedYear}`}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedMonth={selectedMonth}
+          setSelectedMonth={setSelectedMonth}
+          selectedQuarter={selectedQuarter}
+          setSelectedQuarter={setSelectedQuarter}
+          onBack={() => {
+            setDetailRecordInfo(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      </div>
+    );
+  }
+
   // Separate Screen: Chi tiết 4 biểu đồ cơ cấu doanh thu
   if (currentScreen === 'revenue_breakdown') {
     return (
@@ -2273,6 +2298,23 @@ const Dashboard = () => {
           <h2 className="breakdown-nav-page-title">
             Chi tiết 4 biểu đồ cơ cấu doanh thu
           </h2>
+
+          <button
+            type="button"
+            className="tr-btn-view-detail"
+            onClick={() => {
+              setDetailRecordInfo({
+                branchId: 'plan_progress',
+                chartTitle: `Danh sách bản ghi cơ cấu doanh thu ${selectedMonth}/${selectedYear}`
+              });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            style={{ marginLeft: 'auto' }}
+            title="Xem toàn bộ danh sách bản ghi liên quan"
+          >
+            <span>Xem danh sách bản ghi liên quan</span>
+            <ArrowRight size={14} />
+          </button>
 
           <div className="exec-clean-filters-bar" style={{ margin: 0, padding: 0 }}>
             <div className="exec-filters-group">
@@ -2322,6 +2364,14 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
               isDetailScreen={true}
+              onOpenDetailScreen={() => {
+                setDetailRecordInfo({
+                  branchId: 'plan_progress',
+                  chartKey: 'chart21',
+                  chartTitle: `Danh sách bản ghi Doanh thu Nội bộ (${selectedMonth}/${selectedYear})`
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
           </div>
 
@@ -2334,6 +2384,14 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
               isDetailScreen={true}
+              onOpenDetailScreen={() => {
+                setDetailRecordInfo({
+                  branchId: 'plan_progress',
+                  chartKey: 'chart22',
+                  chartTitle: `Danh sách bản ghi Doanh thu Ngoài tập đoàn (${selectedMonth}/${selectedYear})`
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
           </div>
 
@@ -2346,6 +2404,14 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
               isDetailScreen={true}
+              onOpenDetailScreen={() => {
+                setDetailRecordInfo({
+                  branchId: 'plan_progress',
+                  chartKey: 'chart23',
+                  chartTitle: `Danh sách bản ghi Doanh thu Trong nước (${selectedMonth}/${selectedYear})`
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
           </div>
 
@@ -2358,6 +2424,14 @@ const Dashboard = () => {
               selectedYear={selectedYear}
               data={data}
               isDetailScreen={true}
+              onOpenDetailScreen={() => {
+                setDetailRecordInfo({
+                  branchId: 'plan_progress',
+                  chartKey: 'chart24',
+                  chartTitle: `Danh sách bản ghi Doanh thu Quốc tế (${selectedMonth}/${selectedYear})`
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
             />
           </div>
         </div>
@@ -2441,7 +2515,7 @@ const Dashboard = () => {
       </div>
 
       <div className="exec-kpis-top-grid">
-        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ - BẤM VÀO ĐỂ SANG MÀN HÌNH 4 BIỂU ĐỒ CHI TIẾT) */}
+        {/* DÒNG 1: TỔNG DOANH THU (CHỈ TIÊU MẸ - BẤM VÀO ĐỂ SANG MÀN HÌNH DANH SÁCH BẢN GHI CHI TIẾT) */}
         <div className="exec-kpi-full-span">
           <ExecutiveGaugeMasterCard
             index={1}
@@ -2451,7 +2525,11 @@ const Dashboard = () => {
             data={data}
             isClickable={true}
             onOpenDetailScreen={() => {
-              setCurrentScreen('revenue_breakdown');
+              setDetailRecordInfo({
+                branchId: 'month',
+                chartKey: 'chart1_val',
+                chartTitle: `Danh sách bản ghi doanh thu ${selectedMonth}/${selectedYear}`
+              });
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
