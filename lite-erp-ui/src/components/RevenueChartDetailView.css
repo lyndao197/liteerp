@@ -343,10 +343,33 @@
   color: #ffffff;
 }
 
-/* 4. Table */
+/* 4. Table Wrapper with horizontal and vertical scrollbars */
 .chart-detail-table-wrapper {
   width: 100%;
+  max-height: 560px;
   overflow-x: auto;
+  overflow-y: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.chart-detail-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.chart-detail-table-wrapper::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.chart-detail-table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.chart-detail-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .chart-detail-erp-table {
@@ -369,6 +392,10 @@
   text-transform: uppercase;
   letter-spacing: 0.3px;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f8fafc;
 }
 
 .chart-detail-erp-table tbody tr {
@@ -710,5 +737,101 @@
 .chart-detail-month-table tfoot tr.row-grand-total td {
   color: #0f172a;
   font-size: 14px;
+}
+
+/* Sticky Headers when scrolling vertically */
+.chart-detail-month-table thead tr:first-child th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.chart-detail-month-table thead tr:nth-child(2) th {
+  position: sticky;
+  top: 40px;
+  z-index: 10;
+}
+
+.chart-detail-month-table thead tr.th-sub-row th {
+  position: sticky;
+  top: 79px;
+  z-index: 10;
+}
+
+/* Sticky Footer */
+.chart-detail-month-table tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 9;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.03);
+}
+
+/* Footer & Pagination matching Báo cáo kết quả doanh thu */
+.chart-detail-table-card .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 13px;
+  color: #64748b;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chart-detail-table-card .pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chart-detail-table-card .pagination-info {
+  font-weight: 500;
+  color: #334155;
+  font-size: 13px;
+}
+
+.chart-detail-table-card .pagination-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-detail-table-card .btn-paginate {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 4px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.chart-detail-table-card .btn-paginate:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.chart-detail-table-card .btn-paginate.active-btn {
+  background: #e03;
+  border-color: #e03;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.chart-detail-table-card .btn-paginate.active-btn:hover {
+  background: #c02;
+  border-color: #c02;
+}
+
+.chart-detail-table-card .btn-paginate:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowLeft, Download, Search, Filter, CheckCircle2, AlertCircle,
-  TrendingUp, TrendingDown, ChevronDown, TableProperties, BarChart2,
+  TrendingUp, TrendingDown, ChevronDown, ChevronLeft, ChevronRight, TableProperties, BarChart2,
   Calendar, Layers, RefreshCw
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
@@ -460,6 +460,28 @@ export default function RevenueChartDetailView({
     });
   }, [tableData.rows, searchQuery, statusFilter]);
 
+  // Pagination logic matching Báo cáo kết quả doanh thu
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Reset pagination when branch, chart, or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeBranchId, activeChartKey, selectedMonth, selectedYear, selectedQuarter, searchQuery, statusFilter]);
+
+  const totalRecords = activeBranchId === 'month' ? filteredMonthRows.length : filteredRows.length;
+  const totalPages = Math.ceil(totalRecords / itemsPerPage) || 1;
+
+  const paginatedMonthRows = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredMonthRows.slice(start, start + itemsPerPage);
+  }, [filteredMonthRows, currentPage, itemsPerPage]);
+
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredRows.slice(start, start + itemsPerPage);
+  }, [filteredRows, currentPage, itemsPerPage]);
+
   // Compute table totals for non-month branches
   const totals = useMemo(() => {
     let sumKh = 0;
@@ -802,8 +824,8 @@ export default function RevenueChartDetailView({
                 </tr>
               </thead>
               <tbody>
-                {filteredMonthRows.length > 0 ? (
-                  filteredMonthRows.map((row) => (
+                {paginatedMonthRows.length > 0 ? (
+                  paginatedMonthRows.map((row) => (
                     <tr key={row.id} className="month-data-row">
                       <td className="td-customer-group">{row.customerGroup}</td>
                       <td className="td-customer-name font-semibold">{row.customerName}</td>
@@ -904,8 +926,8 @@ export default function RevenueChartDetailView({
                 </tr>
               </thead>
               <tbody>
-                {filteredRows.length > 0 ? (
-                  filteredRows.map((row) => (
+                {paginatedRows.length > 0 ? (
+                  paginatedRows.map((row) => (
                     <tr key={`detail-row-${row.stt}`}>
                       <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
                         {row.stt}
@@ -1011,6 +1033,51 @@ export default function RevenueChartDetailView({
               </tfoot>
             </table>
           )}
+        </div>
+
+        {/* Pagination Bar - Styled identical to Báo cáo kết quả doanh thu */}
+        <div className="table-footer">
+          <div>
+            Hiển thị {totalRecords > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+            {Math.min(currentPage * itemsPerPage, totalRecords)} trong số {totalRecords} bản ghi
+          </div>
+          <div className="pagination-controls">
+            <span className="pagination-info">
+              {currentPage}/{totalPages}
+            </span>
+            <div className="pagination-buttons">
+              <button 
+                type="button"
+                className="btn-paginate" 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                title="Trang trước"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(page => (
+                <button 
+                  key={`page-${page}`}
+                  type="button"
+                  className={`btn-paginate ${currentPage === page ? 'active-btn' : ''}`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button 
+                type="button"
+                className="btn-paginate" 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                title="Trang sau"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
