@@ -613,6 +613,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Viễn thông',
       spdvName: 'FTTH',
       kh: 110,
+      uocTh: 105,
       th: 100,
       diff: -10,
       diffFormatted: '-10',
@@ -628,6 +629,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'CNTT',
       spdvName: 'Cloud',
       kh: 50,
+      uocTh: 52,
       th: 55,
       diff: 5,
       diffFormatted: '+5',
@@ -643,6 +645,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Dịch vụ số',
       spdvName: 'Giải pháp số',
       kh: 30,
+      uocTh: 27,
       th: 25,
       diff: -5,
       diffFormatted: '-5',
@@ -658,6 +661,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Viễn thông',
       spdvName: 'Truyền dẫn',
       kh: 75,
+      uocTh: 72,
       th: 70,
       diff: -5,
       diffFormatted: '-5',
@@ -673,6 +677,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'CNTT',
       spdvName: 'Data Center',
       kh: 55,
+      uocTh: 52,
       th: 50,
       diff: -5,
       diffFormatted: '-5',
@@ -688,6 +693,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Giải pháp, Dịch vụ CNTT',
       spdvName: 'OmniX CRM',
       kh: 160,
+      uocTh: 155,
       th: 150,
       diff: -10,
       diffFormatted: '-10',
@@ -703,6 +709,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Giải pháp, Dịch vụ CNTT',
       spdvName: 'AI Chatbot',
       kh: 110,
+      uocTh: 105,
       th: 100,
       diff: -10,
       diffFormatted: '-10',
@@ -718,6 +725,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'Tích hợp Hệ thống',
       spdvName: 'Loyalty App',
       kh: 95,
+      uocTh: 92,
       th: 90,
       diff: -5,
       diffFormatted: '-5',
@@ -733,6 +741,7 @@ export const CUSTOMER_SPDV_MONTH_DATA = {
       spdvGroup: 'SaaS Platform',
       spdvName: 'ERP Custom',
       kh: 55,
+      uocTh: 52,
       th: 50,
       diff: -5,
       diffFormatted: '-5',
@@ -774,6 +783,8 @@ export const getCustomerSpdvMonthData = (month = 'Tháng 6') => {
     // Slight variance on TH
     const thVariance = idx % 2 === 0 ? 0.93 : 0.97;
     const scaledTh = Math.round(scaledKh * thVariance);
+    // Ước TH
+    const uocTh = Math.round((scaledKh * 0.4) + (scaledTh * 0.6));
     const diff = scaledTh - scaledKh;
     const rateNum = scaledKh > 0 ? Number(((scaledTh / scaledKh) * 100).toFixed(1)) : 100;
     const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
@@ -782,6 +793,7 @@ export const getCustomerSpdvMonthData = (month = 'Tháng 6') => {
       ...item,
       id: `row-${month}-${idx + 1}`,
       kh: scaledKh,
+      uocTh,
       th: scaledTh,
       diff,
       diffFormatted: (diff > 0 ? '+' : '') + diff,

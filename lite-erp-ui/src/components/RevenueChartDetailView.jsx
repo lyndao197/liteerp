@@ -409,12 +409,14 @@ export default function RevenueChartDetailView({
 
     const calcGroup = (rows) => {
       const sumKh = rows.reduce((acc, r) => acc + (r.kh || 0), 0);
+      const sumUocTh = rows.reduce((acc, r) => acc + (r.uocTh || Math.round(((r.kh || 0) + (r.th || 0)) / 2)), 0);
       const sumTh = rows.reduce((acc, r) => acc + (r.th || 0), 0);
       const diff = sumTh - sumKh;
       const rateNum = sumKh > 0 ? Number(((sumTh / sumKh) * 100).toFixed(1)) : 100;
       const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
       return {
         kh: sumKh,
+        uocTh: sumUocTh,
         th: sumTh,
         diff,
         diffFormatted: (diff > 0 ? '+' : '') + diff,
@@ -499,6 +501,7 @@ export default function RevenueChartDetailView({
           'Nhóm SPDV': r.spdvGroup,
           'Tên SPDV': r.spdvName,
           'KH': r.kh,
+          'Ước TH': r.uocTh,
           'TH': r.th,
           '+/- so với KH': r.diffFormatted,
           '% HTKH': r.rate
@@ -511,6 +514,7 @@ export default function RevenueChartDetailView({
           'Nhóm SPDV': '',
           'Tên SPDV': '',
           'KH': monthTotals.external.kh,
+          'Ước TH': monthTotals.external.uocTh,
           'TH': monthTotals.external.th,
           '+/- so với KH': monthTotals.external.diffFormatted,
           '% HTKH': monthTotals.external.rate
@@ -522,6 +526,7 @@ export default function RevenueChartDetailView({
           'Nhóm SPDV': '',
           'Tên SPDV': '',
           'KH': monthTotals.internal.kh,
+          'Ước TH': monthTotals.internal.uocTh,
           'TH': monthTotals.internal.th,
           '+/- so với KH': monthTotals.internal.diffFormatted,
           '% HTKH': monthTotals.internal.rate
@@ -533,6 +538,7 @@ export default function RevenueChartDetailView({
           'Nhóm SPDV': '',
           'Tên SPDV': '',
           'KH': monthTotals.total.kh,
+          'Ước TH': monthTotals.total.uocTh,
           'TH': monthTotals.total.th,
           '+/- so với KH': monthTotals.total.diffFormatted,
           '% HTKH': monthTotals.total.rate
@@ -763,17 +769,31 @@ export default function RevenueChartDetailView({
             <table className="chart-detail-month-table">
               <thead>
                 <tr>
-                  <th rowSpan={2} className="th-customer-group">Nhóm khách hàng</th>
-                  <th rowSpan={2} className="th-customer-name">Tên khách hàng</th>
-                  <th rowSpan={2} className="th-spdv-group">Nhóm SPDV</th>
-                  <th rowSpan={2} className="th-spdv-name">Tên SPDV</th>
-                  <th colSpan={4} className="th-month-group">{selectedMonth}</th>
+                  <th rowSpan={3} className="th-customer-group">Nhóm khách hàng</th>
+                  <th rowSpan={3} className="th-customer-name">Tên khách hàng</th>
+                  <th rowSpan={3} className="th-spdv-group">Nhóm SPDV</th>
+                  <th rowSpan={3} className="th-spdv-name">Tên SPDV</th>
+                  <th colSpan={5} className="th-month-group">{selectedMonth}</th>
+                </tr>
+                <tr>
+                  <th colSpan={5} className="th-plan-group">Thực hiện so với KH Tập đoàn</th>
                 </tr>
                 <tr className="th-sub-row">
                   <th className="th-sub-kh">KH</th>
+                  <th className="th-sub-uoc">
+                    <span className="th-sub-uoc-line">Ước</span>
+                    <span className="th-sub-uoc-line">TH</span>
+                  </th>
                   <th className="th-sub-th">TH</th>
-                  <th className="th-sub-diff">+/- so với KH</th>
-                  <th className="th-sub-rate">% HTKH</th>
+                  <th className="th-sub-diff">
+                    <span className="th-sub-line">+/-</span>
+                    <span className="th-sub-line">so</span>
+                    <span className="th-sub-line">KH</span>
+                  </th>
+                  <th className="th-sub-rate">
+                    <span className="th-sub-line">%</span>
+                    <span className="th-sub-line">HTKH</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -785,6 +805,9 @@ export default function RevenueChartDetailView({
                       <td className="td-spdv-group">{row.spdvGroup}</td>
                       <td className="td-spdv-name">{row.spdvName}</td>
                       <td className="td-kh text-right">{row.kh}</td>
+                      <td className="td-uoc-th text-right font-medium text-orange">
+                        {row.uocTh !== undefined ? row.uocTh : Math.round(((row.kh || 0) + (row.th || 0)) / 2)}
+                      </td>
                       <td className="td-th text-right font-medium">{row.th}</td>
                       <td className={`td-diff text-right font-medium ${row.diff >= 0 ? 'text-green' : 'text-red'}`}>
                         {row.diffFormatted}
@@ -796,7 +819,7 @@ export default function RevenueChartDetailView({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="table-empty-row">
+                    <td colSpan={9} className="table-empty-row">
                       Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                     </td>
                   </tr>
@@ -809,6 +832,7 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu ngoài Tập đoàn
                   </td>
                   <td className="td-kh text-right font-bold">{monthTotals.external.kh}</td>
+                  <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.external.uocTh}</td>
                   <td className="td-th text-right font-bold">{monthTotals.external.th}</td>
                   <td className={`td-diff text-right font-bold ${monthTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.external.diffFormatted}
@@ -824,6 +848,7 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu nội bộ
                   </td>
                   <td className="td-kh text-right font-bold">{monthTotals.internal.kh}</td>
+                  <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.internal.uocTh}</td>
                   <td className="td-th text-right font-bold">{monthTotals.internal.th}</td>
                   <td className={`td-diff text-right font-bold ${monthTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.internal.diffFormatted}
@@ -839,6 +864,7 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu
                   </td>
                   <td className="td-kh text-right font-extrabold">{monthTotals.total.kh}</td>
+                  <td className="td-uoc-th text-right font-extrabold text-orange">{monthTotals.total.uocTh}</td>
                   <td className="td-th text-right font-extrabold">{monthTotals.total.th}</td>
                   <td className={`td-diff text-right font-extrabold ${monthTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.total.diffFormatted}

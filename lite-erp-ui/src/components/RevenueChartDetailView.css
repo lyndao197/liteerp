@@ -568,20 +568,55 @@
   font-size: 13.5px;
   border-left: 2px solid #bfdbfe;
   border-bottom: 1px solid #bfdbfe;
+  padding: 8px 12px;
+}
+
+.chart-detail-month-table thead th.th-plan-group {
+  text-align: center;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-left: 2px solid #bfdbfe;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 10px 16px;
 }
 
 .chart-detail-month-table thead tr.th-sub-row th {
-  background-color: #eff6ff;
-  color: #1e3a8a;
-  font-size: 12.5px;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 12px;
   font-weight: 700;
-  text-align: right;
-  padding: 8px 16px;
+  text-align: center;
+  padding: 8px 10px;
   border-bottom: 2px solid #cbd5e1;
+  border-right: 1px solid #e2e8f0;
+  vertical-align: middle;
+  line-height: 1.3;
 }
 
-.chart-detail-month-table thead tr.th-sub-row th:first-child {
+.chart-detail-month-table thead tr.th-sub-row th:first-child,
+.chart-detail-month-table thead tr.th-sub-row th.th-sub-kh {
   border-left: 2px solid #bfdbfe;
+}
+
+.chart-detail-month-table thead tr.th-sub-row th.th-sub-uoc {
+  color: #ea580c;
+}
+
+.th-sub-uoc-line {
+  display: block;
+  color: #ea580c;
+  font-weight: 700;
+}
+
+.th-sub-line {
+  display: block;
+  font-weight: 700;
+}
+
+.text-orange {
+  color: #ea580c !important;
 }
 
 .chart-detail-month-table tbody tr.month-data-row {
