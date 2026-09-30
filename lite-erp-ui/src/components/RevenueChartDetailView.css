@@ -840,7 +840,7 @@
 /* TREND 12-MONTH MATRIX TABLE STYLES                                         */
 /* ========================================================================== */
 .chart-detail-trend-table {
-  min-width: 2500px !important;
+  min-width: 2600px !important;
 }
 
 .chart-detail-trend-table thead tr:first-child th.th-trend-month-header {
@@ -870,8 +870,10 @@
   text-align: right;
 }
 
-.chart-detail-trend-table thead tr.th-sub-row th.th-sub-rate {
-  text-align: center;
+.chart-detail-trend-table thead tr.th-sub-row th.th-sub-rate,
+.chart-detail-trend-table thead tr.th-sub-row th.th-sub-growth {
+  text-align: right;
+  min-width: 105px;
 }
 
 .chart-detail-trend-table tbody td,
@@ -889,6 +891,10 @@
 .chart-detail-trend-table td.td-th {
   color: #0f172a;
   border-right: 1px solid #f1f5f9;
+}
+
+.chart-detail-trend-table td.td-growth {
+  border-left: 1px solid #f1f5f9;
 }
 
 .chart-detail-trend-table .text-muted {

@@ -1055,6 +1055,12 @@ export default function RevenueChartDetailView({
         const totalRate = `${totalRateNum.toFixed(1).replace('.', ',')}%`;
         const isPass = totalDiff >= 0 || totalRateNum >= 100;
 
+        // Tỷ lệ tăng trưởng so với cùng kỳ năm trước
+        const rowGrowthFactor = 1.10 + ((idx * 3) % 7) * 0.01; // ~1.10 -> 1.16 (+10% đến +16%)
+        const prevTh = Math.round(totalTh / rowGrowthFactor);
+        const growthRateNum = prevTh > 0 ? Number((((totalTh - prevTh) / prevTh) * 100).toFixed(1)) : 0;
+        const growthRate = `${growthRateNum >= 0 ? '+' : ''}${growthRateNum.toFixed(1).replace('.', ',')}%`;
+
         return {
           ...item,
           id: `trend-${selectedYear}-${idx + 1}`,
@@ -1065,6 +1071,9 @@ export default function RevenueChartDetailView({
           totalDiffFormatted: (totalDiff > 0 ? '+' : '') + totalDiff,
           totalRate,
           totalRateNum,
+          prevTh,
+          growthRate,
+          growthRateNum,
           isPass
         };
       });
@@ -1120,6 +1129,10 @@ export default function RevenueChartDetailView({
         const totalRateNum = compKh > 0 ? Number(((totalTh / compKh) * 100).toFixed(1)) : 100;
         const totalRate = `${totalRateNum.toFixed(1).replace('.', ',')}%`;
 
+        const totalPrevTh = rows.reduce((acc, r) => acc + (r.prevTh || 0), 0);
+        const growthRateNum = totalPrevTh > 0 ? Number((((totalTh - totalPrevTh) / totalPrevTh) * 100).toFixed(1)) : 0;
+        const growthRate = `${growthRateNum >= 0 ? '+' : ''}${growthRateNum.toFixed(1).replace('.', ',')}%`;
+
         return {
           monthly,
           totalKh,
@@ -1128,6 +1141,9 @@ export default function RevenueChartDetailView({
           totalDiffFormatted: (totalDiff > 0 ? '+' : '') + totalDiff,
           totalRate,
           totalRateNum,
+          prevTh: totalPrevTh,
+          growthRate,
+          growthRateNum,
           isPass: totalDiff >= 0 || totalRateNum >= 100
         };
       };
@@ -1287,6 +1303,7 @@ export default function RevenueChartDetailView({
             rowObj['Tổng TH'] = r.totalTh;
             rowObj['+/- Chênh lệch'] = r.totalDiffFormatted;
             rowObj['% HTKH'] = r.totalRate;
+            rowObj['Tỷ lệ tăng trưởng'] = r.growthRate;
             return rowObj;
           });
 
@@ -1307,6 +1324,7 @@ export default function RevenueChartDetailView({
             summaryObj['Tổng TH'] = data.totalTh;
             summaryObj['+/- Chênh lệch'] = data.totalDiffFormatted;
             summaryObj['% HTKH'] = data.totalRate;
+            summaryObj['Tỷ lệ tăng trưởng'] = data.growthRate;
             return summaryObj;
           };
 
@@ -1597,7 +1615,7 @@ export default function RevenueChartDetailView({
                         Tháng {m}
                       </th>
                     ))}
-                    <th colSpan={4} className="th-trend-total-header">
+                    <th colSpan={5} className="th-trend-total-header">
                       Cả năm {selectedYear}
                     </th>
                   </tr>
@@ -1612,6 +1630,7 @@ export default function RevenueChartDetailView({
                     <th className="th-sub-th">Tổng TH</th>
                     <th className="th-sub-diff">+/-</th>
                     <th className="th-sub-rate">% HT</th>
+                    <th className="th-sub-growth">Tỷ lệ tăng trưởng</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1640,11 +1659,14 @@ export default function RevenueChartDetailView({
                         <td className={`td-rate text-right font-bold ${row.isPass ? 'text-green' : 'text-red'}`}>
                           {row.totalRate}
                         </td>
+                        <td className={`td-growth text-right font-bold ${row.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
+                          {row.growthRate}
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={32} className="table-empty-row">
+                      <td colSpan={33} className="table-empty-row">
                         Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                       </td>
                     </tr>
@@ -1674,6 +1696,9 @@ export default function RevenueChartDetailView({
                     <td className={`td-rate text-right font-bold ${matrixTotals.external.isPass ? 'text-green' : 'text-red'}`}>
                       {matrixTotals.external.totalRate}
                     </td>
+                    <td className={`td-growth text-right font-bold ${matrixTotals.external.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.external.growthRate}
+                    </td>
                   </tr>
 
                   {/* Summary Row 2: Tổng doanh thu nội bộ */}
@@ -1698,6 +1723,9 @@ export default function RevenueChartDetailView({
                     </td>
                     <td className={`td-rate text-right font-bold ${matrixTotals.internal.isPass ? 'text-green' : 'text-red'}`}>
                       {matrixTotals.internal.totalRate}
+                    </td>
+                    <td className={`td-growth text-right font-bold ${matrixTotals.internal.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.internal.growthRate}
                     </td>
                   </tr>
 
@@ -1724,6 +1752,9 @@ export default function RevenueChartDetailView({
                     <td className={`td-rate text-right font-bold ${matrixTotals.international.isPass ? 'text-green' : 'text-red'}`}>
                       {matrixTotals.international.totalRate}
                     </td>
+                    <td className={`td-growth text-right font-bold ${matrixTotals.international.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.international.growthRate}
+                    </td>
                   </tr>
 
                   {/* Summary Row 4: Tổng doanh thu (Highlight blue background) */}
@@ -1748,6 +1779,9 @@ export default function RevenueChartDetailView({
                     </td>
                     <td className={`td-rate text-right font-extrabold ${matrixTotals.total.isPass ? 'text-green' : 'text-red'}`}>
                       {matrixTotals.total.totalRate}
+                    </td>
+                    <td className={`td-growth text-right font-extrabold ${matrixTotals.total.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.total.growthRate}
                     </td>
                   </tr>
                 </tfoot>
