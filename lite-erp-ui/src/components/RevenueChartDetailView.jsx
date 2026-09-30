@@ -603,27 +603,31 @@ export default function RevenueChartDetailView({
           <div className="chart-detail-breadcrumb">
             <span className="crumb-root">Báo cáo doanh thu</span>
             <span className="crumb-divider">/</span>
-            <span className="crumb-active">{chartTitle}</span>
+            <span className="crumb-active">
+              {activeBranchId === 'month' ? 'Thực hiện so với kế hoạch Tập đoàn' : chartTitle}
+            </span>
           </div>
         </div>
 
         <div className="chart-detail-nav-right">
-          {/* Quick Chart Switcher Dropdown */}
-          <div className="clean-filter-item">
-            <span className="clean-filter-label">Chọn biểu đồ</span>
-            <div className="clean-select-wrapper" style={{ minWidth: '260px' }}>
-              <select
-                className="clean-filter-select"
-                value={activeChartKey}
-                onChange={(e) => setActiveChartKey(e.target.value)}
-              >
-                {chartOptions.map((opt) => (
-                  <option key={opt.id} value={opt.id}>{opt.label}</option>
-                ))}
-              </select>
-              <ChevronDown size={14} className="clean-select-chevron" />
+          {/* Quick Chart Switcher Dropdown (hide in month branch to keep clean) */}
+          {activeBranchId !== 'month' && (
+            <div className="clean-filter-item">
+              <span className="clean-filter-label">Chọn biểu đồ</span>
+              <div className="clean-select-wrapper" style={{ minWidth: '260px' }}>
+                <select
+                  className="clean-filter-select"
+                  value={activeChartKey}
+                  onChange={(e) => setActiveChartKey(e.target.value)}
+                >
+                  {chartOptions.map((opt) => (
+                    <option key={opt.id} value={opt.id}>{opt.label}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="clean-select-chevron" />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Time Filters */}
           <div className="clean-filter-item">
@@ -692,53 +696,7 @@ export default function RevenueChartDetailView({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. SUMMARY KPI TILES                                                      */}
-      {/* ========================================================================= */}
-      <div className="chart-detail-summary-cards">
-        <div className="chart-detail-summary-card card-th">
-          <div className="summary-card-label">Tổng Thực hiện / Ước (TH)</div>
-          <div className="summary-card-value text-red">
-            {activeTotals.sumTh.toLocaleString('vi-VN')}
-            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
-          </div>
-          <div className="summary-card-sub">Theo kỳ báo cáo hiện tại</div>
-        </div>
-
-        <div className="chart-detail-summary-card card-kh">
-          <div className="summary-card-label">Tổng Kế hoạch giao (KH)</div>
-          <div className="summary-card-value text-slate">
-            {activeTotals.sumKh.toLocaleString('vi-VN')}
-            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
-          </div>
-          <div className="summary-card-sub">Chỉ tiêu phân bổ kỳ tương ứng</div>
-        </div>
-
-        <div className="chart-detail-summary-card card-diff">
-          <div className="summary-card-label">Chênh lệch tuyệt đối (+/-)</div>
-          <div className={`summary-card-value ${activeTotals.diffVal >= 0 ? 'text-green' : 'text-red'}`}>
-            {activeTotals.diffFormatted}
-            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
-          </div>
-          <div className="summary-card-sub">
-            {activeTotals.diffVal >= 0 ? 'Vượt chỉ tiêu kế hoạch giao' : 'Chưa đạt chỉ tiêu kế hoạch'}
-          </div>
-        </div>
-
-        <div className="chart-detail-summary-card card-rate">
-          <div className="summary-card-label">Tỷ lệ hoàn thành kế hoạch</div>
-          <div className={`summary-card-value ${activeTotals.isPass ? 'text-green' : 'text-amber'}`}>
-            {activeTotals.avgRate}
-          </div>
-          <div className="summary-card-sub">
-            <span className={`status-pill-small ${activeTotals.isPass ? 'pill-green' : 'pill-red'}`}>
-              {activeTotals.isPass ? 'Đạt mục tiêu' : 'Cần tăng tốc'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ========================================================================= */}
-      {/* 3. TABLE CONTROLS & SEARCH                                                */}
+      {/* 2. TABLE CONTROLS & MAIN DATA TABLE (ONLY TABLE REMAINS)                 */}
       {/* ========================================================================= */}
       <div className="chart-detail-table-card">
         <div className="chart-detail-table-header">
