@@ -139,6 +139,19 @@ export default function RevenueChartDetailView({
   const currentChartObj = chartOptions.find(o => o.id === activeChartKey) || chartOptions[0];
   const chartTitle = initialChartTitle || currentChartObj?.label || 'Bảng dữ liệu chi tiết';
 
+  // Check if current chart has estimate data (Ước)
+  const hasEstimate = useMemo(() => {
+    const keyLower = (activeChartKey || '').toLowerCase();
+    const titleLower = (chartTitle || '').toLowerCase();
+    const labelLower = (currentChartObj?.label || '').toLowerCase();
+    return (
+      keyLower.includes('est') ||
+      keyLower.includes('uoc') ||
+      titleLower.includes('ước') ||
+      labelLower.includes('ước')
+    );
+  }, [activeChartKey, chartTitle, currentChartObj]);
+
   // Compute table dataset according to active branch and chart
   const tableData = useMemo(() => {
     let rows = [];
@@ -495,54 +508,44 @@ export default function RevenueChartDetailView({
   const handleExportTableExcel = () => {
     try {
       if (activeBranchId === 'month') {
-        const exportRows = filteredMonthRows.map(r => ({
-          'Nhóm khách hàng': r.customerGroup,
-          'Tên khách hàng': r.customerName,
-          'Nhóm SPDV': r.spdvGroup,
-          'Tên SPDV': r.spdvName,
-          'KH': r.kh,
-          'Ước TH': r.uocTh,
-          'TH': r.th,
-          '+/- so với KH': r.diffFormatted,
-          '% HTKH': r.rate
-        }));
+        const exportRows = filteredMonthRows.map(r => {
+          const rowObj = {
+            'Nhóm khách hàng': r.customerGroup,
+            'Tên khách hàng': r.customerName,
+            'Nhóm SPDV': r.spdvGroup,
+            'Tên SPDV': r.spdvName,
+            'KH': r.kh
+          };
+          if (hasEstimate) {
+            rowObj['Ước TH'] = r.uocTh;
+          }
+          rowObj['TH'] = r.th;
+          rowObj['+/- so với KH'] = r.diffFormatted;
+          rowObj['% HTKH'] = r.rate;
+          return rowObj;
+        });
 
         // Summary rows matching screenshot
-        exportRows.push({
-          'Nhóm khách hàng': 'Tổng doanh thu ngoài Tập đoàn',
-          'Tên khách hàng': '',
-          'Nhóm SPDV': '',
-          'Tên SPDV': '',
-          'KH': monthTotals.external.kh,
-          'Ước TH': monthTotals.external.uocTh,
-          'TH': monthTotals.external.th,
-          '+/- so với KH': monthTotals.external.diffFormatted,
-          '% HTKH': monthTotals.external.rate
-        });
+        const buildSummaryExport = (title, data) => {
+          const summaryObj = {
+            'Nhóm khách hàng': title,
+            'Tên khách hàng': '',
+            'Nhóm SPDV': '',
+            'Tên SPDV': '',
+            'KH': data.kh
+          };
+          if (hasEstimate) {
+            summaryObj['Ước TH'] = data.uocTh;
+          }
+          summaryObj['TH'] = data.th;
+          summaryObj['+/- so với KH'] = data.diffFormatted;
+          summaryObj['% HTKH'] = data.rate;
+          return summaryObj;
+        };
 
-        exportRows.push({
-          'Nhóm khách hàng': 'Tổng doanh thu nội bộ',
-          'Tên khách hàng': '',
-          'Nhóm SPDV': '',
-          'Tên SPDV': '',
-          'KH': monthTotals.internal.kh,
-          'Ước TH': monthTotals.internal.uocTh,
-          'TH': monthTotals.internal.th,
-          '+/- so với KH': monthTotals.internal.diffFormatted,
-          '% HTKH': monthTotals.internal.rate
-        });
-
-        exportRows.push({
-          'Nhóm khách hàng': 'Tổng doanh thu',
-          'Tên khách hàng': '',
-          'Nhóm SPDV': '',
-          'Tên SPDV': '',
-          'KH': monthTotals.total.kh,
-          'Ước TH': monthTotals.total.uocTh,
-          'TH': monthTotals.total.th,
-          '+/- so với KH': monthTotals.total.diffFormatted,
-          '% HTKH': monthTotals.total.rate
-        });
+        exportRows.push(buildSummaryExport('Tổng doanh thu ngoài Tập đoàn', monthTotals.external));
+        exportRows.push(buildSummaryExport('Tổng doanh thu nội bộ', monthTotals.internal));
+        exportRows.push(buildSummaryExport('Tổng doanh thu', monthTotals.total));
 
         const ws = XLSX.utils.json_to_sheet(exportRows);
         const wb = XLSX.utils.book_new();
@@ -773,17 +776,19 @@ export default function RevenueChartDetailView({
                   <th rowSpan={3} className="th-customer-name">Tên khách hàng</th>
                   <th rowSpan={3} className="th-spdv-group">Nhóm SPDV</th>
                   <th rowSpan={3} className="th-spdv-name">Tên SPDV</th>
-                  <th colSpan={5} className="th-month-group">{selectedMonth}</th>
+                  <th colSpan={hasEstimate ? 5 : 4} className="th-month-group">{selectedMonth}</th>
                 </tr>
                 <tr>
-                  <th colSpan={5} className="th-plan-group">Thực hiện so với KH Tập đoàn</th>
+                  <th colSpan={hasEstimate ? 5 : 4} className="th-plan-group">Thực hiện so với KH Tập đoàn</th>
                 </tr>
                 <tr className="th-sub-row">
                   <th className="th-sub-kh">KH</th>
-                  <th className="th-sub-uoc">
-                    <span className="th-sub-uoc-line">Ước</span>
-                    <span className="th-sub-uoc-line">TH</span>
-                  </th>
+                  {hasEstimate && (
+                    <th className="th-sub-uoc">
+                      <span className="th-sub-uoc-line">Ước</span>
+                      <span className="th-sub-uoc-line">TH</span>
+                    </th>
+                  )}
                   <th className="th-sub-th">TH</th>
                   <th className="th-sub-diff">
                     <span className="th-sub-line">+/-</span>
@@ -805,9 +810,11 @@ export default function RevenueChartDetailView({
                       <td className="td-spdv-group">{row.spdvGroup}</td>
                       <td className="td-spdv-name">{row.spdvName}</td>
                       <td className="td-kh text-right">{row.kh}</td>
-                      <td className="td-uoc-th text-right font-medium text-orange">
-                        {row.uocTh !== undefined ? row.uocTh : Math.round(((row.kh || 0) + (row.th || 0)) / 2)}
-                      </td>
+                      {hasEstimate && (
+                        <td className="td-uoc-th text-right font-medium text-orange">
+                          {row.uocTh !== undefined ? row.uocTh : Math.round(((row.kh || 0) + (row.th || 0)) / 2)}
+                        </td>
+                      )}
                       <td className="td-th text-right font-medium">{row.th}</td>
                       <td className={`td-diff text-right font-medium ${row.diff >= 0 ? 'text-green' : 'text-red'}`}>
                         {row.diffFormatted}
@@ -819,7 +826,7 @@ export default function RevenueChartDetailView({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={9} className="table-empty-row">
+                    <td colSpan={hasEstimate ? 9 : 8} className="table-empty-row">
                       Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                     </td>
                   </tr>
@@ -832,7 +839,9 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu ngoài Tập đoàn
                   </td>
                   <td className="td-kh text-right font-bold">{monthTotals.external.kh}</td>
-                  <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.external.uocTh}</td>
+                  {hasEstimate && (
+                    <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.external.uocTh}</td>
+                  )}
                   <td className="td-th text-right font-bold">{monthTotals.external.th}</td>
                   <td className={`td-diff text-right font-bold ${monthTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.external.diffFormatted}
@@ -848,7 +857,9 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu nội bộ
                   </td>
                   <td className="td-kh text-right font-bold">{monthTotals.internal.kh}</td>
-                  <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.internal.uocTh}</td>
+                  {hasEstimate && (
+                    <td className="td-uoc-th text-right font-bold text-orange">{monthTotals.internal.uocTh}</td>
+                  )}
                   <td className="td-th text-right font-bold">{monthTotals.internal.th}</td>
                   <td className={`td-diff text-right font-bold ${monthTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.internal.diffFormatted}
@@ -864,7 +875,9 @@ export default function RevenueChartDetailView({
                     Tổng doanh thu
                   </td>
                   <td className="td-kh text-right font-extrabold">{monthTotals.total.kh}</td>
-                  <td className="td-uoc-th text-right font-extrabold text-orange">{monthTotals.total.uocTh}</td>
+                  {hasEstimate && (
+                    <td className="td-uoc-th text-right font-extrabold text-orange">{monthTotals.total.uocTh}</td>
+                  )}
                   <td className="td-th text-right font-extrabold">{monthTotals.total.th}</td>
                   <td className={`td-diff text-right font-extrabold ${monthTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {monthTotals.total.diffFormatted}
