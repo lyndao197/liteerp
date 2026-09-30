@@ -81,6 +81,8 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart13', label: 'Biểu đồ 13: Ước TH năm so với TH năm trước (Tăng trưởng)' }
   ],
   trend: [
+    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' },
+    { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu từng tháng so với kế hoạch' },
     { id: 'chart14', label: 'Biểu đồ 14: Xu hướng doanh thu 12 tháng so với năm trước & KH' },
     { id: 'chart15', label: 'Biểu đồ 15: Tích lũy doanh thu 12 tháng' }
   ],
@@ -326,7 +328,8 @@ export default function RevenueChartDetailView({
   const chartTitle = (activeChartKey === initialChartKey && initialChartTitle) ? initialChartTitle : (currentChartObj?.label || 'Bảng dữ liệu chi tiết');
 
   // Branch category helper
-  const isMatrixBranch = activeBranchId === 'month' || activeBranchId === 'quarter' || activeBranchId === 'year';
+  const isMatrixBranch = activeBranchId === 'month' || activeBranchId === 'quarter' || activeBranchId === 'year' || activeBranchId === 'trend';
+  const isTrendBranch = activeBranchId === 'trend';
 
   // Month code computations for dynamic comparison headers
   const monthNum = useMemo(() => {
@@ -999,6 +1002,72 @@ export default function RevenueChartDetailView({
           isPass
         };
       });
+    } else if (activeBranchId === 'trend') {
+      const monthFactors = {
+        1: 0.75, 2: 0.70, 3: 0.95,
+        4: 0.85, 5: 0.88, 6: 1.00,
+        7: 0.92, 8: 0.90, 9: 0.96,
+        10: 0.94, 11: 0.98, 12: 1.10
+      };
+      const isCurrent2026 = selectedYear === '2026';
+
+      processedRows = CUSTOMER_SPDV_MASTER_DATA.map((item, idx) => {
+        const monthly = {};
+        let totalKh = 0;
+        let totalTh = 0;
+        let relevantKh = 0;
+
+        for (let m = 1; m <= 12; m++) {
+          const factor = monthFactors[m] || 0.90;
+          const kh = Math.round(item.baseKh * factor);
+          totalKh += kh;
+
+          if (isCurrent2026 && m > 8) {
+            monthly[m] = {
+              kh,
+              th: null,
+              rate: '—',
+              rateNum: null,
+              diff: null
+            };
+          } else {
+            const variance = idx % 2 === 0 ? 0.94 : 0.98;
+            const th = Math.round(kh * variance);
+            const diff = th - kh;
+            const rateNum = kh > 0 ? Number(((th / kh) * 100).toFixed(1)) : 100;
+            const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+            totalTh += th;
+            relevantKh += kh;
+            monthly[m] = {
+              kh,
+              th,
+              diff,
+              rate,
+              rateNum,
+              isPass: diff >= 0 || rateNum >= 100
+            };
+          }
+        }
+
+        const compKh = isCurrent2026 ? relevantKh : totalKh;
+        const totalDiff = totalTh - compKh;
+        const totalRateNum = compKh > 0 ? Number(((totalTh / compKh) * 100).toFixed(1)) : 100;
+        const totalRate = `${totalRateNum.toFixed(1).replace('.', ',')}%`;
+        const isPass = totalDiff >= 0 || totalRateNum >= 100;
+
+        return {
+          ...item,
+          id: `trend-${selectedYear}-${idx + 1}`,
+          monthly,
+          totalKh,
+          totalTh,
+          totalDiff,
+          totalDiffFormatted: (totalDiff > 0 ? '+' : '') + totalDiff,
+          totalRate,
+          totalRateNum,
+          isPass
+        };
+      });
     }
 
     return processedRows.filter(row => {
@@ -1014,14 +1083,66 @@ export default function RevenueChartDetailView({
       return true;
     });
   }, [
-    isMatrixBranch, activeBranchId, selectedMonth, selectedQuarter, selectedCumulativeMonth,
+    isMatrixBranch, activeBranchId, selectedYear, selectedMonth, selectedQuarter, selectedCumulativeMonth,
     searchQuery, statusFilter, activeChartKey, chartTitle,
     prevMonthNum, nextMonthNum, prevQuarterName, nextQuarterName, hasEstimate
   ]);
 
-  // Totals for Matrix branches (Month, Quarter, Year) matching screenshot structure
+  // Totals for Matrix branches (Month, Quarter, Year, Trend) matching screenshot structure
   const matrixTotals = useMemo(() => {
     const targetRows = filteredMatrixRows;
+
+    if (isTrendBranch) {
+      const calcTrendGroup = (rows) => {
+        const monthly = {};
+        let totalKh = 0;
+        let totalTh = 0;
+        let relevantKh = 0;
+        const isCurrent2026 = selectedYear === '2026';
+
+        for (let m = 1; m <= 12; m++) {
+          const sumKh = rows.reduce((acc, r) => acc + (r.monthly?.[m]?.kh || 0), 0);
+          const hasTh = rows.some(r => r.monthly?.[m]?.th !== null && r.monthly?.[m]?.th !== undefined);
+          const sumTh = hasTh ? rows.reduce((acc, r) => acc + (r.monthly?.[m]?.th || 0), 0) : null;
+          monthly[m] = {
+            kh: sumKh,
+            th: sumTh
+          };
+          totalKh += sumKh;
+          if (sumTh !== null) {
+            totalTh += sumTh;
+            relevantKh += sumKh;
+          }
+        }
+
+        const compKh = isCurrent2026 ? relevantKh : totalKh;
+        const totalDiff = totalTh - compKh;
+        const totalRateNum = compKh > 0 ? Number(((totalTh / compKh) * 100).toFixed(1)) : 100;
+        const totalRate = `${totalRateNum.toFixed(1).replace('.', ',')}%`;
+
+        return {
+          monthly,
+          totalKh,
+          totalTh,
+          totalDiff,
+          totalDiffFormatted: (totalDiff > 0 ? '+' : '') + totalDiff,
+          totalRate,
+          totalRateNum,
+          isPass: totalDiff >= 0 || totalRateNum >= 100
+        };
+      };
+
+      const externalRows = targetRows.filter(r => r.type === 'external');
+      const internalRows = targetRows.filter(r => r.type === 'internal');
+      const internationalRows = targetRows.filter(r => r.isInternational || r.customerGroup?.includes('nước ngoài'));
+
+      return {
+        external: calcTrendGroup(externalRows),
+        internal: calcTrendGroup(internalRows),
+        international: calcTrendGroup(internationalRows),
+        total: calcTrendGroup(targetRows)
+      };
+    }
 
     const calcGroup = (rows) => {
       const sumTarget = rows.reduce((acc, r) => acc + (r.targetVal !== undefined ? r.targetVal : (r.kh || 0)), 0);
@@ -1054,7 +1175,7 @@ export default function RevenueChartDetailView({
       international: calcGroup(internationalRows),
       total: calcGroup(targetRows)
     };
-  }, [filteredMatrixRows, hasEstimate]);
+  }, [filteredMatrixRows, hasEstimate, isTrendBranch, selectedYear]);
 
   // Filtered rows by search and status for non-matrix branches
   const filteredRows = useMemo(() => {
@@ -1120,6 +1241,17 @@ export default function RevenueChartDetailView({
   // Unified KPI tiles totals depending on active branch
   const activeTotals = useMemo(() => {
     if (isMatrixBranch) {
+      if (isTrendBranch && matrixTotals?.total?.monthly) {
+        return {
+          sumTh: matrixTotals.total.totalTh,
+          sumKh: matrixTotals.total.totalKh,
+          diffVal: matrixTotals.total.totalDiff,
+          diffFormatted: matrixTotals.total.totalDiffFormatted,
+          avgRate: matrixTotals.total.totalRate,
+          rateNum: matrixTotals.total.totalRateNum,
+          isPass: matrixTotals.total.isPass
+        };
+      }
       return {
         sumTh: matrixTotals.total.th,
         sumKh: matrixTotals.total.kh,
@@ -1131,12 +1263,66 @@ export default function RevenueChartDetailView({
       };
     }
     return totals;
-  }, [isMatrixBranch, matrixTotals, totals]);
+  }, [isMatrixBranch, isTrendBranch, matrixTotals, totals]);
 
   // Export table directly to Excel (.xlsx)
   const handleExportTableExcel = () => {
     try {
       if (isMatrixBranch) {
+        if (isTrendBranch) {
+          const exportRows = filteredMatrixRows.map(r => {
+            const rowObj = {
+              'Nhóm khách hàng': r.customerGroup,
+              'Tên khách hàng': r.customerName,
+              'Nhóm SPDV': r.spdvGroup,
+              'Tên SPDV': r.spdvName
+            };
+            for (let m = 1; m <= 12; m++) {
+              rowObj[`T${m} - KH`] = r.monthly?.[m]?.kh ?? 0;
+              rowObj[`T${m} - TH`] = (r.monthly?.[m]?.th !== null && r.monthly?.[m]?.th !== undefined)
+                ? r.monthly[m].th
+                : '';
+            }
+            rowObj['Tổng KH'] = r.totalKh;
+            rowObj['Tổng TH'] = r.totalTh;
+            rowObj['+/- Chênh lệch'] = r.totalDiffFormatted;
+            rowObj['% HTKH'] = r.totalRate;
+            return rowObj;
+          });
+
+          const buildTrendSummaryExport = (title, data) => {
+            const summaryObj = {
+              'Nhóm khách hàng': title,
+              'Tên khách hàng': '',
+              'Nhóm SPDV': '',
+              'Tên SPDV': ''
+            };
+            for (let m = 1; m <= 12; m++) {
+              summaryObj[`T${m} - KH`] = data.monthly?.[m]?.kh ?? 0;
+              summaryObj[`T${m} - TH`] = (data.monthly?.[m]?.th !== null && data.monthly?.[m]?.th !== undefined)
+                ? data.monthly[m].th
+                : '';
+            }
+            summaryObj['Tổng KH'] = data.totalKh;
+            summaryObj['Tổng TH'] = data.totalTh;
+            summaryObj['+/- Chênh lệch'] = data.totalDiffFormatted;
+            summaryObj['% HTKH'] = data.totalRate;
+            return summaryObj;
+          };
+
+          exportRows.push(buildTrendSummaryExport('Tổng doanh thu ngoài Tập đoàn', matrixTotals.external));
+          exportRows.push(buildTrendSummaryExport('Tổng doanh thu nội bộ', matrixTotals.internal));
+          exportRows.push(buildTrendSummaryExport('Tổng doanh thu quốc tế', matrixTotals.international));
+          exportRows.push(buildTrendSummaryExport('Tổng doanh thu', matrixTotals.total));
+
+          const ws = XLSX.utils.json_to_sheet(exportRows);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Xu_Huong_Doanh_Thu');
+          const cleanFileName = `Bao_cao_xu_huong_doanh_thu_${selectedYear}.xlsx`;
+          XLSX.writeFile(wb, cleanFileName);
+          return;
+        }
+
         const exportRows = filteredMatrixRows.map(r => {
           const rowObj = {
             'Nhóm khách hàng': r.customerGroup,
@@ -1395,10 +1581,182 @@ export default function RevenueChartDetailView({
         {/* ========================================================================= */}
         <div className="chart-detail-table-wrapper">
           {isMatrixBranch ? (
-            /* ======================================================================= */
-            /* MATRIX TABLE: CUSTOMER & SPDV (MONTH, QUARTER, YEAR)                    */
-            /* ======================================================================= */
-            <table className="chart-detail-month-table">
+            isTrendBranch ? (
+              /* ======================================================================= */
+              /* MATRIX TABLE: 12 MONTHS TREND (KH & TH PER MONTH)                      */
+              /* ======================================================================= */
+              <table className="chart-detail-month-table chart-detail-trend-table">
+                <thead>
+                  <tr>
+                    <th rowSpan={2} className="th-customer-group">Nhóm khách hàng</th>
+                    <th rowSpan={2} className="th-customer-name">Tên khách hàng</th>
+                    <th rowSpan={2} className="th-spdv-group">Nhóm SPDV</th>
+                    <th rowSpan={2} className="th-spdv-name">Tên SPDV</th>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <th key={`th-m-${m}`} colSpan={2} className="th-trend-month-header">
+                        Tháng {m}
+                      </th>
+                    ))}
+                    <th colSpan={4} className="th-trend-total-header">
+                      Cả năm {selectedYear}
+                    </th>
+                  </tr>
+                  <tr className="th-sub-row">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <React.Fragment key={`sub-m-${m}`}>
+                        <th className="th-sub-kh">KH</th>
+                        <th className="th-sub-th">TH</th>
+                      </React.Fragment>
+                    ))}
+                    <th className="th-sub-kh">Tổng KH</th>
+                    <th className="th-sub-th">Tổng TH</th>
+                    <th className="th-sub-diff">+/-</th>
+                    <th className="th-sub-rate">% HT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedMatrixRows.length > 0 ? (
+                    paginatedMatrixRows.map((row) => (
+                      <tr key={row.id} className="month-data-row">
+                        <td className="td-customer-group">{row.customerGroup}</td>
+                        <td className="td-customer-name font-semibold">{row.customerName}</td>
+                        <td className="td-spdv-group">{row.spdvGroup}</td>
+                        <td className="td-spdv-name">{row.spdvName}</td>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                          <React.Fragment key={`td-m-${m}`}>
+                            <td className="td-kh text-right">{row.monthly?.[m]?.kh ?? 0}</td>
+                            <td className="td-th text-right font-medium">
+                              {row.monthly?.[m]?.th !== null && row.monthly?.[m]?.th !== undefined
+                                ? row.monthly[m].th
+                                : <span className="text-muted">—</span>}
+                            </td>
+                          </React.Fragment>
+                        ))}
+                        <td className="td-kh text-right font-semibold">{row.totalKh}</td>
+                        <td className="td-th text-right font-bold">{row.totalTh}</td>
+                        <td className={`td-diff text-right font-medium ${row.totalDiff >= 0 ? 'text-green' : 'text-red'}`}>
+                          {row.totalDiffFormatted}
+                        </td>
+                        <td className={`td-rate text-right font-bold ${row.isPass ? 'text-green' : 'text-red'}`}>
+                          {row.totalRate}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={32} className="table-empty-row">
+                        Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+                <tfoot>
+                  {/* Summary Row 1: Tổng doanh thu ngoài Tập đoàn */}
+                  <tr className="month-summary-row row-external">
+                    <td colSpan={4} className="summary-title-cell font-bold">
+                      Tổng doanh thu ngoài Tập đoàn
+                    </td>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <React.Fragment key={`ext-m-${m}`}>
+                        <td className="td-kh text-right font-bold">{matrixTotals.external.monthly?.[m]?.kh ?? 0}</td>
+                        <td className="td-th text-right font-bold">
+                          {matrixTotals.external.monthly?.[m]?.th !== null && matrixTotals.external.monthly?.[m]?.th !== undefined
+                            ? matrixTotals.external.monthly[m].th
+                            : <span className="text-muted">—</span>}
+                        </td>
+                      </React.Fragment>
+                    ))}
+                    <td className="td-kh text-right font-bold">{matrixTotals.external.totalKh}</td>
+                    <td className="td-th text-right font-bold">{matrixTotals.external.totalTh}</td>
+                    <td className={`td-diff text-right font-bold ${matrixTotals.external.totalDiff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.external.totalDiffFormatted}
+                    </td>
+                    <td className={`td-rate text-right font-bold ${matrixTotals.external.isPass ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.external.totalRate}
+                    </td>
+                  </tr>
+
+                  {/* Summary Row 2: Tổng doanh thu nội bộ */}
+                  <tr className="month-summary-row row-internal">
+                    <td colSpan={4} className="summary-title-cell font-bold">
+                      Tổng doanh thu nội bộ
+                    </td>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <React.Fragment key={`int-m-${m}`}>
+                        <td className="td-kh text-right font-bold">{matrixTotals.internal.monthly?.[m]?.kh ?? 0}</td>
+                        <td className="td-th text-right font-bold">
+                          {matrixTotals.internal.monthly?.[m]?.th !== null && matrixTotals.internal.monthly?.[m]?.th !== undefined
+                            ? matrixTotals.internal.monthly[m].th
+                            : <span className="text-muted">—</span>}
+                        </td>
+                      </React.Fragment>
+                    ))}
+                    <td className="td-kh text-right font-bold">{matrixTotals.internal.totalKh}</td>
+                    <td className="td-th text-right font-bold">{matrixTotals.internal.totalTh}</td>
+                    <td className={`td-diff text-right font-bold ${matrixTotals.internal.totalDiff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.internal.totalDiffFormatted}
+                    </td>
+                    <td className={`td-rate text-right font-bold ${matrixTotals.internal.isPass ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.internal.totalRate}
+                    </td>
+                  </tr>
+
+                  {/* Summary Row 3: Tổng doanh thu quốc tế */}
+                  <tr className="month-summary-row row-international">
+                    <td colSpan={4} className="summary-title-cell font-bold">
+                      Tổng doanh thu quốc tế
+                    </td>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <React.Fragment key={`inter-m-${m}`}>
+                        <td className="td-kh text-right font-bold">{matrixTotals.international.monthly?.[m]?.kh ?? 0}</td>
+                        <td className="td-th text-right font-bold">
+                          {matrixTotals.international.monthly?.[m]?.th !== null && matrixTotals.international.monthly?.[m]?.th !== undefined
+                            ? matrixTotals.international.monthly[m].th
+                            : <span className="text-muted">—</span>}
+                        </td>
+                      </React.Fragment>
+                    ))}
+                    <td className="td-kh text-right font-bold">{matrixTotals.international.totalKh}</td>
+                    <td className="td-th text-right font-bold">{matrixTotals.international.totalTh}</td>
+                    <td className={`td-diff text-right font-bold ${matrixTotals.international.totalDiff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.international.totalDiffFormatted}
+                    </td>
+                    <td className={`td-rate text-right font-bold ${matrixTotals.international.isPass ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.international.totalRate}
+                    </td>
+                  </tr>
+
+                  {/* Summary Row 4: Tổng doanh thu (Highlight blue background) */}
+                  <tr className="month-summary-row row-grand-total">
+                    <td colSpan={4} className="summary-title-cell font-extrabold">
+                      Tổng doanh thu
+                    </td>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
+                      <React.Fragment key={`tot-m-${m}`}>
+                        <td className="td-kh text-right font-extrabold">{matrixTotals.total.monthly?.[m]?.kh ?? 0}</td>
+                        <td className="td-th text-right font-extrabold">
+                          {matrixTotals.total.monthly?.[m]?.th !== null && matrixTotals.total.monthly?.[m]?.th !== undefined
+                            ? matrixTotals.total.monthly[m].th
+                            : <span className="text-muted">—</span>}
+                        </td>
+                      </React.Fragment>
+                    ))}
+                    <td className="td-kh text-right font-extrabold">{matrixTotals.total.totalKh}</td>
+                    <td className="td-th text-right font-extrabold">{matrixTotals.total.totalTh}</td>
+                    <td className={`td-diff text-right font-extrabold ${matrixTotals.total.totalDiff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.total.totalDiffFormatted}
+                    </td>
+                    <td className={`td-rate text-right font-extrabold ${matrixTotals.total.isPass ? 'text-green' : 'text-red'}`}>
+                      {matrixTotals.total.totalRate}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            ) : (
+              /* ======================================================================= */
+              /* MATRIX TABLE: CUSTOMER & SPDV (MONTH, QUARTER, YEAR)                    */
+              /* ======================================================================= */
+              <table className="chart-detail-month-table">
               <thead>
                 <tr>
                   <th rowSpan={3} className="th-customer-group">Nhóm khách hàng</th>
@@ -1535,7 +1893,8 @@ export default function RevenueChartDetailView({
                 </tr>
               </tfoot>
             </table>
-          ) : (
+          )
+        ) : (
             <table className="chart-detail-erp-table">
               <thead>
                 <tr>

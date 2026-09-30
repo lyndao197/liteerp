@@ -836,3 +836,64 @@
   cursor: not-allowed;
 }
 
+/* ========================================================================== */
+/* TREND 12-MONTH MATRIX TABLE STYLES                                         */
+/* ========================================================================== */
+.chart-detail-trend-table {
+  min-width: 2500px !important;
+}
+
+.chart-detail-trend-table thead tr:first-child th.th-trend-month-header {
+  background: #f1f5f9;
+  color: #1e293b;
+  font-weight: 700;
+  text-align: center;
+  border-left: 1px solid #cbd5e1;
+  font-size: 13px;
+  padding: 8px 6px;
+}
+
+.chart-detail-trend-table thead tr:first-child th.th-trend-total-header {
+  background: #e0e7ff;
+  color: #1e1b4b;
+  font-weight: 800;
+  text-align: center;
+  border-left: 2px solid #818cf8;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.chart-detail-trend-table thead tr.th-sub-row th {
+  top: 36px !important;
+  font-size: 11.5px;
+  padding: 6px 6px;
+  text-align: right;
+}
+
+.chart-detail-trend-table thead tr.th-sub-row th.th-sub-rate {
+  text-align: center;
+}
+
+.chart-detail-trend-table tbody td,
+.chart-detail-trend-table tfoot td {
+  padding: 8px 10px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.chart-detail-trend-table td.td-kh {
+  border-left: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.chart-detail-trend-table td.td-th {
+  color: #0f172a;
+  border-right: 1px solid #f1f5f9;
+}
+
+.chart-detail-trend-table .text-muted {
+  color: #94a3b8;
+  font-weight: normal;
+}
+
+
