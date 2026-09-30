@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowLeft, Download, Search, Filter, CheckCircle2, AlertCircle,
   TrendingUp, TrendingDown, ChevronDown, TableProperties, BarChart2,
@@ -127,6 +127,11 @@ export default function RevenueChartDetailView({
   const [activeChartKey, setActiveChartKey] = useState(initialChartKey);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'pass' | 'fail'
+
+  useEffect(() => {
+    if (initialBranchId) setActiveBranchId(initialBranchId);
+    if (initialChartKey) setActiveChartKey(initialChartKey);
+  }, [initialBranchId, initialChartKey]);
 
   const chartOptions = BRANCH_CHART_OPTIONS[activeBranchId] || BRANCH_CHART_OPTIONS.month;
 
