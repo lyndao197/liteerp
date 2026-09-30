@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, TableProperties } from 'lucide-react';
+import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import './MonthComparisonChart.css';
 
 import {
@@ -262,14 +262,14 @@ function QuarterValueCard({
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem danh sách chi tiết"
+            title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <TableProperties size={13} />
             <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
           </button>
         </div>
       )}
@@ -518,14 +518,14 @@ function QuarterRatioCard({
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem danh sách chi tiết"
+            title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <TableProperties size={13} />
             <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
           </button>
         </div>
       )}

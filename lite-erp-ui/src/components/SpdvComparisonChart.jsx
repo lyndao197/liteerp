@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Eye, EyeOff, TableProperties } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
@@ -274,14 +274,14 @@ function SpdvSubcard({
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem danh sách chi tiết"
+            title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <TableProperties size={13} />
             <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
           </button>
         </div>
       )}
@@ -566,14 +566,14 @@ function SpdvBarSubcard({
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem danh sách chi tiết"
+            title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <TableProperties size={13} />
             <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
           </button>
         </div>
       )}
