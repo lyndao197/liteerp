@@ -12,7 +12,9 @@ import {
   MONTHLY_PLAN_DATA,
   MONTH_PREV_DATA,
   MONTH_LAST_YEAR_DATA,
-  MONTH_NEXT_PLAN_DATA
+  MONTH_NEXT_PLAN_DATA,
+  getCustomerSpdvMonthData,
+  CUSTOMER_SPDV_MONTH_DATA
 } from '../data/revenueMonthData';
 
 import {
@@ -377,7 +379,57 @@ export default function RevenueChartDetailView({
     return { rows, defaultUnit, isRatio };
   }, [activeBranchId, activeChartKey, selectedYear, selectedMonth, selectedQuarter, selectedCumulativeMonth]);
 
-  // Filtered rows by search and status
+  // Filtered rows for Month branch (Customer & SPDV matrix)
+  const filteredMonthRows = useMemo(() => {
+    if (activeBranchId !== 'month') return [];
+    const rawRows = getCustomerSpdvMonthData(selectedMonth);
+    return rawRows.filter(row => {
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch = !q ||
+        row.customerGroup.toLowerCase().includes(q) ||
+        row.customerName.toLowerCase().includes(q) ||
+        row.spdvGroup.toLowerCase().includes(q) ||
+        row.spdvName.toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+      if (statusFilter === 'pass') return row.isPass === true;
+      if (statusFilter === 'fail') return row.isPass === false;
+      return true;
+    });
+  }, [activeBranchId, selectedMonth, searchQuery, statusFilter]);
+
+  // Totals for Month branch matching user screenshot structure
+  const monthTotals = useMemo(() => {
+    const allRows = getCustomerSpdvMonthData(selectedMonth);
+    const targetRows = (searchQuery || statusFilter !== 'all') ? filteredMonthRows : allRows;
+
+    const calcGroup = (rows) => {
+      const sumKh = rows.reduce((acc, r) => acc + (r.kh || 0), 0);
+      const sumTh = rows.reduce((acc, r) => acc + (r.th || 0), 0);
+      const diff = sumTh - sumKh;
+      const rateNum = sumKh > 0 ? Number(((sumTh / sumKh) * 100).toFixed(1)) : 100;
+      const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+      return {
+        kh: sumKh,
+        th: sumTh,
+        diff,
+        diffFormatted: (diff > 0 ? '+' : '') + diff,
+        rate,
+        rateNum,
+        isPass: diff >= 0 || rateNum >= 100
+      };
+    };
+
+    const externalRows = targetRows.filter(r => r.type === 'external');
+    const internalRows = targetRows.filter(r => r.type === 'internal');
+
+    return {
+      external: calcGroup(externalRows),
+      internal: calcGroup(internalRows),
+      total: calcGroup(targetRows)
+    };
+  }, [selectedMonth, searchQuery, statusFilter, filteredMonthRows]);
+
+  // Filtered rows by search and status for non-month branches
   const filteredRows = useMemo(() => {
     return tableData.rows.filter(row => {
       const matchesSearch = row.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -388,7 +440,7 @@ export default function RevenueChartDetailView({
     });
   }, [tableData.rows, searchQuery, statusFilter]);
 
-  // Compute table totals
+  // Compute table totals for non-month branches
   const totals = useMemo(() => {
     let sumKh = 0;
     let sumTh = 0;
@@ -409,14 +461,86 @@ export default function RevenueChartDetailView({
       sumTh: Number(sumTh.toFixed(1)),
       sumKh: Number(sumKh.toFixed(1)),
       diffVal,
-      avgRate,
+      diffFormatted: (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN'),
+      avgRate: `${avgRate}%`,
+      rateNum: avgRate,
       isPass: avgRate >= 100
     };
   }, [tableData.rows]);
 
+  // Unified KPI tiles totals depending on active branch
+  const activeTotals = useMemo(() => {
+    if (activeBranchId === 'month') {
+      return {
+        sumTh: monthTotals.total.th,
+        sumKh: monthTotals.total.kh,
+        diffVal: monthTotals.total.diff,
+        diffFormatted: monthTotals.total.diffFormatted,
+        avgRate: monthTotals.total.rate,
+        rateNum: monthTotals.total.rateNum,
+        isPass: monthTotals.total.isPass
+      };
+    }
+    return totals;
+  }, [activeBranchId, monthTotals, totals]);
+
   // Export table directly to Excel (.xlsx)
   const handleExportTableExcel = () => {
     try {
+      if (activeBranchId === 'month') {
+        const exportRows = filteredMonthRows.map(r => ({
+          'Nhóm khách hàng': r.customerGroup,
+          'Tên khách hàng': r.customerName,
+          'Nhóm SPDV': r.spdvGroup,
+          'Tên SPDV': r.spdvName,
+          'KH': r.kh,
+          'TH': r.th,
+          '+/- so với KH': r.diffFormatted,
+          '% HTKH': r.rate
+        }));
+
+        // Summary rows matching screenshot
+        exportRows.push({
+          'Nhóm khách hàng': 'Tổng doanh thu ngoài Tập đoàn',
+          'Tên khách hàng': '',
+          'Nhóm SPDV': '',
+          'Tên SPDV': '',
+          'KH': monthTotals.external.kh,
+          'TH': monthTotals.external.th,
+          '+/- so với KH': monthTotals.external.diffFormatted,
+          '% HTKH': monthTotals.external.rate
+        });
+
+        exportRows.push({
+          'Nhóm khách hàng': 'Tổng doanh thu nội bộ',
+          'Tên khách hàng': '',
+          'Nhóm SPDV': '',
+          'Tên SPDV': '',
+          'KH': monthTotals.internal.kh,
+          'TH': monthTotals.internal.th,
+          '+/- so với KH': monthTotals.internal.diffFormatted,
+          '% HTKH': monthTotals.internal.rate
+        });
+
+        exportRows.push({
+          'Nhóm khách hàng': 'Tổng doanh thu',
+          'Tên khách hàng': '',
+          'Nhóm SPDV': '',
+          'Tên SPDV': '',
+          'KH': monthTotals.total.kh,
+          'TH': monthTotals.total.th,
+          '+/- so với KH': monthTotals.total.diffFormatted,
+          '% HTKH': monthTotals.total.rate
+        });
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Thuc_Hien_So_Voi_KH');
+        const cleanFileName = `Thuc_hien_so_voi_ke_hoach_Tap_doan_${selectedMonth}_${selectedYear}.xlsx`;
+        XLSX.writeFile(wb, cleanFileName);
+        return;
+      }
+
       const exportRows = filteredRows.map((r) => ({
         'STT': r.stt,
         'Chỉ tiêu / Đối tượng': r.name,
@@ -436,8 +560,8 @@ export default function RevenueChartDetailView({
         'Đơn vị tính': tableData.defaultUnit,
         'Kế hoạch (KH)': totals.sumKh,
         'Thực hiện (TH)': totals.sumTh,
-        'Chênh lệch (+/-)': (totals.diffVal >= 0 ? '+' : '') + totals.diffVal,
-        'Tỷ lệ hoàn thành': `${totals.avgRate}%`,
+        'Chênh lệch (+/-)': totals.diffFormatted,
+        'Tỷ lệ hoàn thành': totals.avgRate,
         'Tỷ trọng': '100%',
         'Đánh giá': totals.isPass ? 'Đạt KH chung' : 'Chưa đạt KH'
       });
@@ -569,8 +693,8 @@ export default function RevenueChartDetailView({
         <div className="chart-detail-summary-card card-th">
           <div className="summary-card-label">Tổng Thực hiện / Ước (TH)</div>
           <div className="summary-card-value text-red">
-            {totals.sumTh.toLocaleString('vi-VN')}
-            <span className="summary-card-unit">{tableData.defaultUnit}</span>
+            {activeTotals.sumTh.toLocaleString('vi-VN')}
+            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
           </div>
           <div className="summary-card-sub">Theo kỳ báo cáo hiện tại</div>
         </div>
@@ -578,31 +702,31 @@ export default function RevenueChartDetailView({
         <div className="chart-detail-summary-card card-kh">
           <div className="summary-card-label">Tổng Kế hoạch giao (KH)</div>
           <div className="summary-card-value text-slate">
-            {totals.sumKh.toLocaleString('vi-VN')}
-            <span className="summary-card-unit">{tableData.defaultUnit}</span>
+            {activeTotals.sumKh.toLocaleString('vi-VN')}
+            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
           </div>
           <div className="summary-card-sub">Chỉ tiêu phân bổ kỳ tương ứng</div>
         </div>
 
         <div className="chart-detail-summary-card card-diff">
           <div className="summary-card-label">Chênh lệch tuyệt đối (+/-)</div>
-          <div className={`summary-card-value ${totals.diffVal >= 0 ? 'text-green' : 'text-red'}`}>
-            {(totals.diffVal >= 0 ? '+' : '') + totals.diffVal.toLocaleString('vi-VN')}
-            <span className="summary-card-unit">{tableData.defaultUnit}</span>
+          <div className={`summary-card-value ${activeTotals.diffVal >= 0 ? 'text-green' : 'text-red'}`}>
+            {activeTotals.diffFormatted}
+            <span className="summary-card-unit">{activeBranchId === 'month' ? 'Tỷ đồng' : tableData.defaultUnit}</span>
           </div>
           <div className="summary-card-sub">
-            {totals.diffVal >= 0 ? 'Vượt chỉ tiêu kế hoạch giao' : 'Chưa đạt chỉ tiêu kế hoạch'}
+            {activeTotals.diffVal >= 0 ? 'Vượt chỉ tiêu kế hoạch giao' : 'Chưa đạt chỉ tiêu kế hoạch'}
           </div>
         </div>
 
         <div className="chart-detail-summary-card card-rate">
           <div className="summary-card-label">Tỷ lệ hoàn thành kế hoạch</div>
-          <div className={`summary-card-value ${totals.avgRate >= 100 ? 'text-green' : 'text-amber'}`}>
-            {totals.avgRate}%
+          <div className={`summary-card-value ${activeTotals.isPass ? 'text-green' : 'text-amber'}`}>
+            {activeTotals.avgRate}
           </div>
           <div className="summary-card-sub">
-            <span className={`status-pill-small ${totals.avgRate >= 100 ? 'pill-green' : 'pill-red'}`}>
-              {totals.avgRate >= 100 ? 'Đạt mục tiêu' : 'Cần tăng tốc'}
+            <span className={`status-pill-small ${activeTotals.isPass ? 'pill-green' : 'pill-red'}`}>
+              {activeTotals.isPass ? 'Đạt mục tiêu' : 'Cần tăng tốc'}
             </span>
           </div>
         </div>
@@ -616,10 +740,14 @@ export default function RevenueChartDetailView({
           <div className="table-header-title-box">
             <TableProperties size={18} color="#e11d48" />
             <h3 className="table-header-title">
-              Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span>
+              {activeBranchId === 'month' ? (
+                <>Thực hiện so với kế hoạch Tập đoàn</>
+              ) : (
+                <>Bảng dữ liệu chi tiết số liệu: <span>{chartTitle}</span></>
+              )}
             </h3>
             <span className="table-row-count-badge">
-              {filteredRows.length} dòng
+              {activeBranchId === 'month' ? `${filteredMonthRows.length} dòng` : `${filteredRows.length} dòng`}
             </span>
           </div>
 
@@ -629,7 +757,7 @@ export default function RevenueChartDetailView({
               <Search size={14} className="search-icon" />
               <input
                 type="text"
-                placeholder="Tìm kiếm chỉ tiêu..."
+                placeholder={activeBranchId === 'month' ? 'Tìm khách hàng, SPDV...' : 'Tìm kiếm chỉ tiêu...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="table-search-input"
@@ -643,7 +771,7 @@ export default function RevenueChartDetailView({
                 className={`filter-chip-btn ${statusFilter === 'all' ? 'active' : ''}`}
                 onClick={() => setStatusFilter('all')}
               >
-                Tất cả ({tableData.rows.length})
+                Tất cả ({activeBranchId === 'month' ? (getCustomerSpdvMonthData(selectedMonth) || []).length : tableData.rows.length})
               </button>
               <button
                 type="button"
@@ -667,127 +795,222 @@ export default function RevenueChartDetailView({
         {/* 4. MAIN DATA TABLE                                                        */}
         {/* ========================================================================= */}
         <div className="chart-detail-table-wrapper">
-          <table className="chart-detail-erp-table">
-            <thead>
-              <tr>
-                <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
-                <th style={{ textAlign: 'left', minWidth: '220px' }}>Chỉ tiêu / Đối tượng</th>
-                <th style={{ width: '90px', textAlign: 'center' }}>Đơn vị</th>
-                <th style={{ width: '120px', textAlign: 'right' }}>Kế hoạch (KH)</th>
-                <th style={{ width: '120px', textAlign: 'right' }}>Thực hiện (TH)</th>
-                <th style={{ width: '120px', textAlign: 'right' }}>Chênh lệch (+/-)</th>
-                <th style={{ width: '150px', textAlign: 'center' }}>% Hoàn thành</th>
-                <th style={{ width: '90px', textAlign: 'center' }}>Tỷ trọng</th>
-                <th style={{ width: '110px', textAlign: 'center' }}>Đánh giá</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRows.length > 0 ? (
-                filteredRows.map((row) => (
-                  <tr key={`detail-row-${row.stt}`}>
-                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
-                      {row.stt}
-                    </td>
-                    <td style={{ textAlign: 'left', fontWeight: '700', color: '#0f172a' }}>
-                      {row.name}
-                    </td>
-                    <td style={{ textAlign: 'center', color: '#64748b', fontSize: '12px' }}>
-                      {row.unit}
-                    </td>
-                    <td style={{ textAlign: 'right', fontWeight: '600', color: '#475569' }}>
-                      {typeof row.kh === 'number' ? row.kh.toLocaleString('vi-VN') : row.kh}
-                    </td>
-                    <td style={{ textAlign: 'right', fontWeight: '800', color: '#e11d48' }}>
-                      {typeof row.th === 'number' ? row.th.toLocaleString('vi-VN') : row.th}
-                    </td>
-                    <td
-                      style={{
-                        textAlign: 'right',
-                        fontWeight: '700',
-                        color: row.diffNum >= 0 ? '#15803d' : '#dc2626'
-                      }}
-                    >
-                      {row.diff}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div className="rate-progress-cell">
-                        <span className={`rate-badge-pill ${row.isPass ? 'rate-pass' : 'rate-fail'}`}>
-                          {row.rate}
-                        </span>
-                        {row.rateNum > 0 && (
-                          <div className="rate-mini-bar-track">
-                            <div
-                              className={`rate-mini-bar-fill ${row.isPass ? 'fill-green' : 'fill-red'}`}
-                              style={{ width: `${Math.min(row.rateNum, 100)}%` }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#334155' }}>
-                      {row.share}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span className={`eval-status-pill ${row.isPass ? 'eval-pass' : 'eval-fail'}`}>
-                        {row.isPass ? (
-                          <>
-                            <CheckCircle2 size={12} />
-                            <span>Đạt</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle size={12} />
-                            <span>Chưa đạt</span>
-                          </>
-                        )}
-                      </span>
+          {activeBranchId === 'month' ? (
+            /* ======================================================================= */
+            /* MONTH BRANCH TABLE: THỰC HIỆN SO VỚI KẾ HOẠCH TẬP ĐOÀN                  */
+            /* ======================================================================= */
+            <table className="chart-detail-month-table">
+              <thead>
+                <tr>
+                  <th rowSpan={2} className="th-customer-group">Nhóm khách hàng</th>
+                  <th rowSpan={2} className="th-customer-name">Tên khách hàng</th>
+                  <th rowSpan={2} className="th-spdv-group">Nhóm SPDV</th>
+                  <th rowSpan={2} className="th-spdv-name">Tên SPDV</th>
+                  <th colSpan={4} className="th-month-group">{selectedMonth}</th>
+                </tr>
+                <tr className="th-sub-row">
+                  <th className="th-sub-kh">KH</th>
+                  <th className="th-sub-th">TH</th>
+                  <th className="th-sub-diff">+/- so với KH</th>
+                  <th className="th-sub-rate">% HTKH</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredMonthRows.length > 0 ? (
+                  filteredMonthRows.map((row) => (
+                    <tr key={row.id} className="month-data-row">
+                      <td className="td-customer-group">{row.customerGroup}</td>
+                      <td className="td-customer-name font-semibold">{row.customerName}</td>
+                      <td className="td-spdv-group">{row.spdvGroup}</td>
+                      <td className="td-spdv-name">{row.spdvName}</td>
+                      <td className="td-kh text-right">{row.kh}</td>
+                      <td className="td-th text-right font-medium">{row.th}</td>
+                      <td className={`td-diff text-right font-medium ${row.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                        {row.diffFormatted}
+                      </td>
+                      <td className={`td-rate text-right font-bold ${row.isPass ? 'text-green' : 'text-red'}`}>
+                        {row.rate}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={8} className="table-empty-row">
+                      Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={9} className="table-empty-row">
-                    Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
+                )}
+              </tbody>
+              <tfoot>
+                {/* Summary Row 1: Tổng doanh thu ngoài Tập đoàn */}
+                <tr className="month-summary-row row-external">
+                  <td colSpan={4} className="summary-title-cell font-bold">
+                    Tổng doanh thu ngoài Tập đoàn
+                  </td>
+                  <td className="td-kh text-right font-bold">{monthTotals.external.kh}</td>
+                  <td className="td-th text-right font-bold">{monthTotals.external.th}</td>
+                  <td className={`td-diff text-right font-bold ${monthTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.external.diffFormatted}
+                  </td>
+                  <td className={`td-rate text-right font-bold ${monthTotals.external.isPass ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.external.rate}
                   </td>
                 </tr>
-              )}
-            </tbody>
-            <tfoot>
-              <tr className="chart-detail-table-footer">
-                <td colSpan={3} style={{ textAlign: 'left', fontWeight: '800', paddingLeft: '24px' }}>
-                  TỔNG CỘNG
-                </td>
-                <td style={{ textAlign: 'right', fontWeight: '800', color: '#334155' }}>
-                  {totals.sumKh.toLocaleString('vi-VN')}
-                </td>
-                <td style={{ textAlign: 'right', fontWeight: '900', color: '#e11d48' }}>
-                  {totals.sumTh.toLocaleString('vi-VN')}
-                </td>
-                <td
-                  style={{
-                    textAlign: 'right',
-                    fontWeight: '800',
-                    color: totals.diffVal >= 0 ? '#15803d' : '#dc2626'
-                  }}
-                >
-                  {(totals.diffVal >= 0 ? '+' : '') + totals.diffVal.toLocaleString('vi-VN')}
-                </td>
-                <td style={{ textAlign: 'center' }}>
-                  <span className={`rate-badge-pill large ${totals.avgRate >= 100 ? 'rate-pass' : 'rate-fail'}`}>
-                    {totals.avgRate}%
-                  </span>
-                </td>
-                <td style={{ textAlign: 'center', fontWeight: '800', color: '#0f172a' }}>
-                  100%
-                </td>
-                <td style={{ textAlign: 'center' }}>
-                  <span className={`eval-status-pill ${totals.isPass ? 'eval-pass' : 'eval-fail'}`}>
-                    {totals.isPass ? 'Đạt KH' : 'Chưa đạt'}
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+
+                {/* Summary Row 2: Tổng doanh thu nội bộ */}
+                <tr className="month-summary-row row-internal">
+                  <td colSpan={4} className="summary-title-cell font-bold">
+                    Tổng doanh thu nội bộ
+                  </td>
+                  <td className="td-kh text-right font-bold">{monthTotals.internal.kh}</td>
+                  <td className="td-th text-right font-bold">{monthTotals.internal.th}</td>
+                  <td className={`td-diff text-right font-bold ${monthTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.internal.diffFormatted}
+                  </td>
+                  <td className={`td-rate text-right font-bold ${monthTotals.internal.isPass ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.internal.rate}
+                  </td>
+                </tr>
+
+                {/* Summary Row 3: Tổng doanh thu (Highlight blue background) */}
+                <tr className="month-summary-row row-grand-total">
+                  <td colSpan={4} className="summary-title-cell font-extrabold">
+                    Tổng doanh thu
+                  </td>
+                  <td className="td-kh text-right font-extrabold">{monthTotals.total.kh}</td>
+                  <td className="td-th text-right font-extrabold">{monthTotals.total.th}</td>
+                  <td className={`td-diff text-right font-extrabold ${monthTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.total.diffFormatted}
+                  </td>
+                  <td className={`td-rate text-right font-extrabold ${monthTotals.total.isPass ? 'text-green' : 'text-red'}`}>
+                    {monthTotals.total.rate}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          ) : (
+            <table className="chart-detail-erp-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
+                  <th style={{ textAlign: 'left', minWidth: '220px' }}>Chỉ tiêu / Đối tượng</th>
+                  <th style={{ width: '90px', textAlign: 'center' }}>Đơn vị</th>
+                  <th style={{ width: '120px', textAlign: 'right' }}>Kế hoạch (KH)</th>
+                  <th style={{ width: '120px', textAlign: 'right' }}>Thực hiện (TH)</th>
+                  <th style={{ width: '120px', textAlign: 'right' }}>Chênh lệch (+/-)</th>
+                  <th style={{ width: '150px', textAlign: 'center' }}>% Hoàn thành</th>
+                  <th style={{ width: '90px', textAlign: 'center' }}>Tỷ trọng</th>
+                  <th style={{ width: '110px', textAlign: 'center' }}>Đánh giá</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRows.length > 0 ? (
+                  filteredRows.map((row) => (
+                    <tr key={`detail-row-${row.stt}`}>
+                      <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                        {row.stt}
+                      </td>
+                      <td style={{ textAlign: 'left', fontWeight: '700', color: '#0f172a' }}>
+                        {row.name}
+                      </td>
+                      <td style={{ textAlign: 'center', color: '#64748b', fontSize: '12px' }}>
+                        {row.unit}
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: '600', color: '#475569' }}>
+                        {typeof row.kh === 'number' ? row.kh.toLocaleString('vi-VN') : row.kh}
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: '800', color: '#e11d48' }}>
+                        {typeof row.th === 'number' ? row.th.toLocaleString('vi-VN') : row.th}
+                      </td>
+                      <td
+                        style={{
+                          textAlign: 'right',
+                          fontWeight: '700',
+                          color: row.diffNum >= 0 ? '#15803d' : '#dc2626'
+                        }}
+                      >
+                        {row.diff}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <div className="rate-progress-cell">
+                          <span className={`rate-badge-pill ${row.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                            {row.rate}
+                          </span>
+                          {row.rateNum > 0 && (
+                            <div className="rate-mini-bar-track">
+                              <div
+                                className={`rate-mini-bar-fill ${row.isPass ? 'fill-green' : 'fill-red'}`}
+                                style={{ width: `${Math.min(row.rateNum, 100)}%` }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: '600', color: '#334155' }}>
+                        {row.share}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <span className={`eval-status-pill ${row.isPass ? 'eval-pass' : 'eval-fail'}`}>
+                          {row.isPass ? (
+                            <>
+                              <CheckCircle2 size={12} />
+                              <span>Đạt</span>
+                            </>
+                          ) : (
+                            <>
+                              <AlertCircle size={12} />
+                              <span>Chưa đạt</span>
+                            </>
+                          )}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={9} className="table-empty-row">
+                      Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+              <tfoot>
+                <tr className="chart-detail-table-footer">
+                  <td colSpan={3} style={{ textAlign: 'left', fontWeight: '800', paddingLeft: '24px' }}>
+                    TỔNG CỘNG
+                  </td>
+                  <td style={{ textAlign: 'right', fontWeight: '800', color: '#334155' }}>
+                    {totals.sumKh.toLocaleString('vi-VN')}
+                  </td>
+                  <td style={{ textAlign: 'right', fontWeight: '900', color: '#e11d48' }}>
+                    {totals.sumTh.toLocaleString('vi-VN')}
+                  </td>
+                  <td
+                    style={{
+                      textAlign: 'right',
+                      fontWeight: '800',
+                      color: totals.diffVal >= 0 ? '#15803d' : '#dc2626'
+                    }}
+                  >
+                    {totals.diffFormatted}
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className={`rate-badge-pill large ${totals.avgRate >= 100 ? 'rate-pass' : 'rate-fail'}`}>
+                      {totals.avgRate}%
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'center', fontWeight: '800', color: '#0f172a' }}>
+                    100%
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className={`eval-status-pill ${totals.isPass ? 'eval-pass' : 'eval-fail'}`}>
+                      {totals.isPass ? 'Đạt KH' : 'Chưa đạt'}
+                    </span>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          )}
         </div>
       </div>
 

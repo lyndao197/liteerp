@@ -601,4 +601,196 @@ export const MONTH_NEXT_PLAN_DATA = {
   }
 };
 
+// ==============================================================================
+// 5. DETAILED DATA BY CUSTOMER GROUP & SPDV (Thực hiện so với kế hoạch Tập đoàn)
+// ==============================================================================
+export const CUSTOMER_SPDV_MONTH_DATA = {
+  'Tháng 6': [
+    {
+      id: 'row-1',
+      customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+      customerName: 'Tập đoàn Viettel',
+      spdvGroup: 'Viễn thông',
+      spdvName: 'FTTH',
+      kh: 110,
+      th: 100,
+      diff: -10,
+      diffFormatted: '-10',
+      rate: '90,9%',
+      rateNum: 90.9,
+      isPass: false,
+      type: 'internal'
+    },
+    {
+      id: 'row-2',
+      customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+      customerName: 'Tập đoàn Viettel',
+      spdvGroup: 'CNTT',
+      spdvName: 'Cloud',
+      kh: 50,
+      th: 55,
+      diff: 5,
+      diffFormatted: '+5',
+      rate: '110,0%',
+      rateNum: 110.0,
+      isPass: true,
+      type: 'internal'
+    },
+    {
+      id: 'row-3',
+      customerGroup: 'Khách hàng nội bộ - Tập đoàn trong nước',
+      customerName: 'Tổng công ty X',
+      spdvGroup: 'Dịch vụ số',
+      spdvName: 'Giải pháp số',
+      kh: 30,
+      th: 25,
+      diff: -5,
+      diffFormatted: '-5',
+      rate: '83,3%',
+      rateNum: 83.3,
+      isPass: false,
+      type: 'internal'
+    },
+    {
+      id: 'row-4',
+      customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài',
+      customerName: 'Viettel Global',
+      spdvGroup: 'Viễn thông',
+      spdvName: 'Truyền dẫn',
+      kh: 75,
+      th: 70,
+      diff: -5,
+      diffFormatted: '-5',
+      rate: '93,3%',
+      rateNum: 93.3,
+      isPass: false,
+      type: 'internal'
+    },
+    {
+      id: 'row-5',
+      customerGroup: 'Khách hàng nội bộ - Tập đoàn nước ngoài',
+      customerName: 'Viettel Overseas',
+      spdvGroup: 'CNTT',
+      spdvName: 'Data Center',
+      kh: 55,
+      th: 50,
+      diff: -5,
+      diffFormatted: '-5',
+      rate: '90,9%',
+      rateNum: 90.9,
+      isPass: false,
+      type: 'internal'
+    },
+    {
+      id: 'row-6',
+      customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+      customerName: 'Sungroup',
+      spdvGroup: 'Giải pháp, Dịch vụ CNTT',
+      spdvName: 'OmniX CRM',
+      kh: 160,
+      th: 150,
+      diff: -10,
+      diffFormatted: '-10',
+      rate: '93,8%',
+      rateNum: 93.8,
+      isPass: false,
+      type: 'external'
+    },
+    {
+      id: 'row-7',
+      customerGroup: 'Khách hàng ngoài - Tập đoàn trong nước',
+      customerName: 'FPT',
+      spdvGroup: 'Giải pháp, Dịch vụ CNTT',
+      spdvName: 'AI Chatbot',
+      kh: 110,
+      th: 100,
+      diff: -10,
+      diffFormatted: '-10',
+      rate: '90,9%',
+      rateNum: 90.9,
+      isPass: false,
+      type: 'external'
+    },
+    {
+      id: 'row-8',
+      customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài',
+      customerName: 'Singtel International',
+      spdvGroup: 'Tích hợp Hệ thống',
+      spdvName: 'Loyalty App',
+      kh: 95,
+      th: 90,
+      diff: -5,
+      diffFormatted: '-5',
+      rate: '94,7%',
+      rateNum: 94.7,
+      isPass: false,
+      type: 'external'
+    },
+    {
+      id: 'row-9',
+      customerGroup: 'Khách hàng ngoài - Tập đoàn nước ngoài',
+      customerName: 'SoftBank',
+      spdvGroup: 'SaaS Platform',
+      spdvName: 'ERP Custom',
+      kh: 55,
+      th: 50,
+      diff: -5,
+      diffFormatted: '-5',
+      rate: '90,9%',
+      rateNum: 90.9,
+      isPass: false,
+      type: 'external'
+    }
+  ]
+};
+
+// Helper function to get customer & SPDV detail table data for any month
+export const getCustomerSpdvMonthData = (month = 'Tháng 6') => {
+  if (CUSTOMER_SPDV_MONTH_DATA[month]) {
+    return CUSTOMER_SPDV_MONTH_DATA[month];
+  }
+
+  // Month scaling factor relative to Tháng 6 (base total KH=740, TH=690)
+  const monthFactors = {
+    'Tháng 1': 0.75,
+    'Tháng 2': 0.70,
+    'Tháng 3': 0.95,
+    'Tháng 4': 0.85,
+    'Tháng 5': 0.88,
+    'Tháng 6': 1.00,
+    'Tháng 7': 0.92,
+    'Tháng 8': 0.90,
+    'Tháng 9': 0.96,
+    'Tháng 10': 0.94,
+    'Tháng 11': 0.98,
+    'Tháng 12': 1.10
+  };
+
+  const factor = monthFactors[month] || 0.90;
+  const base = CUSTOMER_SPDV_MONTH_DATA['Tháng 6'];
+
+  return base.map((item, idx) => {
+    const scaledKh = Math.round(item.kh * factor);
+    // Slight variance on TH
+    const thVariance = idx % 2 === 0 ? 0.93 : 0.97;
+    const scaledTh = Math.round(scaledKh * thVariance);
+    const diff = scaledTh - scaledKh;
+    const rateNum = scaledKh > 0 ? Number(((scaledTh / scaledKh) * 100).toFixed(1)) : 100;
+    const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
+
+    return {
+      ...item,
+      id: `row-${month}-${idx + 1}`,
+      kh: scaledKh,
+      th: scaledTh,
+      diff,
+      diffFormatted: (diff > 0 ? '+' : '') + diff,
+      rate,
+      rateNum,
+      isPass: diff >= 0 || rateNum >= 100
+    };
+  });
+};
+
+
 
