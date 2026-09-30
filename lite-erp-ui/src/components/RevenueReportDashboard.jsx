@@ -3077,7 +3077,7 @@ const RevenueReportDashboard = () => {
                currentView === 'year' ? `Báo cáo doanh thu năm ${selectedYear}` :
                currentView === 'month' ? `Báo cáo doanh thu ${selectedMonth}/${selectedYear}` :
                currentView === 'trend' ? `Xu hướng doanh thu từng tháng năm ${selectedYear}` :
-               currentView === 'spdv' ? 'Doanh thu thực hiện và kế hoạch theo nhóm SPDV' :
+               currentView === 'spdv' ? 'Doanh thu theo nhóm SPDV' :
                currentView === 'unit' ? 'Doanh thu theo đơn vị' :
                currentView === 'plan_progress' ? 'Chuyển dịch doanh thu ngoài và doanh thu quốc tế' :
                currentView === 'debt' ? `Báo cáo công nợ năm ${selectedYear}` :
