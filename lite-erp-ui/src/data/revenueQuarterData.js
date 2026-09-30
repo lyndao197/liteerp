@@ -189,6 +189,7 @@ export const QUARTER_PREV_DATA = {
 };
 
 // Data definitions for Biểu đồ 8. Ước kết quả Quý so với cùng kỳ năm trước
+// Excludes Lợi nhuận trước thuế and Tỷ suất LNTT
 export const QUARTER_SAME_PERIOD_DATA = {
   'Quý I': {
     quarterCode: 'Q1',
@@ -196,11 +197,9 @@ export const QUARTER_SAME_PERIOD_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1026.1, thSamePeriod: 945.8, rate: '108,5%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 335.5, thSamePeriod: 320.0, rate: '104,8%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 690.6, thSamePeriod: 625.8, rate: '110,4%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 105.1, thSamePeriod: 78.4, rate: '134,1%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 95.4, thSamePeriod: 91.2, rate: '104,6%', isRatePositive: true, unit: 'Triệu đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 105.1, thSamePeriod: 78.4, rate: '134,1%', isRatePositive: true, unit: 'Triệu đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, thSamePeriod: 9.6, diff: '-0,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.3, thSamePeriod: 66.2, diff: '+1,1 đ.%', isDiffPositive: true, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.2, thSamePeriod: 8.3, diff: '+1,9 đ.%', isDiffPositive: true, unit: '%' }
     ]
@@ -211,11 +210,9 @@ export const QUARTER_SAME_PERIOD_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1179.6, thSamePeriod: 1065.0, rate: '110,8%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 381.4, thSamePeriod: 360.5, rate: '105,8%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 798.2, thSamePeriod: 704.5, rate: '113,3%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 120.7, thSamePeriod: 88.0, rate: '137,2%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 110.2, thSamePeriod: 102.5, rate: '107,5%', isRatePositive: true, unit: 'Triệu đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 120.7, thSamePeriod: 88.0, rate: '137,2%', isRatePositive: true, unit: 'Triệu đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, thSamePeriod: 9.6, diff: '-0,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.7, thSamePeriod: 66.2, diff: '+1,5 đ.%', isDiffPositive: true, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.2, thSamePeriod: 8.3, diff: '+1,9 đ.%', isDiffPositive: true, unit: '%' }
     ]
@@ -226,11 +223,9 @@ export const QUARTER_SAME_PERIOD_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1162.5, thSamePeriod: 1079.5, rate: '107,7%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 375.0, thSamePeriod: 372.4, rate: '100,7%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 787.5, thSamePeriod: 707.1, rate: '111,4%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 122.9, thSamePeriod: 85.7, rate: '143,3%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 108.1, thSamePeriod: 103.8, rate: '104,2%', isRatePositive: true, unit: 'Triệu đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 122.9, thSamePeriod: 85.7, rate: '143,3%', isRatePositive: true, unit: 'Triệu đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, thSamePeriod: 9.6, diff: '-0,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.7, thSamePeriod: 65.5, diff: '+2,2 đ.%', isDiffPositive: true, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.6, thSamePeriod: 7.9, diff: '+2,6 đ.%', isDiffPositive: true, unit: '%' }
     ]
@@ -241,11 +236,9 @@ export const QUARTER_SAME_PERIOD_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1326.2, thSamePeriod: 1215.0, rate: '109,2%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 426.6, thSamePeriod: 405.0, rate: '105,3%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 899.6, thSamePeriod: 810.0, rate: '111,1%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 141.2, thSamePeriod: 102.5, rate: '137,8%', isRatePositive: true, unit: 'Triệu đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 125.0, thSamePeriod: 118.0, rate: '105,9%', isRatePositive: true, unit: 'Triệu đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 141.2, thSamePeriod: 102.5, rate: '137,8%', isRatePositive: true, unit: 'Triệu đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.4, thSamePeriod: 9.7, diff: '-0,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.8, thSamePeriod: 66.7, diff: '+1,1 đ.%', isDiffPositive: true, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.6, thSamePeriod: 8.4, diff: '+2,2 đ.%', isDiffPositive: true, unit: '%' }
     ]
@@ -253,6 +246,7 @@ export const QUARTER_SAME_PERIOD_DATA = {
 };
 
 // Data definitions for Biểu đồ 9. Ước kết quả Quý so với kế hoạch Quý tiếp theo
+// Excludes Lợi nhuận trước thuế and Tỷ suất LNTT
 export const QUARTER_NEXT_PLAN_DATA = {
   'Quý I': {
     quarterCode: 'Q1',
@@ -262,11 +256,9 @@ export const QUARTER_NEXT_PLAN_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1026.1, khNext: 1185.0, rate: '86,6%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 335.5, khNext: 375.0, rate: '89,5%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 690.6, khNext: 810.0, rate: '85,3%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 105.1, khNext: 126.0, rate: '83,4%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 95.4, khNext: 115.0, rate: '83,0%', isRatePositive: false, unit: 'Tỷ đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 105.1, khNext: 126.0, rate: '83,4%', isRatePositive: false, unit: 'Tỷ đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, khNext: 9.7, diff: '-0,4 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.3, khNext: 68.4, diff: '-1,1 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.2, khNext: 10.6, diff: '-0,4 đ.%', isDiffPositive: false, unit: '%' }
     ]
@@ -279,11 +271,9 @@ export const QUARTER_NEXT_PLAN_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1179.6, khNext: 1246.0, rate: '94,7%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 381.4, khNext: 373.8, rate: '102,0%', isRatePositive: true, unit: 'Tỷ đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 798.2, khNext: 872.2, rate: '91,5%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 120.7, khNext: 149.6, rate: '80,7%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 110.2, khNext: 122.0, rate: '90,3%', isRatePositive: false, unit: 'Tỷ đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 120.7, khNext: 149.6, rate: '80,7%', isRatePositive: false, unit: 'Tỷ đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, khNext: 9.8, diff: '-0,5 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.7, khNext: 70.0, diff: '-2,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.2, khNext: 12.0, diff: '-1,8 đ.%', isDiffPositive: false, unit: '%' }
     ]
@@ -296,11 +286,9 @@ export const QUARTER_NEXT_PLAN_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1162.5, khNext: 1498.6, rate: '77,6%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 375.0, khNext: 449.5, rate: '83,4%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 787.5, khNext: 1049.1, rate: '75,1%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 122.9, khNext: 179.9, rate: '68,3%', isRatePositive: false, unit: 'Tỷ đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 108.1, khNext: 157.3, rate: '68,8%', isRatePositive: false, unit: 'Tỷ đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 122.9, khNext: 179.9, rate: '68,3%', isRatePositive: false, unit: 'Tỷ đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.3, khNext: 10.5, diff: '-1,2 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.7, khNext: 70.0, diff: '-2,3 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.6, khNext: 12.0, diff: '-1,4 đ.%', isDiffPositive: false, unit: '%' }
     ]
@@ -313,11 +301,9 @@ export const QUARTER_NEXT_PLAN_DATA = {
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1326.2, khNext: 1100.0, rate: '120,6%', isRatePositive: true, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 426.6, khNext: 345.0, rate: '123,7%', isRatePositive: true, unit: 'Tỷ đồng' },
       { id: 'external', name: 'DT ngoài Tập đoàn', lines: ['DT ngoài', 'Tập đoàn'], uoc: 899.6, khNext: 755.0, rate: '119,2%', isRatePositive: true, unit: 'Tỷ đồng' },
-      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 141.2, khNext: 120.0, rate: '117,7%', isRatePositive: true, unit: 'Tỷ đồng' },
-      { id: 'lntt', name: 'Lợi nhuận trước thuế', lines: ['Lợi nhuận', 'trước thuế'], uoc: 125.0, khNext: 105.0, rate: '119,0%', isRatePositive: true, unit: 'Tỷ đồng' }
+      { id: 'global', name: 'DT quốc tế', lines: ['DT quốc tế'], uoc: 141.2, khNext: 120.0, rate: '117,7%', isRatePositive: true, unit: 'Tỷ đồng' }
     ],
     ratios: [
-      { id: 'lntt_ratio', name: 'Tỷ suất LNTT/Tổng DT', lines: ['Tỷ suất', 'LNTT/Tổng DT'], uoc: 9.4, khNext: 9.5, diff: '-0,1 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'external_ratio', name: 'Tỷ trọng DT ngoài TĐ', lines: ['Tỷ trọng', 'DT ngoài TĐ'], uoc: 67.8, khNext: 68.6, diff: '-0,8 đ.%', isDiffPositive: false, unit: '%' },
       { id: 'global_ratio', name: 'Tỷ trọng DT quốc tế', lines: ['Tỷ trọng', 'DT quốc tế'], uoc: 10.6, khNext: 10.9, diff: '-0,3 đ.%', isDiffPositive: false, unit: '%' }
     ]
