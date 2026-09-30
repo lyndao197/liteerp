@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, TableProperties } from 'lucide-react';
 import './MonthComparisonChart.css';
 
 import {
@@ -31,6 +31,7 @@ function QuarterValueCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
+  onOpenDetail,
   maxVal = 1400,
   yTicks = [0, 200, 400, 600, 800, 1000, 1200, 1400],
   unitLabel = 'Triệu đồng'
@@ -56,6 +57,19 @@ function QuarterValueCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -272,6 +286,7 @@ function QuarterRatioCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
+  onOpenDetail,
   maxVal = 100,
   yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 }) {
@@ -296,6 +311,19 @@ function QuarterRatioCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -506,7 +534,8 @@ export default function QuarterComparisonChart({
   selectedQuarter = 'Quý III',
   setSelectedQuarter,
   visibleMap: propVisibleMap,
-  onVisibleMapChange
+  onVisibleMapChange,
+  onOpenDetail
 }) {
   const [hoveredItem5Val, setHoveredItem5Val] = useState(null);
   const [hoveredItem5Rat, setHoveredItem5Rat] = useState(null);
@@ -646,6 +675,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem5Val}
           isVisible={visibleMap.r1_val}
           onToggle={() => toggleSubcard('r1_val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart5_val',
+            chartTitle: `Lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
@@ -657,6 +690,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem5Rat}
           isVisible={visibleMap.r1_rat}
           onToggle={() => toggleSubcard('r1_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart5_rat',
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
       </div>
 
@@ -674,6 +711,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem6Val}
           isVisible={visibleMap.r2_val}
           onToggle={() => toggleSubcard('r2_val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart6_val',
+            chartTitle: `Ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
@@ -685,6 +726,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem6Rat}
           isVisible={visibleMap.r2_rat}
           onToggle={() => toggleSubcard('r2_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart6_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
       </div>
 
@@ -702,6 +747,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem7Val}
           isVisible={visibleMap.r3_val}
           onToggle={() => toggleSubcard('r3_val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart7_val',
+            chartTitle: `Ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`
+          })}
         />
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`}
@@ -713,6 +762,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem7Rat}
           isVisible={visibleMap.r3_rat}
           onToggle={() => toggleSubcard('r3_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart7_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`
+          })}
         />
       </div>
 
@@ -730,6 +783,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem8Val}
           isVisible={visibleMap.r4_val}
           onToggle={() => toggleSubcard('r4_val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart8_val',
+            chartTitle: `Ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`
+          })}
         />
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`}
@@ -743,6 +800,10 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r4_rat')}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart8_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`
+          })}
         />
       </div>
 
@@ -763,6 +824,10 @@ export default function QuarterComparisonChart({
           maxVal={1750}
           yTicks={[0, 250, 500, 750, 1000, 1250, 1500, 1750]}
           unitLabel="Tỷ đồng"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart9_val',
+            chartTitle: `Ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`
+          })}
         />
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`}
@@ -776,6 +841,10 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r5_rat')}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart9_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`
+          })}
         />
       </div>
     </div>

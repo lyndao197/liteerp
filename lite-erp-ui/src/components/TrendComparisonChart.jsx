@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, TableProperties } from 'lucide-react';
 import './MonthComparisonChart.css';
 import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 
@@ -19,7 +19,8 @@ function TrendPrevYearCard({
   hoveredIdx,
   setHoveredIdx,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   const svgWidth = 540;
   const svgHeight = 310;
@@ -62,6 +63,19 @@ function TrendPrevYearCard({
           {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         </h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">Hàng 1 - Khu 1</span>
         </div>
       </div>
@@ -337,7 +351,8 @@ function TrendPlanCard({
   hoveredIdx,
   setHoveredIdx,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   const svgWidth = 540;
   const svgHeight = 310;
@@ -376,6 +391,19 @@ function TrendPlanCard({
           {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         </h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">Hàng 1 - Khu 2</span>
         </div>
       </div>
@@ -641,7 +669,8 @@ function TrendPlanCard({
 // ==============================================================================
 export default function TrendComparisonChart({
   selectedYear = '2026',
-  setSelectedYear
+  setSelectedYear,
+  onOpenDetail
 }) {
   const [hoveredIdx14, setHoveredIdx14] = useState(null);
   const [hoveredIdx15, setHoveredIdx15] = useState(null);
@@ -703,6 +732,10 @@ export default function TrendComparisonChart({
           setHoveredIdx={setHoveredIdx14}
           isVisible={visibleCards.chart14}
           onToggle={() => toggleCard('chart14')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'trend_prev_year',
+            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`
+          })}
         />
 
         <TrendPlanCard
@@ -712,6 +745,10 @@ export default function TrendComparisonChart({
           setHoveredIdx={setHoveredIdx15}
           isVisible={visibleCards.chart15}
           onToggle={() => toggleCard('chart15')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'trend_plan',
+            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
+          })}
         />
       </div>
     </div>

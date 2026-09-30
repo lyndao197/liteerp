@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, EyeOff, TableProperties } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
 import {
@@ -161,7 +161,8 @@ function InternalExternalSubcard({
   setHoveredSlice,
   cardKey,
   isVisible = false,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   return (
     <div
@@ -216,6 +217,19 @@ function InternalExternalSubcard({
         </div>
 
         <div className="month-subcard-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span
             style={{
               fontSize: '11.5px',
@@ -274,7 +288,8 @@ export default function InternalExternalRevenueChart({
   selectedMonth = 'Tháng 8',
   setSelectedMonth,
   visibleCards: externalVisibleCards,
-  onVisibleCardsChange
+  onVisibleCardsChange,
+  onOpenDetail
 }) {
   const [internalYear, setInternalYear] = useState('2026');
   const [internalMonth, setInternalMonth] = useState('Tháng 8');
@@ -480,6 +495,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-month"
                 isVisible={visibleCards.thMonth}
                 onToggle={() => toggleCard('thMonth')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_th_month',
+                  chartTitle: `${thMonthTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
               <InternalExternalSubcard
                 title={khMonthTitle}
@@ -491,6 +510,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-month"
                 isVisible={visibleCards.khMonth}
                 onToggle={() => toggleCard('khMonth')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_kh_month',
+                  chartTitle: `${khMonthTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
             </div>
 
@@ -506,6 +529,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-quarter"
                 isVisible={visibleCards.thQuarter}
                 onToggle={() => toggleCard('thQuarter')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_th_quarter',
+                  chartTitle: `${thQuarterTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
               <InternalExternalSubcard
                 title={khQuarterTitle}
@@ -517,6 +544,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-quarter"
                 isVisible={visibleCards.khQuarter}
                 onToggle={() => toggleCard('khQuarter')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_kh_quarter',
+                  chartTitle: `${khQuarterTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
             </div>
 
@@ -532,6 +563,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-year"
                 isVisible={visibleCards.thYear}
                 onToggle={() => toggleCard('thYear')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_th_year',
+                  chartTitle: `${thYearTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
               <InternalExternalSubcard
                 title={khYearTitle}
@@ -543,6 +578,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-year"
                 isVisible={visibleCards.khYear}
                 onToggle={() => toggleCard('khYear')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'in_ex_kh_year',
+                  chartTitle: `${khYearTitle} (Nội bộ & Ngoài Tập đoàn)`
+                })}
               />
             </div>
           </div>
@@ -615,6 +654,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-month-27"
                 isVisible={visibleCards.thMonth27}
                 onToggle={() => toggleCard('thMonth27')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_th_month',
+                  chartTitle: `${thMonthTitle} (Trong nước & Quốc tế)`
+                })}
               />
               <InternalExternalSubcard
                 title={khMonthTitle}
@@ -626,6 +669,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-month-28"
                 isVisible={visibleCards.khMonth28}
                 onToggle={() => toggleCard('khMonth28')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_kh_month',
+                  chartTitle: `${khMonthTitle} (Trong nước & Quốc tế)`
+                })}
               />
             </div>
 
@@ -641,6 +688,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-quarter-27"
                 isVisible={visibleCards.thQuarter27}
                 onToggle={() => toggleCard('thQuarter27')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_th_quarter',
+                  chartTitle: `${thQuarterTitle} (Trong nước & Quốc tế)`
+                })}
               />
               <InternalExternalSubcard
                 title={khQuarterTitle}
@@ -652,6 +703,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-quarter-28"
                 isVisible={visibleCards.khQuarter28}
                 onToggle={() => toggleCard('khQuarter28')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_kh_quarter',
+                  chartTitle: `${khQuarterTitle} (Trong nước & Quốc tế)`
+                })}
               />
             </div>
 
@@ -667,6 +722,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="th-year-27"
                 isVisible={visibleCards.thYear27}
                 onToggle={() => toggleCard('thYear27')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_th_year',
+                  chartTitle: `${thYearTitle} (Trong nước & Quốc tế)`
+                })}
               />
               <InternalExternalSubcard
                 title={khYearTitle}
@@ -678,6 +737,10 @@ export default function InternalExternalRevenueChart({
                 cardKey="kh-year-28"
                 isVisible={visibleCards.khYear28}
                 onToggle={() => toggleCard('khYear28')}
+                onOpenDetail={() => onOpenDetail && onOpenDetail({
+                  chartKey: 'dom_intl_kh_year',
+                  chartTitle: `${khYearTitle} (Trong nước & Quốc tế)`
+                })}
               />
             </div>
           </div>

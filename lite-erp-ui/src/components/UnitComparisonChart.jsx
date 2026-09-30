@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, TableProperties } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
 import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
@@ -154,13 +154,27 @@ function UnitStructureSubcard({
   setHoveredSlice,
   cardKey,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   return (
     <div className="month-subcard spdv-card-item">
       <div className="month-subcard-header">
         <h3 className="month-subcard-title">{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -197,7 +211,8 @@ function UnitPlanSubcard({
   data,
   cardKey,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   const [hoveredUnit, setHoveredUnit] = useState(null);
 
@@ -218,6 +233,19 @@ function UnitPlanSubcard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title">{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -389,7 +417,8 @@ export default function UnitComparisonChart({
   selectedMonth = 'Tháng 8',
   setSelectedMonth,
   visibleCards: externalVisibleCards,
-  onVisibleCardsChange
+  onVisibleCardsChange,
+  onOpenDetail
 }) {
   const [internalYear, setInternalYear] = useState('2026');
   const [internalMonth, setInternalMonth] = useState('Tháng 8');
@@ -508,6 +537,10 @@ export default function UnitComparisonChart({
           cardKey="u21-month"
           isVisible={visibleCards.c21Month}
           onToggle={() => toggleCard('c21Month')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_struct_month',
+            chartTitle: `Cơ cấu theo từng đơn vị – ${activeMonth}/${activeYear}`
+          })}
         />
 
         <UnitPlanSubcard
@@ -517,6 +550,10 @@ export default function UnitComparisonChart({
           cardKey="u22-month"
           isVisible={visibleCards.c22Month}
           onToggle={() => toggleCard('c22Month')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_plan_month',
+            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – ${activeMonth}/${activeYear}`
+          })}
         />
       </div>
 
@@ -531,6 +568,10 @@ export default function UnitComparisonChart({
           cardKey="u21-quarter"
           isVisible={visibleCards.c21Quarter}
           onToggle={() => toggleCard('c21Quarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_struct_quarter',
+            chartTitle: `Cơ cấu theo từng đơn vị – ${quarterText}`
+          })}
         />
 
         <UnitPlanSubcard
@@ -540,6 +581,10 @@ export default function UnitComparisonChart({
           cardKey="u22-quarter"
           isVisible={visibleCards.c22Quarter}
           onToggle={() => toggleCard('c22Quarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_plan_quarter',
+            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – ${quarterText}`
+          })}
         />
       </div>
 
@@ -554,6 +599,10 @@ export default function UnitComparisonChart({
           cardKey="u21-year"
           isVisible={visibleCards.c21Year}
           onToggle={() => toggleCard('c21Year')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_struct_year',
+            chartTitle: `Cơ cấu theo từng đơn vị – Năm ${activeYear}`
+          })}
         />
 
         <UnitPlanSubcard
@@ -563,6 +612,10 @@ export default function UnitComparisonChart({
           cardKey="u22-year"
           isVisible={visibleCards.c22Year}
           onToggle={() => toggleCard('c22Year')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_plan_year',
+            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – Năm ${activeYear}`
+          })}
         />
       </div>
 

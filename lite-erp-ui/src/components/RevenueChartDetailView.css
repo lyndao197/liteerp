@@ -1,0 +1,516 @@
+/* Styles for RevenueChartDetailView (Dedicated Chart Data Detail Screen) */
+
+.revenue-chart-detail-view-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  animation: fadeInDetail 0.25s ease-in-out;
+}
+
+@keyframes fadeInDetail {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 1. Top Navigation Bar */
+.chart-detail-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  flex-wrap: wrap;
+}
+
+.chart-detail-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.chart-detail-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chart-detail-back-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.chart-detail-back-btn.large {
+  padding: 10px 18px;
+  font-size: 13.5px;
+}
+
+.chart-detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.crumb-root {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.crumb-divider {
+  color: #cbd5e1;
+}
+
+.crumb-active {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.chart-detail-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chart-detail-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #10b981;
+  border: 1px solid #059669;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2);
+}
+
+.chart-detail-export-btn:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.chart-detail-export-btn.large {
+  padding: 10px 20px;
+  font-size: 13.5px;
+}
+
+/* 2. Summary KPI Tiles */
+.chart-detail-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .chart-detail-summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chart-detail-summary-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-detail-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.chart-detail-summary-card.card-th::before {
+  background-color: #e11d48;
+}
+
+.chart-detail-summary-card.card-kh::before {
+  background-color: #64748b;
+}
+
+.chart-detail-summary-card.card-diff::before {
+  background-color: #10b981;
+}
+
+.chart-detail-summary-card.card-rate::before {
+  background-color: #f59e0b;
+}
+
+.summary-card-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.summary-card-value {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.summary-card-unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.summary-card-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.text-red {
+  color: #e11d48;
+}
+
+.text-slate {
+  color: #334155;
+}
+
+.text-green {
+  color: #15803d;
+}
+
+.text-amber {
+  color: #b45309;
+}
+
+.status-pill-small {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+.status-pill-small.pill-green {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-pill-small.pill-red {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* 3. Table Card */
+.chart-detail-table-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chart-detail-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.table-header-title-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.table-header-title span {
+  color: #e11d48;
+}
+
+.table-row-count-badge {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.table-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.table-search-input {
+  padding: 6px 12px 6px 30px;
+  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  min-width: 180px;
+  transition: all 0.15s ease;
+}
+
+.table-search-input:focus {
+  border-color: #e11d48;
+  box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.1);
+}
+
+.table-filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-chip-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.filter-chip-btn.active {
+  background-color: #e11d48;
+  border-color: #e11d48;
+  color: #ffffff;
+}
+
+/* 4. Table */
+.chart-detail-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chart-detail-erp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.chart-detail-erp-table thead tr {
+  background-color: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.chart-detail-erp-table th {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.chart-detail-erp-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.1s ease;
+}
+
+.chart-detail-erp-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.chart-detail-erp-table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.table-empty-row {
+  text-align: center;
+  padding: 36px 16px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Rate mini progress bar */
+.rate-progress-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rate-badge-pill {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.rate-badge-pill.large {
+  font-size: 13px;
+  padding: 3px 10px;
+}
+
+.rate-badge-pill.rate-pass {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.rate-badge-pill.rate-fail {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.rate-mini-bar-track {
+  width: 70px;
+  height: 4px;
+  background-color: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.rate-mini-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.rate-mini-bar-fill.fill-green {
+  background-color: #15803d;
+}
+
+.rate-mini-bar-fill.fill-red {
+  background-color: #dc2626;
+}
+
+/* Eval status pill */
+.eval-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.eval-status-pill.eval-pass {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.eval-status-pill.eval-fail {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Footer total row */
+.chart-detail-table-footer {
+  background-color: #f8fafc;
+  border-top: 2px solid #cbd5e1;
+}
+
+.chart-detail-table-footer td {
+  padding: 14px 16px;
+  font-size: 13.5px;
+}
+
+/* 5. Bottom bar */
+.chart-detail-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+/* Global button inside chart cards to open detail */
+.subcard-detail-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2563eb;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.subcard-detail-action-btn:hover {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}

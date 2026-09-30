@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, EyeOff, TableProperties } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
@@ -145,7 +145,8 @@ function SpdvSubcard({
   setHoveredSlice,
   cardKey,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   return (
     <div
@@ -218,6 +219,19 @@ function SpdvSubcard({
         </div>
 
         <div className="month-subcard-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span
             style={{
               fontSize: '11.5px',
@@ -280,7 +294,8 @@ function SpdvBarSubcard({
   maxVal,
   ticks,
   items,
-  cardKey
+  cardKey,
+  onOpenDetail
 }) {
   const [hoveredItem, setHoveredItem] = useState(null);
 
@@ -297,6 +312,19 @@ function SpdvBarSubcard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -630,7 +658,8 @@ export default function SpdvComparisonChart({
   selectedMonth = 'Tháng 8',
   setSelectedMonth,
   visibleCards: externalVisibleCards,
-  onVisibleCardsChange
+  onVisibleCardsChange,
+  onOpenDetail
 }) {
   const [internalYear, setInternalYear] = useState('2026');
   const [internalMonth, setInternalMonth] = useState('Tháng 8');
@@ -776,6 +805,10 @@ export default function SpdvComparisonChart({
           cardKey="th-month"
           isVisible={visibleCards.thMonth}
           onToggle={() => toggleCard('thMonth')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_th_month',
+            chartTitle: thMonthTitle
+          })}
         />
 
         <SpdvSubcard
@@ -790,6 +823,10 @@ export default function SpdvComparisonChart({
           cardKey="kh-month"
           isVisible={visibleCards.khMonth}
           onToggle={() => toggleCard('khMonth')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_kh_month',
+            chartTitle: khMonthTitle
+          })}
         />
       </div>
 
@@ -807,6 +844,10 @@ export default function SpdvComparisonChart({
           cardKey="th-quarter"
           isVisible={visibleCards.thQuarter}
           onToggle={() => toggleCard('thQuarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_th_quarter',
+            chartTitle: thQuarterTitle
+          })}
         />
 
         <SpdvSubcard
@@ -821,6 +862,10 @@ export default function SpdvComparisonChart({
           cardKey="kh-quarter"
           isVisible={visibleCards.khQuarter}
           onToggle={() => toggleCard('khQuarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_kh_quarter',
+            chartTitle: khQuarterTitle
+          })}
         />
       </div>
 
@@ -838,6 +883,10 @@ export default function SpdvComparisonChart({
           cardKey="th-year"
           isVisible={visibleCards.thYear}
           onToggle={() => toggleCard('thYear')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_th_year',
+            chartTitle: thYearTitle
+          })}
         />
 
         <SpdvSubcard
@@ -852,6 +901,10 @@ export default function SpdvComparisonChart({
           cardKey="kh-year"
           isVisible={visibleCards.khYear}
           onToggle={() => toggleCard('khYear')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_kh_year',
+            chartTitle: khYearTitle
+          })}
         />
       </div>
 
@@ -866,6 +919,10 @@ export default function SpdvComparisonChart({
           ticks={barData.monthTicks}
           items={barData.monthItems}
           cardKey="month"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_bar_month',
+            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.monthTitle}`
+          })}
         />
 
         <SpdvBarSubcard
@@ -877,6 +934,10 @@ export default function SpdvComparisonChart({
           ticks={barData.quarterTicks}
           items={barData.quarterItems}
           cardKey="quarter"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_bar_quarter',
+            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.quarterTitle}`
+          })}
         />
       </div>
 
@@ -891,6 +952,10 @@ export default function SpdvComparisonChart({
           ticks={barData.yearTicks}
           items={barData.yearItems}
           cardKey="year"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_bar_year',
+            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`
+          })}
         />
 
         <SpdvLegendSubcard tag="Hàng 5 - Khu 2" />

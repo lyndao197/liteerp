@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, TableProperties } from 'lucide-react';
 import './MonthComparisonChart.css';
 import {
   YEAR_CUMULATIVE_DATA,
@@ -29,6 +29,7 @@ function YearValueCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
+  onOpenDetail,
   maxVal = 3500,
   yTicks = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
   rateLabel = '% Hoàn thành KH',
@@ -56,6 +57,19 @@ function YearValueCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -271,6 +285,7 @@ function YearRatioCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
+  onOpenDetail,
   maxVal = 100,
   yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
   primaryColor = '#e11d48',
@@ -296,6 +311,19 @@ function YearRatioCard({
       <div className="month-subcard-header">
         <h3 className="month-subcard-title" title={title}>{title}</h3>
         <div className="month-subcard-header-actions">
+          {onOpenDetail && (
+            <button
+              className="subcard-detail-action-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDetail();
+              }}
+              title="Xem danh sách chi tiết"
+            >
+              <TableProperties size={13} />
+              <span>Xem chi tiết</span>
+            </button>
+          )}
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -501,7 +529,8 @@ export default function YearComparisonChart({
   selectedCumulativeMonth = 'Lũy kế 8 tháng',
   setSelectedCumulativeMonth,
   visibleCards: propVisibleCards,
-  onVisibleCardsChange
+  onVisibleCardsChange,
+  onOpenDetail
 }) {
   // Hover states for Biểu đồ 10
   const [hoveredC10Val, setHoveredC10Val] = useState(null);
@@ -635,6 +664,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC10Val}
           isVisible={visibleCards.c10Val}
           onToggle={() => toggleCard('c10Val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart10_val',
+            chartTitle: `Lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`
+          })}
         />
 
         <YearRatioCard
@@ -649,6 +682,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC10Rat}
           isVisible={visibleCards.c10Rat}
           onToggle={() => toggleCard('c10Rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart10_rat',
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với luỹ kế KH năm ${selectedYear}`
+          })}
         />
       </div>
 
@@ -667,6 +704,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC11Val}
           isVisible={visibleCards.c11Val}
           onToggle={() => toggleCard('c11Val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart11_val',
+            chartTitle: `Lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`
+          })}
         />
 
         <YearRatioCard
@@ -681,6 +722,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC11Rat}
           isVisible={visibleCards.c11Rat}
           onToggle={() => toggleCard('c11Rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart11_rat',
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH năm ${selectedYear} so với KH cả năm ${selectedYear}`
+          })}
         />
       </div>
 
@@ -700,6 +745,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC12Val}
           isVisible={visibleCards.c12Val}
           onToggle={() => toggleCard('c12Val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart12_val',
+            chartTitle: `Ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
+          })}
         />
 
         <YearRatioCard
@@ -714,6 +763,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC12Rat}
           isVisible={visibleCards.c12Rat}
           onToggle={() => toggleCard('c12Rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart12_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
+          })}
         />
       </div>
 
@@ -733,6 +786,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC13Val}
           isVisible={visibleCards.c13Val}
           onToggle={() => toggleCard('c13Val')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart13_val',
+            chartTitle: `Ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`
+          })}
         />
 
         <YearRatioCard
@@ -747,6 +804,10 @@ export default function YearComparisonChart({
           setHoveredItem={setHoveredC13Rat}
           isVisible={visibleCards.c13Rat}
           onToggle={() => toggleCard('c13Rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart13_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`
+          })}
         />
       </div>
     </div>

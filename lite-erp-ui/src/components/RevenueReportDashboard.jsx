@@ -8,12 +8,13 @@ import {
   BarChart2, Activity, PieChart as PieChartIcon, AreaChart as AreaIcon,
   Save, Grid, List, Check, Download, TrendingUp, TrendingDown,
   Building, DollarSign, Calendar, Filter, Search, RefreshCw, Layers, ShieldCheck,
-  Users, Target, Award, Clock, ArrowLeft, HelpCircle, Wallet
+  Users, Target, Award, Clock, ArrowLeft, HelpCircle, Wallet, TableProperties
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 import html2canvas from 'html2canvas';
 import './RevenueReportDashboard.css';
+import RevenueChartDetailView from './RevenueChartDetailView';
 import MonthComparisonChart from './MonthComparisonChart';
 import QuarterComparisonChart from './QuarterComparisonChart';
 import { MONTHLY_PLAN_DATA, MONTH_PREV_DATA, MONTH_LAST_YEAR_DATA, MONTH_NEXT_PLAN_DATA } from '../data/revenueMonthData';
@@ -3051,6 +3052,13 @@ const RevenueReportDashboard = () => {
     return null;
   };
 
+  const [detailChartInfo, setDetailChartInfo] = useState(null);
+
+  // Reset detail chart view whenever user clicks a different sub-branch
+  React.useEffect(() => {
+    setDetailChartInfo(null);
+  }, [currentView]);
+
   const activeBranchInfo = REVENUE_SUB_BRANCHES.find(b => b.id === currentView) || REVENUE_SUB_BRANCHES[0];
 
   return (
@@ -3067,111 +3075,165 @@ const RevenueReportDashboard = () => {
       {/* Top Header Bar: Clean with Back button, Title, pill tag, and 'Xuất Excel' button matching screenshot */}
       <div className="revenue-clean-top-bar">
         <div className="revenue-clean-title-area">
-          <button className="revenue-back-btn" onClick={() => navigate(-1)} title="Quay lại">
+          <button className="revenue-back-btn" onClick={() => detailChartInfo ? setDetailChartInfo(null) : navigate(-1)} title="Quay lại">
             <ArrowLeft size={16} />
-            <span>Quay lại</span>
+            <span>{detailChartInfo ? 'Quay lại biểu đồ' : 'Quay lại'}</span>
           </button>
           <div className="revenue-title-with-pill">
             <h1 className="revenue-main-title">
-              {currentView === 'quarter' ? `Báo cáo doanh thu ${selectedQuarter}/${selectedYear}` :
-               currentView === 'year' ? `Báo cáo doanh thu năm ${selectedYear}` :
-               currentView === 'month' ? `Báo cáo doanh thu ${selectedMonth}/${selectedYear}` :
-               currentView === 'trend' ? `Xu hướng doanh thu từng tháng năm ${selectedYear}` :
-               currentView === 'spdv' ? 'Doanh thu theo nhóm SPDV' :
-               currentView === 'unit' ? 'Doanh thu theo đơn vị' :
-               currentView === 'plan_progress' ? 'Chuyển dịch doanh thu ngoài và doanh thu quốc tế' :
-               currentView === 'debt' ? `Báo cáo công nợ năm ${selectedYear}` :
-               'Báo cáo doanh thu'}
+              {detailChartInfo
+                ? (detailChartInfo.chartTitle || `Bảng dữ liệu chi tiết ${activeBranchInfo.title}`)
+                : (currentView === 'quarter' ? `Báo cáo doanh thu ${selectedQuarter}/${selectedYear}` :
+                   currentView === 'year' ? `Báo cáo doanh thu năm ${selectedYear}` :
+                   currentView === 'month' ? `Báo cáo doanh thu ${selectedMonth}/${selectedYear}` :
+                   currentView === 'trend' ? `Xu hướng doanh thu từng tháng năm ${selectedYear}` :
+                   currentView === 'spdv' ? 'Doanh thu theo nhóm SPDV' :
+                   currentView === 'unit' ? 'Doanh thu theo đơn vị' :
+                   currentView === 'plan_progress' ? 'Chuyển dịch doanh thu ngoài và doanh thu quốc tế' :
+                   currentView === 'debt' ? `Báo cáo công nợ năm ${selectedYear}` :
+                   'Báo cáo doanh thu')}
             </h1>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {!detailChartInfo && (
+            <button
+              type="button"
+              className="clean-view-mode-btn"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#2563eb',
+                backgroundColor: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onClick={() => setDetailChartInfo({
+                branchId: currentView,
+                chartTitle: `Bảng dữ liệu chi tiết ${activeBranchInfo.title}`
+              })}
+              title="Xem toàn bộ số liệu chi tiết dưới dạng bảng danh sách"
+            >
+              <TableProperties size={15} />
+              <span>Xem bảng chi tiết</span>
+            </button>
+          )}
           <button className="clean-export-excel-btn" onClick={handleExportExcel}>
             Xuất Excel
           </button>
         </div>
       </div>
 
-      {/* Main Content Area (Sidebar already provides Nhóm biểu đồ navigation) */}
-      <div className="revenue-group-content-panel">
-        {currentView === 'month' ? (
-          /* Phân tích theo tháng: Renders Biểu đồ 1-4 with Năm & Tháng filters */
-          <MonthComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedMonth={setSelectedMonth}
-            visibleMap={monthVisibleMap}
-            onVisibleMapChange={setMonthVisibleMap}
-          />
-        ) : currentView === 'quarter' ? (
-          /* Phân tích theo quý: Renders Biểu đồ 5-7 with Năm & Quý filters */
-          <QuarterComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedQuarter={selectedQuarter}
-            setSelectedQuarter={setSelectedQuarter}
-            visibleMap={quarterVisibleMap}
-            onVisibleMapChange={setQuarterVisibleMap}
-          />
-        ) : currentView === 'year' ? (
-          /* Phân tích theo năm: Renders Biểu đồ 10 with Năm & Lũy kế tháng filters */
-          <YearComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedCumulativeMonth={selectedCumulativeMonth}
-            setSelectedCumulativeMonth={setSelectedCumulativeMonth}
-            visibleCards={yearVisibleCards}
-            onVisibleCardsChange={setYearVisibleCards}
-          />
-        ) : currentView === 'trend' ? (
-          /* Xu hướng theo thời gian: Renders Biểu đồ 14 */
-          <TrendComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-          />
-        ) : currentView === 'spdv' ? (
-          /* Cơ cấu theo nhóm SPDV: Renders Biểu đồ 16, 17 & 18 */
-          <SpdvComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedMonth={setSelectedMonth}
-            visibleCards={spdvVisibleCards}
-            onVisibleCardsChange={setSpdvVisibleCards}
-          />
-        ) : currentView === 'unit' ? (
-          /* Cơ cấu theo đơn vị: Renders Biểu đồ 21 */
-          <UnitComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedMonth={setSelectedMonth}
-            visibleCards={unitVisibleCards}
-            onVisibleCardsChange={setUnitVisibleCards}
-          />
-        ) : currentView === 'plan_progress' ? (
-          /* Chuyển dịch DT ngoài và DT quốc tế: Renders Biểu đồ 25 & 26 */
-          <InternalExternalRevenueChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedMonth={setSelectedMonth}
-            visibleCards={inExVisibleCards}
-            onVisibleCardsChange={setInExVisibleCards}
-          />
-        ) : currentView === 'debt' ? (
-          /* Nhánh 8: Báo cáo công nợ */
-          <DebtComparisonChart
-            selectedYear={selectedYear}
-            setSelectedYear={setSelectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedMonth={setSelectedMonth}
-            visibleCards={debtVisibleCards}
-            onVisibleCardsChange={setDebtVisibleCards}
-          />
-        ) : (
+      {/* Main Content Area: Detail Table Screen OR Chart Subcards */}
+      {detailChartInfo ? (
+        <RevenueChartDetailView
+          initialBranchId={detailChartInfo.branchId || currentView}
+          initialChartKey={detailChartInfo.chartKey}
+          initialChartTitle={detailChartInfo.chartTitle}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedMonth={selectedMonth}
+          setSelectedMonth={setSelectedMonth}
+          selectedQuarter={selectedQuarter}
+          setSelectedQuarter={setSelectedQuarter}
+          selectedCumulativeMonth={selectedCumulativeMonth}
+          setSelectedCumulativeMonth={setSelectedCumulativeMonth}
+          onBack={() => setDetailChartInfo(null)}
+        />
+      ) : (
+        <div className="revenue-group-content-panel">
+          {currentView === 'month' ? (
+            /* Phân tích theo tháng: Renders Biểu đồ 1-4 with Năm & Tháng filters */
+            <MonthComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+              visibleMap={monthVisibleMap}
+              onVisibleMapChange={setMonthVisibleMap}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'month', ...info })}
+            />
+          ) : currentView === 'quarter' ? (
+            /* Phân tích theo quý: Renders Biểu đồ 5-7 with Năm & Quý filters */
+            <QuarterComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedQuarter={selectedQuarter}
+              setSelectedQuarter={setSelectedQuarter}
+              visibleMap={quarterVisibleMap}
+              onVisibleMapChange={setQuarterVisibleMap}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'quarter', ...info })}
+            />
+          ) : currentView === 'year' ? (
+            /* Phân tích theo năm: Renders Biểu đồ 10 with Năm & Lũy kế tháng filters */
+            <YearComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedCumulativeMonth={selectedCumulativeMonth}
+              setSelectedCumulativeMonth={setSelectedCumulativeMonth}
+              visibleCards={yearVisibleCards}
+              onVisibleCardsChange={setYearVisibleCards}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'year', ...info })}
+            />
+          ) : currentView === 'trend' ? (
+            /* Xu hướng theo thời gian: Renders Biểu đồ 14 */
+            <TrendComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'trend', ...info })}
+            />
+          ) : currentView === 'spdv' ? (
+            /* Cơ cấu theo nhóm SPDV: Renders Biểu đồ 16, 17 & 18 */
+            <SpdvComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+              visibleCards={spdvVisibleCards}
+              onVisibleCardsChange={setSpdvVisibleCards}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'spdv', ...info })}
+            />
+          ) : currentView === 'unit' ? (
+            /* Cơ cấu theo đơn vị: Renders Biểu đồ 21 */
+            <UnitComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+              visibleCards={unitVisibleCards}
+              onVisibleCardsChange={setUnitVisibleCards}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'unit', ...info })}
+            />
+          ) : currentView === 'plan_progress' ? (
+            /* Chuyển dịch DT ngoài và DT quốc tế: Renders Biểu đồ 25 & 26 */
+            <InternalExternalRevenueChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+              visibleCards={inExVisibleCards}
+              onVisibleCardsChange={setInExVisibleCards}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'plan_progress', ...info })}
+            />
+          ) : currentView === 'debt' ? (
+            /* Nhánh 8: Báo cáo công nợ */
+            <DebtComparisonChart
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              selectedMonth={selectedMonth}
+              setSelectedMonth={setSelectedMonth}
+              visibleCards={debtVisibleCards}
+              onVisibleCardsChange={setDebtVisibleCards}
+              onOpenDetail={(info) => setDetailChartInfo({ branchId: 'debt', ...info })}
+            />
+          ) : (
             <>
               {/* Top KPI Summary Cards */}
               <div className="revenue-kpi-grid">
@@ -3351,9 +3413,10 @@ const RevenueReportDashboard = () => {
           </div>
         </>
       )}
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
 };
 
 export default RevenueReportDashboard;
