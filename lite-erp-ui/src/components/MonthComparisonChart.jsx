@@ -287,7 +287,10 @@ function MonthValueCard({
             title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
-              onOpenDetail();
+              onOpenDetail && onOpenDetail({
+                chartKey: 'chart1_val',
+                chartTitle: `Doanh thu thực hiện so với KH ${selectedMonth}/${selectedYear}`
+              });
             }}
           >
             <span>Xem chi tiết</span>
@@ -567,7 +570,10 @@ function MonthRatioCard({
             title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
-              onOpenDetail();
+              onOpenDetail && onOpenDetail({
+                chartKey: 'chart1_rat',
+                chartTitle: `Tỷ trọng hoàn thành doanh thu ${selectedMonth}/${selectedYear}`
+              });
             }}
           >
             <span>Xem chi tiết</span>
