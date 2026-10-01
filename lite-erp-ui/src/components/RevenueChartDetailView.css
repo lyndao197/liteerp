@@ -609,6 +609,36 @@
   padding: 10px 16px;
 }
 
+.chart-detail-month-table thead th.th-obj-group {
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  border-left: 1px solid #e2e8f0;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 8px 10px;
+}
+
+.chart-detail-month-table thead th.th-obj-1 {
+  border-left: 2px solid #bfdbfe;
+  background-color: #fff7ed;
+  color: #c2410c;
+}
+
+.chart-detail-month-table thead th.th-obj-2 {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+.chart-detail-month-table thead th.th-obj-compare {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.chart-detail-month-table thead th.th-obj-uoc {
+  background-color: #fefce8;
+  color: #a16207;
+}
+
 .chart-detail-month-table thead tr.th-sub-row th {
   background-color: #ffffff;
   color: #0f172a;
@@ -840,7 +870,7 @@
 /* TREND 12-MONTH MATRIX TABLE STYLES                                         */
 /* ========================================================================== */
 .chart-detail-trend-table {
-  min-width: 2600px !important;
+  min-width: 3200px !important;
 }
 
 .chart-detail-trend-table thead tr:first-child th.th-trend-month-header {
@@ -870,10 +900,21 @@
   text-align: right;
 }
 
+.chart-detail-trend-table thead tr.th-sub-row th.th-sub-prev {
+  color: #475569;
+  border-left: 1px solid #cbd5e1;
+  min-width: 75px;
+}
+
+.chart-detail-trend-table thead tr.th-sub-row th.th-sub-th {
+  color: #0f172a;
+  min-width: 75px;
+}
+
 .chart-detail-trend-table thead tr.th-sub-row th.th-sub-rate,
 .chart-detail-trend-table thead tr.th-sub-row th.th-sub-growth {
   text-align: right;
-  min-width: 105px;
+  min-width: 95px;
 }
 
 .chart-detail-trend-table tbody td,
@@ -883,7 +924,8 @@
   white-space: nowrap;
 }
 
-.chart-detail-trend-table td.td-kh {
+.chart-detail-trend-table td.td-kh,
+.chart-detail-trend-table td.td-prev {
   border-left: 1px solid #e2e8f0;
   color: #475569;
 }
@@ -895,6 +937,7 @@
 
 .chart-detail-trend-table td.td-growth {
   border-left: 1px solid #f1f5f9;
+  border-right: 1px solid #e2e8f0;
 }
 
 .chart-detail-trend-table .text-muted {

@@ -4,6 +4,7 @@ export const ABBREVIATION_LIST = [
   { abbr: 'TH', full: 'Thực hiện', desc: 'Số liệu thực tế đạt được trong kỳ báo cáo', group: 'Chỉ số thực hiện & Kế hoạch' },
   { abbr: 'KH', full: 'Kế hoạch', desc: 'Chỉ tiêu kế hoạch được giao trong kỳ', group: 'Chỉ số thực hiện & Kế hoạch' },
   { abbr: 'LK', full: 'Lũy kế', desc: 'Số liệu cộng dồn từ đầu năm hoặc đầu chu kỳ đến kỳ báo cáo', group: 'Chỉ số thực hiện & Kế hoạch' },
+  { abbr: 'TH LK', full: 'Thực hiện Lũy kế', desc: 'Tổng số liệu thực tế lũy kế đến kỳ hiện tại (VD: TH LK 8T/2026)', group: 'Chỉ số thực hiện & Kế hoạch' },
   { abbr: 'LK TH', full: 'Lũy kế Thực hiện', desc: 'Tổng số liệu thực tế lũy kế từ đầu năm đến nay', group: 'Chỉ số thực hiện & Kế hoạch' },
   { abbr: 'KH LK', full: 'Kế hoạch Lũy kế', desc: 'Tổng chỉ tiêu kế hoạch lũy kế đến kỳ hiện tại', group: 'Chỉ số thực hiện & Kế hoạch' },
   { abbr: 'Ước', full: 'Ước tính thực hiện', desc: 'Dự báo kết quả thực hiện đến hết kỳ (quý/năm)', group: 'Chỉ số thực hiện & Kế hoạch' },
@@ -25,14 +26,15 @@ export function explainLegend(legend) {
   const s = String(legend).trim();
 
   // Year patterns
-  if (s.startsWith('LK TH')) {
-    const code = s.replace('LK TH', '').trim();
-    return `Lũy kế Thực hiện ${code ? `(${code}: ${explainTimeCode(code)})` : ''}`.trim();
+  if (s.startsWith('TH LK') || s.startsWith('LK TH')) {
+    const code = s.replace(/^(TH LK|LK TH)/, '').trim();
+    return `Thực hiện Lũy kế ${code ? `(${code}: ${explainTimeCode(code)})` : ''}`.trim();
   }
   if (s.startsWith('KH LK')) {
     const code = s.replace('KH LK', '').trim();
     return `Kế hoạch Lũy kế ${code ? `(${code}: ${explainTimeCode(code)})` : ''}`.trim();
   }
+  if (s === 'KH' || s === 'Kế hoạch') return 'Kế hoạch';
   if (s === 'KH năm') return 'Kế hoạch cả năm';
 
   // Month patterns

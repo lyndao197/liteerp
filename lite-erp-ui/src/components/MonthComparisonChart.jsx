@@ -312,7 +312,8 @@ function MonthRatioCard({
   hoveredItem,
   setHoveredItem,
   isVisible = true,
-  onToggle
+  onToggle,
+  onOpenDetail
 }) {
   const svgWidth = 540;
   const svgHeight = 280;
@@ -557,6 +558,23 @@ function MonthRatioCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail && onOpenDetail();
+            }}
+          >
+            <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -727,7 +745,7 @@ export default function MonthComparisonChart({
           setHoveredItem={setHoveredItem1Val}
           isVisible={visibleMap.r1_val}
           onToggle={() => toggleSubcard('r1_val')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({ chartKey: 'chart1_val', chartTitle: `Biểu đồ 1: Kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}` })}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({ chartKey: 'chart1_val', chartTitle: `Kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}` })}
         />
         <MonthRatioCard
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}`}
@@ -740,6 +758,10 @@ export default function MonthComparisonChart({
           setHoveredItem={setHoveredItem1Rat}
           isVisible={visibleMap.r1_rat}
           onToggle={() => toggleSubcard('r1_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart1_rat',
+            chartTitle: `Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}`
+          })}
         />
       </div>
 
@@ -774,6 +796,10 @@ export default function MonthComparisonChart({
           setHoveredItem={setHoveredItem2Rat}
           isVisible={visibleMap.r2_rat}
           onToggle={() => toggleSubcard('r2_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart2_rat',
+            chartTitle: `Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`
+          })}
         />
       </div>
 
@@ -808,6 +834,10 @@ export default function MonthComparisonChart({
           setHoveredItem={setHoveredItem3Rat}
           isVisible={visibleMap.r3_rat}
           onToggle={() => toggleSubcard('r3_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart3_rat',
+            chartTitle: `Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với cùng kỳ ${shortMonth}/${lastYear}`
+          })}
         />
       </div>
 
@@ -842,6 +872,10 @@ export default function MonthComparisonChart({
           setHoveredItem={setHoveredItem4Rat}
           isVisible={visibleMap.r4_rat}
           onToggle={() => toggleSubcard('r4_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart4_rat',
+            chartTitle: `Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`
+          })}
         />
       </div>
     </div>

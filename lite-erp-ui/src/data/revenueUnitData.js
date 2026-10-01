@@ -199,3 +199,123 @@ export const UNIT_PLAN_COMPARISON_DATA = {
   }
 };
 
+export const UNIT_STRUCTURE_TABLE_DATA = {
+  '2026': {
+    rows: [
+      {
+        id: 'hanoi',
+        name: 'Đơn vị Hà Nội',
+        color: '#1b4474',
+        month: { th: 105.3, thShare: '27%' },
+        quarter: { th: 209.3, thShare: '27%' },
+        year: { th: 863.1, thShare: '29%' }
+      },
+      {
+        id: 'hcm',
+        name: 'Đơn vị TP.HCM',
+        color: '#be5318',
+        month: { th: 93.5, thShare: '24%' },
+        quarter: { th: 186.0, thShare: '24%' },
+        year: { th: 714.3, thShare: '24%' }
+      },
+      {
+        id: 'danang',
+        name: 'Đơn vị Đà Nẵng',
+        color: '#538234',
+        month: { th: 50.6, thShare: '13%' },
+        quarter: { th: 100.8, thShare: '13%' },
+        year: { th: 386.9, thShare: '13%' }
+      },
+      {
+        id: 'ttgp',
+        name: 'TT Giải pháp',
+        color: '#70279e',
+        month: { th: 50.6, thShare: '13%' },
+        quarter: { th: 93.0, thShare: '12%' },
+        year: { th: 357.2, thShare: '12%' }
+      },
+      {
+        id: 'quocte',
+        name: 'Cty con Quốc tế',
+        color: '#2b70c9',
+        month: { th: 54.5, thShare: '14%' },
+        quarter: { th: 100.8, thShare: '13%' },
+        year: { th: 386.9, thShare: '13%' }
+      },
+      {
+        id: 'dvs',
+        name: 'Khối Dịch vụ số',
+        color: '#c58b09',
+        month: { th: 38.9, thShare: '10%' },
+        quarter: { th: 69.8, thShare: '9%' },
+        year: { th: 267.9, thShare: '9%' }
+      }
+    ],
+    total: {
+      name: 'Tổng doanh thu',
+      month: { th: 389.9, thShare: '100%' },
+      quarter: { th: 775.0, thShare: '100%' },
+      year: { th: 2976.3, thShare: '100%' }
+    }
+  },
+  '2025': {
+    rows: [
+      {
+        id: 'hanoi',
+        name: 'Đơn vị Hà Nội',
+        color: '#1b4474',
+        month: { th: 98.4, thShare: '27%' },
+        quarter: { th: 290.0, thShare: '27%' },
+        year: { th: 775.6, thShare: '29%' }
+      },
+      {
+        id: 'hcm',
+        name: 'Đơn vị TP.HCM',
+        color: '#be5318',
+        month: { th: 87.5, thShare: '24%' },
+        quarter: { th: 255.0, thShare: '24%' },
+        year: { th: 641.9, thShare: '24%' }
+      },
+      {
+        id: 'danang',
+        name: 'Đơn vị Đà Nẵng',
+        color: '#538234',
+        month: { th: 47.4, thShare: '13%' },
+        quarter: { th: 140.0, thShare: '13%' },
+        year: { th: 347.7, thShare: '13%' }
+      },
+      {
+        id: 'ttgp',
+        name: 'TT Giải pháp',
+        color: '#70279e',
+        month: { th: 47.4, thShare: '13%' },
+        quarter: { th: 135.0, thShare: '13%' },
+        year: { th: 320.9, thShare: '12%' }
+      },
+      {
+        id: 'quocte',
+        name: 'Cty con Quốc tế',
+        color: '#2b70c9',
+        month: { th: 51.0, thShare: '14%' },
+        quarter: { th: 142.0, thShare: '13%' },
+        year: { th: 347.7, thShare: '13%' }
+      },
+      {
+        id: 'dvs',
+        name: 'Khối Dịch vụ số',
+        color: '#c58b09',
+        month: { th: 36.4, thShare: '10%' },
+        quarter: { th: 100.0, thShare: '9%' },
+        year: { th: 240.7, thShare: '9%' }
+      }
+    ],
+    total: {
+      name: 'Tổng doanh thu',
+      month: { th: 368.1, thShare: '100%' },
+      quarter: { th: 1062.0, thShare: '100%' },
+      year: { th: 2674.5, thShare: '100%' }
+    }
+  }
+};
+
+

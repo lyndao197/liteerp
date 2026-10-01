@@ -8,6 +8,7 @@ import {
   DOMESTIC_INTERNATIONAL_CATEGORIES,
   DOMESTIC_INTERNATIONAL_DATA
 } from '../data/revenueInternalExternalData';
+import PlanProgressDetailTable from './PlanProgressDetailTable';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -829,6 +830,14 @@ export default function InternalExternalRevenueChart({
           </div>
         </div>
       </div>
+
+      {/* ========================================================
+          BẢNG MÔ TẢ ĐẦY ĐỦ SỐ LIỆU NHÓM BIỂU ĐỒ SỐ 7 (B25 – B28)
+          ======================================================== */}
+      <PlanProgressDetailTable
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+      />
     </div>
   );
 }

@@ -290,6 +290,7 @@ function QuarterRatioCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
+  onOpenDetail,
   maxVal = 100,
   yTicks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 }) {
@@ -511,6 +512,23 @@ function QuarterRatioCard({
             </div>
           )}
         </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail && onOpenDetail();
+            }}
+          >
+            <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -658,8 +676,8 @@ export default function QuarterComparisonChart({
         <QuarterValueCard
           title={`Lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`LK ${quarterCode}/${selectedYear}`}
-          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
+          primaryLegend={`TH LK ${quarterCode}/${selectedYear}`}
+          secondaryLegend="KH"
           data={chart5Values}
           hoveredItem={hoveredItem5Val}
           setHoveredItem={setHoveredItem5Val}
@@ -673,13 +691,17 @@ export default function QuarterComparisonChart({
         <QuarterRatioCard
           title={`Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`LK ${quarterCode}/${selectedYear}`}
-          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
+          primaryLegend={`TH LK ${quarterCode}/${selectedYear}`}
+          secondaryLegend="KH"
           data={chart5Ratios}
           hoveredItem={hoveredItem5Rat}
           setHoveredItem={setHoveredItem5Rat}
           isVisible={visibleMap.r1_rat}
           onToggle={() => toggleSubcard('r1_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart5_rat',
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
       </div>
 
@@ -691,7 +713,7 @@ export default function QuarterComparisonChart({
           title={`Ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 1"
           primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
-          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
+          secondaryLegend="KH"
           data={chart6Values}
           hoveredItem={hoveredItem6Val}
           setHoveredItem={setHoveredItem6Val}
@@ -706,12 +728,16 @@ export default function QuarterComparisonChart({
           title={`Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`}
           tag="Hàng 2 - Khu 2"
           primaryLegend={`Ước ${quarterCode}/${selectedYear}`}
-          secondaryLegend={`KH ${quarterCode}/${selectedYear}`}
+          secondaryLegend="KH"
           data={chart6Ratios}
           hoveredItem={hoveredItem6Rat}
           setHoveredItem={setHoveredItem6Rat}
           isVisible={visibleMap.r2_rat}
           onToggle={() => toggleSubcard('r2_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart6_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${selectedQuarter}/${selectedYear}`
+          })}
         />
       </div>
 
@@ -744,6 +770,10 @@ export default function QuarterComparisonChart({
           setHoveredItem={setHoveredItem7Rat}
           isVisible={visibleMap.r3_rat}
           onToggle={() => toggleSubcard('r3_rat')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart7_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với TH ${prevQuarterName}/${prevYear}`
+          })}
         />
       </div>
 
@@ -778,6 +808,10 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r4_rat')}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart8_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với cùng kỳ ${selectedQuarter}/${prevYearNum}`
+          })}
         />
       </div>
 
@@ -815,6 +849,10 @@ export default function QuarterComparisonChart({
           onToggle={() => toggleSubcard('r5_rat')}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'chart9_rat',
+            chartTitle: `Tỷ suất / tỷ trọng ước TH ${selectedQuarter}/${selectedYear} so với KH ${nextQuarterName}/${nextQuarterYear}`
+          })}
         />
       </div>
     </div>

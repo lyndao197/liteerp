@@ -1,0 +1,536 @@
+/* Styles for Cơ cấu doanh thu theo Nhóm SPDV & Biểu đồ 18 Table (Nhánh 5) */
+
+.spdv-detail-table-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 22px 24px 28px 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 18px;
+}
+
+.spdv-detail-header-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.spdv-header-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spdv-badge-chart-label {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2563eb;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.spdv-detail-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.spdv-detail-unit {
+  font-size: 13px;
+  color: #64748b;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.spdv-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Period Switching Tabs (Tháng / Quý / Năm / Bảng 3 kỳ) */
+.spdv-period-tab-group {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.spdv-period-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.spdv-period-tab-btn:hover {
+  color: #0f172a;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.spdv-period-tab-btn.active {
+  background-color: #ffffff;
+  color: #1d4ed8;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Export Excel Button */
+.spdv-export-excel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #059669;
+  color: #ffffff;
+  border: 1px solid #047857;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(5, 150, 105, 0.2);
+}
+
+.spdv-export-excel-btn:hover {
+  background-color: #047857;
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
+}
+
+/* KPI Summary Cards */
+.spdv-kpi-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1024px) {
+  .spdv-kpi-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .spdv-kpi-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spdv-kpi-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.spdv-kpi-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.spdv-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.spdv-kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.spdv-kpi-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.th-badge {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.kh-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.diff-pos-badge {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.diff-neg-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.pass-badge {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.fail-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.spdv-kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+
+.spdv-kpi-unit {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.spdv-kpi-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.spdv-kpi-diff-pos {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.spdv-kpi-diff-neg {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+.spdv-kpi-rate-pass {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.spdv-kpi-rate-fail {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+/* Table Wrapper */
+.spdv-detail-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+/* ========================================================================= */
+/* DEDICATED BIỂU ĐỒ 18 TABLE                                                */
+/* ========================================================================= */
+.spdv-b18-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.spdv-b18-thead-row th {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-bottom: 2px solid #cbd5e1;
+  vertical-align: middle;
+}
+
+.spdv-th-two-line {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spdv-th-main {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.spdv-th-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Pill for % HTKH */
+.spdv-rate-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  min-width: 68px;
+}
+
+.rate-pass {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.rate-fail {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.spdv-rate-pill-total {
+  font-size: 13.5px;
+  padding: 5px 12px;
+}
+
+/* Evaluation Badge */
+.spdv-eval-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-pass {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-fail {
+  background-color: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+
+/* No data cell */
+.spdv-no-data-cell {
+  text-align: center;
+  padding: 32px 16px;
+  color: #64748b;
+  font-style: italic;
+  font-size: 13.5px;
+}
+
+/* ========================================================================= */
+/* 3-PERIOD MATRIX TABLE                                                     */
+/* ========================================================================= */
+.spdv-matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+/* Header Row 1 */
+.spdv-matrix-table thead tr.spdv-th-top-row th {
+  padding: 12px 14px;
+  font-weight: 700;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.spdv-th-name {
+  text-align: left;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 800 !important;
+  width: 220px;
+  min-width: 200px;
+  padding-left: 20px !important;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+
+.spdv-th-period-group {
+  text-align: center;
+  background-color: #f1f6fd;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 800;
+  border-left: 1px solid #cbd5e1;
+}
+
+/* Header Row 2 */
+.spdv-matrix-table thead tr.spdv-th-sub-row th {
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-bottom: 2px solid #cbd5e1;
+  text-align: right;
+}
+
+.spdv-th-col:nth-child(even) {
+  text-align: center !important;
+}
+
+.spdv-th-rate {
+  text-align: center !important;
+  color: #1d4ed8 !important;
+}
+
+/* Data Rows */
+.spdv-row {
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.spdv-row:hover {
+  background-color: #f8fafc;
+}
+
+.spdv-td-name {
+  text-align: left;
+  padding: 12px 16px 12px 20px;
+  font-weight: 600;
+  color: #0f172a;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spdv-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.spdv-name-label {
+  font-size: 13.5px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.spdv-td-num {
+  text-align: right;
+  padding: 12px 16px;
+  color: #334155;
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+}
+
+.spdv-td-share {
+  text-align: center;
+  padding: 12px 12px;
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  font-size: 13.5px;
+}
+
+.spdv-td-rate {
+  text-align: center;
+  padding: 12px 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Separator between period groups */
+.spdv-border-left {
+  border-left: 1px solid #cbd5e1 !important;
+}
+
+/* Total Row */
+.spdv-tr-total {
+  background-color: #f1f6fd !important;
+  border-top: 2px solid #bfdbfe;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.spdv-tr-total td {
+  padding: 14px 16px;
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.spdv-tr-total .spdv-td-name {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 800;
+  background-color: #f1f6fd;
+}
+
+.spdv-tr-total .spdv-td-share {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+/* Helpers */
+.text-green {
+  color: #16a34a !important;
+}
+
+.text-red {
+  color: #dc2626 !important;
+}

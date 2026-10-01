@@ -310,3 +310,123 @@ export const getSpdvBarComparisonData = (year = '2026', month = 'Tháng 8') => {
     yearLegendKh: `KH ${year}`
   };
 };
+
+export const SPDV_STRUCTURE_TABLE_DATA = {
+  '2026': {
+    rows: [
+      {
+        id: 'gppm',
+        name: 'Giải pháp phần mềm',
+        color: '#1f3d6d',
+        month: { kh: 112.0, khShare: '27%', th: 101.4, thShare: '26%' },
+        quarter: { kh: 336.4, khShare: '27%', th: 209.3, thShare: '27%' },
+        year: { kh: 1341.4, khShare: '27%', th: 803.6, thShare: '27%' }
+      },
+      {
+        id: 'htcntt',
+        name: 'Hạ tầng CNTT',
+        color: '#2e6aa6',
+        month: { kh: 82.8, khShare: '20%', th: 85.7, thShare: '22%' },
+        quarter: { kh: 249.2, khShare: '20%', th: 162.8, thShare: '21%' },
+        year: { kh: 992.4, khShare: '20%', th: 624.0, thShare: '21%' }
+      },
+      {
+        id: 'dvs',
+        name: 'Dịch vụ số',
+        color: '#5993cd',
+        month: { kh: 82.8, khShare: '20%', th: 74.0, thShare: '19%' },
+        quarter: { kh: 249.2, khShare: '20%', th: 147.3, thShare: '19%' },
+        year: { kh: 992.4, khShare: '20%', th: 565.5, thShare: '19%' }
+      },
+      {
+        id: 'tvth',
+        name: 'Tư vấn & tích hợp',
+        color: '#e59a68',
+        month: { kh: 62.1, khShare: '15%', th: 58.5, thShare: '15%' },
+        quarter: { kh: 186.9, khShare: '15%', th: 116.3, thShare: '15%' },
+        year: { kh: 744.6, khShare: '15%', th: 446.4, thShare: '15%' }
+      },
+      {
+        id: 'vhbt',
+        name: 'Vận hành & bảo trì',
+        color: '#98d593',
+        month: { kh: 45.6, khShare: '11%', th: 42.8, thShare: '11%' },
+        quarter: { kh: 137.7, khShare: '11%', th: 85.3, thShare: '11%' },
+        year: { kh: 546.7, khShare: '11%', th: 327.4, thShare: '11%' }
+      },
+      {
+        id: 'dtk',
+        name: 'Đào tạo & khác',
+        color: '#b8c2cc',
+        month: { kh: 28.7, khShare: '7%', th: 27.3, thShare: '7%' },
+        quarter: { kh: 86.5, khShare: '7%', th: 54.0, thShare: '7%' },
+        year: { kh: 347.6, khShare: '7%', th: 208.8, thShare: '7%' }
+      }
+    ],
+    total: {
+      name: 'Tổng doanh thu',
+      month: { kh: 414.0, khShare: '100%', th: 389.9, thShare: '100%' },
+      quarter: { kh: 1246.0, khShare: '100%', th: 775.0, thShare: '100%' },
+      year: { kh: 4968.1, khShare: '100%', th: 2976.3, thShare: '100%' }
+    }
+  },
+  '2025': {
+    rows: [
+      {
+        id: 'gppm',
+        name: 'Giải pháp phần mềm',
+        color: '#1f3d6d',
+        month: { kh: 102.6, khShare: '27%', th: 94.7, thShare: '26%' },
+        quarter: { kh: 310.5, khShare: '27%', th: 192.5, thShare: '27%' },
+        year: { kh: 1215.0, khShare: '27%', th: 722.1, thShare: '27%' }
+      },
+      {
+        id: 'htcntt',
+        name: 'Hạ tầng CNTT',
+        color: '#2e6aa6',
+        month: { kh: 76.0, khShare: '20%', th: 80.2, thShare: '22%' },
+        quarter: { kh: 230.0, khShare: '20%', th: 149.7, thShare: '21%' },
+        year: { kh: 900.0, khShare: '20%', th: 561.6, thShare: '21%' }
+      },
+      {
+        id: 'dvs',
+        name: 'Dịch vụ số',
+        color: '#5993cd',
+        month: { kh: 76.0, khShare: '20%', th: 69.2, thShare: '19%' },
+        quarter: { kh: 230.0, khShare: '20%', th: 135.5, thShare: '19%' },
+        year: { kh: 900.0, khShare: '20%', th: 508.2, thShare: '19%' }
+      },
+      {
+        id: 'tvth',
+        name: 'Tư vấn & tích hợp',
+        color: '#e59a68',
+        month: { kh: 57.0, khShare: '15%', th: 54.7, thShare: '15%' },
+        quarter: { kh: 172.5, khShare: '15%', th: 106.9, thShare: '15%' },
+        year: { kh: 675.0, khShare: '15%', th: 401.2, thShare: '15%' }
+      },
+      {
+        id: 'vhbt',
+        name: 'Vận hành & bảo trì',
+        color: '#98d593',
+        month: { kh: 41.8, khShare: '11%', th: 40.1, thShare: '11%' },
+        quarter: { kh: 126.5, khShare: '11%', th: 78.4, thShare: '11%' },
+        year: { kh: 495.0, khShare: '11%', th: 294.2, thShare: '11%' }
+      },
+      {
+        id: 'dtk',
+        name: 'Đào tạo & khác',
+        color: '#b8c2cc',
+        month: { kh: 26.6, khShare: '7%', th: 25.5, thShare: '7%' },
+        quarter: { kh: 80.5, khShare: '7%', th: 49.9, thShare: '7%' },
+        year: { kh: 315.0, khShare: '7%', th: 187.1, thShare: '7%' }
+      }
+    ],
+    total: {
+      name: 'Tổng doanh thu',
+      month: { kh: 380.0, khShare: '100%', th: 364.4, thShare: '100%' },
+      quarter: { kh: 1150.0, khShare: '100%', th: 712.9, thShare: '100%' },
+      year: { kh: 4500.0, khShare: '100%', th: 2674.5, thShare: '100%' }
+    }
+  }
+};
+

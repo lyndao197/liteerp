@@ -811,8 +811,8 @@ const RevenueReportDashboard = () => {
     } else if (chartType === 5) {
       const qCode = data.quarterCode || 'Q3';
       cardTitle = `Biểu đồ 5. Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}`;
-      subtitleLeft = `Giá trị (số in đậm: LK ${qCode} % hoàn thành KH ${qCode})`;
-      legend1Label = `LK ${qCode}`;
+      subtitleLeft = `Giá trị (số in đậm: TH LK ${qCode}/${selectedYear} % hoàn thành KH ${qCode})`;
+      legend1Label = `TH LK ${qCode}/${selectedYear}`;
       legend2Label = `KH ${qCode}`;
     } else if (chartType === 6) {
       const qCode = data.quarterCode || 'Q3';
@@ -848,9 +848,9 @@ const RevenueReportDashboard = () => {
     } else if (chartType === 10) {
       const shortCode = data.shortCode || '8T';
       const monthText = data.monthText || '8 tháng';
-      cardTitle = `Biểu đồ 10. Lũy kế năm ${selectedYear} so với kế hoạch lũy kế năm ${selectedYear}`;
-      subtitleLeft = `Giá trị (số in đậm: LK TH ${shortCode} % hoàn thành KH LK ${shortCode})`;
-      legend1Label = `LK TH ${shortCode}`;
+      cardTitle = `Biểu đồ 10. Lũy kế TH ${shortCode} năm ${selectedYear} so với luỹ kế KH ${shortCode} năm ${selectedYear}`;
+      subtitleLeft = `Giá trị (số in đậm: TH LK ${shortCode}/${selectedYear} % hoàn thành KH LK ${shortCode})`;
+      legend1Label = `TH LK ${shortCode}/${selectedYear}`;
       legend2Label = `KH LK ${shortCode}`;
     }
 
@@ -2011,7 +2011,7 @@ const RevenueReportDashboard = () => {
             cardIndex: 0,
             chartType: 10,
             sheetName: 'BieuDo_10_LK_vs_KH_LK',
-            chartTitle: `Biểu đồ 10. Lũy kế năm ${selectedYear} so với kế hoạch lũy kế năm ${selectedYear}`,
+            chartTitle: `Biểu đồ 10. Lũy kế TH ${shortCode} năm ${selectedYear} so với luỹ kế KH ${shortCode} năm ${selectedYear}`,
             vHeader: ['STT', 'Chỉ tiêu doanh thu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
             vRows: currentYearData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.kh, Number((item.lk - item.kh).toFixed(1)), item.rate]),
             rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch điểm %'],
@@ -3075,10 +3075,12 @@ const RevenueReportDashboard = () => {
       {/* Top Header Bar: Clean with Back button, Title, pill tag, and 'Xuất Excel' button matching screenshot */}
       <div className="revenue-clean-top-bar">
         <div className="revenue-clean-title-area">
-          <button className="revenue-back-btn" onClick={() => detailChartInfo ? setDetailChartInfo(null) : navigate(-1)} title="Quay lại">
-            <ArrowLeft size={16} />
-            <span>{detailChartInfo ? 'Quay lại biểu đồ' : 'Quay lại'}</span>
-          </button>
+          {detailChartInfo && (
+            <button className="revenue-back-btn" onClick={() => setDetailChartInfo(null)} title="Quay lại">
+              <ArrowLeft size={16} />
+              <span>Quay lại</span>
+            </button>
+          )}
           <div className="revenue-title-with-pill">
             <h1 className="revenue-main-title">
               {detailChartInfo
