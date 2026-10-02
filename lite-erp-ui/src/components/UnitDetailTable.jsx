@@ -192,8 +192,8 @@ export default function UnitDetailTable({
                 <th style={{ textAlign: 'left', minWidth: '220px' }}>Đơn vị thực hiện</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colKhLabel}</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colThLabel}</th>
-                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>Chênh lệch</th>
-                <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>Tỷ lệ (%)</th>
+                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>+/- so KH</th>
+                <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>% HTKH</th>
               </tr>
             </thead>
             <tbody>

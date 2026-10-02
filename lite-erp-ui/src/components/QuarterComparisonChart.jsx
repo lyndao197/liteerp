@@ -248,7 +248,7 @@ function QuarterValueCard({
               </div>
               {hoveredItem.rate && hoveredItem.rate !== '-' && (
                 <div className="tooltip-stat-row">
-                  <span>Tỷ lệ hoàn thành:</span>
+                  <span>Tỷ lệ (%):</span>
                   <strong className={hoveredItem.isRatePositive ? 'text-green' : 'text-red'}>
                     {hoveredItem.rate}
                   </strong>

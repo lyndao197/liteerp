@@ -389,7 +389,7 @@ function UnitPlanSubcard({
                 <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.kh} Triệu đồng</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% Hoàn thành:</span>
+                <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>Tỷ lệ (%):</span>
                 <span style={{ fontWeight: '700', color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredUnit.rate}</span>
               </div>
             </div>

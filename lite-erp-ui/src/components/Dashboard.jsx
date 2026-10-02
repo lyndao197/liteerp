@@ -1869,17 +1869,22 @@ const ExecutiveGaugeMasterCard = ({
             <table className="tr-executive-detailed-table cust-matrix-style">
               <thead>
                 <tr>
-                  <th className="th-left col-cust-group">Nhóm khách hàng</th>
-                  <th className="th-left col-cust-name">Tên khách hàng</th>
-                  <th className="th-center col-cust-new" title="Khách hàng mới">KH Mới</th>
-                  <th className="th-left col-spdv-group">Nhóm SPDV</th>
-                  <th className="th-left col-spdv-name">Tên SPDV</th>
+                  <th rowSpan={2} className="th-left col-cust-group">Nhóm khách hàng</th>
+                  <th rowSpan={2} className="th-left col-cust-name">Tên khách hàng</th>
+                  <th rowSpan={2} className="th-center col-cust-new" title="Khách hàng mới">KH Mới</th>
+                  <th rowSpan={2} className="th-left col-spdv-group">Nhóm SPDV</th>
+                  <th rowSpan={2} className="th-left col-spdv-name">Tên SPDV</th>
+                  <th colSpan={5} className="th-center group-header-perf">
+                    Thực hiện tháng {monthNum}/{selectedYear}
+                  </th>
+                  <th rowSpan={2} className="th-center col-share">Tỷ trọng</th>
+                </tr>
+                <tr>
                   <th className="th-right col-num">KH</th>
                   <th className="th-right col-num col-uoc-th" style={{ color: '#ea580c' }}>Ước TH</th>
                   <th className="th-right col-num">TH</th>
-                  <th className="th-right col-num">Chênh lệch</th>
-                  <th className="th-center col-rate">Tỷ lệ (%)</th>
-                  <th className="th-center col-share">Tỷ trọng</th>
+                  <th className="th-right col-num">+/- so KH</th>
+                  <th className="th-center col-rate">% HTKH</th>
                 </tr>
               </thead>
               <tbody>

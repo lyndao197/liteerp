@@ -687,7 +687,7 @@ export default function DebtComparisonChart({
                     <strong>{formatNum(hoveredRecoveryItem.plan)} Tỷ đồng</strong>
                   </div>
                   <div className="tooltip-stat-row">
-                    <span>Tỷ lệ hoàn thành:</span>
+                    <span>Tỷ lệ (%):</span>
                     <strong style={{ color: '#16a34a' }}>{hoveredRecoveryItem.rate}</strong>
                   </div>
                   <div className="tooltip-stat-row">

@@ -33,7 +33,7 @@ function YearValueCard({
   onOpenDetail,
   maxVal = 3500,
   yTicks = [0, 500, 1000, 1500, 2000, 2500, 3000, 3500],
-  rateLabel = '% Hoàn thành KH',
+  rateLabel = 'Tỷ lệ (%)',
   unitLabel = 'Triệu đồng',
   primaryColor = '#e11d48',
   secondaryColor = '#94a3b8'
@@ -668,7 +668,7 @@ export default function YearComparisonChart({
           data={chart10Values}
           maxVal={3500}
           yTicks={[0, 500, 1000, 1500, 2000, 2500, 3000, 3500]}
-          rateLabel={`% Hoàn thành KH LK ${shortCode}`}
+          rateLabel="Tỷ lệ (%)"
           hoveredItem={hoveredC10Val}
           setHoveredItem={setHoveredC10Val}
           isVisible={visibleCards.c10Val}
@@ -708,7 +708,7 @@ export default function YearComparisonChart({
           data={chart11Values}
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
-          rateLabel="% Hoàn thành KH năm"
+          rateLabel="Tỷ lệ (%)"
           hoveredItem={hoveredC11Val}
           setHoveredItem={setHoveredC11Val}
           isVisible={visibleCards.c11Val}
@@ -749,7 +749,7 @@ export default function YearComparisonChart({
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
           unitLabel="Tỷ đồng"
-          rateLabel={`% Hoàn thành KH ${selectedYear}`}
+          rateLabel="Tỷ lệ (%)"
           hoveredItem={hoveredC12Val}
           setHoveredItem={setHoveredC12Val}
           isVisible={visibleCards.c12Val}

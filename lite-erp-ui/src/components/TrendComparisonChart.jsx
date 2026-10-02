@@ -644,7 +644,7 @@ function TrendPlanCard({
               </div>
               {hoveredData.rate && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                  <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% Hoàn thành:</span>
+                  <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>Tỷ lệ (%):</span>
                   <span style={{ fontWeight: '700', color: hoveredData.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredData.rate}</span>
                 </div>
               )}

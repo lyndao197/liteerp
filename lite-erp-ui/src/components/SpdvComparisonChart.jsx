@@ -552,7 +552,7 @@ function SpdvBarSubcard({
               </strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
-              <span>Hoàn thành:</span>
+              <span>Tỷ lệ (%):</span>
               <strong style={{ color: hoveredItem.isRatePositive ? '#16a34a' : '#dc2626' }}>
                 {hoveredItem.rate}
               </strong>
