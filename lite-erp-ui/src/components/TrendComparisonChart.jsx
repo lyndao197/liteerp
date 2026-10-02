@@ -316,15 +316,6 @@ function TrendPrevYearCard({
                   {hoveredData.th2025 !== null ? `${formatVal(hoveredData.th2025)} Tr.đ` : '-'}
                 </span>
               </div>
-              {hoveredData.th2026 !== null && hoveredData.th2025 !== null && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <span>Tăng/giảm:</span>
-                  <strong style={{ color: hoveredData.th2026 >= hoveredData.th2025 ? '#15803d' : '#b91c1c' }}>
-                    {(hoveredData.th2026 - hoveredData.th2025) > 0 ? '+' : ''}
-                    {formatVal(hoveredData.th2026 - hoveredData.th2025)} Tr.đ
-                  </strong>
-                </div>
-              )}
               {hoveredData.growth && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
                   <span style={{ color: '#15803d', fontWeight: '600' }}>% Delta:</span>
@@ -651,15 +642,6 @@ function TrendPlanCard({
                   {hoveredData.th !== null ? `${formatVal(hoveredData.th)} Tr.đ` : 'Chưa có'}
                 </span>
               </div>
-              {hoveredData.th !== null && hoveredData.kh !== null && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <span>+/- so KH:</span>
-                  <strong style={{ color: hoveredData.th >= hoveredData.kh ? '#15803d' : '#b91c1c' }}>
-                    {(hoveredData.th - hoveredData.kh) > 0 ? '+' : ''}
-                    {formatVal(hoveredData.th - hoveredData.kh)} Tr.đ
-                  </strong>
-                </div>
-              )}
               {hoveredData.rate && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
                   <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>

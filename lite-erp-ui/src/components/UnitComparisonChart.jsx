@@ -393,13 +393,6 @@ function UnitPlanSubcard({
                 <span style={{ color: '#e11d48', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.th} Triệu đồng</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span>+/- so KH:</span>
-                <strong style={{ color: hoveredUnit.th >= hoveredUnit.kh ? '#16a34a' : '#dc2626' }}>
-                  {(hoveredUnit.th - hoveredUnit.kh) > 0 ? '+' : ''}
-                  {(hoveredUnit.th - hoveredUnit.kh).toFixed(1)} Triệu đồng
-                </strong>
-              </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
                 <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
                 <span style={{ fontWeight: '700', color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredUnit.rate}</span>

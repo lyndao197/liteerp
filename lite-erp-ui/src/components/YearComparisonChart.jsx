@@ -288,15 +288,6 @@ function YearValueCard({
                   {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
-              {diffVal !== null && diffVal !== undefined && (
-                <div className="tooltip-stat-row">
-                  <span>{diffLabel}:</span>
-                  <strong className={diffVal >= 0 ? 'text-green' : 'text-red'}>
-                    {diffVal > 0 ? '+' : ''}{formatVal(diffVal)}{' '}
-                    {hoveredItem.unit || unitLabel}
-                  </strong>
-                </div>
-              )}
               {hoveredItem.rate && hoveredItem.rate !== '-' && (
                 <div className="tooltip-stat-row">
                   <span>{rateLabel}:</span>
@@ -602,17 +593,6 @@ function YearRatioCard({
                     {formatPercent(val2)}
                   </strong>
                 </div>
-                {diffDisplay && diffDisplay !== '-' && (
-                  <>
-                    <div className="ratio-tooltip-divider" />
-                    <div className="ratio-tooltip-row">
-                      <span className="ratio-tooltip-label">Chênh lệch điểm %:</span>
-                      <strong className={`ratio-tooltip-val ${isPositive ? 'diff-positive' : 'diff-negative'}`}>
-                        {diffDisplay}
-                      </strong>
-                    </div>
-                  </>
-                )}
               </div>
             );
           })()}

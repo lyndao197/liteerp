@@ -687,13 +687,6 @@ export default function DebtComparisonChart({
                     <strong>{formatNum(hoveredRecoveryItem.actual)} Tỷ đồng</strong>
                   </div>
                   <div className="tooltip-stat-row">
-                    <span>+/- so KH:</span>
-                    <strong style={{ color: hoveredRecoveryItem.actual >= hoveredRecoveryItem.plan ? '#16a34a' : '#dc2626' }}>
-                      {(hoveredRecoveryItem.actual - hoveredRecoveryItem.plan) > 0 ? '+' : ''}
-                      {formatNum(hoveredRecoveryItem.actual - hoveredRecoveryItem.plan)} Tỷ đồng
-                    </strong>
-                  </div>
-                  <div className="tooltip-stat-row">
                     <span>% HTKH:</span>
                     <strong style={{ color: '#16a34a' }}>{hoveredRecoveryItem.rate}</strong>
                   </div>

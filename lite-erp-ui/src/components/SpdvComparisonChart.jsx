@@ -549,13 +549,6 @@ function SpdvBarSubcard({
               <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendTh}:</span>
               <strong>{hoveredItem.th.toFixed(1)} Tỷ đ</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span>+/- so KH:</span>
-              <strong style={{ color: hoveredItem.th >= hoveredItem.kh ? '#16a34a' : '#dc2626' }}>
-                {(hoveredItem.th - hoveredItem.kh) > 0 ? '+' : ''}
-                {(hoveredItem.th - hoveredItem.kh).toFixed(1)} Tỷ đ
-              </strong>
-            </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
               <span>% HTKH:</span>
               <strong style={{ color: hoveredItem.isRatePositive ? '#16a34a' : '#dc2626' }}>
