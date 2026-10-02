@@ -17,7 +17,7 @@ export default function UnitDetailTable({
 }) {
   const monthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
   const quarterNum = Math.ceil(monthNum / 3);
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNum - 1] || 'III';
+  const quarterRoman = `${quarterNum}`;
   const quarterStartMonth = (quarterNum - 1) * 3 + 1;
   const quarterCumText = quarterStartMonth === monthNum
     ? `T${quarterStartMonth}`

@@ -374,11 +374,11 @@ export default function MonthRatioDetailTable({
 
     // 2. Quarter Mode
     if (resolvedBranchId === 'quarter') {
-      let baseData = QUARTER_CUMULATIVE_DATA[selectedQuarter] || QUARTER_CUMULATIVE_DATA['Quý III'];
-      if (activeChartKey === 'chart6_rat') baseData = QUARTER_ESTIMATE_DATA[selectedQuarter] || QUARTER_ESTIMATE_DATA['Quý III'];
-      else if (activeChartKey === 'chart7_rat') baseData = QUARTER_PREV_DATA[selectedQuarter] || QUARTER_PREV_DATA['Quý III'];
-      else if (activeChartKey === 'chart8_rat') baseData = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý III'];
-      else if (activeChartKey === 'chart9_rat') baseData = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý III'];
+      let baseData = QUARTER_CUMULATIVE_DATA[selectedQuarter] || QUARTER_CUMULATIVE_DATA['Quý 3'] || QUARTER_CUMULATIVE_DATA['Quý III'];
+      if (activeChartKey === 'chart6_rat') baseData = QUARTER_ESTIMATE_DATA[selectedQuarter] || QUARTER_ESTIMATE_DATA['Quý 3'] || QUARTER_ESTIMATE_DATA['Quý III'];
+      else if (activeChartKey === 'chart7_rat') baseData = QUARTER_PREV_DATA[selectedQuarter] || QUARTER_PREV_DATA['Quý 3'] || QUARTER_PREV_DATA['Quý III'];
+      else if (activeChartKey === 'chart8_rat') baseData = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý 3'] || QUARTER_SAME_PERIOD_DATA['Quý III'];
+      else if (activeChartKey === 'chart9_rat') baseData = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý 3'] || QUARTER_NEXT_PLAN_DATA['Quý III'];
 
       const values = baseData?.values || [];
       const ratios = baseData?.ratios || [];

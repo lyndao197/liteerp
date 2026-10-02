@@ -499,7 +499,7 @@ export default function UnitComparisonChart({
   // Calculate Quarter and Cumulative texts based on activeMonth
   const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
   const quarterNumber = Math.ceil(monthNum / 3);
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNumber - 1];
+  const quarterRoman = `${quarterNumber}`;
   const quarterText = `Quý ${quarterRoman}/${activeYear}`;
 
   return (

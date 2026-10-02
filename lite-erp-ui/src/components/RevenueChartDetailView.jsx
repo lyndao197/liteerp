@@ -817,11 +817,11 @@ export default function RevenueChartDetailView({
         });
       }
     } else if (activeBranchId === 'quarter') {
-      const qCum = QUARTER_CUMULATIVE_DATA[selectedQuarter] || QUARTER_CUMULATIVE_DATA['Quý III'];
-      const qEst = QUARTER_ESTIMATE_DATA[selectedQuarter] || QUARTER_ESTIMATE_DATA['Quý III'];
-      const qPrev = QUARTER_PREV_DATA[selectedQuarter] || QUARTER_PREV_DATA['Quý III'];
-      const qSame = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý III'];
-      const qNext = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý III'];
+      const qCum = QUARTER_CUMULATIVE_DATA[selectedQuarter] || QUARTER_CUMULATIVE_DATA['Quý 3'] || QUARTER_CUMULATIVE_DATA['Quý III'];
+      const qEst = QUARTER_ESTIMATE_DATA[selectedQuarter] || QUARTER_ESTIMATE_DATA['Quý 3'] || QUARTER_ESTIMATE_DATA['Quý III'];
+      const qPrev = QUARTER_PREV_DATA[selectedQuarter] || QUARTER_PREV_DATA['Quý 3'] || QUARTER_PREV_DATA['Quý III'];
+      const qSame = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý 3'] || QUARTER_SAME_PERIOD_DATA['Quý III'];
+      const qNext = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý 3'] || QUARTER_NEXT_PLAN_DATA['Quý III'];
 
       const raw = activeChartKey === 'chart5_est_val' ? qEst?.values
         : activeChartKey === 'chart6_val' ? qPrev?.values
@@ -1930,7 +1930,7 @@ export default function RevenueChartDetailView({
         const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
         const spdvMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
         const spdvQuarterNum = Math.ceil(spdvMonthNum / 3);
-        const spdvQuarterRoman = ['I', 'II', 'III', 'IV'][spdvQuarterNum - 1] || 'III';
+        const spdvQuarterRoman = `${spdvQuarterNum}`;
         const spdvQuarterStartMonth = (spdvQuarterNum - 1) * 3 + 1;
         const spdvQuarterCumText = spdvQuarterStartMonth === spdvMonthNum
           ? `T${spdvQuarterStartMonth}`
