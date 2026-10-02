@@ -1832,7 +1832,6 @@ export default function RevenueChartDetailView({
               rowObj[`KH ${selectedYear}`] = r.totalKh;
               rowObj['Chênh lệch'] = r.totalDiffFormatted;
               rowObj['Tỷ lệ (%)'] = r.totalRate;
-              rowObj['Tỷ lệ tăng trưởng'] = r.growthRate;
             }
             return rowObj;
           });
@@ -1869,7 +1868,6 @@ export default function RevenueChartDetailView({
               summaryObj[`KH ${selectedYear}`] = data.totalKh;
               summaryObj['Chênh lệch'] = data.totalDiffFormatted;
               summaryObj['Tỷ lệ (%)'] = data.totalRate;
-              summaryObj['Tỷ lệ tăng trưởng'] = data.growthRate;
             }
             return summaryObj;
           };
@@ -2237,7 +2235,7 @@ export default function RevenueChartDetailView({
                         Tháng {m}
                       </th>
                     ))}
-                    <th colSpan={isTrendPrevYear ? 3 : 5} className="th-trend-total-header">
+                    <th colSpan={isTrendPrevYear ? 3 : 4} className="th-trend-total-header">
                       Cả năm {selectedYear}
                     </th>
                   </tr>
@@ -2269,7 +2267,6 @@ export default function RevenueChartDetailView({
                         <th className="th-sub-kh">Tổng KH {selectedYear}</th>
                         <th className="th-sub-diff">+/- so KH</th>
                         <th className="th-sub-rate">% HTKH</th>
-                        <th className="th-sub-growth">Tỷ lệ tăng trưởng</th>
                       </>
                     )}
                   </tr>
@@ -2331,16 +2328,13 @@ export default function RevenueChartDetailView({
                             <td className={`td-rate text-right font-bold ${row.isPass ? 'text-green' : 'text-red'}`}>
                               {row.totalRate}
                             </td>
-                            <td className={`td-growth text-right font-bold ${row.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
-                              {row.growthRate}
-                            </td>
                           </>
                         )}
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={isTrendPrevYear ? 43 : 45} className="table-empty-row">
+                      <td colSpan={isTrendPrevYear ? 43 : 44} className="table-empty-row">
                         Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                       </td>
                     </tr>
@@ -2398,9 +2392,6 @@ export default function RevenueChartDetailView({
                         </td>
                         <td className={`td-rate text-right font-extrabold ${matrixTotals.total.isPass ? 'text-green' : 'text-red'}`}>
                           {matrixTotals.total.totalRate}
-                        </td>
-                        <td className={`td-growth text-right font-extrabold ${matrixTotals.total.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
-                          {matrixTotals.total.growthRate}
                         </td>
                       </>
                     )}
