@@ -1543,7 +1543,7 @@ export default function RevenueChartDetailView({
               }
               rowObj[`TH ${lastYear}`] = r.prevTh;
               rowObj[`TH ${selectedYear}`] = r.totalTh;
-              rowObj['+/- Chênh lệch'] = (r.totalTh - r.prevTh) >= 0 ? `+${r.totalTh - r.prevTh}` : (r.totalTh - r.prevTh);
+              rowObj['Chênh lệch'] = (r.totalTh - r.prevTh) >= 0 ? `+${r.totalTh - r.prevTh}` : (r.totalTh - r.prevTh);
               rowObj['Tỷ lệ tăng trưởng'] = r.growthRate;
             } else {
               for (let m = 1; m <= 12; m++) {
@@ -1551,12 +1551,12 @@ export default function RevenueChartDetailView({
                   ? r.monthly[m].th
                   : '';
                 rowObj[`T${m} - KH ${selectedYear}`] = r.monthly?.[m]?.kh ?? 0;
-                rowObj[`T${m} - % HTKH`] = r.monthly?.[m]?.rate ?? '';
+                rowObj[`T${m} - Tỷ lệ (%)`] = r.monthly?.[m]?.rate ?? '';
               }
               rowObj[`TH ${selectedYear}`] = r.totalTh;
               rowObj[`KH ${selectedYear}`] = r.totalKh;
-              rowObj['+/- Chênh lệch'] = r.totalDiffFormatted;
-              rowObj['% HTKH'] = r.totalRate;
+              rowObj['Chênh lệch'] = r.totalDiffFormatted;
+              rowObj['Tỷ lệ (%)'] = r.totalRate;
               rowObj['Tỷ lệ tăng trưởng'] = r.growthRate;
             }
             return rowObj;
@@ -1581,7 +1581,7 @@ export default function RevenueChartDetailView({
               }
               summaryObj[`TH ${lastYear}`] = data.prevTh;
               summaryObj[`TH ${selectedYear}`] = data.totalTh;
-              summaryObj['+/- Chênh lệch'] = (data.totalTh - data.prevTh) >= 0 ? `+${data.totalTh - data.prevTh}` : (data.totalTh - data.prevTh);
+              summaryObj['Chênh lệch'] = (data.totalTh - data.prevTh) >= 0 ? `+${data.totalTh - data.prevTh}` : (data.totalTh - data.prevTh);
               summaryObj['Tỷ lệ tăng trưởng'] = data.growthRate;
             } else {
               for (let m = 1; m <= 12; m++) {
@@ -1589,12 +1589,12 @@ export default function RevenueChartDetailView({
                   ? data.monthly[m].th
                   : '';
                 summaryObj[`T${m} - KH ${selectedYear}`] = data.monthly?.[m]?.kh ?? 0;
-                summaryObj[`T${m} - % HTKH`] = data.monthly?.[m]?.rate ?? '';
+                summaryObj[`T${m} - Tỷ lệ (%)`] = data.monthly?.[m]?.rate ?? '';
               }
               summaryObj[`TH ${selectedYear}`] = data.totalTh;
               summaryObj[`KH ${selectedYear}`] = data.totalKh;
-              summaryObj['+/- Chênh lệch'] = data.totalDiffFormatted;
-              summaryObj['% HTKH'] = data.totalRate;
+              summaryObj['Chênh lệch'] = data.totalDiffFormatted;
+              summaryObj['Tỷ lệ (%)'] = data.totalRate;
               summaryObj['Tỷ lệ tăng trưởng'] = data.growthRate;
             }
             return summaryObj;
@@ -1635,8 +1635,8 @@ export default function RevenueChartDetailView({
             }
             rowObj[actualColumnLabel] = r.th;
           }
-          rowObj[`+/- so với ${diffColumnLabel}`] = r.diffFormatted;
-          rowObj[`% ${rateSubLabel}`] = r.rate;
+          rowObj['Chênh lệch'] = r.diffFormatted;
+          rowObj['Tỷ lệ (%)'] = r.rate;
           return rowObj;
         });
 
@@ -1661,8 +1661,8 @@ export default function RevenueChartDetailView({
             }
             summaryObj[actualColumnLabel] = data.th;
           }
-          summaryObj[`+/- so với ${diffColumnLabel}`] = data.diffFormatted;
-          summaryObj[`% ${rateSubLabel}`] = data.rate;
+          summaryObj['Chênh lệch'] = data.diffFormatted;
+          summaryObj['Tỷ lệ (%)'] = data.rate;
           return summaryObj;
         };
 
@@ -1744,8 +1744,8 @@ export default function RevenueChartDetailView({
         'Đơn vị tính': r.unit,
         'Kế hoạch (KH)': r.kh,
         'Thực hiện (TH)': r.th,
-        'Chênh lệch (+/-)': r.diff,
-        'Tỷ lệ hoàn thành': r.rate,
+        'Chênh lệch': r.diff,
+        'Tỷ lệ (%)': r.rate,
         'Tỷ trọng': r.share,
         'Đánh giá': r.isPass ? 'Đạt / Tốt' : 'Chưa đạt'
       }));
@@ -1757,8 +1757,8 @@ export default function RevenueChartDetailView({
         'Đơn vị tính': tableData.defaultUnit,
         'Kế hoạch (KH)': totals.sumKh,
         'Thực hiện (TH)': totals.sumTh,
-        'Chênh lệch (+/-)': totals.diffFormatted,
-        'Tỷ lệ hoàn thành': totals.avgRate,
+        'Chênh lệch': totals.diffFormatted,
+        'Tỷ lệ (%)': totals.avgRate,
         'Tỷ trọng': '100%',
         'Đánh giá': totals.isPass ? 'Đạt KH chung' : 'Chưa đạt KH'
       });
@@ -1980,7 +1980,7 @@ export default function RevenueChartDetailView({
                         <React.Fragment key={`sub-m-${m}`}>
                           <th className="th-sub-th">TH {selectedYear}</th>
                           <th className="th-sub-kh">KH {selectedYear}</th>
-                          <th className="th-sub-rate">% HTKH</th>
+                          <th className="th-sub-rate">Tỷ lệ (%)</th>
                         </React.Fragment>
                       )
                     ))}
@@ -1988,15 +1988,15 @@ export default function RevenueChartDetailView({
                       <>
                         <th className="th-sub-prev">TH {lastYear}</th>
                         <th className="th-sub-th">TH {selectedYear}</th>
-                        <th className="th-sub-diff">+/-</th>
+                        <th className="th-sub-diff">Chênh lệch</th>
                         <th className="th-sub-growth">Tỷ lệ tăng trưởng</th>
                       </>
                     ) : (
                       <>
                         <th className="th-sub-th">Tổng TH {selectedYear}</th>
                         <th className="th-sub-kh">Tổng KH {selectedYear}</th>
-                        <th className="th-sub-diff">+/-</th>
-                        <th className="th-sub-rate">% HT</th>
+                        <th className="th-sub-diff">Chênh lệch</th>
+                        <th className="th-sub-rate">Tỷ lệ (%)</th>
                         <th className="th-sub-growth">Tỷ lệ tăng trưởng</th>
                       </>
                     )}
@@ -2458,25 +2458,14 @@ export default function RevenueChartDetailView({
               <table className="chart-detail-month-table">
               <thead>
                 <tr>
-                  <th rowSpan={2} className="th-customer-group">Nhóm khách hàng</th>
-                  <th rowSpan={2} className="th-customer-name">Tên khách hàng</th>
-                  <th rowSpan={2} className="th-spdv-group">Nhóm SPDV</th>
-                  <th rowSpan={2} className="th-spdv-name">Tên SPDV</th>
-                  <th colSpan={4} className="th-month-group">
-                    {periodHeaderTitle} — {comparisonGroupTitle}
-                  </th>
-                </tr>
-                <tr className="th-sub-row">
-                  <th className="th-sub-kh">{targetColumnLabel}</th>
-                  <th className="th-sub-th">{actualColumnLabel}</th>
-                  <th className="th-sub-diff">
-                    <span className="th-sub-line">+/-</span>
-                    <span className="th-sub-line">{diffColumnLabel}</span>
-                  </th>
-                  <th className="th-sub-rate">
-                    <span className="th-sub-line">%</span>
-                    <span className="th-sub-line">{rateSubLabel}</span>
-                  </th>
+                  <th className="th-customer-group">Nhóm khách hàng</th>
+                  <th className="th-customer-name">Tên khách hàng</th>
+                  <th className="th-spdv-group">Nhóm SPDV</th>
+                  <th className="th-spdv-name">Tên SPDV</th>
+                  <th className="th-sub-kh text-right">{targetColumnLabel}</th>
+                  <th className="th-sub-th text-right">{actualColumnLabel}</th>
+                  <th className="th-sub-diff text-right">Chênh lệch</th>
+                  <th className="th-sub-rate text-center">Tỷ lệ (%)</th>
                 </tr>
               </thead>
               <tbody>
@@ -2633,18 +2622,8 @@ export default function RevenueChartDetailView({
                   <th style={{ width: '90px', textAlign: 'center' }}>Đơn vị</th>
                   <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{targetColumnLabel}</th>
                   <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{actualColumnLabel}</th>
-                  <th style={{ width: '125px', textAlign: 'right' }}>
-                    <div className="spdv-th-two-line">
-                      <span className="spdv-th-main font-bold">+/-</span>
-                      <span className="spdv-th-sub font-bold">{diffColumnLabel}</span>
-                    </div>
-                  </th>
-                  <th style={{ width: '130px', textAlign: 'center' }}>
-                    <div className="spdv-th-two-line">
-                      <span className="spdv-th-main font-bold">%</span>
-                      <span className="spdv-th-sub font-bold">{rateSubLabel}</span>
-                    </div>
-                  </th>
+                  <th style={{ width: '125px', textAlign: 'right', fontWeight: '700' }}>Chênh lệch</th>
+                  <th style={{ width: '130px', textAlign: 'center', fontWeight: '700' }}>Tỷ lệ (%)</th>
                   <th style={{ width: '90px', textAlign: 'center' }}>Tỷ trọng</th>
                   <th style={{ width: '110px', textAlign: 'center' }}>Đánh giá</th>
                 </tr>

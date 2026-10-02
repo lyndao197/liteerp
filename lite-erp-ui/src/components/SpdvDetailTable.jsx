@@ -197,18 +197,8 @@ export default function SpdvDetailTable({
                 <th style={{ textAlign: 'left', minWidth: '220px' }}>Nhóm SPDV</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colKhLabel}</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colThLabel}</th>
-                <th style={{ width: '130px', textAlign: 'right' }}>
-                  <div className="spdv-th-two-line">
-                    <span className="spdv-th-main font-bold">+/-</span>
-                    <span className="spdv-th-sub font-bold">so KH</span>
-                  </div>
-                </th>
-                <th style={{ width: '135px', textAlign: 'center' }}>
-                  <div className="spdv-th-two-line">
-                    <span className="spdv-th-main font-bold">%</span>
-                    <span className="spdv-th-sub font-bold">HTKH</span>
-                  </div>
-                </th>
+                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>Chênh lệch</th>
+                <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>Tỷ lệ (%)</th>
               </tr>
             </thead>
             <tbody>

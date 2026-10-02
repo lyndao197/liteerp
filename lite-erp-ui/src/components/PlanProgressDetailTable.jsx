@@ -327,18 +327,8 @@ export default function PlanProgressDetailTable({
                 <th style={{ width: '85px', textAlign: 'center' }}>Đơn vị</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.kh}</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.th}</th>
-                <th style={{ width: '125px', textAlign: 'right' }}>
-                  <div className="spdv-th-two-line">
-                    <span className="spdv-th-main font-bold">+/-</span>
-                    <span className="spdv-th-sub font-bold">so KH</span>
-                  </div>
-                </th>
-                <th style={{ width: '125px', textAlign: 'center' }}>
-                  <div className="spdv-th-two-line">
-                    <span className="spdv-th-main font-bold">%</span>
-                    <span className="spdv-th-sub font-bold">HTKH</span>
-                  </div>
-                </th>
+                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>Chênh lệch</th>
+                <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>Tỷ lệ (%)</th>
                 <th style={{ width: '130px', textAlign: 'center' }}>
                   <div className="spdv-th-two-line">
                     <span className="spdv-th-main">{currentPeriodColLabels.khShare}</span>
@@ -537,19 +527,19 @@ export default function PlanProgressDetailTable({
                 <th className="spdv-th-col spdv-border-left">KH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col">TH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
-                <th className="spdv-th-col">% HTKH</th>
+                <th className="spdv-th-col">Tỷ lệ (%)</th>
 
                 {/* Quý */}
                 <th className="spdv-th-col spdv-border-left">KH Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col">TH LK Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
-                <th className="spdv-th-col">% HTKH</th>
+                <th className="spdv-th-col">Tỷ lệ (%)</th>
 
                 {/* Năm */}
                 <th className="spdv-th-col spdv-border-left">KH Năm {selectedYear}</th>
                 <th className="spdv-th-col">TH LK Năm {selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
-                <th className="spdv-th-col">% HTKH</th>
+                <th className="spdv-th-col">Tỷ lệ (%)</th>
               </tr>
             </thead>
             <tbody>
