@@ -190,8 +190,8 @@ export default function UnitDetailTable({
               <tr className="spdv-b18-thead-row">
                 <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th style={{ textAlign: 'left', minWidth: '220px' }}>Đơn vị thực hiện</th>
-                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colKhLabel}</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colThLabel}</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colKhLabel}</th>
                 <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>+/- so KH</th>
                 <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>% HTKH</th>
               </tr>
@@ -207,8 +207,8 @@ export default function UnitDetailTable({
                       <span className="spdv-dot" style={{ backgroundColor: item.color }}></span>
                       <span className="spdv-name-label">{item.name}</span>
                     </td>
+                    <td className="spdv-td-num font-bold">{formatUnitNum(item.th)}</td>
                     <td className="spdv-td-num font-semibold">{formatUnitNum(item.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatUnitNum(item.th)}</td>
                     <td className="spdv-td-num">
                       <span className={`spdv-diff-val ${item.diffVal >= 0 ? 'positive' : 'negative'}`}>
                         {item.diffVal >= 0 ? `+${formatUnitNum(item.diffVal)}` : formatUnitNum(item.diffVal)}
@@ -235,8 +235,8 @@ export default function UnitDetailTable({
                 <td style={{ textAlign: 'left', fontWeight: '800' }}>
                   Tổng doanh thu
                 </td>
-                <td style={{ textAlign: 'right', fontWeight: '800' }}>{formatUnitNum(totalKh)}</td>
                 <td style={{ textAlign: 'right', fontWeight: '800' }}>{formatUnitNum(totalTh)}</td>
+                <td style={{ textAlign: 'right', fontWeight: '800' }}>{formatUnitNum(totalKh)}</td>
                 <td style={{ textAlign: 'right', fontWeight: '800' }}>
                   <span className={`spdv-diff-val ${totalDiff >= 0 ? 'positive' : 'negative'}`}>
                     {totalDiff >= 0 ? `+${formatUnitNum(totalDiff)}` : formatUnitNum(totalDiff)}

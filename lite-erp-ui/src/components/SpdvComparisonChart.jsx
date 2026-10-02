@@ -311,6 +311,11 @@ function SpdvBarSubcard({
   const chartTop = 38;
   const chartBottom = 236;
 
+  const legendThStr = String(legendTh || 'TH');
+  const legendKhStr = String(legendKh || 'KH');
+  const secondLegendOffset = legendThStr.length > 10 ? 115 : (legendThStr.length > 7 ? 95 : 82);
+  const legendTranslateX = (legendThStr.length > 10 || legendKhStr.length > 10) ? 145 : 190;
+
   return (
     <div className="month-subcard spdv-card-item">
       <div className="month-subcard-header">
@@ -327,15 +332,15 @@ function SpdvBarSubcard({
           onMouseLeave={() => setHoveredItem(null)}
         >
           {/* Top Legend */}
-          <g transform="translate(190, 10)">
+          <g transform={`translate(${legendTranslateX}, 10)`}>
             <rect x={0} y={1} width={12} height={9} fill="#e11d48" rx={1.5} />
             <text x={16} y={9} style={{ fontSize: '10.5px', fontWeight: '600', fill: '#1e293b' }}>
-              {legendTh}
+              {legendThStr}
             </text>
 
-            <rect x={82} y={1} width={12} height={9} fill="#94a3b8" rx={1.5} />
-            <text x={98} y={9} style={{ fontSize: '10.5px', fontWeight: '600', fill: '#64748b' }}>
-              {legendKh}
+            <rect x={secondLegendOffset} y={1} width={12} height={9} fill="#94a3b8" rx={1.5} />
+            <text x={secondLegendOffset + 16} y={9} style={{ fontSize: '10.5px', fontWeight: '600', fill: '#64748b' }}>
+              {legendKhStr}
             </text>
           </g>
 
@@ -537,22 +542,22 @@ function SpdvBarSubcard({
               {hoveredItem.name}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendTh}:</span>
-              <strong>{hoveredItem.th.toFixed(1)} Tỷ đ</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
               <span style={{ color: '#64748b', fontWeight: '600' }}>{legendKh}:</span>
               <strong>{hoveredItem.kh.toFixed(1)} Tỷ đ</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span>Chênh lệch:</span>
+              <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendTh}:</span>
+              <strong>{hoveredItem.th.toFixed(1)} Tỷ đ</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+              <span>+/- so KH:</span>
               <strong style={{ color: hoveredItem.th >= hoveredItem.kh ? '#16a34a' : '#dc2626' }}>
                 {(hoveredItem.th - hoveredItem.kh) > 0 ? '+' : ''}
                 {(hoveredItem.th - hoveredItem.kh).toFixed(1)} Tỷ đ
               </strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
-              <span>Tỷ lệ (%):</span>
+              <span>% HTKH:</span>
               <strong style={{ color: hoveredItem.isRatePositive ? '#16a34a' : '#dc2626' }}>
                 {hoveredItem.rate}
               </strong>
@@ -736,7 +741,7 @@ export default function SpdvComparisonChart({
   // Calculate Quarter and Cumulative texts based on activeMonth
   const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
   const quarterNumber = Math.ceil(monthNum / 3);
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNumber - 1];
+  const quarterRoman = `${quarterNumber}`;
   const startMonthOfQuarter = (quarterNumber - 1) * 3 + 1;
 
   // Formatted subcard titles exactly matching user mockup
@@ -921,8 +926,8 @@ export default function SpdvComparisonChart({
         <SpdvBarSubcard
           title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.monthTitle}`}
           tag="Hàng 4 - Khu 1"
-          legendTh={barData.monthLegendTh}
-          legendKh={barData.monthLegendKh}
+          legendTh={`TH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
+          legendKh={`KH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
           maxVal={barData.monthMax}
           ticks={barData.monthTicks}
           items={barData.monthItems}
@@ -936,8 +941,8 @@ export default function SpdvComparisonChart({
         <SpdvBarSubcard
           title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.quarterTitle}`}
           tag="Hàng 4 - Khu 2"
-          legendTh={barData.quarterLegendTh}
-          legendKh={barData.quarterLegendKh}
+          legendTh={`Ước TH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
+          legendKh={`KH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
           maxVal={barData.quarterMax}
           ticks={barData.quarterTicks}
           items={barData.quarterItems}
@@ -954,8 +959,8 @@ export default function SpdvComparisonChart({
         <SpdvBarSubcard
           title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`}
           tag="Hàng 5 - Khu 1"
-          legendTh={barData.yearLegendTh}
-          legendKh={barData.yearLegendKh}
+          legendTh={`Ước TH ${barData.yearTitle?.replace('Năm ', '')}`}
+          legendKh={`KH ${barData.yearTitle?.replace('Năm ', '')}`}
           maxVal={barData.yearMax}
           ticks={barData.yearTicks}
           items={barData.yearItems}

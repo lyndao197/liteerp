@@ -1,7 +1,7 @@
 // Data definitions for Biểu đồ 16 & 17 (Cơ cấu doanh thu thực hiện và kế hoạch theo 6 nhóm SPDV)
 // Hàng trên: Biểu đồ 16 (Thực hiện)
 // Hàng dưới: Biểu đồ 17 (Kế hoạch)
-// 3 Cột: Tháng 8/2026 | Quý III/2026 | Năm 2026
+// 3 Cột: Tháng 8/2026 | Quý 3/2026 | Năm 2026
 
 export const SPDV_CATEGORIES = [
   { id: 'gppm', name: 'Giải pháp phần mềm', color: '#1f3d6d' },
@@ -30,7 +30,7 @@ export const SPDV_STRUCTURE_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2026 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2026 (lũy kế T7–T8)',
       total: 775.0,
       formattedTotal: '775,0',
       unit: 'Triệu đồng',
@@ -74,7 +74,7 @@ export const SPDV_STRUCTURE_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2026',
+      title: 'KH – Quý 3/2026',
       total: 1246.0,
       formattedTotal: '1.246,0',
       unit: 'Triệu đồng',
@@ -118,7 +118,7 @@ export const SPDV_STRUCTURE_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2025 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2025 (lũy kế T7–T8)',
       total: 712.9,
       formattedTotal: '712,9',
       unit: 'Triệu đồng',
@@ -160,7 +160,7 @@ export const SPDV_STRUCTURE_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2025',
+      title: 'KH – Quý 3/2025',
       total: 1150.0,
       formattedTotal: '1.150,0',
       unit: 'Triệu đồng',
@@ -198,8 +198,8 @@ export const SPDV_BAR_COMPARISON_DATA = {
   '2026': {
     'Tháng 8': {
       monthTitle: 'Tháng 8/2026',
-      monthLegendTh: 'TH T8',
-      monthLegendKh: 'KH T8',
+      monthLegendTh: 'TH',
+      monthLegendKh: 'KH',
       monthMax: 120,
       monthTicks: [0, 20, 40, 60, 80, 100, 120],
       monthItems: [
@@ -210,9 +210,9 @@ export const SPDV_BAR_COMPARISON_DATA = {
         { id: 'vhbt', name: 'Vận hành & bảo trì', th: 44.6, kh: 45.5, rate: '98%', isRatePositive: false },
         { id: 'dtk', name: 'Đào tạo & khác', th: 28.1, kh: 29.0, rate: '97%', isRatePositive: false }
       ],
-      quarterTitle: 'Quý III/2026',
-      quarterLegendTh: 'Ước Q3',
-      quarterLegendKh: 'KH Q3',
+      quarterTitle: 'Quý 3/2026',
+      quarterLegendTh: 'Ước TH',
+      quarterLegendKh: 'KH',
       quarterMax: 400,
       quarterTicks: [0, 100, 200, 300, 400],
       quarterItems: [
@@ -224,8 +224,8 @@ export const SPDV_BAR_COMPARISON_DATA = {
         { id: 'dtk', name: 'Đào tạo & khác', th: 82.6, kh: 87.0, rate: '95%', isRatePositive: false }
       ],
       yearTitle: 'Năm 2026',
-      yearLegendTh: 'Ước 2026',
-      yearLegendKh: 'KH 2026',
+      yearLegendTh: 'Ước TH',
+      yearLegendKh: 'KH',
       yearMax: 1500,
       yearTicks: [0, 250, 500, 750, 1000, 1250, 1500],
       yearItems: [
@@ -241,8 +241,8 @@ export const SPDV_BAR_COMPARISON_DATA = {
   '2025': {
     'Tháng 8': {
       monthTitle: 'Tháng 8/2025',
-      monthLegendTh: 'TH T8',
-      monthLegendKh: 'KH T8',
+      monthLegendTh: 'TH',
+      monthLegendKh: 'KH',
       monthMax: 120,
       monthTicks: [0, 20, 40, 60, 80, 100, 120],
       monthItems: [
@@ -253,9 +253,9 @@ export const SPDV_BAR_COMPARISON_DATA = {
         { id: 'vhbt', name: 'Vận hành & bảo trì', th: 40.1, kh: 41.8, rate: '96%', isRatePositive: false },
         { id: 'dtk', name: 'Đào tạo & khác', th: 25.5, kh: 26.6, rate: '96%', isRatePositive: false }
       ],
-      quarterTitle: 'Quý III/2025',
-      quarterLegendTh: 'Ước Q3',
-      quarterLegendKh: 'KH Q3',
+      quarterTitle: 'Quý 3/2025',
+      quarterLegendTh: 'Ước TH',
+      quarterLegendKh: 'KH',
       quarterMax: 400,
       quarterTicks: [0, 100, 200, 300, 400],
       quarterItems: [
@@ -267,8 +267,8 @@ export const SPDV_BAR_COMPARISON_DATA = {
         { id: 'dtk', name: 'Đào tạo & khác', th: 75.0, kh: 80.5, rate: '93%', isRatePositive: false }
       ],
       yearTitle: 'Năm 2025',
-      yearLegendTh: 'Ước 2025',
-      yearLegendKh: 'KH 2025',
+      yearLegendTh: 'Ước TH',
+      yearLegendKh: 'KH',
       yearMax: 1500,
       yearTicks: [0, 250, 500, 750, 1000, 1250, 1500],
       yearItems: [
@@ -295,19 +295,18 @@ export const getSpdvBarComparisonData = (year = '2026', month = 'Tháng 8') => {
   const base = (yearData && yearData[defaultMonth]) || SPDV_BAR_COMPARISON_DATA[defaultYear][defaultMonth];
   const mNum = parseInt(month?.match(/\d+/)?.[0] || '8', 10);
   const qNum = Math.ceil(mNum / 3);
-  const qRoman = ['I', 'II', 'III', 'IV'][qNum - 1] || 'III';
 
   return {
     ...base,
     monthTitle: `Tháng ${mNum}/${year}`,
-    monthLegendTh: `TH T${mNum}`,
-    monthLegendKh: `KH T${mNum}`,
-    quarterTitle: `Quý ${qRoman}/${year}`,
-    quarterLegendTh: `Ước Q${qNum}`,
-    quarterLegendKh: `KH Q${qNum}`,
+    monthLegendTh: 'TH',
+    monthLegendKh: 'KH',
+    quarterTitle: `Quý ${qNum}/${year}`,
+    quarterLegendTh: 'Ước TH',
+    quarterLegendKh: 'KH',
     yearTitle: `Năm ${year}`,
-    yearLegendTh: `Ước ${year}`,
-    yearLegendKh: `KH ${year}`
+    yearLegendTh: 'Ước TH',
+    yearLegendKh: 'KH'
   };
 };
 

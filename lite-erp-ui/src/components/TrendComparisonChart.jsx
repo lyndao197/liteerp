@@ -79,19 +79,19 @@ function TrendPrevYearCard({
             </text>
 
             {/* Stacked Legend Top Right */}
-            <g transform={`translate(${chartRight - 150}, 8)`}>
+            <g transform={`translate(${chartRight - 185}, 8)`}>
               {/* TH prevYear */}
               <line x1={0} y1={6} x2={16} y2={6} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4 2" />
               <circle cx={8} cy={6} r="3" fill="#94a3b8" />
               <text x={22} y={10} style={{ fontSize: '11px', fontWeight: '600', fill: '#64748b' }}>
-                TH {prevYear}
+                {`TH ${prevYear}`}
               </text>
 
               {/* TH selectedYear */}
               <line x1={80} y1={6} x2={96} y2={6} stroke="#c8102e" strokeWidth="2.5" />
               <circle cx={88} cy={6} r="3.5" fill="#c8102e" />
               <text x={102} y={10} style={{ fontSize: '11px', fontWeight: '700', fill: '#1e293b' }}>
-                TH {selectedYear}
+                {`Ước TH ${selectedYear}`}
               </text>
             </g>
 
@@ -305,20 +305,29 @@ function TrendPrevYearCard({
                 {hoveredData.name} ({hoveredData.month})
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#c8102e', fontWeight: '600' }}>TH {selectedYear}:</span>
+                <span style={{ color: '#c8102e', fontWeight: '600' }}>Ước TH:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>
                   {hoveredData.th2026 !== null ? `${formatVal(hoveredData.th2026)} Tr.đ` : 'Chưa có'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>TH {prevYear}:</span>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>TH:</span>
                 <span style={{ fontWeight: '600', color: '#475569' }}>
                   {hoveredData.th2025 !== null ? `${formatVal(hoveredData.th2025)} Tr.đ` : '-'}
                 </span>
               </div>
+              {hoveredData.th2026 !== null && hoveredData.th2025 !== null && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                  <span>Tăng/giảm:</span>
+                  <strong style={{ color: hoveredData.th2026 >= hoveredData.th2025 ? '#15803d' : '#b91c1c' }}>
+                    {(hoveredData.th2026 - hoveredData.th2025) > 0 ? '+' : ''}
+                    {formatVal(hoveredData.th2026 - hoveredData.th2025)} Tr.đ
+                  </strong>
+                </div>
+              )}
               {hoveredData.growth && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                  <span style={{ color: '#15803d', fontWeight: '600' }}>Tăng trưởng:</span>
+                  <span style={{ color: '#15803d', fontWeight: '600' }}>% Delta:</span>
                   <span style={{ fontWeight: '700', color: '#15803d' }}>{hoveredData.growth}</span>
                 </div>
               )}
@@ -411,18 +420,18 @@ function TrendPlanCard({
             </text>
 
             {/* Stacked Legend Top Right */}
-            <g transform={`translate(${chartRight - 150}, 8)`}>
+            <g transform={`translate(${chartRight - 165}, 8)`}>
               {/* TH selectedYear (Dark Navy Blue Line) */}
               <line x1={0} y1={6} x2={16} y2={6} stroke="#1e3a8a" strokeWidth="2.5" />
               <circle cx={8} cy={6} r="3.5" fill="#1e3a8a" />
               <text x={22} y={10} style={{ fontSize: '11px', fontWeight: '700', fill: '#1e3a8a' }}>
-                TH {selectedYear}
+                {`TH ${selectedYear}`}
               </text>
 
               {/* KH selectedYear (Light Steel Blue Bar) */}
-              <rect x={80} y={1} width={14} height={10} fill="#9fbcd7" rx={1.5} />
-              <text x={99} y={10} style={{ fontSize: '11px', fontWeight: '600', fill: '#475569' }}>
-                KH {selectedYear}
+              <rect x={75} y={1} width={14} height={10} fill="#9fbcd7" rx={1.5} />
+              <text x={94} y={10} style={{ fontSize: '11px', fontWeight: '600', fill: '#475569' }}>
+                {`KH ${selectedYear}`}
               </text>
             </g>
 
@@ -631,20 +640,29 @@ function TrendPlanCard({
                 {hoveredData.name} ({hoveredData.month})
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#1e3a8a', fontWeight: '600' }}>TH {selectedYear}:</span>
-                <span style={{ fontWeight: '700', color: '#0f172a' }}>
-                  {hoveredData.th !== null ? `${formatVal(hoveredData.th)} Tr.đ` : 'Chưa có'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>KH {selectedYear}:</span>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>KH:</span>
                 <span style={{ fontWeight: '600', color: '#475569' }}>
                   {hoveredData.kh !== null ? `${formatVal(hoveredData.kh)} Tr.đ` : '-'}
                 </span>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ color: '#1e3a8a', fontWeight: '600' }}>TH:</span>
+                <span style={{ fontWeight: '700', color: '#0f172a' }}>
+                  {hoveredData.th !== null ? `${formatVal(hoveredData.th)} Tr.đ` : 'Chưa có'}
+                </span>
+              </div>
+              {hoveredData.th !== null && hoveredData.kh !== null && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                  <span>+/- so KH:</span>
+                  <strong style={{ color: hoveredData.th >= hoveredData.kh ? '#15803d' : '#b91c1c' }}>
+                    {(hoveredData.th - hoveredData.kh) > 0 ? '+' : ''}
+                    {formatVal(hoveredData.th - hoveredData.kh)} Tr.đ
+                  </strong>
+                </div>
+              )}
               {hoveredData.rate && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                  <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>Tỷ lệ (%):</span>
+                  <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
                   <span style={{ fontWeight: '700', color: hoveredData.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredData.rate}</span>
                 </div>
               )}

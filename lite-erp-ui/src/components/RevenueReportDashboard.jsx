@@ -214,7 +214,7 @@ const RevenueReportDashboard = () => {
   // Filter States
   const [selectedYear, setSelectedYear] = useState('2026');
   const [selectedMonth, setSelectedMonth] = useState('Tháng 8');
-  const [selectedQuarter, setSelectedQuarter] = useState('Quý III');
+  const [selectedQuarter, setSelectedQuarter] = useState('Quý 3');
   const [selectedCumulativeMonth, setSelectedCumulativeMonth] = useState('Lũy kế 8 tháng');
   const [selectedStream, setSelectedStream] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -823,8 +823,8 @@ const RevenueReportDashboard = () => {
     } else if (chartType === 7) {
       const qCode = data.quarterCode || 'Q3';
       const prevQCode = data.prevQuarterCode || 'Q2';
-      const prevQName = data.prevQuarterName || 'Quý II';
-      const prevY = selectedQuarter === 'Quý I' ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+      const prevQName = data.prevQuarterName || 'Quý 2';
+      const prevY = (selectedQuarter === 'Quý I' || selectedQuarter === 'Quý 1') ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
       cardTitle = `Biểu đồ 7. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQName}/${prevY}`;
       subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % so với TH ${prevQCode})`;
       legend1Label = `Ước ${qCode}`;
@@ -839,8 +839,8 @@ const RevenueReportDashboard = () => {
     } else if (chartType === 9) {
       const qCode = data.quarterCode || 'Q3';
       const nextQCode = data.nextQuarterCode || 'Q4';
-      const nextQName = data.nextQuarterName || 'Quý IV';
-      const nextQYear = selectedQuarter === 'Quý IV' ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
+      const nextQName = data.nextQuarterName || 'Quý 4';
+      const nextQYear = (selectedQuarter === 'Quý IV' || selectedQuarter === 'Quý 4') ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
       cardTitle = `Biểu đồ 9. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQName}/${nextQYear}`;
       subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % so với KH ${nextQCode})`;
       legend1Label = `Ước ${qCode}`;
@@ -1735,12 +1735,12 @@ const RevenueReportDashboard = () => {
         const quarterData8 = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý III'];
         const quarterData9 = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý III'];
         const qCode = quarterData5.quarterCode || 'Q3';
-        const prevQName = quarterData7.prevQuarterName || 'Quý II';
-        const prevYear = selectedQuarter === 'Quý I' ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+        const prevQName = quarterData7.prevQuarterName || 'Quý 2';
+        const prevYear = (selectedQuarter === 'Quý I' || selectedQuarter === 'Quý 1') ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
         const prevYearNum = (parseInt(selectedYear, 10) - 1).toString();
         const nextQCode = quarterData9.nextQuarterCode || 'Q4';
-        const nextQName = quarterData9.nextQuarterName || 'Quý IV';
-        const nextQYear = selectedQuarter === 'Quý IV' ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
+        const nextQName = quarterData9.nextQuarterName || 'Quý 4';
+        const nextQYear = (selectedQuarter === 'Quý IV' || selectedQuarter === 'Quý 4') ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
 
         const ALL_QUARTER_CHARTS = [
           {

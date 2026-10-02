@@ -1,7 +1,7 @@
 // Data definitions for Biểu đồ 25 – 26 (Cơ cấu doanh thu nội bộ và doanh thu ngoài Tập đoàn: thực hiện và kế hoạch)
 // Hàng trên: Biểu đồ 25 (Thực hiện)
 // Hàng dưới: Biểu đồ 26 (Kế hoạch)
-// 3 Cột: Tháng 8/2026 | Quý III/2026 | Năm 2026
+// 3 Cột: Tháng 8/2026 | Quý 3/2026 | Năm 2026
 
 export const INTERNAL_EXTERNAL_CATEGORIES = [
   { id: 'internal', name: 'DT nội bộ', color: '#64748b' },
@@ -22,7 +22,7 @@ export const INTERNAL_EXTERNAL_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2026 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2026 (lũy kế T7–T8)',
       total: 775.0,
       formattedTotal: '775,0',
       unit: 'Triệu đồng',
@@ -54,7 +54,7 @@ export const INTERNAL_EXTERNAL_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2026',
+      title: 'KH – Quý 3/2026',
       total: 1246.0,
       formattedTotal: '1.246,0',
       unit: 'Triệu đồng',
@@ -86,7 +86,7 @@ export const INTERNAL_EXTERNAL_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2025 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2025 (lũy kế T7–T8)',
       total: 712.9,
       formattedTotal: '712,9',
       unit: 'Triệu đồng',
@@ -116,7 +116,7 @@ export const INTERNAL_EXTERNAL_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2025',
+      title: 'KH – Quý 3/2025',
       total: 1150.0,
       formattedTotal: '1.150,0',
       unit: 'Triệu đồng',
@@ -160,7 +160,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2026 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2026 (lũy kế T7–T8)',
       total: 775.0,
       formattedTotal: '775,0',
       unit: 'Triệu đồng',
@@ -192,7 +192,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2026',
+      title: 'KH – Quý 3/2026',
       total: 1246.0,
       formattedTotal: '1.246,0',
       unit: 'Triệu đồng',
@@ -224,7 +224,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2025 (lũy kế T7–T8)',
+      title: 'TH – Quý 3/2025 (lũy kế T7–T8)',
       total: 712.9,
       formattedTotal: '712,9',
       unit: 'Triệu đồng',
@@ -254,7 +254,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2025',
+      title: 'KH – Quý 3/2025',
       total: 1150.0,
       formattedTotal: '1.150,0',
       unit: 'Triệu đồng',
@@ -286,7 +286,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     thQuarter: {
-      title: 'TH – Quý III/2024',
+      title: 'TH – Quý 3/2024',
       total: 680.0,
       formattedTotal: '680,0',
       unit: 'Triệu đồng',
@@ -316,7 +316,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       ]
     },
     khQuarter: {
-      title: 'KH – Quý III/2024',
+      title: 'KH – Quý 3/2024',
       total: 1050.0,
       formattedTotal: '1.050,0',
       unit: 'Triệu đồng',

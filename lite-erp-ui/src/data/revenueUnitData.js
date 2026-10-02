@@ -1,5 +1,5 @@
 // Data definitions for Biểu đồ 21 (Cơ cấu doanh thu theo đơn vị thực hiện)
-// Cơ sở so sánh: Tháng 8 | Quý III (lũy kế) | Năm (lũy kế 8T)
+// Cơ sở so sánh: Tháng 8 | Quý 3 (lũy kế) | Năm (lũy kế 8T)
 
 export const UNIT_CATEGORIES = [
   { id: 'hanoi', name: 'Đơn vị Hà Nội', color: '#1b4474' },
@@ -27,7 +27,7 @@ export const UNIT_STRUCTURE_DATA = {
       ]
     },
     thQuarter: {
-      title: 'Quý III/2026 (lũy kế T7–T8)',
+      title: 'Quý 3/2026 (lũy kế T7–T8)',
       total: 775.0,
       formattedTotal: '775,0',
       unit: 'Triệu đồng',
@@ -71,7 +71,7 @@ export const UNIT_STRUCTURE_DATA = {
       ]
     },
     thQuarter: {
-      title: 'Quý III/2025 (lũy kế T7–T8)',
+      title: 'Quý 3/2025 (lũy kế T7–T8)',
       total: 712.9,
       formattedTotal: '712,9',
       unit: 'Triệu đồng',
@@ -106,8 +106,8 @@ export const UNIT_PLAN_COMPARISON_DATA = {
   '2026': {
     month: {
       periodLabel: 'Tháng 8/2026',
-      primaryLegend: 'TH T8',
-      secondaryLegend: 'KH T8',
+      primaryLegend: 'TH T8/2026',
+      secondaryLegend: 'KH T8/2026',
       maxVal: 150,
       xTicks: [0, 25, 50, 75, 100, 125, 150],
       items: [
@@ -120,9 +120,9 @@ export const UNIT_PLAN_COMPARISON_DATA = {
       ]
     },
     quarter: {
-      periodLabel: 'Quý III/2026',
-      primaryLegend: 'Ước Q3',
-      secondaryLegend: 'KH Q3',
+      periodLabel: 'Quý 3/2026',
+      primaryLegend: 'Ước TH Q3/2026',
+      secondaryLegend: 'KH Q3/2026',
       maxVal: 400,
       xTicks: [0, 100, 200, 300, 400],
       items: [
@@ -136,7 +136,7 @@ export const UNIT_PLAN_COMPARISON_DATA = {
     },
     year: {
       periodLabel: 'Năm 2026',
-      primaryLegend: 'Ước 2026',
+      primaryLegend: 'Ước TH 2026',
       secondaryLegend: 'KH 2026',
       maxVal: 1500,
       xTicks: [0, 500, 1000, 1500],
@@ -153,8 +153,8 @@ export const UNIT_PLAN_COMPARISON_DATA = {
   '2025': {
     month: {
       periodLabel: 'Tháng 8/2025',
-      primaryLegend: 'TH T8',
-      secondaryLegend: 'KH T8',
+      primaryLegend: 'TH T8/2025',
+      secondaryLegend: 'KH T8/2025',
       maxVal: 150,
       xTicks: [0, 25, 50, 75, 100, 125, 150],
       items: [
@@ -167,9 +167,9 @@ export const UNIT_PLAN_COMPARISON_DATA = {
       ]
     },
     quarter: {
-      periodLabel: 'Quý III/2025',
-      primaryLegend: 'Ước Q3',
-      secondaryLegend: 'KH Q3',
+      periodLabel: 'Quý 3/2025',
+      primaryLegend: 'Ước TH Q3/2025',
+      secondaryLegend: 'KH Q3/2025',
       maxVal: 400,
       xTicks: [0, 100, 200, 300, 400],
       items: [
@@ -183,7 +183,7 @@ export const UNIT_PLAN_COMPARISON_DATA = {
     },
     year: {
       periodLabel: 'Năm 2025',
-      primaryLegend: 'Ước 2025',
+      primaryLegend: 'Ước TH 2025',
       secondaryLegend: 'KH 2025',
       maxVal: 1500,
       xTicks: [0, 500, 1000, 1500],

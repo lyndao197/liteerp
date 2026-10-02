@@ -51,7 +51,50 @@ function YearValueCard({
     : [112, 226, 340, 454];
   const barWidth = data.length === 5 ? 13 : 14;
   const barGap = 2;
-  const legendX = (primaryLegend?.length > 10 || secondaryLegend?.length > 10) ? 395 : ((primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 415 : 435);
+
+  const isCompareOther = rateLabel === '% Delta';
+  const isCompareNext = rateLabel === '% so KH kỳ sau';
+  const isComparePlan = !isCompareOther && !isCompareNext;
+
+  const displayPrimaryLegend = primaryLegend || (isCompareOther ? 'Ước TH' : 'TH');
+  const displaySecondaryLegend = secondaryLegend || (isCompareOther ? 'TH' : 'KH');
+
+  const col1Label = isComparePlan ? displaySecondaryLegend : displayPrimaryLegend;
+  const col2Label = isComparePlan ? displayPrimaryLegend : displaySecondaryLegend;
+  const diffLabel = isCompareOther ? 'Tăng/giảm' : '+/- so KH';
+
+  let col1Val = null;
+  let col2Val = null;
+  let diffVal = null;
+  let isCol1Primary = false;
+
+  if (hoveredItem) {
+    const val1 = hoveredItem.lk !== undefined ? hoveredItem.lk : hoveredItem.uoc;
+    const val2 = hoveredItem.kh !== undefined
+      ? hoveredItem.kh
+      : hoveredItem.khYear !== undefined
+      ? hoveredItem.khYear
+      : hoveredItem.thPrev;
+
+    if (isComparePlan) {
+      col1Val = val2;
+      col2Val = val1;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = false;
+    } else if (isCompareNext) {
+      col1Val = val1;
+      col2Val = val2;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = true;
+    } else {
+      col1Val = val1;
+      col2Val = val2;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = true;
+    }
+  }
+
+  const legendX = (displayPrimaryLegend?.length > 12 || displaySecondaryLegend?.length > 12) ? 365 : ((displayPrimaryLegend?.length > 8 || displaySecondaryLegend?.length > 8) ? 395 : 435);
 
   return (
     <div className="month-subcard">
@@ -67,15 +110,15 @@ function YearValueCard({
             {/* Stacked Legend Top Right */}
             <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
               <g>
-                <title>{explainLegend(primaryLegend)}</title>
+                <title>{explainLegend(displayPrimaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill={primaryColor} rx={1} />
-                <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+                <text x={16} y={10} className="legend-label">{displayPrimaryLegend}</text>
               </g>
 
               <g transform="translate(0, 16)">
-                <title>{explainLegend(secondaryLegend)}</title>
+                <title>{explainLegend(displaySecondaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill={secondaryColor} rx={1} />
-                <text x={16} y={10} className="legend-label">{secondaryLegend}</text>
+                <text x={16} y={10} className="legend-label">{displaySecondaryLegend}</text>
               </g>
             </g>
 
@@ -230,21 +273,30 @@ function YearValueCard({
             <div className="month-subcard-tooltip">
               <div className="tooltip-item-title">{hoveredItem.name}</div>
               <div className="tooltip-stat-row">
-                <span className="tooltip-dot" style={{ backgroundColor: primaryColor }}></span>
-                <span>{primaryLegend}:</span>
+                <span className="tooltip-dot" style={{ backgroundColor: isCol1Primary ? primaryColor : secondaryColor }}></span>
+                <span>{col1Label}:</span>
                 <strong>
-                  {formatVal(hoveredItem.lk !== undefined ? hoveredItem.lk : hoveredItem.uoc)}{' '}
+                  {col1Val !== null && col1Val !== undefined ? formatVal(col1Val) : '—'}{' '}
                   {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
               <div className="tooltip-stat-row">
-                <span className="tooltip-dot" style={{ backgroundColor: secondaryColor }}></span>
-                <span>{secondaryLegend}:</span>
+                <span className="tooltip-dot" style={{ backgroundColor: isCol1Primary ? secondaryColor : primaryColor }}></span>
+                <span>{col2Label}:</span>
                 <strong>
-                  {formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : hoveredItem.khYear)}{' '}
+                  {col2Val !== null && col2Val !== undefined ? formatVal(col2Val) : '—'}{' '}
                   {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
+              {diffVal !== null && diffVal !== undefined && (
+                <div className="tooltip-stat-row">
+                  <span>{diffLabel}:</span>
+                  <strong className={diffVal >= 0 ? 'text-green' : 'text-red'}>
+                    {diffVal > 0 ? '+' : ''}{formatVal(diffVal)}{' '}
+                    {hoveredItem.unit || unitLabel}
+                  </strong>
+                </div>
+              )}
               {hoveredItem.rate && hoveredItem.rate !== '-' && (
                 <div className="tooltip-stat-row">
                   <span>{rateLabel}:</span>
@@ -285,6 +337,8 @@ function YearRatioCard({
   tag,
   primaryLegend,
   secondaryLegend,
+  tooltipPrimaryLabel,
+  tooltipSecondaryLabel,
   data,
   hoveredItem,
   setHoveredItem,
@@ -309,7 +363,7 @@ function YearRatioCard({
     : [210, 390];
   const barWidth = 15;
   const barGap = 2;
-  const legendX = (primaryLegend?.length > 10 || secondaryLegend?.length > 10) ? 395 : ((primaryLegend?.length > 7 || secondaryLegend?.length > 7) ? 415 : 435);
+  const legendX = (primaryLegend?.length > 12 || secondaryLegend?.length > 12) ? 365 : ((primaryLegend?.length > 8 || secondaryLegend?.length > 8) ? 395 : 435);
 
   return (
     <div className="month-subcard">
@@ -484,29 +538,84 @@ function YearRatioCard({
           </svg>
 
           {/* Hover Tooltip */}
-          {hoveredItem && (
-            <div className="month-subcard-tooltip">
-              <div className="tooltip-item-title">{hoveredItem.name}</div>
-              <div className="tooltip-stat-row">
-                <span className="tooltip-dot" style={{ backgroundColor: primaryColor }}></span>
-                <span>{primaryLegend}:</span>
-                <strong>{formatVal(hoveredItem.lk !== undefined ? hoveredItem.lk : hoveredItem.uoc)}%</strong>
-              </div>
-              <div className="tooltip-stat-row">
-                <span className="tooltip-dot" style={{ backgroundColor: secondaryColor }}></span>
-                <span>{secondaryLegend}:</span>
-                <strong>{formatVal(hoveredItem.kh !== undefined ? hoveredItem.kh : hoveredItem.khYear)}%</strong>
-              </div>
-              {hoveredItem.diff && (
-                <div className="tooltip-stat-row">
-                  <span>Chênh lệch:</span>
-                  <strong className={hoveredItem.isDiffPositive ? 'text-green' : 'text-red'}>
-                    {hoveredItem.diff}
+          {hoveredItem && (() => {
+            const rawLbl1 = tooltipPrimaryLabel || (primaryLegend.includes('/') ? primaryLegend : `TH ${primaryLegend}`);
+            const rawLbl2 = tooltipSecondaryLabel || (secondaryLegend.includes('/') ? secondaryLegend : (secondaryLegend === 'KH' ? 'KH' : secondaryLegend));
+            const primaryLabel = rawLbl1.endsWith(':') ? rawLbl1 : `${rawLbl1}:`;
+            const secondaryLabel = rawLbl2.endsWith(':') ? rawLbl2 : `${rawLbl2}:`;
+
+            const val1 = hoveredItem.lk !== undefined ? hoveredItem.lk : hoveredItem.uoc;
+            const val2 = hoveredItem.kh !== undefined
+              ? hoveredItem.kh
+              : (hoveredItem.khYear !== undefined
+                ? hoveredItem.khYear
+                : (hoveredItem.thLastYear !== undefined
+                  ? hoveredItem.thLastYear
+                  : hoveredItem.thPrev));
+
+            const formatPercent = (val) => {
+              if (val === null || val === undefined || val === '') return '—';
+              const num = Number(val);
+              if (isNaN(num)) return `${val}%`;
+              return `${num.toFixed(1).replace('.', ',')}%`;
+            };
+
+            const formatDiff = (diffVal, v1, v2) => {
+              if (diffVal !== null && diffVal !== undefined && diffVal !== '' && diffVal !== '-') {
+                const str = String(diffVal).trim();
+                if (str.includes('đ.%')) return str;
+                return `${str} đ.%`;
+              }
+              if (v1 !== null && v1 !== undefined && v2 !== null && v2 !== undefined) {
+                const d = Number(v1) - Number(v2);
+                if (!isNaN(d)) {
+                  const sign = d > 0 ? '+' : '';
+                  return `${sign}${d.toFixed(1).replace('.', ',')} đ.%`;
+                }
+              }
+              return '-';
+            };
+
+            const diffDisplay = formatDiff(hoveredItem.diff, val1, val2);
+            const isPositive = hoveredItem.isDiffPositive !== undefined
+              ? Boolean(hoveredItem.isDiffPositive)
+              : (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined
+                  ? Number(val1) >= Number(val2)
+                  : true);
+
+            return (
+              <div className="ratio-subcard-tooltip">
+                <div className="ratio-tooltip-header">
+                  <div className="ratio-tooltip-title">{hoveredItem.name}</div>
+                </div>
+                <div className="ratio-tooltip-row">
+                  <span className="ratio-tooltip-square" style={{ backgroundColor: primaryColor }}></span>
+                  <span className="ratio-tooltip-label">{primaryLabel}</span>
+                  <strong className="ratio-tooltip-val">
+                    {formatPercent(val1)}
                   </strong>
                 </div>
-              )}
-            </div>
-          )}
+                <div className="ratio-tooltip-row">
+                  <span className="ratio-tooltip-square" style={{ backgroundColor: secondaryColor }}></span>
+                  <span className="ratio-tooltip-label">{secondaryLabel}</span>
+                  <strong className="ratio-tooltip-val">
+                    {formatPercent(val2)}
+                  </strong>
+                </div>
+                {diffDisplay && diffDisplay !== '-' && (
+                  <>
+                    <div className="ratio-tooltip-divider" />
+                    <div className="ratio-tooltip-row">
+                      <span className="ratio-tooltip-label">Chênh lệch điểm %:</span>
+                      <strong className={`ratio-tooltip-val ${isPositive ? 'diff-positive' : 'diff-negative'}`}>
+                        {diffDisplay}
+                      </strong>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
         </div>
 
       {onOpenDetail && (
@@ -641,21 +750,6 @@ export default function YearComparisonChart({
           </div>
         </div>
 
-        <div className="clean-filter-item">
-          <span className="clean-filter-label">Kỳ lũy kế</span>
-          <div className="clean-select-wrapper">
-            <select
-              className="clean-filter-select"
-              value={selectedCumulativeMonth}
-              onChange={(e) => setSelectedCumulativeMonth && setSelectedCumulativeMonth(e.target.value)}
-            >
-              {CUMULATIVE_MONTH_OPTIONS.map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-            <ChevronDown size={14} className="clean-select-chevron" />
-          </div>
-        </div>
       </div>
 
       {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 10 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH LŨY KẾ NĂM */}
@@ -668,7 +762,7 @@ export default function YearComparisonChart({
           data={chart10Values}
           maxVal={3500}
           yTicks={[0, 500, 1000, 1500, 2000, 2500, 3000, 3500]}
-          rateLabel="Tỷ lệ (%)"
+          rateLabel="% HTKH"
           hoveredItem={hoveredC10Val}
           setHoveredItem={setHoveredC10Val}
           isVisible={visibleCards.c10Val}
@@ -684,6 +778,8 @@ export default function YearComparisonChart({
           tag="Hàng 1 - Khu 2"
           primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
           secondaryLegend={`KH LK ${shortCode}/${selectedYear}`}
+          tooltipPrimaryLabel={`TH LK ${shortCode}/${selectedYear}`}
+          tooltipSecondaryLabel={`KH LK ${shortCode}/${selectedYear}`}
           data={chart10Ratios}
           maxVal={100}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
@@ -708,7 +804,7 @@ export default function YearComparisonChart({
           data={chart11Values}
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
-          rateLabel="Tỷ lệ (%)"
+          rateLabel="% HTKH"
           hoveredItem={hoveredC11Val}
           setHoveredItem={setHoveredC11Val}
           isVisible={visibleCards.c11Val}
@@ -724,6 +820,8 @@ export default function YearComparisonChart({
           tag="Hàng 2 - Khu 2"
           primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
           secondaryLegend={`KH ${selectedYear}`}
+          tooltipPrimaryLabel={`TH LK ${shortCode}/${selectedYear}`}
+          tooltipSecondaryLabel={`KH ${selectedYear}`}
           data={chart11Ratios}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
@@ -743,13 +841,13 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
           tag="Hàng 3 - Khu 1"
-          primaryLegend={`Ước ${selectedYear}`}
-          secondaryLegend="KH"
+          primaryLegend={`Ước TH ${selectedYear}`}
+          secondaryLegend={`KH ${selectedYear}`}
           data={chart12Values}
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
           unitLabel="Tỷ đồng"
-          rateLabel="Tỷ lệ (%)"
+          rateLabel="% HTKH"
           hoveredItem={hoveredC12Val}
           setHoveredItem={setHoveredC12Val}
           isVisible={visibleCards.c12Val}
@@ -763,8 +861,10 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
           tag="Hàng 3 - Khu 2"
-          primaryLegend={`Ước ${selectedYear}`}
-          secondaryLegend="KH"
+          primaryLegend={`Ước TH ${selectedYear}`}
+          secondaryLegend={`KH ${selectedYear}`}
+          tooltipPrimaryLabel={`Ước TH ${selectedYear}`}
+          tooltipSecondaryLabel={`KH ${selectedYear}`}
           data={chart12Ratios}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
@@ -784,13 +884,13 @@ export default function YearComparisonChart({
         <YearValueCard
           title={`Ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`}
           tag="Hàng 4 - Khu 1"
-          primaryLegend={`Ước ${selectedYear}`}
+          primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`TH ${prevYear}`}
           data={chart13Values}
           maxVal={5000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000]}
           unitLabel="Tỷ đồng"
-          rateLabel={`% so với TH ${prevYear}`}
+          rateLabel="% Delta"
           hoveredItem={hoveredC13Val}
           setHoveredItem={setHoveredC13Val}
           isVisible={visibleCards.c13Val}
@@ -804,8 +904,10 @@ export default function YearComparisonChart({
         <YearRatioCard
           title={`Tỷ suất / tỷ trọng ước kết quả năm ${selectedYear} so với kết quả năm ${prevYear}`}
           tag="Hàng 4 - Khu 2"
-          primaryLegend={`Ước ${selectedYear}`}
+          primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`TH ${prevYear}`}
+          tooltipPrimaryLabel={`Ước TH ${selectedYear}`}
+          tooltipSecondaryLabel={`TH ${prevYear}`}
           data={chart13Ratios}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}

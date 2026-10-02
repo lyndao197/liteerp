@@ -232,6 +232,11 @@ function UnitPlanSubcard({
   const items = data.items || [];
   const xTicks = data.xTicks || [];
 
+  const primaryLegendStr = String(data.primaryLegend || 'TH');
+  const secondaryLegendStr = String(data.secondaryLegend || 'KH');
+  const secondLegendOffset = primaryLegendStr.length > 10 ? 115 : (primaryLegendStr.length > 7 ? 95 : 75);
+  const legendTranslateX = (primaryLegendStr.length > 10 || secondaryLegendStr.length > 10) ? (chartRight - 200) : (chartRight - 150);
+
   return (
     <div className="month-subcard spdv-card-item">
       <div className="month-subcard-header">
@@ -244,15 +249,15 @@ function UnitPlanSubcard({
       <div className="month-subcard-svg-wrap" style={{ position: 'relative' }}>
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg" onMouseLeave={() => setHoveredUnit(null)}>
             {/* Top Legend */}
-            <g transform={`translate(${chartRight - 150}, 8)`}>
+            <g transform={`translate(${legendTranslateX}, 8)`}>
               <rect x={0} y={1} width={12} height={9} fill="#e11d48" rx={1.5} />
               <text x={16} y={9} style={{ fontSize: '11px', fontWeight: '600', fill: '#1e293b' }}>
-                {data.primaryLegend}
+                {primaryLegendStr}
               </text>
 
-              <rect x={75} y={1} width={12} height={9} fill="#94a3b8" rx={1.5} />
-              <text x={91} y={9} style={{ fontSize: '11px', fontWeight: '600', fill: '#64748b' }}>
-                {data.secondaryLegend}
+              <rect x={secondLegendOffset} y={1} width={12} height={9} fill="#94a3b8" rx={1.5} />
+              <text x={secondLegendOffset + 16} y={9} style={{ fontSize: '11px', fontWeight: '600', fill: '#64748b' }}>
+                {secondaryLegendStr}
               </text>
             </g>
 
@@ -381,15 +386,22 @@ function UnitPlanSubcard({
                 {hoveredUnit.name}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#e11d48', fontWeight: '600' }}>{data.primaryLegend}:</span>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'KH'}:</span>
+                <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.kh} Triệu đồng</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ color: '#e11d48', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.th} Triệu đồng</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend}:</span>
-                <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.kh} Triệu đồng</span>
+                <span>+/- so KH:</span>
+                <strong style={{ color: hoveredUnit.th >= hoveredUnit.kh ? '#16a34a' : '#dc2626' }}>
+                  {(hoveredUnit.th - hoveredUnit.kh) > 0 ? '+' : ''}
+                  {(hoveredUnit.th - hoveredUnit.kh).toFixed(1)} Triệu đồng
+                </strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>Tỷ lệ (%):</span>
+                <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
                 <span style={{ fontWeight: '700', color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredUnit.rate}</span>
               </div>
             </div>

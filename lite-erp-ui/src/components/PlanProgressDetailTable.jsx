@@ -21,7 +21,7 @@ export default function PlanProgressDetailTable({
 }) {
   const monthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
   const quarterNum = Math.ceil(monthNum / 3);
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNum - 1] || 'III';
+  const quarterRoman = `${quarterNum}`;
   const quarterStartMonth = (quarterNum - 1) * 3 + 1;
   const quarterCumText = quarterStartMonth === monthNum
     ? `T${quarterStartMonth}`
@@ -325,19 +325,19 @@ export default function PlanProgressDetailTable({
                 <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th style={{ textAlign: 'left', minWidth: '240px' }}>Chỉ tiêu cơ cấu doanh thu</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>Đơn vị</th>
-                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.kh}</th>
                 <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.th}</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.kh}</th>
                 <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>+/- so KH</th>
                 <th style={{ width: '135px', textAlign: 'center', fontWeight: '700' }}>% HTKH</th>
                 <th style={{ width: '130px', textAlign: 'center' }}>
                   <div className="spdv-th-two-line">
-                    <span className="spdv-th-main">{currentPeriodColLabels.khShare}</span>
+                    <span className="spdv-th-main">{currentPeriodColLabels.thShare}</span>
                     <span className="spdv-th-sub">% cơ cấu</span>
                   </div>
                 </th>
                 <th style={{ width: '130px', textAlign: 'center' }}>
                   <div className="spdv-th-two-line">
-                    <span className="spdv-th-main">{currentPeriodColLabels.thShare}</span>
+                    <span className="spdv-th-main">{currentPeriodColLabels.khShare}</span>
                     <span className="spdv-th-sub">% cơ cấu</span>
                   </div>
                 </th>
@@ -365,11 +365,11 @@ export default function PlanProgressDetailTable({
                     <td style={{ textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
                       Triệu đồng
                     </td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatNum(row.kh)}
-                    </td>
                     <td className="spdv-td-num font-bold" style={{ color: '#0f172a' }}>
                       {formatNum(row.th)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
+                      {formatNum(row.kh)}
                     </td>
                     <td className="spdv-td-num">
                       <span className={`spdv-diff-val ${row.diff >= 0 ? 'positive' : 'negative'}`}>
@@ -381,11 +381,11 @@ export default function PlanProgressDetailTable({
                         {row.rate.toFixed(1).replace('.', ',')}%
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center', color: '#475569', fontWeight: '500' }}>
-                      {row.khShare}
-                    </td>
                     <td style={{ textAlign: 'center', color: '#0f172a', fontWeight: '600' }}>
                       {row.thShare}
+                    </td>
+                    <td style={{ textAlign: 'center', color: '#475569', fontWeight: '500' }}>
+                      {row.khShare}
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <span className={`spdv-badge ${isPass ? 'pass' : 'fail'}`}>
@@ -401,8 +401,8 @@ export default function PlanProgressDetailTable({
                 <td style={{ textAlign: 'center', color: '#64748b' }}>Σ</td>
                 <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu (B25 & B26)</td>
                 <td style={{ textAlign: 'center', color: '#64748b' }}>Triệu đồng</td>
-                <td style={{ textAlign: 'right', color: '#1e293b' }}>{formatNum(periodData.inExTotal.kh)}</td>
                 <td style={{ textAlign: 'right', color: '#0f172a' }}>{formatNum(periodData.inExTotal.th)}</td>
+                <td style={{ textAlign: 'right', color: '#1e293b' }}>{formatNum(periodData.inExTotal.kh)}</td>
                 <td style={{ textAlign: 'right' }}>
                   <span className={`spdv-diff-val ${periodData.inExTotal.diff >= 0 ? 'positive' : 'negative'}`}>
                     {periodData.inExTotal.diff >= 0 ? `+${formatNum(periodData.inExTotal.diff)}` : formatNum(periodData.inExTotal.diff)}
@@ -443,11 +443,11 @@ export default function PlanProgressDetailTable({
                     <td style={{ textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
                       Triệu đồng
                     </td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatNum(row.kh)}
-                    </td>
                     <td className="spdv-td-num font-bold" style={{ color: '#0f172a' }}>
                       {formatNum(row.th)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
+                      {formatNum(row.kh)}
                     </td>
                     <td className="spdv-td-num">
                       <span className={`spdv-diff-val ${row.diff >= 0 ? 'positive' : 'negative'}`}>
@@ -459,11 +459,11 @@ export default function PlanProgressDetailTable({
                         {row.rate.toFixed(1).replace('.', ',')}%
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center', color: '#475569', fontWeight: '500' }}>
-                      {row.khShare}
-                    </td>
                     <td style={{ textAlign: 'center', color: '#0f172a', fontWeight: '600' }}>
                       {row.thShare}
+                    </td>
+                    <td style={{ textAlign: 'center', color: '#475569', fontWeight: '500' }}>
+                      {row.khShare}
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <span className={`spdv-badge ${isPass ? 'pass' : 'fail'}`}>
@@ -479,8 +479,8 @@ export default function PlanProgressDetailTable({
                 <td style={{ textAlign: 'center', color: '#64748b' }}>Σ</td>
                 <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu (B27 & B28)</td>
                 <td style={{ textAlign: 'center', color: '#64748b' }}>Triệu đồng</td>
-                <td style={{ textAlign: 'right', color: '#1e293b' }}>{formatNum(periodData.domIntlTotal.kh)}</td>
                 <td style={{ textAlign: 'right', color: '#0f172a' }}>{formatNum(periodData.domIntlTotal.th)}</td>
+                <td style={{ textAlign: 'right', color: '#1e293b' }}>{formatNum(periodData.domIntlTotal.kh)}</td>
                 <td style={{ textAlign: 'right' }}>
                   <span className={`spdv-diff-val ${periodData.domIntlTotal.diff >= 0 ? 'positive' : 'negative'}`}>
                     {periodData.domIntlTotal.diff >= 0 ? `+${formatNum(periodData.domIntlTotal.diff)}` : formatNum(periodData.domIntlTotal.diff)}
@@ -524,20 +524,20 @@ export default function PlanProgressDetailTable({
               </tr>
               <tr className="spdv-th-sub-row">
                 {/* Tháng */}
-                <th className="spdv-th-col spdv-border-left">KH T{monthNum}/{selectedYear}</th>
-                <th className="spdv-th-col">TH T{monthNum}/{selectedYear}</th>
+                <th className="spdv-th-col spdv-border-left">TH T{monthNum}/{selectedYear}</th>
+                <th className="spdv-th-col">KH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
 
                 {/* Quý */}
-                <th className="spdv-th-col spdv-border-left">KH Q{quarterRoman}/{selectedYear}</th>
-                <th className="spdv-th-col">TH LK Q{quarterRoman}/{selectedYear}</th>
+                <th className="spdv-th-col spdv-border-left">TH LK Q{quarterRoman}/{selectedYear}</th>
+                <th className="spdv-th-col">KH Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
 
                 {/* Năm */}
-                <th className="spdv-th-col spdv-border-left">KH Năm {selectedYear}</th>
-                <th className="spdv-th-col">TH LK Năm {selectedYear}</th>
+                <th className="spdv-th-col spdv-border-left">TH LK Năm {selectedYear}</th>
+                <th className="spdv-th-col">KH Năm {selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
               </tr>
@@ -560,20 +560,20 @@ export default function PlanProgressDetailTable({
                     </td>
 
                     {/* Tháng */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(mRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(mRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(mRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(mRow.kh)}</td>
                     <td className="spdv-td-share">{mRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{mRow.rate.toFixed(1).replace('.', ',')}%</td>
 
                     {/* Quý */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(qRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(qRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(qRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(qRow.kh)}</td>
                     <td className="spdv-td-share">{qRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{qRow.rate.toFixed(1).replace('.', ',')}%</td>
 
                     {/* Năm */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(yRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(yRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(yRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(yRow.kh)}</td>
                     <td className="spdv-td-share">{yRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{yRow.rate.toFixed(1).replace('.', ',')}%</td>
                   </tr>
@@ -583,18 +583,18 @@ export default function PlanProgressDetailTable({
               <tr style={{ backgroundColor: '#f1f5f9', fontWeight: '700' }}>
                 <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu</td>
                 {/* Tháng */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.month.inExTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.month.inExTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.month.inExTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.month.inExTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.month.inExTotal.rate.toFixed(1).replace('.', ',')}%</td>
                 {/* Quý */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.quarter.inExTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.quarter.inExTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.quarter.inExTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.quarter.inExTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.quarter.inExTotal.rate.toFixed(1).replace('.', ',')}%</td>
                 {/* Năm */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.year.inExTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.year.inExTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.year.inExTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.year.inExTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.year.inExTotal.rate.toFixed(1).replace('.', ',')}%</td>
               </tr>
@@ -616,20 +616,20 @@ export default function PlanProgressDetailTable({
                     </td>
 
                     {/* Tháng */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(mRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(mRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(mRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(mRow.kh)}</td>
                     <td className="spdv-td-share">{mRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{mRow.rate.toFixed(1).replace('.', ',')}%</td>
 
                     {/* Quý */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(qRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(qRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(qRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(qRow.kh)}</td>
                     <td className="spdv-td-share">{qRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{qRow.rate.toFixed(1).replace('.', ',')}%</td>
 
                     {/* Năm */}
-                    <td className="spdv-td-num spdv-border-left">{formatNum(yRow.kh)}</td>
-                    <td className="spdv-td-num font-semibold">{formatNum(yRow.th)}</td>
+                    <td className="spdv-td-num spdv-border-left font-semibold">{formatNum(yRow.th)}</td>
+                    <td className="spdv-td-num">{formatNum(yRow.kh)}</td>
                     <td className="spdv-td-share">{yRow.thShare}</td>
                     <td className="spdv-td-share font-semibold">{yRow.rate.toFixed(1).replace('.', ',')}%</td>
                   </tr>
@@ -639,18 +639,18 @@ export default function PlanProgressDetailTable({
               <tr style={{ backgroundColor: '#f1f5f9', fontWeight: '700' }}>
                 <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu</td>
                 {/* Tháng */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.month.domIntlTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.month.domIntlTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.month.domIntlTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.month.domIntlTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.month.domIntlTotal.rate.toFixed(1).replace('.', ',')}%</td>
                 {/* Quý */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.quarter.domIntlTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.quarter.domIntlTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.quarter.domIntlTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.quarter.domIntlTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.quarter.domIntlTotal.rate.toFixed(1).replace('.', ',')}%</td>
                 {/* Năm */}
-                <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.year.domIntlTotal.kh)}</td>
-                <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.year.domIntlTotal.th)}</td>
+                <td className="spdv-td-num spdv-border-left font-bold">{formatNum(summary3PeriodsData.year.domIntlTotal.th)}</td>
+                <td className="spdv-td-num">{formatNum(summary3PeriodsData.year.domIntlTotal.kh)}</td>
                 <td className="spdv-td-share font-bold">100,0%</td>
                 <td className="spdv-td-share font-bold">{summary3PeriodsData.year.domIntlTotal.rate.toFixed(1).replace('.', ',')}%</td>
               </tr>

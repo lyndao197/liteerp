@@ -8,7 +8,6 @@ import {
   DOMESTIC_INTERNATIONAL_CATEGORIES,
   DOMESTIC_INTERNATIONAL_DATA
 } from '../data/revenueInternalExternalData';
-import PlanProgressDetailTable from './PlanProgressDetailTable';
 import InternalExternalDetailTable from './InternalExternalDetailTable';
 import DomesticInternationalDetailTable from './DomesticInternationalDetailTable';
 import PlanCompletionRateChart, { ExternalPlanCompletionRateChart, InternationalPlanCompletionRateChart } from './PlanCompletionRateChart';
@@ -387,7 +386,7 @@ export default function InternalExternalRevenueChart({
   // Calculate Quarter and Cumulative texts based on activeMonth
   const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
   const quarterNumber = Math.ceil(monthNum / 3);
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNumber - 1];
+  const quarterRoman = `${quarterNumber}`;
   const startMonthOfQuarter = (quarterNumber - 1) * 3 + 1;
 
   // Formatted subcard titles exactly matching user mockup
@@ -928,14 +927,6 @@ export default function InternalExternalRevenueChart({
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}
         onOpenDetail={onOpenDetail}
-      />
-
-      {/* ========================================================
-          BẢNG MÔ TẢ ĐẦY ĐỦ SỐ LIỆU NHÓM BIỂU ĐỒ SỐ 7 (B25 – B28)
-          ======================================================== */}
-      <PlanProgressDetailTable
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
       />
     </div>
   );

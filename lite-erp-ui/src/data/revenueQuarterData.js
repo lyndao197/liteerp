@@ -1,7 +1,7 @@
 // Data definitions for QuarterComparisonChart (Phân tích theo quý)
 // Excludes Lợi nhuận trước thuế and Tỷ suất LNTT
 
-export const QUARTER_OPTIONS = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'];
+export const QUARTER_OPTIONS = ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'];
 
 export const QUARTER_CUMULATIVE_DATA = {
   'Quý I': {
@@ -145,7 +145,7 @@ export const QUARTER_PREV_DATA = {
   'Quý I': {
     quarterCode: 'Q1',
     prevQuarterCode: 'Q4',
-    prevQuarterName: 'Quý IV',
+    prevQuarterName: 'Quý 4',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1026.1, thPrev: 1060.0, rate: '96,8%', isRatePositive: false, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 335.5, thPrev: 345.0, rate: '97,2%', isRatePositive: false, unit: 'Triệu đồng' },
@@ -162,7 +162,7 @@ export const QUARTER_PREV_DATA = {
   'Quý II': {
     quarterCode: 'Q2',
     prevQuarterCode: 'Q1',
-    prevQuarterName: 'Quý I',
+    prevQuarterName: 'Quý 1',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1179.6, thPrev: 1026.1, rate: '115,0%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 381.4, thPrev: 335.5, rate: '113,7%', isRatePositive: true, unit: 'Triệu đồng' },
@@ -179,7 +179,7 @@ export const QUARTER_PREV_DATA = {
   'Quý III': {
     quarterCode: 'Q3',
     prevQuarterCode: 'Q2',
-    prevQuarterName: 'Quý II',
+    prevQuarterName: 'Quý 2',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1162.5, thPrev: 1210.4, rate: '96,0%', isRatePositive: false, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 375.0, thPrev: 387.2, rate: '96,8%', isRatePositive: false, unit: 'Triệu đồng' },
@@ -196,7 +196,7 @@ export const QUARTER_PREV_DATA = {
   'Quý IV': {
     quarterCode: 'Q4',
     prevQuarterCode: 'Q3',
-    prevQuarterName: 'Quý III',
+    prevQuarterName: 'Quý 3',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1326.2, thPrev: 1210.4, rate: '109,6%', isRatePositive: true, unit: 'Triệu đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 426.6, thPrev: 387.2, rate: '110,2%', isRatePositive: true, unit: 'Triệu đồng' },
@@ -283,7 +283,7 @@ export const QUARTER_NEXT_PLAN_DATA = {
   'Quý I': {
     quarterCode: 'Q1',
     nextQuarterCode: 'Q2',
-    nextQuarterName: 'Quý II',
+    nextQuarterName: 'Quý 2',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1026.1, khNext: 1185.0, rate: '86,6%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 335.5, khNext: 375.0, rate: '89,5%', isRatePositive: false, unit: 'Tỷ đồng' },
@@ -300,7 +300,7 @@ export const QUARTER_NEXT_PLAN_DATA = {
   'Quý II': {
     quarterCode: 'Q2',
     nextQuarterCode: 'Q3',
-    nextQuarterName: 'Quý III',
+    nextQuarterName: 'Quý 3',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1179.6, khNext: 1246.0, rate: '94,7%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 381.4, khNext: 373.8, rate: '102,0%', isRatePositive: true, unit: 'Tỷ đồng' },
@@ -317,7 +317,7 @@ export const QUARTER_NEXT_PLAN_DATA = {
   'Quý III': {
     quarterCode: 'Q3',
     nextQuarterCode: 'Q4',
-    nextQuarterName: 'Quý IV',
+    nextQuarterName: 'Quý 4',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1162.5, khNext: 1498.6, rate: '77,6%', isRatePositive: false, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 375.0, khNext: 449.5, rate: '83,4%', isRatePositive: false, unit: 'Tỷ đồng' },
@@ -334,7 +334,7 @@ export const QUARTER_NEXT_PLAN_DATA = {
   'Quý IV': {
     quarterCode: 'Q4',
     nextQuarterCode: 'Q1',
-    nextQuarterName: 'Quý I',
+    nextQuarterName: 'Quý 1',
     values: [
       { id: 'total', name: 'Tổng doanh thu', lines: ['Tổng doanh thu'], uoc: 1326.2, khNext: 1100.0, rate: '120,6%', isRatePositive: true, unit: 'Tỷ đồng' },
       { id: 'internal', name: 'DT nội bộ', lines: ['DT nội bộ'], uoc: 426.6, khNext: 345.0, rate: '123,7%', isRatePositive: true, unit: 'Tỷ đồng' },
@@ -349,3 +349,14 @@ export const QUARTER_NEXT_PLAN_DATA = {
     ]
   }
 };
+
+// Aliases for Arabic quarters (Quý 1, Quý 2, Quý 3, Quý 4) to Roman keys
+['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'].forEach((q, idx) => {
+  const roman = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][idx];
+  if (QUARTER_CUMULATIVE_DATA[roman]) QUARTER_CUMULATIVE_DATA[q] = QUARTER_CUMULATIVE_DATA[roman];
+  if (QUARTER_ESTIMATE_DATA[roman]) QUARTER_ESTIMATE_DATA[q] = QUARTER_ESTIMATE_DATA[roman];
+  if (QUARTER_PREV_DATA[roman]) QUARTER_PREV_DATA[q] = QUARTER_PREV_DATA[roman];
+  if (QUARTER_SAME_PERIOD_DATA[roman]) QUARTER_SAME_PERIOD_DATA[q] = QUARTER_SAME_PERIOD_DATA[roman];
+  if (QUARTER_NEXT_PLAN_DATA[roman]) QUARTER_NEXT_PLAN_DATA[q] = QUARTER_NEXT_PLAN_DATA[roman];
+});
+

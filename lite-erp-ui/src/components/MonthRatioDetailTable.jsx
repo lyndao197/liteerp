@@ -56,7 +56,7 @@ export default function MonthRatioDetailTable({
   branchId = 'month',
   selectedYear = '2026',
   selectedMonth = 'Tháng 8',
-  selectedQuarter = 'Quý III',
+  selectedQuarter = 'Quý 3',
   selectedCumulativeMonth = 'Lũy kế 8 tháng',
   activeChartKey = 'chart1_rat',
   title = null,
@@ -99,7 +99,10 @@ export default function MonthRatioDetailTable({
   const nextYear = monthNum === 12 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
 
   // Quarter codes
-  const qNum = selectedQuarter?.includes('IV') ? 4 : selectedQuarter?.includes('III') ? 3 : selectedQuarter?.includes('II') ? 2 : 1;
+  const qNum = (selectedQuarter?.includes('4') || selectedQuarter?.includes('IV')) ? 4
+    : (selectedQuarter?.includes('3') || selectedQuarter?.includes('III')) ? 3
+    : (selectedQuarter?.includes('2') || selectedQuarter?.includes('II')) ? 2
+    : 1;
   const qCode = `Q${qNum}`;
   const prevQNum = qNum === 1 ? 4 : qNum - 1;
   const prevQCode = `Q${prevQNum}`;
@@ -287,15 +290,6 @@ export default function MonthRatioDetailTable({
             diff: '-1,8 đ.%'
           },
           {
-            id: 'cost',
-            name: 'Tổng chi phí',
-            th: 859.7,
-            kh: 850.8,
-            thShare: '90,3%',
-            khShare: '90,2%',
-            diff: '+0,1 đ.%'
-          },
-          {
             id: 'profit',
             name: 'Lợi nhuận trước thuế',
             th: 92.3,
@@ -338,13 +332,6 @@ export default function MonthRatioDetailTable({
       const profTh = getPrimaryVal(profitVal);
       const profKh = getSecondaryVal(profitVal);
 
-      const costTh = Number((totTh - profTh).toFixed(1));
-      const costKh = Number((totKh - profKh).toFixed(1));
-      const costThShareNum = totTh > 0 ? Number(((costTh / totTh) * 100).toFixed(1)) : 90.3;
-      const costKhShareNum = totKh > 0 ? Number(((costKh / totKh) * 100).toFixed(1)) : 90.2;
-      const costDiffNum = Number((costThShareNum - costKhShareNum).toFixed(1));
-      const costDiffStr = `${costDiffNum >= 0 ? '+' : ''}${costDiffNum.toFixed(1).replace('.', ',')} đ.%`;
-
       return [
         {
           id: 'external',
@@ -363,15 +350,6 @@ export default function MonthRatioDetailTable({
           thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
           khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
           diff: globRat?.diff || '—'
-        },
-        {
-          id: 'cost',
-          name: 'Tổng chi phí',
-          th: costTh,
-          kh: costKh,
-          thShare: `${formatNum(costThShareNum)}%`,
-          khShare: `${formatNum(costKhShareNum)}%`,
-          diff: costDiffStr
         },
         {
           id: 'profit',
@@ -419,13 +397,6 @@ export default function MonthRatioDetailTable({
       const profTh = getPrimaryVal(profitVal);
       const profKh = getSecondaryVal(profitVal);
 
-      const costTh = Number((totTh - profTh).toFixed(1));
-      const costKh = Number((totKh - profKh).toFixed(1));
-      const costThShareNum = totTh > 0 ? Number(((costTh / totTh) * 100).toFixed(1)) : 90.3;
-      const costKhShareNum = totKh > 0 ? Number(((costKh / totKh) * 100).toFixed(1)) : 90.2;
-      const costDiffNum = Number((costThShareNum - costKhShareNum).toFixed(1));
-      const costDiffStr = `${costDiffNum >= 0 ? '+' : ''}${costDiffNum.toFixed(1).replace('.', ',')} đ.%`;
-
       return [
         {
           id: 'external',
@@ -444,15 +415,6 @@ export default function MonthRatioDetailTable({
           thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
           khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
           diff: globRat?.diff || '—'
-        },
-        {
-          id: 'cost',
-          name: 'Tổng chi phí',
-          th: costTh,
-          kh: costKh,
-          thShare: `${formatNum(costThShareNum)}%`,
-          khShare: `${formatNum(costKhShareNum)}%`,
-          diff: costDiffStr
         },
         {
           id: 'profit',
@@ -499,13 +461,6 @@ export default function MonthRatioDetailTable({
       const profTh = getPrimaryVal(profitVal);
       const profKh = getSecondaryVal(profitVal);
 
-      const costTh = Number((totTh - profTh).toFixed(1));
-      const costKh = Number((totKh - profKh).toFixed(1));
-      const costThShareNum = totTh > 0 ? Number(((costTh / totTh) * 100).toFixed(1)) : 90.3;
-      const costKhShareNum = totKh > 0 ? Number(((costKh / totKh) * 100).toFixed(1)) : 90.2;
-      const costDiffNum = Number((costThShareNum - costKhShareNum).toFixed(1));
-      const costDiffStr = `${costDiffNum >= 0 ? '+' : ''}${costDiffNum.toFixed(1).replace('.', ',')} đ.%`;
-
       return [
         {
           id: 'external',
@@ -524,15 +479,6 @@ export default function MonthRatioDetailTable({
           thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
           khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
           diff: globRat?.diff || '—'
-        },
-        {
-          id: 'cost',
-          name: 'Tổng chi phí',
-          th: costTh,
-          kh: costKh,
-          thShare: `${formatNum(costThShareNum)}%`,
-          khShare: `${formatNum(costKhShareNum)}%`,
-          diff: costDiffStr
         },
         {
           id: 'profit',

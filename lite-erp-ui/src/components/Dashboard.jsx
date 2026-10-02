@@ -24,7 +24,7 @@ import RevenueChartDetailView from './RevenueChartDetailView';
 import './Dashboard.css';
 
 const YEAR_OPTIONS = ['2026', '2025', '2024'];
-const QUARTER_OPTIONS = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'];
+const QUARTER_OPTIONS = ['Quý 1', 'Quý 2', 'Quý 3', 'Quý 4'];
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`);
 
 // 12-month full dataset for Item 10: Xu thế tổng doanh thu
@@ -128,7 +128,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         vsLastYear: { value: 25.6, percent: 7.0, isUp: true },
         table: [
           { period: 'T8/2026', actual: 389.9, plan: 414.0, rate: 94.2, growth: 7.0, isUp: true },
-          { period: 'Quý III', actual: 775.0, plan: 1246.0, rate: 62.2, growth: 8.7, isUp: true },
+          { period: 'Quý 3', actual: 775.0, plan: 1246.0, rate: 62.2, growth: 8.7, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 2976.3, plan: 3043.1, rate: 97.8, growth: 12.8, isUp: true },
           { period: 'Năm 2026', actual: 2976.3, plan: 4968.1, rate: 59.9, growth: null, isUp: null }
         ]
@@ -141,7 +141,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         vsLastYear: { value: 4.3, percent: 3.5, isUp: true },
         table: [
           { period: 'T8/2026', actual: 127.2, plan: 124.2, rate: 102.4, growth: 3.5, isUp: true },
-          { period: 'Quý III', actual: 250.0, plan: 373.8, rate: 66.9, growth: 4.2, isUp: true },
+          { period: 'Quý 3', actual: 250.0, plan: 373.8, rate: 66.9, growth: 4.2, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 953.5, plan: 912.9, rate: 104.4, growth: 6.8, isUp: true },
           { period: 'Năm 2026', actual: 953.5, plan: 1490.4, rate: 64.0, growth: null, isUp: null }
         ]
@@ -154,7 +154,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         vsLastYear: { value: 21.3, percent: 8.8, isUp: true },
         table: [
           { period: 'T8/2026', actual: 262.7, plan: 289.8, rate: 90.6, growth: 8.8, isUp: true },
-          { period: 'Quý III', actual: 525.0, plan: 872.2, rate: 60.2, growth: 11.6, isUp: true },
+          { period: 'Quý 3', actual: 525.0, plan: 872.2, rate: 60.2, growth: 11.6, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 2022.8, plan: 2130.2, rate: 95.0, growth: 17.5, isUp: true },
           { period: 'Năm 2026', actual: 2022.8, plan: 3477.7, rate: 58.2, growth: null, isUp: null }
         ]
@@ -167,7 +167,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         vsLastYear: { value: 19.0, percent: 5.8, isUp: true },
         table: [
           { period: 'T8/2026', actual: 347.1, plan: 369.0, rate: 94.1, growth: 5.8, isUp: true },
-          { period: 'Quý III', actual: 692.9, plan: 1096.5, rate: 63.2, growth: 7.8, isUp: true },
+          { period: 'Quý 3', actual: 692.9, plan: 1096.5, rate: 63.2, growth: 7.8, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 2663.8, plan: 2713.1, rate: 98.2, growth: 12.0, isUp: true },
           { period: 'Năm 2026', actual: 2663.8, plan: 4421.6, rate: 60.2, growth: null, isUp: null }
         ]
@@ -178,7 +178,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         rate: 95.1,
         table: [
           { period: 'T8/2026', actual: 42.8, plan: 45.0, rate: 95.1, growth: 18.2, isUp: true },
-          { period: 'Quý III', actual: 82.1, plan: 149.5, rate: 54.9, growth: 16.5, isUp: true },
+          { period: 'Quý 3', actual: 82.1, plan: 149.5, rate: 54.9, growth: 16.5, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 312.5, plan: 330.0, rate: 94.7, growth: 19.4, isUp: true },
           { period: 'Năm 2026', actual: 312.5, plan: 546.5, rate: 57.2, growth: null, isUp: null }
         ]
@@ -191,7 +191,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         vsLastYear: { value: 182, percent: 17.1, isUp: true },
         table: [
           { period: 'T8/2026', actual: 1248, plan: 1170, rate: 106.7, growth: 17.1, isUp: true },
-          { period: 'Quý III', actual: 2450, plan: 3510, rate: 69.8, growth: 15.5, isUp: true },
+          { period: 'Quý 3', actual: 2450, plan: 3510, rate: 69.8, growth: 15.5, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 9480, plan: 8775, rate: 108.0, growth: 18.2, isUp: true },
           { period: 'Năm 2026', actual: 9480, plan: 14040, rate: 67.5, growth: null, isUp: null }
         ]
@@ -202,7 +202,7 @@ const MONTHLY_EXECUTIVE_DATA = {
         rate: 104.4,
         table: [
           { period: 'T8/2026', actual: 856, plan: 820, rate: 104.4, growth: 15.4, isUp: true },
-          { period: 'Quý III', actual: 1680, plan: 2460, rate: 68.3, growth: 14.2, isUp: true },
+          { period: 'Quý 3', actual: 1680, plan: 2460, rate: 68.3, growth: 14.2, isUp: true },
           { period: 'Luỹ kế năm 2026', actual: 6420, plan: 6150, rate: 104.4, growth: 16.0, isUp: true },
           { period: 'Năm 2026', actual: 6420, plan: 9840, rate: 65.2, growth: null, isUp: null }
         ]
@@ -567,7 +567,7 @@ function getProfitTaxDetails(m, y, activePeriod) {
   const isT8 = m === 8 && y === '2026';
   const table = [
     { period: isT8 ? 'T8/2026' : `T${m}/${y}`, type: 'Tháng', actual: isT8 ? '39,0' : (39.0 * (0.88 + (m % 4) * 0.06)).toFixed(1).replace('.', ','), plan: isT8 ? '42,0' : (42.0 * (0.9 + (m % 3) * 0.05)).toFixed(1).replace('.', ','), rate: isT8 ? '92,9%' : '92,9%', rateNum: 92.9 },
-    { period: 'Quý III', type: 'Quý', actual: isT8 ? '76,0' : (76.0 * (0.9 + (m % 3) * 0.05)).toFixed(1).replace('.', ','), plan: isT8 ? '118,0' : '118,0', rate: isT8 ? '64,4%' : '64,4%', rateNum: 64.4 },
+    { period: 'Quý 3', type: 'Quý', actual: isT8 ? '76,0' : (76.0 * (0.9 + (m % 3) * 0.05)).toFixed(1).replace('.', ','), plan: isT8 ? '118,0' : '118,0', rate: isT8 ? '64,4%' : '64,4%', rateNum: 64.4 },
     { period: isT8 ? 'Luỹ kế năm 2026' : `Luỹ kế năm ${y}`, type: 'LK', actual: isT8 ? '285,0' : (39.0 * m * 0.91).toFixed(1).replace('.', ','), plan: isT8 ? '310,0' : (42.0 * m * 0.92).toFixed(1).replace('.', ','), rate: isT8 ? '91,9%' : '91,9%', rateNum: 91.9 },
     { period: `Năm ${y}`, type: 'Năm', actual: isT8 ? '285,0' : (39.0 * m * 0.91).toFixed(1).replace('.', ','), plan: '520,0', rate: isT8 ? '54,8%' : '54,8%', rateNum: 54.8 }
   ];
@@ -590,7 +590,7 @@ function getProfitMarginDetails(m, y, activePeriod) {
   const isT8 = m === 8 && y === '2026';
   const table = [
     { period: isT8 ? 'T8/2026' : `T${m}/${y}`, type: 'Tháng', actual: '10,0%', plan: '10,1%', rate: '99,0%', rateNum: 99.0 },
-    { period: 'Quý III', type: 'Quý', actual: '9,8%', plan: '9,5%', rate: '103,2%', rateNum: 103.2 },
+    { period: 'Quý 3', type: 'Quý', actual: '9,8%', plan: '9,5%', rate: '103,2%', rateNum: 103.2 },
     { period: isT8 ? 'Luỹ kế năm 2026' : `Luỹ kế năm ${y}`, type: 'LK', actual: '9,6%', plan: '10,2%', rate: '94,1%', rateNum: 94.1 },
     { period: `Năm ${y}`, type: 'Năm', actual: '9,6%', plan: '10,5%', rate: '91,4%', rateNum: 91.4 }
   ];
@@ -1229,12 +1229,12 @@ const ExecutiveGaugeMasterCard = ({
           ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 3,5%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '250.000 / 373.800', rate: '66,9%', rateNum: 66.9, growth: '▲ 4,2%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '250.000 / 373.800', rate: '66,9%', rateNum: 66.9, growth: '▲ 4,2%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '953.500 / 912.900', rate: '104,4%', rateNum: 104.4, growth: '▲ 6,8%', isHighlight: false }
           ],
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +3,5%', growthPrev: '▲ +3,6%', share: '32,6%', status: 'Vượt KH', statusType: 'success' },
-            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 250000, plan: 373800, rate: 66.9, diff: -123800, growthYear: '▲ +4,2%', growthPrev: '▲ +4,0%', share: '32,3%', status: 'Đạt tiến độ', statusType: 'warning' },
+            { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 250000, plan: 373800, rate: 66.9, diff: -123800, growthYear: '▲ +4,2%', growthPrev: '▲ +4,0%', share: '32,3%', status: 'Đạt tiến độ', statusType: 'warning' },
             { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 953500, plan: 912900, rate: 104.4, diff: 40600, growthYear: '▲ +6,8%', growthPrev: '—', share: '32,0%', status: 'Vượt KH', statusType: 'success' },
             { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 953500, plan: 1490400, rate: 64.0, diff: -536900, growthYear: '▲ +4,1%', growthPrev: '—', share: '30,0%', status: 'Tiến độ tốt', statusType: 'success' }
           ],
@@ -1307,12 +1307,12 @@ const ExecutiveGaugeMasterCard = ({
           ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 8,8%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '525.000 / 872.200', rate: '60,2%', rateNum: 60.2, growth: '▲ 11,6%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '525.000 / 872.200', rate: '60,2%', rateNum: 60.2, growth: '▲ 11,6%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.022.800 / 2.130.200', rate: '95,0%', rateNum: 95.0, growth: '▲ 17,5%', isHighlight: false }
           ],
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +8,8%', growthPrev: '▲ +0,2%', share: '67,4%', status: 'Cần tăng tốc', statusType: 'warning' },
-            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 525000, plan: 872200, rate: 60.2, diff: -347200, growthYear: '▲ +11,6%', growthPrev: '▲ +9,5%', share: '67,7%', status: 'Cần tăng tốc', statusType: 'warning' },
+            { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 525000, plan: 872200, rate: 60.2, diff: -347200, growthYear: '▲ +11,6%', growthPrev: '▲ +9,5%', share: '67,7%', status: 'Cần tăng tốc', statusType: 'warning' },
             { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2022800, plan: 2130200, rate: 95.0, diff: -107400, growthYear: '▲ +17,5%', growthPrev: '—', share: '68,0%', status: 'Bám sát KH', statusType: 'warning' },
             { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2022800, plan: 3477700, rate: 58.2, diff: -1454900, growthYear: '▲ +7,4%', growthPrev: '—', share: '70,0%', status: 'Tập trung Q4', statusType: 'warning' }
           ],
@@ -1380,12 +1380,12 @@ const ExecutiveGaugeMasterCard = ({
           ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 18,2%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '82.100 / 149.500', rate: '54,9%', rateNum: 54.9, growth: '▲ 16,5%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '82.100 / 149.500', rate: '54,9%', rateNum: 54.9, growth: '▲ 16,5%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '312.500 / 330.000', rate: '94,7%', rateNum: 94.7, growth: '▲ 19,4%', isHighlight: false }
           ],
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +18,2%', growthPrev: '▲ +2,9%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
-            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 82100, plan: 149500, rate: 54.9, diff: -67400, growthYear: '▲ +16,5%', growthPrev: '▲ +12,0%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
+            { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 82100, plan: 149500, rate: 54.9, diff: -67400, growthYear: '▲ +16,5%', growthPrev: '▲ +12,0%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
             { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 312500, plan: 330000, rate: 94.7, diff: -17500, growthYear: '▲ +19,4%', growthPrev: '—', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
             { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 312500, plan: 540100, rate: 57.9, diff: -227600, growthYear: '▲ +15,2%', growthPrev: '—', share: '10,9%', status: 'Tăng trưởng tốt', statusType: 'success' }
           ],
@@ -1461,12 +1461,12 @@ const ExecutiveGaugeMasterCard = ({
           ],
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 5,8%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '692.900 / 1.096.500', rate: '63,2%', rateNum: 63.2, growth: '▲ 7,8%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '692.900 / 1.096.500', rate: '63,2%', rateNum: 63.2, growth: '▲ 7,8%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.663.800 / 2.713.100', rate: '98,2%', rateNum: 98.2, growth: '▲ 12,0%', isHighlight: false }
           ],
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +5,8%', growthPrev: '▲ +1,0%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
-            { period: `Quý III/${selectedYear}`, isHighlight: false, actual: 690000, plan: 1110000, rate: 62.2, diff: -420000, growthYear: '▲ +8,2%', growthPrev: '▲ +7,8%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
+            { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 690000, plan: 1110000, rate: 62.2, diff: -420000, growthYear: '▲ +8,2%', growthPrev: '▲ +7,8%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
             { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2650000, plan: 2710000, rate: 97.8, diff: -60000, growthYear: '▲ +12,5%', growthPrev: '—', share: '89,0%', status: 'Hoàn thành tốt', statusType: 'success' },
             { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2650000, plan: 4428000, rate: 59.8, diff: -1778000, growthYear: '▲ +5,8%', growthPrev: '—', share: '89,1%', status: 'Bám sát KH', statusType: 'success' }
           ],
@@ -1527,7 +1527,7 @@ const ExecutiveGaugeMasterCard = ({
           diffYearIsNeg,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 17,1%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '2.450 / 3.510', rate: '69,8%', rateNum: 69.8, growth: '▲ 15,5%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '2.450 / 3.510', rate: '69,8%', rateNum: 69.8, growth: '▲ 15,5%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '9.480 / 8.775', rate: '108,0%', rateNum: 108.0, growth: '▲ 18,2%', isHighlight: false }
           ],
           qForecast: '3.700',
@@ -1573,7 +1573,7 @@ const ExecutiveGaugeMasterCard = ({
           diffYearIsNeg,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 15,4%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '1.680 / 2.460', rate: '68,3%', rateNum: 68.3, growth: '▲ 14,2%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '1.680 / 2.460', rate: '68,3%', rateNum: 68.3, growth: '▲ 14,2%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '6.420 / 6.150', rate: '104,4%', rateNum: 104.4, growth: '▲ 16,0%', isHighlight: false }
           ],
           qForecast: '2.580',
@@ -1619,7 +1619,7 @@ const ExecutiveGaugeMasterCard = ({
           diffYearIsNeg,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 8,1%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '76.000 / 118.000', rate: '64,4%', rateNum: 64.4, growth: '▲ 6,5%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '76.000 / 118.000', rate: '64,4%', rateNum: 64.4, growth: '▲ 6,5%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '285.000 / 310.000', rate: '91,9%', rateNum: 91.9, growth: '▲ 9,2%', isHighlight: false }
           ],
           qForecast: '114.000',
@@ -1665,7 +1665,7 @@ const ExecutiveGaugeMasterCard = ({
           diffYearIsNeg,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual} / ${plan}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 0,1%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '9,8% / 9,5%', rate: '103,2%', rateNum: 103.2, growth: '▲ 0,3%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '9,8% / 9,5%', rate: '103,2%', rateNum: 103.2, growth: '▲ 0,3%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '9,6% / 10,2%', rate: '94,1%', rateNum: 94.1, growth: '▲ 0,2%', isHighlight: false }
           ],
           qForecast: '9,8%',
@@ -1713,7 +1713,7 @@ const ExecutiveGaugeMasterCard = ({
           diffYearIsNeg,
           tableRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, actualPlan: `${actual.toLocaleString('vi-VN')} / ${plan.toLocaleString('vi-VN')}`, rate: `${rate.toString().replace('.', ',')}%`, rateNum: rate, growth: '▲ 7,0%', isHighlight: true },
-            { period: `Quý III/${selectedYear}`, actualPlan: '775.000 / 1.246.000', rate: '62,2%', rateNum: 62.2, growth: '▲ 8,7%', isHighlight: false },
+            { period: `Quý 3/${selectedYear}`, actualPlan: '775.000 / 1.246.000', rate: '62,2%', rateNum: 62.2, growth: '▲ 8,7%', isHighlight: false },
             { period: `Luỹ kế năm ${selectedYear}`, actualPlan: '2.976.300 / 3.043.100', rate: '97,8%', rateNum: 97.8, growth: '▲ 12,8%', isHighlight: false }
           ],
           qForecast: '1.162.500',
@@ -2002,13 +2002,13 @@ const ExecutiveGaugeMasterCard = ({
 
       {/* Bottom Section: 3 Forecast / Target Summary Cards */}
       <div className="tr-bottom-summary-cards">
-        {/* Card 1: Ước Quý III/2026 */}
+        {/* Card 1: Ước Quý 3/2026 */}
         <div className="tr-summary-card">
           <div className="tr-sc-icon-box purple">
             <BarChart2 size={16} color="#8b5cf6" strokeWidth={2.2} />
           </div>
           <div className="tr-sc-content">
-            <div className="tr-sc-title">Ước Quý III/{selectedYear}</div>
+            <div className="tr-sc-title">Ước Quý 3/{selectedYear}</div>
             <div className="tr-sc-num-row">
               <span className="tr-sc-num">{cfg.qForecast}</span>
               <span className="tr-sc-unit">{cfg.unit}</span>
@@ -2151,7 +2151,7 @@ const KpiSummaryCard = ({ index, title, kpi, icon: Icon, colorTheme = 'red', onC
 
 const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState('2026');
-  const [selectedQuarter, setSelectedQuarter] = useState('Quý III');
+  const [selectedQuarter, setSelectedQuarter] = useState('Quý 3');
   const [selectedMonth, setSelectedMonth] = useState('Tháng 8');
   const [isExporting, setIsExporting] = useState(false);
   const [trendMetric, setTrendMetric] = useState('revenue');
@@ -2168,20 +2168,20 @@ const Dashboard = () => {
   const handleMonthChange = (newMonthStr) => {
     setSelectedMonth(newMonthStr);
     const m = parseInt(newMonthStr.replace('Tháng ', ''), 10);
-    if (m >= 1 && m <= 3) setSelectedQuarter('Quý I');
-    else if (m >= 4 && m <= 6) setSelectedQuarter('Quý II');
-    else if (m >= 7 && m <= 9) setSelectedQuarter('Quý III');
-    else if (m >= 10 && m <= 12) setSelectedQuarter('Quý IV');
+    if (m >= 1 && m <= 3) setSelectedQuarter('Quý 1');
+    else if (m >= 4 && m <= 6) setSelectedQuarter('Quý 2');
+    else if (m >= 7 && m <= 9) setSelectedQuarter('Quý 3');
+    else if (m >= 10 && m <= 12) setSelectedQuarter('Quý 4');
   };
 
   // Handle Quarter change
   const handleQuarterChange = (newQuarterStr) => {
     setSelectedQuarter(newQuarterStr);
     const m = monthNum;
-    if (newQuarterStr === 'Quý I' && (m < 1 || m > 3)) setSelectedMonth('Tháng 3');
-    else if (newQuarterStr === 'Quý II' && (m < 4 || m > 6)) setSelectedMonth('Tháng 6');
-    else if (newQuarterStr === 'Quý III' && (m < 7 || m > 9)) setSelectedMonth('Tháng 8');
-    else if (newQuarterStr === 'Quý IV' && (m < 10 || m > 12)) setSelectedMonth('Tháng 12');
+    if ((newQuarterStr === 'Quý 1' || newQuarterStr === 'Quý I') && (m < 1 || m > 3)) setSelectedMonth('Tháng 3');
+    else if ((newQuarterStr === 'Quý 2' || newQuarterStr === 'Quý II') && (m < 4 || m > 6)) setSelectedMonth('Tháng 6');
+    else if ((newQuarterStr === 'Quý 3' || newQuarterStr === 'Quý III') && (m < 7 || m > 9)) setSelectedMonth('Tháng 8');
+    else if ((newQuarterStr === 'Quý 4' || newQuarterStr === 'Quý IV') && (m < 10 || m > 12)) setSelectedMonth('Tháng 12');
   };
 
   const data = useMemo(() => getMonthData(monthNum, selectedYear), [monthNum, selectedYear]);

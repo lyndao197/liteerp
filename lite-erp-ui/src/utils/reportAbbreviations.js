@@ -48,6 +48,14 @@ export function explainLegend(legend) {
   }
 
   // Quarter patterns
+  if (s.startsWith('TH Q')) {
+    const q = s.replace('TH', '').trim();
+    return `Thực hiện ${q.includes('/') ? `Quý ${q.replace('Q', '')}` : `Quý ${q.replace('Q', '')}`}`;
+  }
+  if (s.startsWith('KH Q')) {
+    const q = s.replace('KH', '').trim();
+    return `Kế hoạch Quý ${q.replace('Q', '')}`;
+  }
   if (s.startsWith('LK Q') || s.startsWith('LK TH Q')) {
     const q = s.replace(/LK|TH/g, '').trim();
     return `Lũy kế Thực hiện Quý ${q.replace('Q', '')}`;
@@ -56,12 +64,23 @@ export function explainLegend(legend) {
     const q = s.replace('KH LK', '').trim();
     return `Kế hoạch Lũy kế Quý ${q.replace('Q', '')}`;
   }
+  if (s.startsWith('Ước TH')) {
+    const rest = s.replace('Ước TH', '').trim();
+    if (rest.startsWith('Q')) {
+      return `Ước tính thực hiện Quý ${rest.replace('Q', '')}`;
+    }
+    return `Ước tính thực hiện ${rest ? `năm ${rest}` : 'cả năm'}`.trim();
+  }
   if (s.startsWith('Ước')) {
     const rest = s.replace('Ước', '').trim();
     if (rest.startsWith('Q')) {
       return `Ước tính thực hiện ${rest.includes('/') ? `Quý ${rest.replace('Q', '')}` : `Quý ${rest.replace('Q', '')}`}`;
     }
     return `Ước tính thực hiện ${rest ? `năm ${rest}` : 'cả năm'}`.trim();
+  }
+  if (s.startsWith('TH') && /^\d{4}$/.test(s.replace('TH', '').trim())) {
+    const yr = s.replace('TH', '').trim();
+    return `Thực hiện năm ${yr}`;
   }
   if (s.startsWith('KH') && /^\d{4}$/.test(s.replace('KH', '').trim())) {
     const yr = s.replace('KH', '').trim();
@@ -74,6 +93,15 @@ export function explainLegend(legend) {
 export function explainTimeCode(code) {
   if (!code) return '';
   const c = String(code).trim();
+  if (c.includes('/')) {
+    const [t, y] = c.split('/');
+    if (t.endsWith('T')) {
+      return `${t.replace('T', '')} tháng năm ${y}`;
+    }
+    if (t.startsWith('Q')) {
+      return `Quý ${t.replace('Q', '')} năm ${y}`;
+    }
+  }
   if (c.endsWith('T')) {
     const num = c.replace('T', '');
     return `${num} tháng`;

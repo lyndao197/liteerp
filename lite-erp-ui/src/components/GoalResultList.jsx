@@ -3004,12 +3004,12 @@ const GoalResultList = () => {
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         {/* Group 3 */}
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     ))}
                     {/* Quarters indicators */}
@@ -3023,11 +3023,11 @@ const GoalResultList = () => {
                         {/* Group 2 */}
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         {/* Group 3 */}
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     ))}
                     {/* Year indicators */}
@@ -3041,11 +3041,11 @@ const GoalResultList = () => {
                         {/* Group 2 */}
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         {/* Group 3 */}
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     )}
                   </tr>
@@ -3106,10 +3106,10 @@ const GoalResultList = () => {
                         <th className="matrix-indicator-title cell-right">TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     ))}
                     {/* Quarters indicators */}
@@ -3118,10 +3118,10 @@ const GoalResultList = () => {
                         <th className="matrix-indicator-title cell-right">TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     ))}
                     {/* Year indicators */}
@@ -3130,10 +3130,10 @@ const GoalResultList = () => {
                         <th className="matrix-indicator-title cell-right">TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                         <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                        <th className="matrix-indicator-title cell-right" style={{ background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                       </React.Fragment>
                     )}
                   </tr>
@@ -4427,12 +4427,12 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                               {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
@@ -4697,12 +4697,12 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                               {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (
@@ -4893,12 +4893,12 @@ const GoalResultList = () => {
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f9fbf9', color: '#047857' }}>% Delta</th>
                               {/* Group 3 */}
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#ea580c' }}>Ước TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>TH</th>
                               <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>Tăng/giảm</th>
-                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% delta</th>
+                              <th className="cell-right" style={{ fontSize: '11px', background: '#f8fafc', color: '#1d4ed8' }}>% Delta</th>
                             </React.Fragment>
                           ))}
                           {Array.from({ length: 4 }).map((_, i) => i).filter(i => selectedPeriods.includes('q' + (i + 1))).map(i => (

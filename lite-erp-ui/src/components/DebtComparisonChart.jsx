@@ -677,17 +677,24 @@ export default function DebtComparisonChart({
                 <div className="month-subcard-tooltip">
                   <div className="tooltip-item-title">Kỳ thu nợ {hoveredRecoveryItem.month}/{selectedYear}</div>
                   <div className="tooltip-stat-row">
-                    <span className="tooltip-dot red"></span>
-                    <span>Thực hiện thu hồi:</span>
-                    <strong>{formatNum(hoveredRecoveryItem.actual)} Tỷ đồng</strong>
-                  </div>
-                  <div className="tooltip-stat-row">
                     <span className="tooltip-dot gray"></span>
-                    <span>Kế hoạch thu hồi:</span>
+                    <span>KH thu hồi:</span>
                     <strong>{formatNum(hoveredRecoveryItem.plan)} Tỷ đồng</strong>
                   </div>
                   <div className="tooltip-stat-row">
-                    <span>Tỷ lệ (%):</span>
+                    <span className="tooltip-dot red"></span>
+                    <span>TH thu hồi:</span>
+                    <strong>{formatNum(hoveredRecoveryItem.actual)} Tỷ đồng</strong>
+                  </div>
+                  <div className="tooltip-stat-row">
+                    <span>+/- so KH:</span>
+                    <strong style={{ color: hoveredRecoveryItem.actual >= hoveredRecoveryItem.plan ? '#16a34a' : '#dc2626' }}>
+                      {(hoveredRecoveryItem.actual - hoveredRecoveryItem.plan) > 0 ? '+' : ''}
+                      {formatNum(hoveredRecoveryItem.actual - hoveredRecoveryItem.plan)} Tỷ đồng
+                    </strong>
+                  </div>
+                  <div className="tooltip-stat-row">
+                    <span>% HTKH:</span>
                     <strong style={{ color: '#16a34a' }}>{hoveredRecoveryItem.rate}</strong>
                   </div>
                   <div className="tooltip-stat-row">

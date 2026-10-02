@@ -320,7 +320,7 @@ export default function RevenueChartDetailView({
   setSelectedYear,
   selectedMonth = 'Tháng 8',
   setSelectedMonth,
-  selectedQuarter = 'Quý III',
+  selectedQuarter = 'Quý 3',
   setSelectedQuarter,
   selectedCumulativeMonth = '8 tháng',
   setSelectedCumulativeMonth,
@@ -384,24 +384,24 @@ export default function RevenueChartDetailView({
 
   // Quarter code computations
   const quarterNum = useMemo(() => {
-    if (selectedQuarter === 'Quý I') return 1;
-    if (selectedQuarter === 'Quý II') return 2;
-    if (selectedQuarter === 'Quý III') return 3;
-    if (selectedQuarter === 'Quý IV') return 4;
+    if (selectedQuarter === 'Quý I' || selectedQuarter === 'Quý 1') return 1;
+    if (selectedQuarter === 'Quý II' || selectedQuarter === 'Quý 2') return 2;
+    if (selectedQuarter === 'Quý III' || selectedQuarter === 'Quý 3') return 3;
+    if (selectedQuarter === 'Quý IV' || selectedQuarter === 'Quý 4') return 4;
     return 3;
   }, [selectedQuarter]);
 
   const quarterCode = `Q${quarterNum}`;
-  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNum - 1] || 'III';
+  const quarterRoman = `${quarterNum}`;
   const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
-  const prevQuarterRoman = ['I', 'II', 'III', 'IV'][prevQuarterNum - 1] || 'II';
+  const prevQuarterRoman = `${prevQuarterNum}`;
   const prevQuarterYear = quarterNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
-  const prevQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][prevQuarterNum - 1];
+  const prevQuarterName = `Quý ${prevQuarterNum}`;
   const prevQuarterCode = `Q${prevQuarterNum}`;
   const nextQuarterNum = quarterNum === 4 ? 1 : quarterNum + 1;
-  const nextQuarterRoman = ['I', 'II', 'III', 'IV'][nextQuarterNum - 1] || 'IV';
+  const nextQuarterRoman = `${nextQuarterNum}`;
   const nextQuarterYear = quarterNum === 4 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
-  const nextQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][nextQuarterNum - 1];
+  const nextQuarterName = `Quý ${nextQuarterNum}`;
   const nextQuarterCode = `Q${nextQuarterNum}`;
 
   // Cumulative month code computations
@@ -412,6 +412,9 @@ export default function RevenueChartDetailView({
 
   // Check if current chart has estimate data (Ước)
   const hasEstimate = useMemo(() => {
+    // Month charts NEVER have estimate!
+    if (activeBranchId === 'month') return false;
+
     const keyLower = (activeChartKey || '').toLowerCase();
     const titleLower = (chartTitle || '').toLowerCase();
     const labelLower = (currentChartObj?.label || '').toLowerCase();
@@ -426,6 +429,7 @@ export default function RevenueChartDetailView({
       keyLower === 'chart6_val' ||
       keyLower === 'chart7_val' ||
       keyLower === 'chart8_val' ||
+      keyLower === 'chart9_val' ||
       keyLower === 'chart12' ||
       keyLower === 'chart13' ||
       keyLower === 'chart12_val' ||
@@ -433,7 +437,7 @@ export default function RevenueChartDetailView({
       titleLower.includes('ước') ||
       labelLower.includes('ước')
     );
-  }, [activeChartKey, chartTitle, currentChartObj]);
+  }, [activeBranchId, activeChartKey, chartTitle, currentChartObj]);
 
   const isCompareWithPlan = useMemo(() => {
     if (activeBranchId === 'month') {
@@ -461,6 +465,142 @@ export default function RevenueChartDetailView({
     }
     return true;
   }, [activeBranchId, activeChartKey, chartTitle]);
+
+  // Determine comparison case based on user specification:
+  // 1. TH tháng này vs KH tháng này -> % HTKH
+  // 2. TH tháng này vs TH tháng trước/cùng kỳ -> % Delta
+  // 3. TH tháng này vs KH tháng sau -> % so KH kỳ sau
+  const comparisonType = useMemo(() => {
+    if (
+      activeChartKey === 'chart4_val' ||
+      activeChartKey === 'chart4_rat' ||
+      activeChartKey === 'chart4' ||
+      activeChartKey === 'chart9_val' ||
+      activeChartKey === 'chart9_rat' ||
+      activeChartKey === 'chart9' ||
+      activeChartKey === 'chart7_next' ||
+      chartTitle.toLowerCase().includes('tiếp theo') ||
+      chartTitle.toLowerCase().includes('tháng sau') ||
+      chartTitle.toLowerCase().includes('kỳ sau')
+    ) {
+      return 'next_plan';
+    }
+
+    if (isCompareWithPlan) {
+      return 'current_plan';
+    }
+
+    return 'other_period';
+  }, [activeChartKey, chartTitle, isCompareWithPlan]);
+
+  const rateHeaderLabel = useMemo(() => {
+    if (comparisonType === 'current_plan') return '% HTKH';
+    if (comparisonType === 'next_plan') return '% so KH kỳ sau';
+    return '% Delta';
+  }, [comparisonType]);
+
+  const diffHeaderLabel = useMemo(() => {
+    if (comparisonType === 'other_period') return 'Tăng/giảm';
+    return '+/- so KH';
+  }, [comparisonType]);
+
+  const firstSubColLabel = useMemo(() => {
+    if (comparisonType === 'current_plan') {
+      if (activeBranchId === 'month') return `TH Tháng ${monthNum}/${selectedYear}`;
+      if (activeBranchId === 'quarter') {
+        return hasEstimate ? `Ước TH Quý ${quarterRoman}/${selectedYear}` : `TH LK Quý ${quarterRoman}/${selectedYear}`;
+      }
+      if (activeBranchId === 'year') {
+        if (isEstVsFullPlan || activeChartKey === 'chart12' || activeChartKey === 'chart12_val') {
+          return `Ước TH Năm ${selectedYear}`;
+        }
+        const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
+        return `TH LK ${cleanMonth} ${selectedYear}`;
+      }
+      return hasEstimate ? 'Ước TH' : 'TH';
+    }
+
+    if (comparisonType === 'next_plan') {
+      if (activeBranchId === 'month') return `TH Tháng ${monthNum}/${selectedYear}`;
+      if (activeBranchId === 'quarter') return `Ước TH Quý ${quarterRoman}/${selectedYear}`;
+      if (activeBranchId === 'year') return `Ước TH Năm ${selectedYear}`;
+      return hasEstimate ? 'Ước TH' : 'TH';
+    }
+
+    // comparisonType === 'other_period' (so kỳ trước hoặc cùng kỳ)
+    if (hasEstimate) {
+      if (activeBranchId === 'quarter') {
+        return `Ước TH Quý ${quarterRoman}/${selectedYear}`;
+      }
+      if (activeBranchId === 'year') {
+        return `Ước TH Năm ${selectedYear}`;
+      }
+      return 'Ước TH';
+    }
+
+    // Biểu đồ không so sánh ước: Đặt tên theo tiêu chí TH [kỳ báo cáo]
+    if (activeBranchId === 'month') {
+      return `TH Tháng ${monthNum}/${selectedYear}`;
+    }
+    if (activeBranchId === 'quarter') {
+      return `TH Quý ${quarterRoman}/${selectedYear}`;
+    }
+    if (activeBranchId === 'year') {
+      const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
+      return `TH LK ${cleanMonth} ${selectedYear}`;
+    }
+    return 'TH';
+  }, [comparisonType, hasEstimate, activeBranchId, quarterRoman, selectedYear, monthNum, selectedCumulativeMonth, isEstVsFullPlan, activeChartKey]);
+
+  const secondSubColLabel = useMemo(() => {
+    if (comparisonType === 'current_plan') {
+      if (activeBranchId === 'month') return `KH Tháng ${monthNum}/${selectedYear}`;
+      if (activeBranchId === 'quarter') return `KH Quý ${quarterRoman}/${selectedYear}`;
+      if (activeBranchId === 'year') {
+        if (isEstVsFullPlan || activeChartKey === 'chart12' || activeChartKey === 'chart12_val') {
+          return `KH Năm ${selectedYear}`;
+        }
+        if (activeChartKey === 'chart11' || activeChartKey === 'chart11_val') {
+          return `KH Cả năm ${selectedYear}`;
+        }
+        const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
+        return `KH LK ${cleanMonth} ${selectedYear}`;
+      }
+      return 'KH';
+    }
+
+    if (comparisonType === 'next_plan') {
+      if (activeBranchId === 'month') return `KH Tháng ${nextMonthNum}/${nextYear}`;
+      if (activeBranchId === 'quarter') return `KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
+      if (activeBranchId === 'year') return `KH Năm ${parseInt(selectedYear, 10) + 1}`;
+      return 'KH';
+    }
+
+    // comparisonType === 'other_period' (so kỳ trước hoặc cùng kỳ): Đặt tên theo tiêu chí TH [kỳ báo cáo trước]
+    if (activeBranchId === 'month') {
+      if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat' || chartTitle.includes('cùng kỳ')) {
+        return `TH Tháng ${monthNum}/${lastYear}`;
+      }
+      return `TH Tháng ${prevMonthNum}/${prevYear}`;
+    }
+
+    if (activeBranchId === 'quarter') {
+      if (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.includes('cùng kỳ')) {
+        return `TH Quý ${quarterRoman}/${lastYear}`;
+      }
+      return `TH Quý ${prevQuarterRoman}/${prevQuarterYear}`;
+    }
+
+    if (activeBranchId === 'year') {
+      if (hasEstimate || activeChartKey === 'chart13_val' || activeChartKey === 'chart13_rat') {
+        return `TH Năm ${lastYear}`;
+      }
+      const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
+      return `TH LK ${cleanMonth} ${lastYear}`;
+    }
+
+    return 'TH';
+  }, [comparisonType, hasEstimate, activeBranchId, activeChartKey, chartTitle, monthNum, lastYear, prevMonthNum, prevYear, nextMonthNum, nextYear, quarterRoman, prevQuarterRoman, prevQuarterYear, nextQuarterRoman, nextQuarterYear, selectedCumulativeMonth, selectedYear, isEstVsFullPlan]);
 
   // Dynamic header 1: Period title
   const periodHeaderTitle = useMemo(() => {
@@ -538,69 +678,9 @@ export default function RevenueChartDetailView({
     isEstVsFullPlan, isEstVsPrevYear, prevQuarterRoman, quarterRoman
   ]);
 
-  // Dynamic sub-column labels with year
-  const targetColumnLabel = useMemo(() => {
-    if (activeBranchId === 'quarter') {
-      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
-        return `TH Quý ${prevQuarterRoman}/${prevQuarterYear}`;
-      }
-      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
-        return `TH Quý ${quarterRoman}/${lastYear}`;
-      }
-      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
-        return `KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
-      }
-      return `KH Quý ${quarterRoman}/${selectedYear}`;
-    }
-
-    if (activeBranchId === 'year') {
-      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
-        return `TH LK ${cumulativeShortCode}/${lastYear}`;
-      }
-      if (isEstVsFullPlan || activeChartKey === 'chart11' || activeChartKey === 'chart11_val') {
-        return `KH Cả năm ${selectedYear}`;
-      }
-      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
-        return `TH Năm ${lastYear}`;
-      }
-      if (activeChartKey === 'chart12' || activeChartKey === 'chart12_val') {
-        return `KH Năm ${selectedYear}`;
-      }
-      return `KH LK ${cumulativeShortCode}/${selectedYear}`;
-    }
-
-    // Month branch
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `TH T${prevMonthNum}/${prevYear}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `TH T${monthNum}/${lastYear}`;
-    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `KH T${nextMonthNum}/${nextYear}`;
-    if (activeChartKey === 'chart1_val' || activeChartKey === 'chart1_rat') return 'KH';
-    return `KH T${monthNum}/${selectedYear}`;
-  }, [
-    activeBranchId, activeChartKey, chartTitle,
-    prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear,
-    quarterRoman, prevQuarterRoman, prevQuarterYear, nextQuarterRoman, nextQuarterYear, selectedYear,
-    cumulativeShortCode, isEstVsFullPlan, isEstVsPrevYear
-  ]);
-
-  const actualColumnLabel = useMemo(() => {
-    if (activeChartKey === 'chart1_val' || activeChartKey === 'chart1_rat') return 'TH';
-    if (activeBranchId === 'month') {
-      return `TH T${monthNum}/${selectedYear}`;
-    }
-    if (activeBranchId === 'quarter') {
-      if (hasEstimate) {
-        return `Ước Quý ${quarterRoman}/${selectedYear}`;
-      }
-      return `TH LK Quý ${quarterRoman}/${selectedYear}`;
-    }
-    if (activeBranchId === 'year') {
-      if (hasEstimate || activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart12_val' || activeChartKey === 'chart13_val') {
-        return `Ước Năm ${selectedYear}`;
-      }
-      return `TH LK ${cumulativeShortCode}/${selectedYear}`;
-    }
-    return `TH T${monthNum}/${selectedYear}`;
-  }, [activeBranchId, monthNum, quarterRoman, cumulativeShortCode, selectedYear, hasEstimate, activeChartKey]);
+  // Dynamic sub-column labels with year matching matrix table columns
+  const actualColumnLabel = firstSubColLabel;
+  const targetColumnLabel = secondSubColLabel;
 
   const diffColumnLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
@@ -961,15 +1041,36 @@ export default function RevenueChartDetailView({
           targetVal = Math.round(item.baseKh * nextFactor);
         }
 
-        const isOtherPeriod = !isCompareWithPlan;
-        const diff = isOtherPeriod ? (scaledUoc - targetVal) : (scaledTh - targetVal);
-        const deltaRateNum = targetVal > 0 ? Number(((diff / targetVal) * 100).toFixed(1)) : 0;
-        const planRateNum = targetVal > 0 ? Number(((scaledTh / targetVal) * 100).toFixed(1)) : 100;
-        const rateNum = isOtherPeriod ? deltaRateNum : planRateNum;
-        const rate = isOtherPeriod
-          ? `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`
-          : `${planRateNum.toFixed(1).replace('.', ',')}%`;
-        const isPass = diff >= 0;
+        const isNextPlan = comparisonType === 'next_plan';
+        const isOtherPeriod = comparisonType === 'other_period';
+
+        let diff = 0;
+        let rate = '';
+        let rateNum = 100;
+        let isPass = false;
+
+        if (isOtherPeriod) {
+          // TH tháng này vs TH tháng trước/cùng kỳ -> % Delta
+          diff = scaledUoc - targetVal;
+          const deltaRateNum = targetVal > 0 ? Number(((diff / targetVal) * 100).toFixed(1)) : 0;
+          rateNum = deltaRateNum;
+          rate = `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0;
+        } else if (isNextPlan) {
+          // TH tháng này vs KH tháng sau -> % so KH kỳ sau
+          diff = scaledTh - targetVal;
+          const nextRateNum = targetVal > 0 ? Number(((scaledTh / targetVal) * 100).toFixed(1)) : 100;
+          rateNum = nextRateNum;
+          rate = `${nextRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0 || nextRateNum >= 100;
+        } else {
+          // TH tháng này vs KH tháng này -> % HTKH
+          diff = scaledTh - targetVal;
+          const planRateNum = targetVal > 0 ? Number(((scaledTh / targetVal) * 100).toFixed(1)) : 100;
+          rateNum = planRateNum;
+          rate = `${planRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0 || planRateNum >= 100;
+        }
 
         return {
           ...item,
@@ -987,6 +1088,10 @@ export default function RevenueChartDetailView({
       });
     } else if (activeBranchId === 'quarter') {
       const quarterFactors = {
+        'Quý 1': 1.05,
+        'Quý 2': 1.18,
+        'Quý 3': 1.12,
+        'Quý 4': 1.30,
         'Quý I': 1.05,
         'Quý II': 1.18,
         'Quý III': 1.12,
@@ -1015,11 +1120,34 @@ export default function RevenueChartDetailView({
           targetVal = Math.round(item.baseKh * nextQuarterFactor);
         }
 
-        const valueToCompare = hasEstimate ? scaledUoc : scaledTh;
-        const diff = valueToCompare - targetVal;
-        const rateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
-        const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
-        const isPass = diff >= 0 || rateNum >= 100;
+        let diff = 0;
+        let rate = '';
+        let rateNum = 100;
+        let isPass = false;
+
+        if (isVsPrev || isVsSame) {
+          // TH vs TH trước/cùng kỳ -> % Delta
+          diff = scaledUoc - targetVal;
+          const deltaRateNum = targetVal > 0 ? Number(((diff / targetVal) * 100).toFixed(1)) : 0;
+          rateNum = deltaRateNum;
+          rate = `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0;
+        } else if (isVsNext) {
+          // TH vs KH kỳ sau -> % so KH kỳ sau
+          diff = scaledTh - targetVal;
+          const nextRateNum = targetVal > 0 ? Number(((scaledTh / targetVal) * 100).toFixed(1)) : 100;
+          rateNum = nextRateNum;
+          rate = `${nextRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0 || nextRateNum >= 100;
+        } else {
+          // TH vs KH -> % HTKH
+          const valueToCompare = hasEstimate ? scaledUoc : scaledTh;
+          diff = valueToCompare - targetVal;
+          const planRateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
+          rateNum = planRateNum;
+          rate = `${planRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0 || planRateNum >= 100;
+        }
 
         return {
           ...item,
@@ -1083,9 +1211,23 @@ export default function RevenueChartDetailView({
 
         const valueToCompare = hasEstimate ? scaledUoc : scaledTh;
         const diff = valueToCompare - targetVal;
-        const rateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
-        const rate = `${rateNum.toFixed(1).replace('.', ',')}%`;
-        const isPass = diff >= 0 || rateNum >= 100;
+        let rate = '';
+        let rateNum = 100;
+        let isPass = false;
+
+        if (isEstVsLastYear) {
+          // TH vs TH năm trước -> % Delta
+          const deltaRateNum = targetVal > 0 ? Number(((diff / targetVal) * 100).toFixed(1)) : 0;
+          rateNum = deltaRateNum;
+          rate = `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0;
+        } else {
+          // TH vs KH -> % HTKH
+          const planRateNum = targetVal > 0 ? Number(((valueToCompare / targetVal) * 100).toFixed(1)) : 100;
+          rateNum = planRateNum;
+          rate = `${planRateNum.toFixed(1).replace('.', ',')}%`;
+          isPass = diff >= 0 || planRateNum >= 100;
+        }
 
         return {
           ...item,
@@ -1392,15 +1534,35 @@ export default function RevenueChartDetailView({
       const sumTarget = rows.reduce((acc, r) => acc + (r.targetVal !== undefined ? r.targetVal : (r.kh || 0)), 0);
       const sumUocTh = rows.reduce((acc, r) => acc + (r.uocTh || Math.round(((r.targetVal || r.kh || 0) + (r.th || 0)) / 2)), 0);
       const sumTh = rows.reduce((acc, r) => acc + (r.th || 0), 0);
-      const isOtherPeriod = !isCompareWithPlan;
-      const valueToCompare = isOtherPeriod ? sumUocTh : (hasEstimate ? sumUocTh : sumTh);
-      const diff = valueToCompare - sumTarget;
-      const deltaRateNum = sumTarget > 0 ? Number(((diff / sumTarget) * 100).toFixed(1)) : 0;
-      const planRateNum = sumTarget > 0 ? Number(((valueToCompare / sumTarget) * 100).toFixed(1)) : 100;
-      const rateNum = isOtherPeriod ? deltaRateNum : planRateNum;
-      const rate = isOtherPeriod
-        ? `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`
-        : `${planRateNum.toFixed(1).replace('.', ',')}%`;
+      const isOtherPeriod = comparisonType === 'other_period';
+      const isNextPlan = comparisonType === 'next_plan';
+
+      let diff = 0;
+      let rate = '';
+      let rateNum = 100;
+      let isPass = false;
+
+      if (isOtherPeriod) {
+        diff = sumUocTh - sumTarget;
+        const deltaRateNum = sumTarget > 0 ? Number(((diff / sumTarget) * 100).toFixed(1)) : 0;
+        rateNum = deltaRateNum;
+        rate = `${deltaRateNum >= 0 ? '+' : ''}${deltaRateNum.toFixed(1).replace('.', ',')}%`;
+        isPass = diff >= 0;
+      } else if (isNextPlan) {
+        diff = sumTh - sumTarget;
+        const nextRateNum = sumTarget > 0 ? Number(((sumTh / sumTarget) * 100).toFixed(1)) : 100;
+        rateNum = nextRateNum;
+        rate = `${nextRateNum.toFixed(1).replace('.', ',')}%`;
+        isPass = diff >= 0 || nextRateNum >= 100;
+      } else {
+        const valToCompare = hasEstimate ? sumUocTh : sumTh;
+        diff = valToCompare - sumTarget;
+        const planRateNum = sumTarget > 0 ? Number(((valToCompare / sumTarget) * 100).toFixed(1)) : 100;
+        rateNum = planRateNum;
+        rate = `${planRateNum.toFixed(1).replace('.', ',')}%`;
+        isPass = diff >= 0 || planRateNum >= 100;
+      }
+
       return {
         kh: sumTarget,
         targetVal: sumTarget,
@@ -1410,7 +1572,7 @@ export default function RevenueChartDetailView({
         diffFormatted: (diff > 0 ? '+' : '') + diff,
         rate,
         rateNum,
-        isPass: diff >= 0 || rateNum >= 100
+        isPass
       };
     };
 
@@ -1420,21 +1582,41 @@ export default function RevenueChartDetailView({
 
     const totalGroup = calcGroup(targetRows);
 
-    const isOtherPeriod = !isCompareWithPlan;
+    const isOtherPeriod = comparisonType === 'other_period';
+    const isNextPlan = comparisonType === 'next_plan';
 
     // Lợi nhuận trước thuế: ~9.7% TH, ~9.8% KH
     const profitKh = Math.round(totalGroup.kh * 0.098);
-    const profitTargetVal = isOtherPeriod ? Math.round(totalGroup.targetVal * 0.098) : profitKh;
+    const profitTargetVal = (isOtherPeriod || isNextPlan) ? Math.round(totalGroup.targetVal * 0.098) : profitKh;
     const profitUocTh = Math.round(totalGroup.uocTh * 0.097);
     const profitTh = Math.round(totalGroup.th * 0.097);
-    const profitValueToCompare = isOtherPeriod ? profitUocTh : (hasEstimate ? profitUocTh : profitTh);
-    const profitDiff = profitValueToCompare - profitTargetVal;
-    const profitDeltaRateNum = profitTargetVal > 0 ? Number(((profitDiff / profitTargetVal) * 100).toFixed(1)) : 0;
-    const profitPlanRateNum = profitKh > 0 ? Number(((profitValueToCompare / profitKh) * 100).toFixed(1)) : 100;
-    const profitRateNum = isOtherPeriod ? profitDeltaRateNum : profitPlanRateNum;
-    const profitRate = isOtherPeriod
-      ? `${profitDeltaRateNum >= 0 ? '+' : ''}${profitDeltaRateNum.toFixed(1).replace('.', ',')}%`
-      : `${profitPlanRateNum.toFixed(1).replace('.', ',')}%`;
+
+    let profitDiff = 0;
+    let profitRate = '';
+    let profitRateNum = 100;
+    let profitIsPass = false;
+
+    if (isOtherPeriod) {
+      profitDiff = profitUocTh - profitTargetVal;
+      const profitDeltaRateNum = profitTargetVal > 0 ? Number(((profitDiff / profitTargetVal) * 100).toFixed(1)) : 0;
+      profitRateNum = profitDeltaRateNum;
+      profitRate = `${profitDeltaRateNum >= 0 ? '+' : ''}${profitDeltaRateNum.toFixed(1).replace('.', ',')}%`;
+      profitIsPass = profitDiff >= 0;
+    } else if (isNextPlan) {
+      profitDiff = profitTh - profitTargetVal;
+      const profitNextRateNum = profitTargetVal > 0 ? Number(((profitTh / profitTargetVal) * 100).toFixed(1)) : 100;
+      profitRateNum = profitNextRateNum;
+      profitRate = `${profitNextRateNum.toFixed(1).replace('.', ',')}%`;
+      profitIsPass = profitDiff >= 0 || profitNextRateNum >= 100;
+    } else {
+      const profitValueToCompare = hasEstimate ? profitUocTh : profitTh;
+      profitDiff = profitValueToCompare - profitTargetVal;
+      const profitPlanRateNum = profitKh > 0 ? Number(((profitValueToCompare / profitKh) * 100).toFixed(1)) : 100;
+      profitRateNum = profitPlanRateNum;
+      profitRate = `${profitPlanRateNum.toFixed(1).replace('.', ',')}%`;
+      profitIsPass = profitDiff >= 0 || profitRateNum >= 100;
+    }
+
     const profitGroup = {
       kh: profitKh,
       targetVal: profitTargetVal,
@@ -1444,22 +1626,41 @@ export default function RevenueChartDetailView({
       diffFormatted: (profitDiff > 0 ? '+' : '') + profitDiff,
       rate: profitRate,
       rateNum: profitRateNum,
-      isPass: profitDiff >= 0 || profitRateNum >= 100
+      isPass: profitIsPass
     };
 
     // Tổng chi phí = Tổng doanh thu - Lợi nhuận trước thuế
     const costKh = totalGroup.kh - profitKh;
-    const costTargetVal = isOtherPeriod ? (totalGroup.targetVal - profitTargetVal) : costKh;
+    const costTargetVal = (isOtherPeriod || isNextPlan) ? (totalGroup.targetVal - profitTargetVal) : costKh;
     const costUocTh = totalGroup.uocTh - profitUocTh;
     const costTh = totalGroup.th - profitTh;
-    const costValueToCompare = isOtherPeriod ? costUocTh : (hasEstimate ? costUocTh : costTh);
-    const costDiff = costValueToCompare - costTargetVal;
-    const costDeltaRateNum = costTargetVal > 0 ? Number(((costDiff / costTargetVal) * 100).toFixed(1)) : 0;
-    const costPlanRateNum = costKh > 0 ? Number(((costValueToCompare / costKh) * 100).toFixed(1)) : 100;
-    const costRateNum = isOtherPeriod ? costDeltaRateNum : costPlanRateNum;
-    const costRate = isOtherPeriod
-      ? `${costDeltaRateNum >= 0 ? '+' : ''}${costDeltaRateNum.toFixed(1).replace('.', ',')}%`
-      : `${costPlanRateNum.toFixed(1).replace('.', ',')}%`;
+
+    let costDiff = 0;
+    let costRate = '';
+    let costRateNum = 100;
+    let costIsPass = false;
+
+    if (isOtherPeriod) {
+      costDiff = costUocTh - costTargetVal;
+      const costDeltaRateNum = costTargetVal > 0 ? Number(((costDiff / costTargetVal) * 100).toFixed(1)) : 0;
+      costRateNum = costDeltaRateNum;
+      costRate = `${costDeltaRateNum >= 0 ? '+' : ''}${costDeltaRateNum.toFixed(1).replace('.', ',')}%`;
+      costIsPass = costDiff <= 0;
+    } else if (isNextPlan) {
+      costDiff = costTh - costTargetVal;
+      const costNextRateNum = costTargetVal > 0 ? Number(((costTh / costTargetVal) * 100).toFixed(1)) : 100;
+      costRateNum = costNextRateNum;
+      costRate = `${costNextRateNum.toFixed(1).replace('.', ',')}%`;
+      costIsPass = costDiff <= 0 || costNextRateNum <= 100;
+    } else {
+      const costValueToCompare = hasEstimate ? costUocTh : costTh;
+      costDiff = costValueToCompare - costTargetVal;
+      const costPlanRateNum = costKh > 0 ? Number(((costValueToCompare / costKh) * 100).toFixed(1)) : 100;
+      costRateNum = costPlanRateNum;
+      costRate = `${costPlanRateNum.toFixed(1).replace('.', ',')}%`;
+      costIsPass = costDiff <= 0 || costRateNum <= 100;
+    }
+
     const costGroup = {
       kh: costKh,
       targetVal: costTargetVal,
@@ -1469,7 +1670,7 @@ export default function RevenueChartDetailView({
       diffFormatted: (costDiff > 0 ? '+' : '') + costDiff,
       rate: costRate,
       rateNum: costRateNum,
-      isPass: isOtherPeriod ? costDiff <= 0 : (costDiff <= 0 || costPlanRateNum <= 100)
+      isPass: costIsPass
     };
 
     return {
@@ -1480,7 +1681,7 @@ export default function RevenueChartDetailView({
       cost: costGroup,
       profit: profitGroup
     };
-  }, [filteredMatrixRows, hasEstimate, isTrendBranch, selectedYear, isCompareWithPlan]);
+  }, [filteredMatrixRows, hasEstimate, isTrendBranch, selectedYear, isCompareWithPlan, comparisonType]);
 
   // Filtered rows by search and status for non-matrix branches
   const filteredRows = useMemo(() => {
@@ -1654,7 +1855,6 @@ export default function RevenueChartDetailView({
           exportRows.push(buildTrendSummaryExport('Tổng doanh thu ngoài Tập đoàn', matrixTotals.external));
           exportRows.push(buildTrendSummaryExport('Tổng doanh thu nội bộ', matrixTotals.internal));
           exportRows.push(buildTrendSummaryExport('Tổng doanh thu quốc tế', matrixTotals.international));
-          exportRows.push(buildTrendSummaryExport('Tổng chi phí', matrixTotals.cost));
           exportRows.push(buildTrendSummaryExport('Lợi nhuận trước thuế', matrixTotals.profit));
           exportRows.push(buildTrendSummaryExport('Tổng doanh thu', matrixTotals.total));
 
@@ -1673,23 +1873,18 @@ export default function RevenueChartDetailView({
             'Nhóm SPDV': r.spdvGroup,
             'Tên SPDV': r.spdvName
           };
-          if (isEstComparison) {
-            rowObj[estimateColumnHeader] = r.uocTh;
-            rowObj[targetColumnLabel] = r.targetVal !== undefined ? r.targetVal : r.kh;
-          } else if (activeBranchId === 'month') {
-            rowObj[actualColumnLabel] = r.th;
-            rowObj[targetColumnLabel] = r.targetVal !== undefined ? r.targetVal : r.kh;
+          if (comparisonType === 'current_plan') {
+            rowObj[firstSubColLabel] = r.th;
+            rowObj[secondSubColLabel] = r.targetVal !== undefined ? r.targetVal : r.kh;
+          } else if (comparisonType === 'next_plan') {
+            rowObj[firstSubColLabel] = hasEstimate ? (r.uocTh !== undefined ? r.uocTh : r.th) : r.th;
+            rowObj[secondSubColLabel] = r.targetVal !== undefined ? r.targetVal : r.kh;
           } else {
-            rowObj[targetColumnLabel] = r.targetVal !== undefined ? r.targetVal : r.kh;
-            if (hasEstimate) {
-              rowObj['Ước TH'] = r.uocTh;
-            }
-            rowObj[actualColumnLabel] = r.th;
+            rowObj[firstSubColLabel] = r.uocTh !== undefined ? r.uocTh : r.th;
+            rowObj[secondSubColLabel] = r.targetVal !== undefined ? r.targetVal : r.th;
           }
-          const diffColName = isCompareWithPlan ? '+/- so KH' : 'Tăng/giảm';
-          const rateColName = isCompareWithPlan ? '% HTKH' : '% delta';
-          rowObj[diffColName] = r.diffFormatted;
-          rowObj[rateColName] = r.rate;
+          rowObj[diffHeaderLabel] = r.diffFormatted;
+          rowObj[rateHeaderLabel] = r.rate;
           return rowObj;
         });
 
@@ -1701,30 +1896,24 @@ export default function RevenueChartDetailView({
             'Nhóm SPDV': '',
             'Tên SPDV': ''
           };
-          if (isEstComparison) {
-            summaryObj[estimateColumnHeader] = data.uocTh;
-            summaryObj[targetColumnLabel] = data.kh;
-          } else if (activeBranchId === 'month') {
-            summaryObj[actualColumnLabel] = data.th;
-            summaryObj[targetColumnLabel] = data.kh;
+          if (comparisonType === 'current_plan') {
+            summaryObj[firstSubColLabel] = data.th;
+            summaryObj[secondSubColLabel] = data.kh;
+          } else if (comparisonType === 'next_plan') {
+            summaryObj[firstSubColLabel] = hasEstimate ? data.uocTh : data.th;
+            summaryObj[secondSubColLabel] = data.targetVal;
           } else {
-            summaryObj[targetColumnLabel] = data.kh;
-            if (hasEstimate) {
-              summaryObj['Ước TH'] = data.uocTh;
-            }
-            summaryObj[actualColumnLabel] = data.th;
+            summaryObj[firstSubColLabel] = data.uocTh !== undefined ? data.uocTh : data.th;
+            summaryObj[secondSubColLabel] = data.targetVal;
           }
-          const diffColName = isCompareWithPlan ? '+/- so KH' : 'Tăng/giảm';
-          const rateColName = isCompareWithPlan ? '% HTKH' : '% delta';
-          summaryObj[diffColName] = data.diffFormatted;
-          summaryObj[rateColName] = data.rate;
+          summaryObj[diffHeaderLabel] = data.diffFormatted;
+          summaryObj[rateHeaderLabel] = data.rate;
           return summaryObj;
         };
 
         exportRows.push(buildSummaryExport('Tổng doanh thu ngoài Tập đoàn', matrixTotals.external));
         exportRows.push(buildSummaryExport('Tổng doanh thu nội bộ', matrixTotals.internal));
         exportRows.push(buildSummaryExport('Tổng doanh thu quốc tế', matrixTotals.international));
-        exportRows.push(buildSummaryExport('Tổng chi phí', matrixTotals.cost));
         exportRows.push(buildSummaryExport('Lợi nhuận trước thuế', matrixTotals.profit));
         exportRows.push(buildSummaryExport('Tổng doanh thu', matrixTotals.total));
 
@@ -1797,10 +1986,10 @@ export default function RevenueChartDetailView({
         'STT': r.stt,
         'Chỉ tiêu / Đối tượng': r.name,
         'Đơn vị tính': r.unit,
-        'Kế hoạch (KH)': r.kh,
-        'Thực hiện (TH)': r.th,
-        'Chênh lệch': r.diff,
-        'Tỷ lệ (%)': r.rate,
+        [targetColumnLabel]: r.kh,
+        [actualColumnLabel]: r.th,
+        [diffHeaderLabel]: r.diff,
+        [rateHeaderLabel]: r.rate,
         'Tỷ trọng': r.share,
         'Đánh giá': r.isPass ? 'Đạt / Tốt' : 'Chưa đạt'
       }));
@@ -1810,10 +1999,10 @@ export default function RevenueChartDetailView({
         'STT': 'TỔNG',
         'Chỉ tiêu / Đối tượng': 'TỔNG CỘNG',
         'Đơn vị tính': tableData.defaultUnit,
-        'Kế hoạch (KH)': totals.sumKh,
-        'Thực hiện (TH)': totals.sumTh,
-        'Chênh lệch': totals.diffFormatted,
-        'Tỷ lệ (%)': totals.avgRate,
+        [targetColumnLabel]: totals.sumKh,
+        [actualColumnLabel]: totals.sumTh,
+        [diffHeaderLabel]: totals.diffFormatted,
+        [rateHeaderLabel]: totals.avgRate,
         'Tỷ trọng': '100%',
         'Đánh giá': totals.isPass ? 'Đạt KH chung' : 'Chưa đạt KH'
       });
@@ -1828,6 +2017,17 @@ export default function RevenueChartDetailView({
       console.error('Error exporting table to excel:', err);
       alert('Có lỗi khi xuất file Excel. Vui lòng thử lại!');
     }
+  };
+
+  const renderSummaryCol1 = (group) => {
+    if (comparisonType === 'current_plan') return matrixTotals[group]?.th ?? 0;
+    if (comparisonType === 'next_plan') return hasEstimate ? (matrixTotals[group]?.uocTh ?? 0) : (matrixTotals[group]?.th ?? 0);
+    return hasEstimate ? (matrixTotals[group]?.uocTh ?? 0) : (matrixTotals[group]?.th ?? 0);
+  };
+
+  const renderSummaryCol2 = (group) => {
+    if (comparisonType === 'current_plan') return matrixTotals[group]?.kh ?? 0;
+    return matrixTotals[group]?.targetVal ?? 0;
   };
 
   return (
@@ -2027,9 +2227,9 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`sub-m-${m}`}>
-                          <th className="th-sub-prev">TH {lastYear}</th>
                           <th className="th-sub-th">TH {selectedYear}</th>
-                          <th className="th-sub-growth">% delta</th>
+                          <th className="th-sub-prev">TH {lastYear}</th>
+                          <th className="th-sub-growth">% Delta</th>
                         </React.Fragment>
                       ) : (
                         <React.Fragment key={`sub-m-${m}`}>
@@ -2041,10 +2241,10 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <th className="th-sub-prev">TH {lastYear}</th>
                         <th className="th-sub-th">TH {selectedYear}</th>
+                        <th className="th-sub-prev">TH {lastYear}</th>
                         <th className="th-sub-diff">Tăng/giảm</th>
-                        <th className="th-sub-growth">% delta</th>
+                        <th className="th-sub-growth">% Delta</th>
                       </>
                     ) : (
                       <>
@@ -2068,14 +2268,14 @@ export default function RevenueChartDetailView({
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                           isTrendPrevYear ? (
                             <React.Fragment key={`td-m-${m}`}>
-                              <td className="td-prev text-right">
-                                {row.monthly?.[m]?.thPrev !== null && row.monthly?.[m]?.thPrev !== undefined
-                                  ? row.monthly[m].thPrev
-                                  : <span className="text-muted">—</span>}
-                              </td>
                               <td className="td-th text-right font-medium">
                                 {row.monthly?.[m]?.thCurrent !== null && row.monthly?.[m]?.thCurrent !== undefined
                                   ? row.monthly[m].thCurrent
+                                  : <span className="text-muted">—</span>}
+                              </td>
+                              <td className="td-prev text-right">
+                                {row.monthly?.[m]?.thPrev !== null && row.monthly?.[m]?.thPrev !== undefined
+                                  ? row.monthly[m].thPrev
                                   : <span className="text-muted">—</span>}
                               </td>
                               <td className={`td-growth text-right font-bold ${row.monthly?.[m]?.growthNum !== null && row.monthly?.[m]?.growthNum !== undefined ? (row.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
@@ -2098,8 +2298,8 @@ export default function RevenueChartDetailView({
                         ))}
                         {isTrendPrevYear ? (
                           <>
-                            <td className="td-prev text-right font-semibold">{row.prevTh}</td>
                             <td className="td-th text-right font-bold">{row.totalTh}</td>
+                            <td className="td-prev text-right font-semibold">{row.prevTh}</td>
                             <td className={`td-diff text-right font-medium ${(row.totalTh - row.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                               {(row.totalTh - row.prevTh) >= 0 ? `+${row.totalTh - row.prevTh}` : (row.totalTh - row.prevTh)}
                             </td>
@@ -2141,13 +2341,13 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`ext-m-${m}`}>
-                          <td className="td-prev text-right font-bold">
-                            {matrixTotals.external.monthly?.[m]?.thPrev ?? 0}
-                          </td>
                           <td className="td-th text-right font-bold">
                             {matrixTotals.external.monthly?.[m]?.thCurrent !== null && matrixTotals.external.monthly?.[m]?.thCurrent !== undefined
                               ? matrixTotals.external.monthly[m].thCurrent
                               : <span className="text-muted">—</span>}
+                          </td>
+                          <td className="td-prev text-right font-bold">
+                            {matrixTotals.external.monthly?.[m]?.thPrev ?? 0}
                           </td>
                           <td className={`td-growth text-right font-bold ${matrixTotals.external.monthly?.[m]?.growthNum !== null && matrixTotals.external.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.external.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
                             {matrixTotals.external.monthly?.[m]?.growth || <span className="text-muted">—</span>}
@@ -2169,8 +2369,8 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <td className="td-prev text-right font-bold">{matrixTotals.external.prevTh}</td>
                         <td className="td-th text-right font-bold">{matrixTotals.external.totalTh}</td>
+                        <td className="td-prev text-right font-bold">{matrixTotals.external.prevTh}</td>
                         <td className={`td-diff text-right font-bold ${(matrixTotals.external.totalTh - matrixTotals.external.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                           {(matrixTotals.external.totalTh - matrixTotals.external.prevTh) >= 0 ? `+${matrixTotals.external.totalTh - matrixTotals.external.prevTh}` : (matrixTotals.external.totalTh - matrixTotals.external.prevTh)}
                         </td>
@@ -2203,13 +2403,13 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`int-m-${m}`}>
-                          <td className="td-prev text-right font-bold">
-                            {matrixTotals.internal.monthly?.[m]?.thPrev ?? 0}
-                          </td>
                           <td className="td-th text-right font-bold">
                             {matrixTotals.internal.monthly?.[m]?.thCurrent !== null && matrixTotals.internal.monthly?.[m]?.thCurrent !== undefined
                               ? matrixTotals.internal.monthly[m].thCurrent
                               : <span className="text-muted">—</span>}
+                          </td>
+                          <td className="td-prev text-right font-bold">
+                            {matrixTotals.internal.monthly?.[m]?.thPrev ?? 0}
                           </td>
                           <td className={`td-growth text-right font-bold ${matrixTotals.internal.monthly?.[m]?.growthNum !== null && matrixTotals.internal.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.internal.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
                             {matrixTotals.internal.monthly?.[m]?.growth || <span className="text-muted">—</span>}
@@ -2231,8 +2431,8 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <td className="td-prev text-right font-bold">{matrixTotals.internal.prevTh}</td>
                         <td className="td-th text-right font-bold">{matrixTotals.internal.totalTh}</td>
+                        <td className="td-prev text-right font-bold">{matrixTotals.internal.prevTh}</td>
                         <td className={`td-diff text-right font-bold ${(matrixTotals.internal.totalTh - matrixTotals.internal.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                           {(matrixTotals.internal.totalTh - matrixTotals.internal.prevTh) >= 0 ? `+${matrixTotals.internal.totalTh - matrixTotals.internal.prevTh}` : (matrixTotals.internal.totalTh - matrixTotals.internal.prevTh)}
                         </td>
@@ -2265,13 +2465,13 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`inter-m-${m}`}>
-                          <td className="td-prev text-right font-bold">
-                            {matrixTotals.international.monthly?.[m]?.thPrev ?? 0}
-                          </td>
                           <td className="td-th text-right font-bold">
                             {matrixTotals.international.monthly?.[m]?.thCurrent !== null && matrixTotals.international.monthly?.[m]?.thCurrent !== undefined
                               ? matrixTotals.international.monthly[m].thCurrent
                               : <span className="text-muted">—</span>}
+                          </td>
+                          <td className="td-prev text-right font-bold">
+                            {matrixTotals.international.monthly?.[m]?.thPrev ?? 0}
                           </td>
                           <td className={`td-growth text-right font-bold ${matrixTotals.international.monthly?.[m]?.growthNum !== null && matrixTotals.international.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.international.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
                             {matrixTotals.international.monthly?.[m]?.growth || <span className="text-muted">—</span>}
@@ -2293,8 +2493,8 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <td className="td-prev text-right font-bold">{matrixTotals.international.prevTh}</td>
                         <td className="td-th text-right font-bold">{matrixTotals.international.totalTh}</td>
+                        <td className="td-prev text-right font-bold">{matrixTotals.international.prevTh}</td>
                         <td className={`td-diff text-right font-bold ${(matrixTotals.international.totalTh - matrixTotals.international.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                           {(matrixTotals.international.totalTh - matrixTotals.international.prevTh) >= 0 ? `+${matrixTotals.international.totalTh - matrixTotals.international.prevTh}` : (matrixTotals.international.totalTh - matrixTotals.international.prevTh)}
                         </td>
@@ -2319,67 +2519,6 @@ export default function RevenueChartDetailView({
                     )}
                   </tr>
 
-                  {/* Summary Row 4: Tổng chi phí */}
-                  <tr className="month-summary-row row-cost">
-                    <td colSpan={4} className="summary-title-cell font-bold">
-                      Tổng chi phí
-                    </td>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
-                      isTrendPrevYear ? (
-                        <React.Fragment key={`cost-m-${m}`}>
-                          <td className="td-prev text-right font-bold">
-                            {matrixTotals.cost.monthly?.[m]?.thPrev ?? 0}
-                          </td>
-                          <td className="td-th text-right font-bold">
-                            {matrixTotals.cost.monthly?.[m]?.thCurrent !== null && matrixTotals.cost.monthly?.[m]?.thCurrent !== undefined
-                              ? matrixTotals.cost.monthly[m].thCurrent
-                              : <span className="text-muted">—</span>}
-                          </td>
-                          <td className={`td-growth text-right font-bold ${matrixTotals.cost.monthly?.[m]?.growthNum !== null && matrixTotals.cost.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.cost.monthly[m].growthNum <= 0 ? 'text-green' : 'text-red') : ''}`}>
-                            {matrixTotals.cost.monthly?.[m]?.growth || <span className="text-muted">—</span>}
-                          </td>
-                        </React.Fragment>
-                      ) : (
-                        <React.Fragment key={`cost-m-${m}`}>
-                          <td className="td-th text-right font-bold">
-                            {matrixTotals.cost.monthly?.[m]?.th !== null && matrixTotals.cost.monthly?.[m]?.th !== undefined
-                              ? matrixTotals.cost.monthly[m].th
-                              : <span className="text-muted">—</span>}
-                          </td>
-                          <td className="td-kh text-right font-bold">{matrixTotals.cost.monthly?.[m]?.kh ?? 0}</td>
-                          <td className={`td-rate text-right font-bold ${matrixTotals.cost.monthly?.[m]?.rateNum !== null && matrixTotals.cost.monthly?.[m]?.rateNum !== undefined ? (matrixTotals.cost.monthly[m].isPass ? 'text-green' : 'text-red') : ''}`}>
-                            {matrixTotals.cost.monthly?.[m]?.rate || <span className="text-muted">—</span>}
-                          </td>
-                        </React.Fragment>
-                      )
-                    ))}
-                    {isTrendPrevYear ? (
-                      <>
-                        <td className="td-prev text-right font-bold">{matrixTotals.cost.prevTh}</td>
-                        <td className="td-th text-right font-bold">{matrixTotals.cost.totalTh}</td>
-                        <td className={`td-diff text-right font-bold ${(matrixTotals.cost.totalTh - matrixTotals.cost.prevTh) <= 0 ? 'text-green' : 'text-red'}`}>
-                          {(matrixTotals.cost.totalTh - matrixTotals.cost.prevTh) >= 0 ? `+${matrixTotals.cost.totalTh - matrixTotals.cost.prevTh}` : (matrixTotals.cost.totalTh - matrixTotals.cost.prevTh)}
-                        </td>
-                        <td className={`td-growth text-right font-bold ${matrixTotals.cost.growthRateNum <= 0 ? 'text-green' : 'text-red'}`}>
-                          {matrixTotals.cost.growthRate}
-                        </td>
-                      </>
-                    ) : (
-                      <>
-                        <td className="td-th text-right font-bold">{matrixTotals.cost.totalTh}</td>
-                        <td className="td-kh text-right font-bold">{matrixTotals.cost.totalKh}</td>
-                        <td className={`td-diff text-right font-bold ${matrixTotals.cost.totalDiff <= 0 ? 'text-green' : 'text-red'}`}>
-                          {matrixTotals.cost.totalDiffFormatted}
-                        </td>
-                        <td className={`td-rate text-right font-bold ${matrixTotals.cost.isPass ? 'text-green' : 'text-red'}`}>
-                          {matrixTotals.cost.totalRate}
-                        </td>
-                        <td className={`td-growth text-right font-bold ${matrixTotals.cost.growthRateNum <= 0 ? 'text-green' : 'text-red'}`}>
-                          {matrixTotals.cost.growthRate}
-                        </td>
-                      </>
-                    )}
-                  </tr>
 
                   {/* Summary Row 5: Lợi nhuận trước thuế */}
                   <tr className="month-summary-row row-profit">
@@ -2389,13 +2528,13 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`prof-m-${m}`}>
-                          <td className="td-prev text-right font-extrabold">
-                            {matrixTotals.profit.monthly?.[m]?.thPrev ?? 0}
-                          </td>
                           <td className="td-th text-right font-extrabold">
                             {matrixTotals.profit.monthly?.[m]?.thCurrent !== null && matrixTotals.profit.monthly?.[m]?.thCurrent !== undefined
                               ? matrixTotals.profit.monthly[m].thCurrent
                               : <span className="text-muted">—</span>}
+                          </td>
+                          <td className="td-prev text-right font-extrabold">
+                            {matrixTotals.profit.monthly?.[m]?.thPrev ?? 0}
                           </td>
                           <td className={`td-growth text-right font-extrabold ${matrixTotals.profit.monthly?.[m]?.growthNum !== null && matrixTotals.profit.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.profit.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
                             {matrixTotals.profit.monthly?.[m]?.growth || <span className="text-muted">—</span>}
@@ -2417,8 +2556,8 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <td className="td-prev text-right font-extrabold">{matrixTotals.profit.prevTh}</td>
                         <td className="td-th text-right font-extrabold">{matrixTotals.profit.totalTh}</td>
+                        <td className="td-prev text-right font-extrabold">{matrixTotals.profit.prevTh}</td>
                         <td className={`td-diff text-right font-extrabold ${(matrixTotals.profit.totalTh - matrixTotals.profit.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                           {(matrixTotals.profit.totalTh - matrixTotals.profit.prevTh) >= 0 ? `+${matrixTotals.profit.totalTh - matrixTotals.profit.prevTh}` : (matrixTotals.profit.totalTh - matrixTotals.profit.prevTh)}
                         </td>
@@ -2451,13 +2590,13 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`tot-m-${m}`}>
-                          <td className="td-prev text-right font-extrabold">
-                            {matrixTotals.total.monthly?.[m]?.thPrev ?? 0}
-                          </td>
                           <td className="td-th text-right font-extrabold">
                             {matrixTotals.total.monthly?.[m]?.thCurrent !== null && matrixTotals.total.monthly?.[m]?.thCurrent !== undefined
                               ? matrixTotals.total.monthly[m].thCurrent
                               : <span className="text-muted">—</span>}
+                          </td>
+                          <td className="td-prev text-right font-extrabold">
+                            {matrixTotals.total.monthly?.[m]?.thPrev ?? 0}
                           </td>
                           <td className={`td-growth text-right font-extrabold ${matrixTotals.total.monthly?.[m]?.growthNum !== null && matrixTotals.total.monthly?.[m]?.growthNum !== undefined ? (matrixTotals.total.monthly[m].growthNum >= 0 ? 'text-green' : 'text-red') : ''}`}>
                             {matrixTotals.total.monthly?.[m]?.growth || <span className="text-muted">—</span>}
@@ -2479,8 +2618,8 @@ export default function RevenueChartDetailView({
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <td className="td-prev text-right font-extrabold">{matrixTotals.total.prevTh}</td>
                         <td className="td-th text-right font-extrabold">{matrixTotals.total.totalTh}</td>
+                        <td className="td-prev text-right font-extrabold">{matrixTotals.total.prevTh}</td>
                         <td className={`td-diff text-right font-extrabold ${(matrixTotals.total.totalTh - matrixTotals.total.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
                           {(matrixTotals.total.totalTh - matrixTotals.total.prevTh) >= 0 ? `+${matrixTotals.total.totalTh - matrixTotals.total.prevTh}` : (matrixTotals.total.totalTh - matrixTotals.total.prevTh)}
                         </td>
@@ -2527,13 +2666,13 @@ export default function RevenueChartDetailView({
                   </th>
                 </tr>
                 <tr className="th-sub-row">
-                  <th className="th-sub-kh text-right">{isCompareWithPlan ? 'KH' : 'Ước TH'}</th>
-                  <th className="th-sub-th text-right">TH</th>
+                  <th className="th-sub-th text-right">{firstSubColLabel}</th>
+                  <th className="th-sub-kh text-right">{secondSubColLabel}</th>
                   <th className="th-sub-diff text-right">
-                    {isCompareWithPlan ? '+/- so KH' : 'Tăng/giảm'}
+                    {diffHeaderLabel}
                   </th>
                   <th className="th-sub-rate text-center">
-                    {isCompareWithPlan ? '% HTKH' : '% delta'}
+                    {rateHeaderLabel}
                   </th>
                 </tr>
               </thead>
@@ -2545,11 +2684,19 @@ export default function RevenueChartDetailView({
                       <td className="td-customer-name font-semibold">{row.customerName}</td>
                       <td className="td-spdv-group">{row.spdvGroup}</td>
                       <td className="td-spdv-name">{row.spdvName}</td>
-                      <td className="td-kh text-right">
-                        {isCompareWithPlan ? (row.targetVal !== undefined ? row.targetVal : row.kh) : (row.uocTh !== undefined ? row.uocTh : row.th)}
-                      </td>
                       <td className="td-th text-right font-medium">
-                        {isCompareWithPlan ? row.th : (row.targetVal !== undefined ? row.targetVal : row.th)}
+                        {comparisonType === 'current_plan'
+                          ? row.th
+                          : comparisonType === 'next_plan'
+                          ? (hasEstimate ? (row.uocTh !== undefined ? row.uocTh : row.th) : row.th)
+                          : (hasEstimate ? (row.uocTh !== undefined ? row.uocTh : row.th) : row.th)}
+                      </td>
+                      <td className="td-kh text-right">
+                        {comparisonType === 'current_plan'
+                          ? (row.targetVal !== undefined ? row.targetVal : row.kh)
+                          : comparisonType === 'next_plan'
+                          ? (row.targetVal !== undefined ? row.targetVal : row.kh)
+                          : (row.targetVal !== undefined ? row.targetVal : row.th)}
                       </td>
                       <td className={`td-diff text-right font-medium ${row.diff >= 0 ? 'text-green' : 'text-red'}`}>
                         {row.diffFormatted}
@@ -2573,11 +2720,11 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-bold">
                     Tổng doanh thu ngoài Tập đoàn
                   </td>
-                  <td className="td-kh text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.external.kh : matrixTotals.external.uocTh}
-                  </td>
                   <td className="td-th text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.external.th : matrixTotals.external.targetVal}
+                    {renderSummaryCol1('external')}
+                  </td>
+                  <td className="td-kh text-right font-bold">
+                    {renderSummaryCol2('external')}
                   </td>
                   <td className={`td-diff text-right font-bold ${matrixTotals.external.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {matrixTotals.external.diffFormatted}
@@ -2592,11 +2739,11 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-bold">
                     Tổng doanh thu nội bộ
                   </td>
-                  <td className="td-kh text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.internal.kh : matrixTotals.internal.uocTh}
-                  </td>
                   <td className="td-th text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.internal.th : matrixTotals.internal.targetVal}
+                    {renderSummaryCol1('internal')}
+                  </td>
+                  <td className="td-kh text-right font-bold">
+                    {renderSummaryCol2('internal')}
                   </td>
                   <td className={`td-diff text-right font-bold ${matrixTotals.internal.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {matrixTotals.internal.diffFormatted}
@@ -2611,11 +2758,11 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-bold">
                     Tổng doanh thu quốc tế
                   </td>
-                  <td className="td-kh text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.international.kh : matrixTotals.international.uocTh}
-                  </td>
                   <td className="td-th text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.international.th : matrixTotals.international.targetVal}
+                    {renderSummaryCol1('international')}
+                  </td>
+                  <td className="td-kh text-right font-bold">
+                    {renderSummaryCol2('international')}
                   </td>
                   <td className={`td-diff text-right font-bold ${matrixTotals.international.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {matrixTotals.international.diffFormatted}
@@ -2625,35 +2772,17 @@ export default function RevenueChartDetailView({
                   </td>
                 </tr>
 
-                {/* Summary Row 4: Tổng chi phí */}
-                <tr className="month-summary-row row-cost">
-                  <td colSpan={4} className="summary-title-cell font-bold">
-                    Tổng chi phí
-                  </td>
-                  <td className="td-kh text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.cost.kh : matrixTotals.cost.uocTh}
-                  </td>
-                  <td className="td-th text-right font-bold">
-                    {isCompareWithPlan ? matrixTotals.cost.th : matrixTotals.cost.targetVal}
-                  </td>
-                  <td className={`td-diff text-right font-bold ${matrixTotals.cost.isPass ? 'text-green' : 'text-red'}`}>
-                    {matrixTotals.cost.diffFormatted}
-                  </td>
-                  <td className={`td-rate text-right font-bold ${matrixTotals.cost.isPass ? 'text-green' : 'text-red'}`}>
-                    {matrixTotals.cost.rate}
-                  </td>
-                </tr>
 
                 {/* Summary Row 5: Lợi nhuận trước thuế */}
                 <tr className="month-summary-row row-profit">
                   <td colSpan={4} className="summary-title-cell font-extrabold">
                     Lợi nhuận trước thuế
                   </td>
-                  <td className="td-kh text-right font-extrabold">
-                    {isCompareWithPlan ? matrixTotals.profit.kh : matrixTotals.profit.uocTh}
-                  </td>
                   <td className="td-th text-right font-extrabold">
-                    {isCompareWithPlan ? matrixTotals.profit.th : matrixTotals.profit.targetVal}
+                    {renderSummaryCol1('profit')}
+                  </td>
+                  <td className="td-kh text-right font-extrabold">
+                    {renderSummaryCol2('profit')}
                   </td>
                   <td className={`td-diff text-right font-extrabold ${matrixTotals.profit.isPass ? 'text-green' : 'text-red'}`}>
                     {matrixTotals.profit.diffFormatted}
@@ -2668,11 +2797,11 @@ export default function RevenueChartDetailView({
                   <td colSpan={4} className="summary-title-cell font-extrabold">
                     Tổng doanh thu
                   </td>
-                  <td className="td-kh text-right font-extrabold">
-                    {isCompareWithPlan ? matrixTotals.total.kh : matrixTotals.total.uocTh}
-                  </td>
                   <td className="td-th text-right font-extrabold">
-                    {isCompareWithPlan ? matrixTotals.total.th : matrixTotals.total.targetVal}
+                    {renderSummaryCol1('total')}
+                  </td>
+                  <td className="td-kh text-right font-extrabold">
+                    {renderSummaryCol2('total')}
                   </td>
                   <td className={`td-diff text-right font-extrabold ${matrixTotals.total.diff >= 0 ? 'text-green' : 'text-red'}`}>
                     {matrixTotals.total.diffFormatted}
@@ -2717,13 +2846,13 @@ export default function RevenueChartDetailView({
                   <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                   <th style={{ textAlign: 'left', minWidth: '220px' }}>Chỉ tiêu / Đối tượng</th>
                   <th style={{ width: '90px', textAlign: 'center' }}>Đơn vị</th>
-                  <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{targetColumnLabel}</th>
-                  <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{actualColumnLabel}</th>
+                  <th style={{ width: '150px', textAlign: 'right', fontWeight: '700' }}>{actualColumnLabel}</th>
+                  <th style={{ width: '150px', textAlign: 'right', fontWeight: '700' }}>{targetColumnLabel}</th>
                   <th style={{ width: '125px', textAlign: 'right', fontWeight: '700' }}>
-                    {isCompareWithPlan ? '+/- so KH' : 'Tăng/giảm'}
+                    {diffHeaderLabel}
                   </th>
                   <th style={{ width: '130px', textAlign: 'center', fontWeight: '700' }}>
-                    {isCompareWithPlan ? '% HTKH' : '% delta'}
+                    {rateHeaderLabel}
                   </th>
                   <th style={{ width: '90px', textAlign: 'center' }}>Tỷ trọng</th>
                   <th style={{ width: '110px', textAlign: 'center' }}>Đánh giá</th>
@@ -2742,11 +2871,11 @@ export default function RevenueChartDetailView({
                       <td style={{ textAlign: 'center', color: '#64748b', fontSize: '12px' }}>
                         {row.unit}
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: '600', color: '#475569' }}>
-                        {typeof row.kh === 'number' ? row.kh.toLocaleString('vi-VN') : row.kh}
-                      </td>
                       <td style={{ textAlign: 'right', fontWeight: '800', color: '#e11d48' }}>
                         {typeof row.th === 'number' ? row.th.toLocaleString('vi-VN') : row.th}
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: '600', color: '#475569' }}>
+                        {typeof row.kh === 'number' ? row.kh.toLocaleString('vi-VN') : row.kh}
                       </td>
                       <td
                         style={{
@@ -2805,11 +2934,11 @@ export default function RevenueChartDetailView({
                   <td colSpan={3} style={{ textAlign: 'left', fontWeight: '800', paddingLeft: '24px' }}>
                     TỔNG CỘNG
                   </td>
-                  <td style={{ textAlign: 'right', fontWeight: '800', color: '#334155' }}>
-                    {totals.sumKh.toLocaleString('vi-VN')}
-                  </td>
                   <td style={{ textAlign: 'right', fontWeight: '900', color: '#e11d48' }}>
                     {totals.sumTh.toLocaleString('vi-VN')}
+                  </td>
+                  <td style={{ textAlign: 'right', fontWeight: '800', color: '#334155' }}>
+                    {totals.sumKh.toLocaleString('vi-VN')}
                   </td>
                   <td
                     style={{

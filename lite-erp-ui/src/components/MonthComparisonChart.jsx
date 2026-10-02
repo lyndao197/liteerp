@@ -32,7 +32,8 @@ function MonthValueCard({
   setHoveredItem,
   isVisible = true,
   onToggle,
-  onOpenDetail
+  onOpenDetail,
+  rateLabel = '% HTKH'
 }) {
   const svgWidth = 540;
   const svgHeight = 280;
@@ -49,6 +50,52 @@ function MonthValueCard({
   const barWidth = data.length === 5 ? 13 : 14;
   const barGap = 2;
 
+  const isCompareOther = rateLabel === '% Delta';
+  const isCompareNext = rateLabel === '% so KH kỳ sau';
+  const isComparePlan = !isCompareOther && !isCompareNext;
+
+  const displayPrimaryLegend = primaryLegend || 'TH';
+  const displaySecondaryLegend = secondaryLegend || (isCompareOther ? 'TH' : 'KH');
+
+  const col1Label = isComparePlan ? displaySecondaryLegend : displayPrimaryLegend;
+  const col2Label = isComparePlan ? displayPrimaryLegend : displaySecondaryLegend;
+  const diffLabel = isCompareOther ? 'Tăng/giảm' : '+/- so KH';
+
+  let col1Val = null;
+  let col2Val = null;
+  let diffVal = null;
+  let isCol1Primary = false;
+
+  if (hoveredItem) {
+    const val1 = hoveredItem.th !== undefined ? hoveredItem.th : hoveredItem.thCurrent;
+    const val2 = hoveredItem.kh !== undefined
+      ? hoveredItem.kh
+      : hoveredItem.thPrev !== undefined
+      ? hoveredItem.thPrev
+      : hoveredItem.thLastYear !== undefined
+      ? hoveredItem.thLastYear
+      : hoveredItem.khNext;
+
+    if (isComparePlan) {
+      col1Val = val2;
+      col2Val = val1;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = false;
+    } else if (isCompareNext) {
+      col1Val = val1;
+      col2Val = val2;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = true;
+    } else {
+      col1Val = val1;
+      col2Val = val2;
+      diffVal = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined) ? (val1 - val2) : null;
+      isCol1Primary = true;
+    }
+  }
+
+  const legendX = (displayPrimaryLegend.length > 12 || displaySecondaryLegend.length > 12) ? 370 : ((displayPrimaryLegend.length > 8 || displaySecondaryLegend.length > 8) ? 395 : 435);
+
   return (
     <div className="month-subcard">
       <div className="month-subcard-header">
@@ -61,17 +108,17 @@ function MonthValueCard({
       <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(425, 8)" style={{ cursor: 'help' }}>
+            <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
               <g>
-                <title>{explainLegend(primaryLegend)}</title>
+                <title>{explainLegend(displayPrimaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
-                <text x={16} y={10} className="legend-label">{primaryLegend}</text>
+                <text x={16} y={10} className="legend-label">{displayPrimaryLegend}</text>
               </g>
 
               <g transform="translate(0, 16)">
-                <title>{explainLegend(secondaryLegend)}</title>
-                <rect x={0} y={16} width={12} height={12} fill="#94a3b8" rx={1} />
-                <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+                <title>{explainLegend(displaySecondaryLegend)}</title>
+                <rect x={0} y={0} width={12} height={12} fill="#94a3b8" rx={1} />
+                <text x={16} y={10} className="legend-label">{displaySecondaryLegend}</text>
               </g>
             </g>
 
@@ -247,32 +294,33 @@ function MonthValueCard({
             <div className="month-subcard-tooltip">
               <div className="tooltip-item-title">{hoveredItem.name}</div>
               <div className="tooltip-stat-row">
-                <span className="tooltip-dot red"></span>
-                <span>{primaryLegend}:</span>
+                <span className={`tooltip-dot ${isCol1Primary ? 'red' : 'gray'}`}></span>
+                <span>{col1Label}:</span>
                 <strong>
-                  {hoveredItem.th !== undefined
-                    ? formatVal(hoveredItem.th)
-                    : formatVal(hoveredItem.thCurrent)}{' '}
+                  {col1Val !== null && col1Val !== undefined ? formatVal(col1Val) : '—'}{' '}
                   {hoveredItem.unit || 'Triệu đồng'}
                 </strong>
               </div>
               <div className="tooltip-stat-row">
-                <span className="tooltip-dot gray"></span>
-                <span>{secondaryLegend}:</span>
+                <span className={`tooltip-dot ${isCol1Primary ? 'gray' : 'red'}`}></span>
+                <span>{col2Label}:</span>
                 <strong>
-                  {hoveredItem.kh !== undefined
-                    ? formatVal(hoveredItem.kh)
-                    : hoveredItem.thPrev !== undefined
-                    ? formatVal(hoveredItem.thPrev)
-                    : hoveredItem.thLastYear !== undefined
-                    ? formatVal(hoveredItem.thLastYear)
-                    : formatVal(hoveredItem.khNext)}{' '}
+                  {col2Val !== null && col2Val !== undefined ? formatVal(col2Val) : '—'}{' '}
                   {hoveredItem.unit || 'Triệu đồng'}
                 </strong>
               </div>
+              {diffVal !== null && diffVal !== undefined && (
+                <div className="tooltip-stat-row">
+                  <span>{diffLabel}:</span>
+                  <strong className={diffVal >= 0 ? 'text-green' : 'text-red'}>
+                    {diffVal > 0 ? '+' : ''}{formatVal(diffVal)}{' '}
+                    {hoveredItem.unit || 'Triệu đồng'}
+                  </strong>
+                </div>
+              )}
               {hoveredItem.rate && hoveredItem.rate !== '-' && (
                 <div className="tooltip-stat-row">
-                  <span>Tỷ lệ (%):</span>
+                  <span>{rateLabel}:</span>
                   <strong className={hoveredItem.isRatePositive ? 'text-green' : 'text-red'}>
                     {hoveredItem.rate}
                   </strong>
@@ -310,6 +358,8 @@ function MonthRatioCard({
   tag,
   primaryLegend,
   secondaryLegend,
+  tooltipPrimaryLabel,
+  tooltipSecondaryLabel,
   data,
   isBlank,
   hoveredItem,
@@ -333,6 +383,8 @@ function MonthRatioCard({
   const barWidth = data.length === 3 ? 14 : 15;
   const barGap = 2;
 
+  const legendX = (primaryLegend.length > 12 || secondaryLegend.length > 12) ? 370 : ((primaryLegend.length > 8 || secondaryLegend.length > 8) ? 395 : 425);
+
   return (
     <div className="month-subcard">
       <div className="month-subcard-header">
@@ -345,7 +397,7 @@ function MonthRatioCard({
       <div className="month-subcard-svg-wrap">
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="month-subcard-svg">
             {/* Stacked Legend Top Right */}
-            <g transform="translate(425, 8)" style={{ cursor: 'help' }}>
+            <g transform={`translate(${legendX}, 8)`} style={{ cursor: 'help' }}>
               <g>
                 <title>{explainLegend(primaryLegend)}</title>
                 <rect x={0} y={0} width={12} height={12} fill="#e11d48" rx={1} />
@@ -354,8 +406,8 @@ function MonthRatioCard({
 
               <g transform="translate(0, 16)">
                 <title>{explainLegend(secondaryLegend)}</title>
-                <rect x={0} y={16} width={12} height={12} fill="#94a3b8" rx={1} />
-                <text x={16} y={26} className="legend-label">{secondaryLegend}</text>
+                <rect x={0} y={0} width={12} height={12} fill="#94a3b8" rx={1} />
+                <text x={16} y={10} className="legend-label">{secondaryLegend}</text>
               </g>
             </g>
 
@@ -527,41 +579,84 @@ function MonthRatioCard({
           </svg>
 
           {/* Hover Tooltip */}
-          {hoveredItem && !isBlank && (
-            <div className="month-subcard-tooltip">
-              <div className="tooltip-item-title">{hoveredItem.name}</div>
-              <div className="tooltip-stat-row">
-                <span className="tooltip-dot red"></span>
-                <span>{primaryLegend}:</span>
-                <strong>
-                  {hoveredItem.th !== undefined
-                    ? formatVal(hoveredItem.th)
-                    : formatVal(hoveredItem.thCurrent)}%
-                </strong>
-              </div>
-              <div className="tooltip-stat-row">
-                <span className="tooltip-dot gray"></span>
-                <span>{secondaryLegend}:</span>
-                <strong>
-                  {hoveredItem.kh !== undefined
-                    ? formatVal(hoveredItem.kh)
-                    : hoveredItem.thPrev !== undefined
-                    ? formatVal(hoveredItem.thPrev)
-                    : hoveredItem.thLastYear !== undefined
-                    ? formatVal(hoveredItem.thLastYear)
-                    : formatVal(hoveredItem.khNext)}%
-                </strong>
-              </div>
-              {hoveredItem.diff && hoveredItem.diff !== '-' && (
-                <div className="tooltip-stat-row">
-                  <span>Chênh lệch điểm %:</span>
-                  <strong className={hoveredItem.isDiffPositive ? 'text-green' : 'text-red'}>
-                    {hoveredItem.diff}
+          {hoveredItem && !isBlank && (() => {
+            const rawLbl1 = tooltipPrimaryLabel || (primaryLegend.includes('/') ? primaryLegend : `TH ${primaryLegend}`);
+            const rawLbl2 = tooltipSecondaryLabel || (secondaryLegend.includes('/') ? secondaryLegend : (secondaryLegend === 'KH' ? 'KH' : secondaryLegend));
+            const primaryLabel = rawLbl1.endsWith(':') ? rawLbl1 : `${rawLbl1}:`;
+            const secondaryLabel = rawLbl2.endsWith(':') ? rawLbl2 : `${rawLbl2}:`;
+
+            const val1 = hoveredItem.th !== undefined ? hoveredItem.th : hoveredItem.thCurrent;
+            const val2 = hoveredItem.kh !== undefined
+              ? hoveredItem.kh
+              : hoveredItem.thPrev !== undefined
+              ? hoveredItem.thPrev
+              : hoveredItem.thLastYear !== undefined
+              ? hoveredItem.thLastYear
+              : hoveredItem.khNext;
+
+            const formatPercent = (val) => {
+              if (val === null || val === undefined || val === '') return '—';
+              const num = Number(val);
+              if (isNaN(num)) return `${val}%`;
+              return `${num.toFixed(1).replace('.', ',')}%`;
+            };
+
+            const formatDiff = (diffVal, v1, v2) => {
+              if (diffVal !== null && diffVal !== undefined && diffVal !== '' && diffVal !== '-') {
+                const str = String(diffVal).trim();
+                if (str.includes('đ.%')) return str;
+                return `${str} đ.%`;
+              }
+              if (v1 !== null && v1 !== undefined && v2 !== null && v2 !== undefined) {
+                const d = Number(v1) - Number(v2);
+                if (!isNaN(d)) {
+                  const sign = d > 0 ? '+' : '';
+                  return `${sign}${d.toFixed(1).replace('.', ',')} đ.%`;
+                }
+              }
+              return '-';
+            };
+
+            const diffDisplay = formatDiff(hoveredItem.diff, val1, val2);
+            const isPositive = hoveredItem.isDiffPositive !== undefined
+              ? Boolean(hoveredItem.isDiffPositive)
+              : (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined
+                  ? Number(val1) >= Number(val2)
+                  : true);
+
+            return (
+              <div className="ratio-subcard-tooltip">
+                <div className="ratio-tooltip-header">
+                  <div className="ratio-tooltip-title">{hoveredItem.name}</div>
+                </div>
+                <div className="ratio-tooltip-row">
+                  <span className="ratio-tooltip-square red"></span>
+                  <span className="ratio-tooltip-label">{primaryLabel}</span>
+                  <strong className="ratio-tooltip-val">
+                    {formatPercent(val1)}
                   </strong>
                 </div>
-              )}
-            </div>
-          )}
+                <div className="ratio-tooltip-row">
+                  <span className="ratio-tooltip-square gray"></span>
+                  <span className="ratio-tooltip-label">{secondaryLabel}</span>
+                  <strong className="ratio-tooltip-val">
+                    {formatPercent(val2)}
+                  </strong>
+                </div>
+                {diffDisplay && diffDisplay !== '-' && (
+                  <>
+                    <div className="ratio-tooltip-divider" />
+                    <div className="ratio-tooltip-row">
+                      <span className="ratio-tooltip-label">Chênh lệch điểm %:</span>
+                      <strong className={`ratio-tooltip-val ${isPositive ? 'diff-positive' : 'diff-negative'}`}>
+                        {diffDisplay}
+                      </strong>
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
         </div>
 
       {onOpenDetail && (
@@ -742,10 +837,11 @@ export default function MonthComparisonChart({
         <MonthValueCard
           title={`Kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`KH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
+          secondaryLegend={`KH ${shortMonth}/${selectedYear}`}
           data={chart1Values}
           isBlank={isBlank}
+          rateLabel="% HTKH"
           hoveredItem={hoveredItem1Val}
           setHoveredItem={setHoveredItem1Val}
           isVisible={visibleMap.r1_val}
@@ -755,8 +851,10 @@ export default function MonthComparisonChart({
         <MonthRatioCard
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${shortMonth}/${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`TH ${shortMonth}`}
-          secondaryLegend={`KH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
+          secondaryLegend={`KH ${shortMonth}/${selectedYear}`}
+          tooltipPrimaryLabel={`TH ${shortMonth}/${selectedYear}`}
+          tooltipSecondaryLabel={`KH ${shortMonth}/${selectedYear}`}
           data={chart1Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem1Rat}
@@ -777,10 +875,11 @@ export default function MonthComparisonChart({
         <MonthValueCard
           title={`Kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`}
           tag="Hàng 2 - Khu 1"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`TH ${prevShortMonth}/${prevYear}`}
           data={chart2Values}
           isBlank={isBlank}
+          rateLabel="% Delta"
           hoveredItem={hoveredItem2Val}
           setHoveredItem={setHoveredItem2Val}
           isVisible={visibleMap.r2_val}
@@ -793,8 +892,10 @@ export default function MonthComparisonChart({
         <MonthRatioCard
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với ${prevShortMonth}/${prevYear}`}
           tag="Hàng 2 - Khu 2"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`TH ${prevShortMonth}/${prevYear}`}
+          tooltipPrimaryLabel={`TH ${shortMonth}/${selectedYear}`}
+          tooltipSecondaryLabel={`TH ${prevShortMonth}/${prevYear}`}
           data={chart2Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem2Rat}
@@ -815,10 +916,11 @@ export default function MonthComparisonChart({
         <MonthValueCard
           title={`Kết quả ${shortMonth}/${selectedYear} so với cùng kỳ ${shortMonth}/${lastYear}`}
           tag="Hàng 3 - Khu 1"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`TH ${shortMonth}/${lastYear}`}
           data={chart3Values}
           isBlank={isBlank}
+          rateLabel="% Delta"
           hoveredItem={hoveredItem3Val}
           setHoveredItem={setHoveredItem3Val}
           isVisible={visibleMap.r3_val}
@@ -831,8 +933,10 @@ export default function MonthComparisonChart({
         <MonthRatioCard
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với cùng kỳ ${shortMonth}/${lastYear}`}
           tag="Hàng 3 - Khu 2"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`TH ${shortMonth}/${lastYear}`}
+          tooltipPrimaryLabel={`TH ${shortMonth}/${selectedYear}`}
+          tooltipSecondaryLabel={`TH ${shortMonth}/${lastYear}`}
           data={chart3Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem3Rat}
@@ -853,10 +957,11 @@ export default function MonthComparisonChart({
         <MonthValueCard
           title={`Kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`}
           tag="Hàng 4 - Khu 1"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`KH ${nextShortMonth}/${nextYear}`}
           data={chart4Values}
           isBlank={isBlank}
+          rateLabel="% so KH kỳ sau"
           hoveredItem={hoveredItem4Val}
           setHoveredItem={setHoveredItem4Val}
           isVisible={visibleMap.r4_val}
@@ -869,8 +974,10 @@ export default function MonthComparisonChart({
         <MonthRatioCard
           title={`Tỷ suất / tỷ trọng kết quả ${shortMonth}/${selectedYear} so với kế hoạch ${nextShortMonth}/${nextYear}`}
           tag="Hàng 4 - Khu 2"
-          primaryLegend={`TH ${shortMonth}`}
+          primaryLegend={`TH ${shortMonth}/${selectedYear}`}
           secondaryLegend={`KH ${nextShortMonth}/${nextYear}`}
+          tooltipPrimaryLabel={`TH ${shortMonth}/${selectedYear}`}
+          tooltipSecondaryLabel={`KH ${nextShortMonth}/${nextYear}`}
           data={chart4Ratios}
           isBlank={isBlank}
           hoveredItem={hoveredItem4Rat}
