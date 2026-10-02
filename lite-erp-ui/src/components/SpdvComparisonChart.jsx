@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
+import { SPDV_STRUCTURE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -579,84 +579,7 @@ function SpdvBarSubcard({
   );
 }
 
-// Subcard for Hàng 5 - Khu 2: Chú thích 6 nhóm SPDV & Quy chuẩn màu sắc
-function SpdvLegendSubcard({ tag = 'Hàng 5 - Khu 2' }) {
-  return (
-    <div className="month-subcard spdv-card-item" style={{ justifyContent: 'space-between' }}>
-      <div className="month-subcard-header">
-        <h3 className="month-subcard-title" title="Chú thích 6 nhóm SPDV & Mức độ hoàn thành">
-          Chú thích 6 nhóm SPDV & Mức độ hoàn thành
-        </h3>
-        <div className="month-subcard-header-actions">
-          <span className="month-subcard-tag">{tag}</span>
-        </div>
-      </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', padding: '8px 4px', flex: 1, justifyContent: 'center' }}>
-        {/* Phần 1: Quy ước màu thanh Biểu đồ 18 */}
-        <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
-            Quy ước màu thanh so sánh (Biểu đồ 18):
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '18px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '9px', borderRadius: '2px', backgroundColor: '#e11d48' }} />
-              <span style={{ fontSize: '11.5px', fontWeight: '600', color: '#334155' }}>
-                Thực hiện / Ước
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '9px', borderRadius: '2px', backgroundColor: '#94a3b8' }} />
-              <span style={{ fontSize: '11.5px', fontWeight: '600', color: '#334155' }}>
-                Kế hoạch
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#15803d' }}>
-                ≥ 100%: Đạt
-              </span>
-              <span style={{ color: '#cbd5e1' }}>|</span>
-              <span style={{ fontSize: '11.5px', fontWeight: '700', color: '#dc2626' }}>
-                &lt; 100%: Chưa đạt
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Phần 2: Cơ cấu 6 nhóm SPDV (Biểu đồ 16 & 17) */}
-        <div>
-          <div style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
-            Phân loại màu sắc 6 nhóm SPDV (Biểu đồ 16 & 17):
-          </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '10px 14px'
-            }}
-          >
-            {SPDV_CATEGORIES.map((cat) => (
-              <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span
-                  style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '3px',
-                    backgroundColor: cat.color,
-                    flexShrink: 0
-                  }}
-                />
-                <span style={{ fontSize: '12px', fontWeight: '500', color: '#334155' }}>
-                  {cat.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function SpdvComparisonChart({
   selectedYear = '2026',
@@ -947,11 +870,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 5: BIỂU ĐỒ 18 - NĂM & CHÚ THÍCH NHÓM SPDV (2 BIỂU ĐỒ 1 HÀNG) */}
+      {/* DÒNG 5: BIỂU ĐỒ 18 - NĂM */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`}
-          tag="Hàng 5 - Khu 1"
+          tag="Hàng 5"
           legendTh={`Ước TH ${barData.yearTitle?.replace('Năm ', '')}`}
           legendKh={`KH ${barData.yearTitle?.replace('Năm ', '')}`}
           maxVal={barData.yearMax}
@@ -963,8 +886,6 @@ export default function SpdvComparisonChart({
             chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`
           })}
         />
-
-        <SpdvLegendSubcard tag="Hàng 5 - Khu 2" />
       </div>
     </div>
   );
