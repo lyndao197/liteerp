@@ -190,8 +190,8 @@ export default function UnitDetailTable({
               <tr className="spdv-b18-thead-row">
                 <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th style={{ textAlign: 'left', minWidth: '220px' }}>Đơn vị thực hiện</th>
-                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>KH</th>
-                <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>TH</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colKhLabel}</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{colThLabel}</th>
                 <th style={{ width: '130px', textAlign: 'right' }}>
                   <div className="spdv-th-two-line">
                     <span className="spdv-th-main font-bold">+/-</span>
@@ -282,15 +282,15 @@ export default function UnitDetailTable({
               </tr>
               <tr className="spdv-th-sub-row">
                 {/* Tháng */}
-                <th className="spdv-th-col spdv-border-left">TH</th>
+                <th className="spdv-th-col spdv-border-left">TH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
 
                 {/* Quý */}
-                <th className="spdv-th-col spdv-border-left">TH</th>
+                <th className="spdv-th-col spdv-border-left">TH Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
 
                 {/* Năm */}
-                <th className="spdv-th-col spdv-border-left">TH</th>
+                <th className="spdv-th-col spdv-border-left">TH Năm {selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
               </tr>
             </thead>

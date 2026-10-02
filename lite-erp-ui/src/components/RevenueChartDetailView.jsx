@@ -392,11 +392,14 @@ export default function RevenueChartDetailView({
   }, [selectedQuarter]);
 
   const quarterCode = `Q${quarterNum}`;
+  const quarterRoman = ['I', 'II', 'III', 'IV'][quarterNum - 1] || 'III';
   const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
+  const prevQuarterRoman = ['I', 'II', 'III', 'IV'][prevQuarterNum - 1] || 'II';
   const prevQuarterYear = quarterNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
   const prevQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][prevQuarterNum - 1];
   const prevQuarterCode = `Q${prevQuarterNum}`;
   const nextQuarterNum = quarterNum === 4 ? 1 : quarterNum + 1;
+  const nextQuarterRoman = ['I', 'II', 'III', 'IV'][nextQuarterNum - 1] || 'IV';
   const nextQuarterYear = quarterNum === 4 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
   const nextQuarterName = ['Quý I', 'Quý II', 'Quý III', 'Quý IV'][nextQuarterNum - 1];
   const nextQuarterCode = `Q${nextQuarterNum}`;
@@ -512,29 +515,29 @@ export default function RevenueChartDetailView({
   const targetColumnLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
       if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
-        return `TH ${prevQuarterCode}/${prevQuarterYear}`;
+        return `TH Quý ${prevQuarterRoman}/${prevQuarterYear}`;
       }
       if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
-        return `TH ${quarterCode}/${lastYear}`;
+        return `TH Quý ${quarterRoman}/${lastYear}`;
       }
       if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
-        return `KH ${nextQuarterCode}/${nextQuarterYear}`;
+        return `KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
       }
-      return `KH quý ${quarterNum}`;
+      return `KH Quý ${quarterRoman}/${selectedYear}`;
     }
 
     if (activeBranchId === 'year') {
       if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
         return `TH LK ${cumulativeShortCode}/${lastYear}`;
       }
-      if (isEstVsFullPlan) {
-        return 'KH';
+      if (isEstVsFullPlan || activeChartKey === 'chart11' || activeChartKey === 'chart11_val') {
+        return `KH Cả năm ${selectedYear}`;
       }
-      if (isEstVsPrevYear) {
-        return `TH ${lastYear}`;
+      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
+        return `TH Năm ${lastYear}`;
       }
-      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
-        return `KH ${selectedYear}`;
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart12_val') {
+        return `KH Năm ${selectedYear}`;
       }
       return `KH LK ${cumulativeShortCode}/${selectedYear}`;
     }
@@ -547,7 +550,7 @@ export default function RevenueChartDetailView({
   }, [
     activeBranchId, activeChartKey, chartTitle,
     prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear,
-    quarterCode, prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear, quarterNum, selectedYear,
+    quarterRoman, prevQuarterRoman, prevQuarterYear, nextQuarterRoman, nextQuarterYear, selectedYear,
     cumulativeShortCode, isEstVsFullPlan, isEstVsPrevYear
   ]);
 
@@ -556,88 +559,94 @@ export default function RevenueChartDetailView({
       return `TH T${monthNum}/${selectedYear}`;
     }
     if (activeBranchId === 'quarter') {
-      return `TH quý ${quarterNum}`;
+      if (hasEstimate) {
+        return `Ước Quý ${quarterRoman}/${selectedYear}`;
+      }
+      return `TH LK Quý ${quarterRoman}/${selectedYear}`;
     }
     if (activeBranchId === 'year') {
+      if (hasEstimate || activeChartKey === 'chart12' || activeChartKey === 'chart13' || activeChartKey === 'chart12_val' || activeChartKey === 'chart13_val') {
+        return `Ước Năm ${selectedYear}`;
+      }
       return `TH LK ${cumulativeShortCode}/${selectedYear}`;
     }
-    return 'TH';
-  }, [activeBranchId, monthNum, quarterNum, cumulativeShortCode, selectedYear]);
+    return `TH T${monthNum}/${selectedYear}`;
+  }, [activeBranchId, monthNum, quarterRoman, cumulativeShortCode, selectedYear, hasEstimate, activeChartKey]);
 
   const diffColumnLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
       if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
-        return `${prevQuarterCode}/${prevQuarterYear}`;
+        return `so Q${prevQuarterRoman}/${prevQuarterYear}`;
       }
       if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
-        return `CK ${lastYear}`;
+        return `so CK ${lastYear}`;
       }
       if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
-        return `${nextQuarterCode}/${nextQuarterYear}`;
+        return `so Q${nextQuarterRoman}/${nextQuarterYear}`;
       }
-      return `KH quý ${quarterNum}`;
+      return `so KH`;
     }
 
     if (activeBranchId === 'year') {
       if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
-        return `CK ${lastYear}`;
+        return `so CK ${lastYear}`;
       }
-      if (isEstVsFullPlan) {
-        return 'KH';
+      if (isEstVsFullPlan || activeChartKey === 'chart11' || activeChartKey === 'chart11_val') {
+        return `so KH năm`;
       }
-      if (isEstVsPrevYear) {
-        return `TH ${lastYear}`;
+      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
+        return `so Năm ${lastYear}`;
       }
-      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
-        return `KH ${selectedYear}`;
+      if (activeChartKey === 'chart8') {
+        return `so KH ${selectedYear}`;
       }
-      return `KH LK`;
+      return `so KH LK`;
     }
 
     // Month branch
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `T${prevMonthNum}/${prevYear}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `T${monthNum}/${lastYear}`;
-    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `T${nextMonthNum}/${nextYear}`;
-    return `KH T${monthNum}/${selectedYear}`;
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}/${prevYear}`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `so T${monthNum}/${lastYear}`;
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `so T${nextMonthNum}/${nextYear}`;
+    return `so KH`;
   }, [
     activeBranchId, activeChartKey, chartTitle,
     prevMonthNum, prevYear, monthNum, lastYear, nextMonthNum, nextYear,
-    prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear, selectedQuarter, selectedYear,
+    quarterRoman, prevQuarterRoman, prevQuarterYear, nextQuarterRoman, nextQuarterYear, selectedYear,
     isEstVsFullPlan, isEstVsPrevYear
   ]);
 
   const rateSubLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
       if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
-        return `so ${prevQuarterCode}/${prevQuarterYear}`;
+        return `Tăng trưởng`;
       }
       if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
-        return `so CK ${lastYear}`;
+        return `Tăng trưởng`;
       }
       if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
-        return `so ${nextQuarterCode}/${nextQuarterYear}`;
+        return `so KH tới`;
       }
       return 'HTKH';
     }
 
     if (activeBranchId === 'year') {
       if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
-        return `so CK ${lastYear}`;
+        return `Tăng trưởng`;
       }
-      if (isEstVsPrevYear) {
-        return `so TH ${lastYear}`;
+      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
+        return `Tăng trưởng`;
       }
       return 'HTKH';
     }
 
     // Month branch
-    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `so T${prevMonthNum}/${prevYear}`;
-    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `so T${monthNum}/${lastYear}`;
+    if (activeChartKey === 'chart2_val' || activeChartKey === 'chart2_rat') return `Tăng trưởng`;
+    if (activeChartKey === 'chart3_val' || activeChartKey === 'chart3_rat') return `Tăng trưởng`;
+    if (activeChartKey === 'chart4_val' || activeChartKey === 'chart4_rat') return `so KH tới`;
     return 'HTKH';
   }, [
     activeBranchId, activeChartKey, chartTitle,
-    prevMonthNum, prevYear, monthNum, lastYear,
-    prevQuarterCode, prevQuarterYear, nextQuarterCode, nextQuarterYear
+    isEstVsPrevYear
   ]);
 
   // Compute table dataset according to active branch and chart
@@ -2458,15 +2467,15 @@ export default function RevenueChartDetailView({
                   </th>
                 </tr>
                 <tr className="th-sub-row">
-                  <th className="th-sub-kh">KH</th>
-                  <th className="th-sub-th">TH</th>
+                  <th className="th-sub-kh">{targetColumnLabel}</th>
+                  <th className="th-sub-th">{actualColumnLabel}</th>
                   <th className="th-sub-diff">
                     <span className="th-sub-line">+/-</span>
-                    <span className="th-sub-line">so KH</span>
+                    <span className="th-sub-line">{diffColumnLabel}</span>
                   </th>
                   <th className="th-sub-rate">
                     <span className="th-sub-line">%</span>
-                    <span className="th-sub-line">HTKH</span>
+                    <span className="th-sub-line">{rateSubLabel}</span>
                   </th>
                 </tr>
               </thead>
@@ -2622,18 +2631,18 @@ export default function RevenueChartDetailView({
                   <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                   <th style={{ textAlign: 'left', minWidth: '220px' }}>Chỉ tiêu / Đối tượng</th>
                   <th style={{ width: '90px', textAlign: 'center' }}>Đơn vị</th>
-                  <th style={{ width: '120px', textAlign: 'right', fontWeight: '700' }}>KH</th>
-                  <th style={{ width: '120px', textAlign: 'right', fontWeight: '700' }}>TH</th>
-                  <th style={{ width: '120px', textAlign: 'right' }}>
+                  <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{targetColumnLabel}</th>
+                  <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>{actualColumnLabel}</th>
+                  <th style={{ width: '125px', textAlign: 'right' }}>
                     <div className="spdv-th-two-line">
                       <span className="spdv-th-main font-bold">+/-</span>
-                      <span className="spdv-th-sub font-bold">so KH</span>
+                      <span className="spdv-th-sub font-bold">{diffColumnLabel}</span>
                     </div>
                   </th>
                   <th style={{ width: '130px', textAlign: 'center' }}>
                     <div className="spdv-th-two-line">
                       <span className="spdv-th-main font-bold">%</span>
-                      <span className="spdv-th-sub font-bold">HTKH</span>
+                      <span className="spdv-th-sub font-bold">{rateSubLabel}</span>
                     </div>
                   </th>
                   <th style={{ width: '90px', textAlign: 'center' }}>Tỷ trọng</th>

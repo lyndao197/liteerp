@@ -202,11 +202,11 @@ export default function TotalRevenuePlanProgressTable({
                 padding: '8px 14px',
                 fontWeight: '700',
                 color: '#0f172a',
-                fontSize: '13.5px',
+                fontSize: '13px',
                 width: '12%'
               }}
             >
-              TH
+              TH LK Q{quarterRoman}/{selectedYear}
             </th>
             {/* KH Quý */}
             <th
@@ -215,11 +215,11 @@ export default function TotalRevenuePlanProgressTable({
                 padding: '8px 14px',
                 fontWeight: '700',
                 color: '#0f172a',
-                fontSize: '13.5px',
+                fontSize: '13px',
                 width: '12%'
               }}
             >
-              KH
+              KH Q{quarterRoman}/{selectedYear}
             </th>
             {/* TH Năm */}
             <th
@@ -228,11 +228,11 @@ export default function TotalRevenuePlanProgressTable({
                 padding: '8px 14px',
                 fontWeight: '700',
                 color: '#0f172a',
-                fontSize: '13.5px',
+                fontSize: '13px',
                 width: '12%'
               }}
             >
-              TH
+              TH LK {monthNum}T/{selectedYear}
             </th>
             {/* KH Năm */}
             <th
@@ -241,11 +241,11 @@ export default function TotalRevenuePlanProgressTable({
                 padding: '8px 14px',
                 fontWeight: '700',
                 color: '#0f172a',
-                fontSize: '13.5px',
+                fontSize: '13px',
                 width: '12%'
               }}
             >
-              KH
+              KH Cả năm {selectedYear}
             </th>
             {/* 66,7% Mốc thời gian */}
             <th

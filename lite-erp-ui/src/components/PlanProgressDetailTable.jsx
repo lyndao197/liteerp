@@ -182,6 +182,31 @@ export default function PlanProgressDetailTable({
     return `Tổng hợp 3 kỳ (Tháng, Quý, Năm ${selectedYear})`;
   }, [activeTab, monthNum, selectedYear, quarterRoman, quarterCumText]);
 
+  const currentPeriodColLabels = useMemo(() => {
+    if (activeTab === 'quarter') {
+      return {
+        kh: `KH Quý ${quarterRoman}/${selectedYear}`,
+        th: `TH LK Quý ${quarterRoman}/${selectedYear}`,
+        khShare: `Tỷ trọng KH Q${quarterRoman}`,
+        thShare: `Tỷ trọng TH Q${quarterRoman}`
+      };
+    }
+    if (activeTab === 'year') {
+      return {
+        kh: `KH Năm ${selectedYear}`,
+        th: `TH LK Năm ${selectedYear}`,
+        khShare: `Tỷ trọng KH ${selectedYear}`,
+        thShare: `Tỷ trọng TH ${selectedYear}`
+      };
+    }
+    return {
+      kh: `KH T${monthNum}/${selectedYear}`,
+      th: `TH T${monthNum}/${selectedYear}`,
+      khShare: `Tỷ trọng KH T${monthNum}`,
+      thShare: `Tỷ trọng TH T${monthNum}`
+    };
+  }, [activeTab, quarterRoman, selectedYear, monthNum]);
+
   return (
     <div className="spdv-detail-table-card">
       {/* Header bar with title and period switcher tabs */}
@@ -300,8 +325,8 @@ export default function PlanProgressDetailTable({
                 <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th style={{ textAlign: 'left', minWidth: '240px' }}>Chỉ tiêu cơ cấu doanh thu</th>
                 <th style={{ width: '85px', textAlign: 'center' }}>Đơn vị</th>
-                <th style={{ width: '130px', textAlign: 'right', fontWeight: '700' }}>KH</th>
-                <th style={{ width: '130px', textAlign: 'right', fontWeight: '700' }}>TH</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.kh}</th>
+                <th style={{ width: '145px', textAlign: 'right', fontWeight: '700' }}>{currentPeriodColLabels.th}</th>
                 <th style={{ width: '125px', textAlign: 'right' }}>
                   <div className="spdv-th-two-line">
                     <span className="spdv-th-main font-bold">+/-</span>
@@ -314,15 +339,15 @@ export default function PlanProgressDetailTable({
                     <span className="spdv-th-sub font-bold">HTKH</span>
                   </div>
                 </th>
-                <th style={{ width: '110px', textAlign: 'center' }}>
+                <th style={{ width: '130px', textAlign: 'center' }}>
                   <div className="spdv-th-two-line">
-                    <span className="spdv-th-main">Tỷ trọng KH</span>
+                    <span className="spdv-th-main">{currentPeriodColLabels.khShare}</span>
                     <span className="spdv-th-sub">% cơ cấu</span>
                   </div>
                 </th>
-                <th style={{ width: '110px', textAlign: 'center' }}>
+                <th style={{ width: '130px', textAlign: 'center' }}>
                   <div className="spdv-th-two-line">
-                    <span className="spdv-th-main">Tỷ trọng TH</span>
+                    <span className="spdv-th-main">{currentPeriodColLabels.thShare}</span>
                     <span className="spdv-th-sub">% cơ cấu</span>
                   </div>
                 </th>
@@ -509,20 +534,20 @@ export default function PlanProgressDetailTable({
               </tr>
               <tr className="spdv-th-sub-row">
                 {/* Tháng */}
-                <th className="spdv-th-col spdv-border-left">KH</th>
-                <th className="spdv-th-col">TH</th>
+                <th className="spdv-th-col spdv-border-left">KH T{monthNum}/{selectedYear}</th>
+                <th className="spdv-th-col">TH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
 
                 {/* Quý */}
-                <th className="spdv-th-col spdv-border-left">KH</th>
-                <th className="spdv-th-col">TH</th>
+                <th className="spdv-th-col spdv-border-left">KH Q{quarterRoman}/{selectedYear}</th>
+                <th className="spdv-th-col">TH LK Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
 
                 {/* Năm */}
-                <th className="spdv-th-col spdv-border-left">KH</th>
-                <th className="spdv-th-col">TH</th>
+                <th className="spdv-th-col spdv-border-left">KH Năm {selectedYear}</th>
+                <th className="spdv-th-col">TH LK Năm {selectedYear}</th>
                 <th className="spdv-th-col">Tỷ trọng TH</th>
                 <th className="spdv-th-col">% HTKH</th>
               </tr>

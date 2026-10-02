@@ -250,25 +250,25 @@ export default function InternalExternalDetailTable({
 
             {/* Hàng 2 tiêu đề TH / KH */}
             <tr style={{ borderBottom: '1.5px solid #cbd5e1' }}>
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '105px', borderLeft: '1px solid #f1f5f9' }}>
-                TH
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '105px', borderLeft: '1px solid #f1f5f9' }}>
+                TH T{monthNum}/{selectedYear}
               </th>
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '105px' }}>
-                KH
-              </th>
-
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '105px', borderLeft: '1px solid #f1f5f9' }}>
-                TH
-              </th>
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '105px' }}>
-                KH
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '105px' }}>
+                KH T{monthNum}/{selectedYear}
               </th>
 
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '115px', borderLeft: '1px solid #f1f5f9' }}>
-                TH
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '115px', borderLeft: '1px solid #f1f5f9' }}>
+                TH LK Q{quarterRoman}/{selectedYear}
               </th>
-              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', width: '115px' }}>
-                KH
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '115px' }}>
+                KH Q{quarterRoman}/{selectedYear}
+              </th>
+
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '120px', borderLeft: '1px solid #f1f5f9' }}>
+                TH LK Năm {selectedYear}
+              </th>
+              <th style={{ textAlign: 'right', padding: '8px 14px', fontWeight: '700', color: '#0f172a', minWidth: '120px' }}>
+                KH Cả năm {selectedYear}
               </th>
             </tr>
           </thead>
