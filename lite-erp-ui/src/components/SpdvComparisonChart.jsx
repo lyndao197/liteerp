@@ -306,15 +306,15 @@ function SpdvBarSubcard({
   const svgWidth = 540;
   const svgHeight = 280;
   const chartLeft = 112;
-  const chartRight = 392;
-  const chartWidth = chartRight - chartLeft; // 280px
+  const chartRight = 490;
+  const chartWidth = chartRight - chartLeft; // 378px
   const chartTop = 38;
   const chartBottom = 236;
 
   const legendThStr = String(legendTh || 'TH');
   const legendKhStr = String(legendKh || 'KH');
   const secondLegendOffset = legendThStr.length > 10 ? 115 : (legendThStr.length > 7 ? 95 : 82);
-  const legendTranslateX = (legendThStr.length > 10 || legendKhStr.length > 10) ? 145 : 190;
+  const legendTranslateX = chartRight - (secondLegendOffset + 65);
 
   return (
     <div className="month-subcard spdv-card-item">
@@ -343,14 +343,6 @@ function SpdvBarSubcard({
               {legendKhStr}
             </text>
           </g>
-
-          {/* Top Headers for Values and Completion Rate columns */}
-          <text x="402" y="19" style={{ fontSize: '9.5px', fontWeight: '700', fill: '#64748b' }}>
-            Giá trị
-          </text>
-          <text x="532" y="19" textAnchor="end" style={{ fontSize: '9.5px', fontWeight: '700', fill: '#64748b' }}>
-            % Đạt
-          </text>
 
           {/* Left Y-Axis Baseline */}
           <line
@@ -472,49 +464,6 @@ function SpdvBarSubcard({
                     opacity: isHovered ? 1 : 0.85
                   }}
                 />
-
-                {/* TH Value in dedicated column */}
-                <text
-                  x={402}
-                  y={yRow - 5.5}
-                  dominantBaseline="central"
-                  style={{
-                    fontSize: '8.5px',
-                    fontWeight: '700',
-                    fill: '#e11d48'
-                  }}
-                >
-                  TH: {item.th.toFixed(1)}
-                </text>
-
-                {/* KH Value in dedicated column */}
-                <text
-                  x={402}
-                  y={yRow + 5.5}
-                  dominantBaseline="central"
-                  style={{
-                    fontSize: '8.5px',
-                    fontWeight: '600',
-                    fill: '#64748b'
-                  }}
-                >
-                  KH: {item.kh.toFixed(1)}
-                </text>
-
-                {/* % Rate in dedicated column */}
-                <text
-                  x={532}
-                  y={yRow + 0.5}
-                  dominantBaseline="central"
-                  textAnchor="end"
-                  style={{
-                    fontSize: '10.5px',
-                    fontWeight: '800',
-                    fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                  }}
-                >
-                  {item.rate}
-                </text>
               </g>
             );
           })}
