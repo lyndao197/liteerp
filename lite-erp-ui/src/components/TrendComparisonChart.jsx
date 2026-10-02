@@ -22,14 +22,14 @@ function TrendPrevYearCard({
   onToggle,
   onOpenDetail
 }) {
-  const svgWidth = 540;
-  const svgHeight = 310;
-  const chartTop = 52;
-  const chartBottom = 250;
-  const chartHeight = chartBottom - chartTop; // 198px
-  const chartLeft = 45;
-  const chartRight = 515;
-  const chartWidth = chartRight - chartLeft; // 470px
+  const svgWidth = 980;
+  const svgHeight = 330;
+  const chartTop = 50;
+  const chartBottom = 265;
+  const chartHeight = chartBottom - chartTop; // 215px
+  const chartLeft = 55;
+  const chartRight = 940;
+  const chartWidth = chartRight - chartLeft; // 885px
 
   const yMax = 600;
   const yTicks = [0, 100, 200, 300, 400, 500, 600];
@@ -54,16 +54,16 @@ function TrendPrevYearCard({
   const hoveredData = hoveredIdx !== null ? data[hoveredIdx] : null;
 
   return (
-    <div className="month-subcard">
+    <div className="month-subcard" style={{ width: '100%', boxSizing: 'border-box' }}>
       <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
-          title={`Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
+          title={`Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         >
-          {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
+          {`Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          <span className="month-subcard-tag">Hàng 1 - Khu 1</span>
+          <span className="month-subcard-tag">Biểu đồ 14</span>
         </div>
       </div>
 
@@ -74,12 +74,12 @@ function TrendPrevYearCard({
             onMouseLeave={() => setHoveredIdx(null)}
           >
             {/* Subtitle in chart */}
-            <text x={chartLeft} y={20} style={{ fontSize: '11px', fontWeight: '700', fill: '#0f172a' }}>
+            <text x={chartLeft} y={20} style={{ fontSize: '11.5px', fontWeight: '700', fill: '#0f172a' }}>
               (ngoặc: tăng trưởng cùng kỳ)
             </text>
 
             {/* Stacked Legend Top Right */}
-            <g transform={`translate(${chartRight - 185}, 8)`}>
+            <g transform={`translate(${chartRight - 170}, 8)`}>
               {/* TH prevYear */}
               <line x1={0} y1={6} x2={16} y2={6} stroke="#94a3b8" strokeWidth="2" strokeDasharray="4 2" />
               <circle cx={8} cy={6} r="3" fill="#94a3b8" />
@@ -91,7 +91,7 @@ function TrendPrevYearCard({
               <line x1={80} y1={6} x2={96} y2={6} stroke="#c8102e" strokeWidth="2.5" />
               <circle cx={88} cy={6} r="3.5" fill="#c8102e" />
               <text x={102} y={10} style={{ fontSize: '11px', fontWeight: '700', fill: '#1e293b' }}>
-                {`Ước TH ${selectedYear}`}
+                {`TH ${selectedYear}`}
               </text>
             </g>
 
@@ -305,39 +305,145 @@ function TrendPrevYearCard({
                 {hoveredData.name} ({hoveredData.month})
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#c8102e', fontWeight: '600' }}>Ước TH:</span>
+                <span style={{ color: '#c8102e', fontWeight: '600' }}>TH {selectedYear}:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>
                   {hoveredData.th2026 !== null ? `${formatVal(hoveredData.th2026)} Tr.đ` : 'Chưa có'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>TH:</span>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>TH {prevYear}:</span>
                 <span style={{ fontWeight: '600', color: '#475569' }}>
                   {hoveredData.th2025 !== null ? `${formatVal(hoveredData.th2025)} Tr.đ` : '-'}
                 </span>
               </div>
-              {hoveredData.growth && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                  <span style={{ color: '#15803d', fontWeight: '600' }}>% Delta:</span>
-                  <span style={{ fontWeight: '700', color: '#15803d' }}>{hoveredData.growth}</span>
-                </div>
-              )}
             </div>
           )}
         </div>
 
+      {/* 12-Month Summary Table */}
+      <div style={{ marginTop: '22px', overflowX: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
+        <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span>Bảng tổng hợp xu hướng doanh thu từng tháng năm {selectedYear} so với năm {prevYear}</span>
+          <span style={{ fontSize: '12px', fontWeight: '500', color: '#64748b' }}>Đơn vị tính: Triệu đồng</span>
+        </div>
+        <table className="spdv-matrix-table" style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+              <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: '600', color: '#475569', width: '50px' }}>STT</th>
+              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: '600', color: '#475569' }}>Tháng</th>
+              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#c8102e' }}>TH {selectedYear}</th>
+              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: '#64748b' }}>TH {prevYear}</th>
+              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: '#334155' }}>Chênh lệch (+/-)</th>
+              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#15803d' }}>Tăng trưởng YoY (%)</th>
+              <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: '600', color: '#475569', width: '110px' }}>Đánh giá</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item, idx) => {
+              const thCurr = item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : null;
+              const thOld = item.th2025;
+              const diffVal = thCurr !== null ? Number((thCurr - thOld).toFixed(1)) : null;
+              const isPositive = diffVal !== null ? diffVal >= 0 : null;
+
+              return (
+                <tr
+                  key={item.month}
+                  style={{
+                    borderBottom: '1px solid #f1f5f9',
+                    backgroundColor: hoveredIdx === idx ? '#f8fafc' : 'transparent',
+                    transition: 'background-color 0.15s ease'
+                  }}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                >
+                  <td style={{ padding: '8px 10px', textAlign: 'center', color: '#64748b' }}>{idx + 1}</td>
+                  <td style={{ padding: '8px 12px', fontWeight: '600', color: '#1e293b' }}>
+                    {item.name} ({item.month})
+                  </td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: thCurr !== null ? '#0f172a' : '#94a3b8' }}>
+                    {thCurr !== null ? formatVal(thCurr) : 'Chưa có'}
+                  </td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '500', color: '#475569' }}>
+                    {formatVal(thOld)}
+                  </td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: isPositive === null ? '#94a3b8' : (isPositive ? '#16a34a' : '#dc2626') }}>
+                    {diffVal !== null ? `${diffVal > 0 ? '+' : ''}${formatVal(diffVal)}` : '—'}
+                  </td>
+                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#15803d' }}>
+                    {item.growth || '—'}
+                  </td>
+                  <td style={{ padding: '8px 10px', textAlign: 'center' }}>
+                    {thCurr !== null ? (
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '2px 8px',
+                        borderRadius: '999px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        background: isPositive ? '#dcfce7' : '#fee2e2',
+                        color: isPositive ? '#166534' : '#991b1b'
+                      }}>
+                        {isPositive ? 'Tăng trưởng' : 'Giảm'}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>Chưa đến kỳ</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            {/* Lũy kế 8 tháng đã có dữ liệu thực hiện */}
+            <tr style={{ background: '#f1f5f9', fontWeight: '700', borderTop: '2px solid #cbd5e1' }}>
+              <td colSpan={2} style={{ padding: '10px 12px', color: '#0f172a' }}>
+                Lũy kế 8 tháng thực hiện (T1 - T8)
+              </td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#c8102e', fontSize: '13px' }}>
+                2.976,3
+              </td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#475569' }}>
+                2.638,9
+              </td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#16a34a' }}>
+                +337,4
+              </td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#15803d', fontSize: '13px' }}>
+                +12,8%
+              </td>
+              <td style={{ padding: '10px 10px', textAlign: 'center' }}>
+                <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '999px', fontSize: '11px', fontWeight: '700', background: '#dcfce7', color: '#166534' }}>
+                  Tăng trưởng
+                </span>
+              </td>
+            </tr>
+            {/* Cả năm 2025 */}
+            <tr style={{ background: '#f8fafc', fontWeight: '600', color: '#64748b', fontSize: '11.5px' }}>
+              <td colSpan={2} style={{ padding: '8px 12px' }}>
+                Tổng thực hiện cả năm {prevYear} (12T)
+              </td>
+              <td style={{ padding: '8px 12px', textAlign: 'right' }}>—</td>
+              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#475569' }}>4.328,9</td>
+              <td colSpan={3} style={{ padding: '8px 12px', textAlign: 'right', color: '#94a3b8' }}>
+                (T9 - T12 đang cập nhật theo kỳ thực hiện)
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
       {onOpenDetail && (
-        <div className="subcard-bottom-bar">
+        <div className="subcard-bottom-bar" style={{ marginTop: '16px' }}>
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem chi tiết"
+            title="Xem chi tiết ma trận doanh thu"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <span>Xem chi tiết</span>
+            <span>Xem chi tiết ma trận doanh thu từng tháng</span>
             <ArrowRight size={14} />
           </button>
         </div>
@@ -681,33 +787,9 @@ export default function TrendComparisonChart({
   onOpenDetail
 }) {
   const [hoveredIdx14, setHoveredIdx14] = useState(null);
-  const [hoveredIdx15, setHoveredIdx15] = useState(null);
-
-  // Independent toggle states for Biểu đồ 14 and Biểu đồ 15
-  const [visibleCards, setVisibleCards] = useState({
-    chart14: true,
-    chart15: true
-  });
-
-  const toggleCard = (cardKey) => {
-    setVisibleCards((prev) => ({
-      ...prev,
-      [cardKey]: !prev[cardKey]
-    }));
-  };
-
-  const isAllVisible = Object.values(visibleCards).every(Boolean);
-  const toggleAll = () => {
-    const nextState = !isAllVisible;
-    setVisibleCards({
-      chart14: nextState,
-      chart15: nextState
-    });
-  };
 
   const prevYear = (parseInt(selectedYear, 10) - 1).toString();
   const rawData14 = MONTH_TREND_DATA[selectedYear] || MONTH_TREND_DATA['2026'];
-  const rawData15 = MONTH_PLAN_TREND_DATA[selectedYear] || MONTH_PLAN_TREND_DATA['2026'];
 
   return (
     <div className="month-charts-stack">
@@ -730,32 +812,17 @@ export default function TrendComparisonChart({
         </div>
       </div>
 
-      {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 14 & BIỂU ĐỒ 15 */}
-      <div className="month-row-grid">
+      {/* DÒNG 1 (BIỂU ĐỒ DUY NHẤT): BIỂU ĐỒ 14 - XU HƯỚNG TỔNG DOANH THU SO VỚI NĂM TRƯỚC */}
+      <div style={{ width: '100%' }}>
         <TrendPrevYearCard
           selectedYear={selectedYear}
           prevYear={prevYear}
           data={rawData14}
           hoveredIdx={hoveredIdx14}
           setHoveredIdx={setHoveredIdx14}
-          isVisible={visibleCards.chart14}
-          onToggle={() => toggleCard('chart14')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'trend_prev_year',
             chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`
-          })}
-        />
-
-        <TrendPlanCard
-          selectedYear={selectedYear}
-          data={rawData15}
-          hoveredIdx={hoveredIdx15}
-          setHoveredIdx={setHoveredIdx15}
-          isVisible={visibleCards.chart15}
-          onToggle={() => toggleCard('chart15')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'trend_plan',
-            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
           })}
         />
       </div>

@@ -92,10 +92,7 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart13_rat', label: 'Biểu đồ 13b: Tỷ suất / tỷ trọng ước kết quả năm so với TH năm trước' }
   ],
   trend: [
-    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' },
-    { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu từng tháng so với kế hoạch' },
-    { id: 'chart14', label: 'Biểu đồ 14: Xu hướng doanh thu 12 tháng so với năm trước & KH' },
-    { id: 'chart15', label: 'Biểu đồ 15: Tích lũy doanh thu 12 tháng' }
+    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' }
   ],
   spdv: [
     { id: 'spdv_bar_month', label: 'Biểu đồ 18: Doanh thu 6 nhóm SPDV so với KH (Tháng)' },
@@ -879,19 +876,22 @@ export default function RevenueChartDetailView({
     } else if (activeBranchId === 'trend') {
       const trendList = MONTH_TREND_DATA[selectedYear] || MONTH_TREND_DATA['2026'] || [];
       rows = trendList.map((item, idx) => {
-        const diffVal = Number((item.actual - item.target).toFixed(1));
+        const thCurr = item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : null;
+        const thOld = item.th2025 !== null && item.th2025 !== undefined ? item.th2025 : null;
+        const diffVal = (thCurr !== null && thOld !== null) ? Number((thCurr - thOld).toFixed(1)) : null;
+        const isPass = diffVal !== null ? diffVal >= 0 : true;
         return {
           stt: idx + 1,
-          name: item.month,
-          unit: 'Tỷ VNĐ',
-          kh: item.target,
-          th: item.actual,
-          diff: (diffVal >= 0 ? '+' : '') + diffVal.toLocaleString('vi-VN'),
-          diffNum: diffVal,
-          rate: `${item.rate}%`,
-          rateNum: item.rate,
-          isPass: item.rate >= 100,
-          share: `${item.growth}% tăng trưởng`
+          name: `${item.name} (${item.month})`,
+          unit: 'Triệu đồng',
+          kh: thOld !== null ? thOld : '-',
+          th: thCurr !== null ? thCurr : '-',
+          diff: diffVal !== null ? (diffVal > 0 ? `+${diffVal.toLocaleString('vi-VN')}` : diffVal.toLocaleString('vi-VN')) : '-',
+          diffNum: diffVal || 0,
+          rate: item.growth || '-',
+          rateNum: parseFloat(item.growth?.replace(',', '.') || 0),
+          isPass,
+          share: item.growth || '-'
         };
       });
     } else if (activeBranchId === 'spdv') {
