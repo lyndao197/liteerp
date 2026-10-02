@@ -244,6 +244,16 @@
   overflow: hidden;
 }
 
+.chart-detail-table-card.transparent-wrap {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+.chart-detail-table-card.transparent-wrap > .spdv-detail-table-card {
+  margin-top: 0;
+}
+
 .chart-detail-table-header {
   display: flex;
   align-items: center;
@@ -770,6 +780,27 @@
   font-size: 14px;
 }
 
+.chart-detail-month-table tfoot tr.row-cost {
+  background-color: #fffaf0 !important;
+  border-top: 1px solid #fed7aa;
+}
+
+.chart-detail-month-table tfoot tr.row-cost td {
+  color: #9a3412;
+  font-size: 13.5px;
+}
+
+.chart-detail-month-table tfoot tr.row-profit {
+  background-color: #f0fdf4 !important;
+  border-top: 1px solid #bbf7d0;
+  border-bottom: 2px solid #86efac;
+}
+
+.chart-detail-month-table tfoot tr.row-profit td {
+  color: #166534;
+  font-size: 14px;
+}
+
 /* Sticky Headers when scrolling vertically */
 .chart-detail-month-table thead tr:first-child th {
   position: sticky;
@@ -870,7 +901,7 @@
 /* TREND 12-MONTH MATRIX TABLE STYLES                                         */
 /* ========================================================================== */
 .chart-detail-trend-table {
-  min-width: 3200px !important;
+  min-width: 3600px !important;
 }
 
 .chart-detail-trend-table thead tr:first-child th.th-trend-month-header {
@@ -935,6 +966,7 @@
   border-right: 1px solid #f1f5f9;
 }
 
+.chart-detail-trend-table td.td-rate,
 .chart-detail-trend-table td.td-growth {
   border-left: 1px solid #f1f5f9;
   border-right: 1px solid #e2e8f0;

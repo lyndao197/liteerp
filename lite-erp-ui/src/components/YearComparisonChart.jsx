@@ -9,6 +9,7 @@ import {
   CUMULATIVE_MONTH_OPTIONS
 } from '../data/revenueYearData';
 import { explainLegend, explainCategory } from '../utils/reportAbbreviations';
+import MonthRatioDetailTable from './MonthRatioDetailTable';
 
 // Helper to format numbers with comma as decimal separator
 const formatVal = (val) => {
@@ -818,6 +819,14 @@ export default function YearComparisonChart({
           })}
         />
       </div>
+
+      {/* BẢNG PHÂN TÍCH TỶ SUẤT / TỶ TRỌNG NĂM */}
+      <MonthRatioDetailTable
+        branchId="year"
+        selectedYear={selectedYear}
+        selectedCumulativeMonth={selectedCumulativeMonth}
+        activeChartKey="chart10_rat"
+      />
     </div>
   );
 }

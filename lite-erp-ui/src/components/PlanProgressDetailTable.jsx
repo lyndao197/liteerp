@@ -7,6 +7,10 @@ import {
   DOMESTIC_INTERNATIONAL_DATA
 } from '../data/revenueInternalExternalData';
 import './SpdvDetailTable.css';
+import InternalExternalDetailTable from './InternalExternalDetailTable';
+import TotalRevenuePlanProgressTable from './TotalRevenuePlanProgressTable';
+import ExternalRevenuePlanProgressTable from './ExternalRevenuePlanProgressTable';
+import InternationalRevenuePlanProgressTable from './InternationalRevenuePlanProgressTable';
 
 export default function PlanProgressDetailTable({
   selectedYear = '2026',
@@ -28,6 +32,10 @@ export default function PlanProgressDetailTable({
     if (initialPeriod) return initialPeriod;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
+    if (key.includes('chart29_30') || key.includes('29_30') || (title.includes('29') && title.includes('30'))) return 'total_plan';
+    if (key.includes('chart31_32') || key.includes('31_32') || (title.includes('31') && title.includes('32'))) return 'external_plan';
+    if (key.includes('chart33_34') || key.includes('33_34') || (title.includes('33') && title.includes('34')) || (title.includes('tiến độ') && title.includes('quốc tế'))) return 'intl_plan';
+    if (key.includes('chart21') || key.includes('chart22') || key.includes('in_ex') || (title.includes('nội bộ') && title.includes('ngoài'))) return 'in_ex';
     if (key.includes('quarter') || title.includes('quý')) return 'quarter';
     if (key.includes('year') || title.includes('năm')) return 'year';
     return 'month';
@@ -175,16 +183,13 @@ export default function PlanProgressDetailTable({
   }, [activeTab, monthNum, selectedYear, quarterRoman, quarterCumText]);
 
   return (
-    <div className="spdv-detail-table-card" style={{ marginTop: '16px' }}>
+    <div className="spdv-detail-table-card">
       {/* Header bar with title and period switcher tabs */}
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="spdv-badge-chart-label" style={{ backgroundColor: '#fef2f2', color: '#dc2626', borderColor: '#fecaca' }}>
-              Nhóm biểu đồ số 7
-            </span>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#64748b' }}>
-              Biểu đồ 25 – 28
+              Nhóm chuyển dịch doanh thu
             </span>
           </div>
           <h3 className="spdv-detail-title">
@@ -221,6 +226,38 @@ export default function PlanProgressDetailTable({
             </button>
             <button
               type="button"
+              className={`spdv-period-tab-btn ${activeTab === 'total_plan' ? 'active' : ''}`}
+              onClick={() => setActiveTab('total_plan')}
+            >
+              <TableProperties size={14} />
+              Bảng tiến độ tổng DT
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${activeTab === 'external_plan' ? 'active' : ''}`}
+              onClick={() => setActiveTab('external_plan')}
+            >
+              <TableProperties size={14} />
+              Bảng tiến độ ngoài TĐ
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${activeTab === 'intl_plan' ? 'active' : ''}`}
+              onClick={() => setActiveTab('intl_plan')}
+            >
+              <TableProperties size={14} />
+              Bảng tiến độ quốc tế
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${activeTab === 'in_ex' ? 'active' : ''}`}
+              onClick={() => setActiveTab('in_ex')}
+            >
+              <TableProperties size={14} />
+              Bảng DT nội bộ & ngoài TĐ
+            </button>
+            <button
+              type="button"
               className={`spdv-period-tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
               onClick={() => setActiveTab('summary')}
             >
@@ -231,7 +268,27 @@ export default function PlanProgressDetailTable({
         </div>
       </div>
 
-      {activeTab !== 'summary' && periodData ? (
+      {activeTab === 'total_plan' ? (
+        <TotalRevenuePlanProgressTable
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+        />
+      ) : activeTab === 'external_plan' ? (
+        <ExternalRevenuePlanProgressTable
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+        />
+      ) : activeTab === 'intl_plan' ? (
+        <InternationalRevenuePlanProgressTable
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+        />
+      ) : activeTab === 'in_ex' ? (
+        <InternalExternalDetailTable
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+        />
+      ) : activeTab !== 'summary' && periodData ? (
         /* ===================================================================== */
         /* 1. SINGLE PERIOD TABLE (THÁNG / QUÝ / NĂM)                             */
         /* Chuẩn cột: KH | TH | +/- so KH | % HTKH | Tỷ trọng KH | Tỷ trọng TH     */
@@ -276,7 +333,7 @@ export default function PlanProgressDetailTable({
               {/* SECTION 1: NỘI BỘ VÀ NGOÀI TẬP ĐOÀN */}
               <tr style={{ backgroundColor: '#f8fafc' }}>
                 <td colSpan={10} style={{ padding: '10px 16px', fontWeight: '800', color: '#1e293b', fontSize: '13.5px', borderTop: '1px solid #cbd5e1', borderBottom: '1px solid #e2e8f0' }}>
-                  I. Biểu đồ 25 & 26: Cơ cấu doanh thu nội bộ và ngoài Tập đoàn
+                  I. Cơ cấu doanh thu nội bộ và ngoài Tập đoàn
                 </td>
               </tr>
               {periodData.inExRows.map((row) => {
@@ -354,7 +411,7 @@ export default function PlanProgressDetailTable({
               {/* SECTION 2: TRONG NƯỚC VÀ QUỐC TẾ */}
               <tr style={{ backgroundColor: '#f8fafc' }}>
                 <td colSpan={10} style={{ padding: '10px 16px', fontWeight: '800', color: '#1e293b', fontSize: '13.5px', borderTop: '2px solid #cbd5e1', borderBottom: '1px solid #e2e8f0' }}>
-                  II. Biểu đồ 27 & 28: Cơ cấu doanh thu trong nước và quốc tế
+                  II. Cơ cấu doanh thu trong nước và quốc tế
                 </td>
               </tr>
               {periodData.domIntlRows.map((row) => {
@@ -474,7 +531,7 @@ export default function PlanProgressDetailTable({
               {/* PHẦN 1: B25 & B26 */}
               <tr style={{ backgroundColor: '#f8fafc' }}>
                 <td colSpan={13} style={{ padding: '8px 16px', fontWeight: '800', color: '#1e293b', fontSize: '13px' }}>
-                  I. Cơ cấu doanh thu nội bộ và ngoài Tập đoàn (Biểu đồ 25 & 26)
+                  I. Cơ cấu doanh thu nội bộ và ngoài Tập đoàn
                 </td>
               </tr>
               {summary3PeriodsData.month.inExRows.map((mRow, idx) => {
@@ -509,7 +566,7 @@ export default function PlanProgressDetailTable({
               })}
               {/* Tổng B25 & B26 */}
               <tr style={{ backgroundColor: '#f1f5f9', fontWeight: '700' }}>
-                <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu B25 & B26</td>
+                <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu</td>
                 {/* Tháng */}
                 <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.month.inExTotal.kh)}</td>
                 <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.month.inExTotal.th)}</td>
@@ -530,7 +587,7 @@ export default function PlanProgressDetailTable({
               {/* PHẦN 2: B27 & B28 */}
               <tr style={{ backgroundColor: '#f8fafc' }}>
                 <td colSpan={13} style={{ padding: '8px 16px', fontWeight: '800', color: '#1e293b', fontSize: '13px', borderTop: '2px solid #cbd5e1' }}>
-                  II. Cơ cấu doanh thu trong nước và quốc tế (Biểu đồ 27 & 28)
+                  II. Cơ cấu doanh thu trong nước và quốc tế
                 </td>
               </tr>
               {summary3PeriodsData.month.domIntlRows.map((mRow, idx) => {
@@ -565,7 +622,7 @@ export default function PlanProgressDetailTable({
               })}
               {/* Tổng B27 & B28 */}
               <tr style={{ backgroundColor: '#f1f5f9', fontWeight: '700' }}>
-                <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu B27 & B28</td>
+                <td style={{ color: '#0f172a', paddingLeft: '16px' }}>Tổng doanh thu</td>
                 {/* Tháng */}
                 <td className="spdv-td-num spdv-border-left">{formatNum(summary3PeriodsData.month.domIntlTotal.kh)}</td>
                 <td className="spdv-td-num font-bold">{formatNum(summary3PeriodsData.month.domIntlTotal.th)}</td>

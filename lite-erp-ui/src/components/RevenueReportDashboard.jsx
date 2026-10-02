@@ -97,7 +97,7 @@ const REVENUE_SUB_BRANCHES = [
     id: 'plan_progress',
     title: '7. Chuyển dịch DT ngoài và DT quốc tế',
     subtitle: 'Cơ cấu DT nội bộ - ngoài TĐ & DT trong nước - quốc tế',
-    badge: 4,
+    badge: 10,
     icon: Target,
     color: '#dc2626'
   },

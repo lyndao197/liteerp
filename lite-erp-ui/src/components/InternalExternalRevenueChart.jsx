@@ -9,6 +9,9 @@ import {
   DOMESTIC_INTERNATIONAL_DATA
 } from '../data/revenueInternalExternalData';
 import PlanProgressDetailTable from './PlanProgressDetailTable';
+import InternalExternalDetailTable from './InternalExternalDetailTable';
+import DomesticInternationalDetailTable from './DomesticInternationalDetailTable';
+import PlanCompletionRateChart, { ExternalPlanCompletionRateChart, InternationalPlanCompletionRateChart } from './PlanCompletionRateChart';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -87,7 +90,7 @@ function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey }) {
                   percent: slice.formattedPercent,
                   value: slice.value,
                   color: slice.color,
-                  unit: chart.unit || 'tỷ đ'
+                  unit: chart.unit || 'Triệu đồng'
                 });
               }}
               onMouseLeave={() => setHoveredSlice(null)}
@@ -262,7 +265,7 @@ function InternalExternalSubcard({
               </div>
               <div className="tooltip-stat-row">
                 <span>Giá trị:</span>
-                <strong>{hoveredSlice.value} {hoveredSlice.unit || chart.unit || 'tỷ đ'}</strong>
+                <strong>{hoveredSlice.value} {hoveredSlice.unit || chart.unit || 'Triệu đồng'}</strong>
               </div>
             </div>
           )}
@@ -471,20 +474,6 @@ export default function InternalExternalRevenueChart({
             Cơ cấu doanh thu nội bộ và doanh thu ngoài Tập đoàn
           </h2>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#475569',
-                backgroundColor: '#f1f5f9',
-                padding: '3px 10px',
-                borderRadius: '6px'
-              }}
-            >
-              Biểu đồ 25 – 26
-            </span>
-          </div>
         </div>
 
         {/* Section Subcards Grid */}
@@ -591,6 +580,94 @@ export default function InternalExternalRevenueChart({
               />
             </div>
           </div>
+
+          {/* Chú giải cho Cơ cấu DT nội bộ và ngoài Tập đoàn */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '24px',
+              flexWrap: 'wrap',
+              padding: '10px 18px',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              marginTop: '4px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '3px',
+                  backgroundColor: '#EE0033'
+                }}
+              />
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
+                DT ngoài Tập đoàn
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '3px',
+                  backgroundColor: '#64748b'
+                }}
+              />
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
+                DT nội bộ
+              </span>
+            </div>
+
+            <div style={{ height: '18px', width: '1px', backgroundColor: '#cbd5e1' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  color: '#1d4ed8',
+                  backgroundColor: '#dbeafe',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }}
+              >
+                TH
+              </span>
+              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
+                Thực hiện
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  color: '#b91c1c',
+                  backgroundColor: '#fee2e2',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }}
+              >
+                KH
+              </span>
+              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
+                Kế hoạch
+              </span>
+            </div>
+          </div>
+
+          {/* BẢNG DỮ LIỆU CHI TIẾT CƠ CẤU DOANH THU NỘI BỘ VÀ NGOÀI TẬP ĐOÀN */}
+          <InternalExternalDetailTable
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+          />
       </div>
 
       {/* ========================================================
@@ -630,20 +707,6 @@ export default function InternalExternalRevenueChart({
             </h2>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#475569',
-                backgroundColor: '#f1f5f9',
-                padding: '3px 10px',
-                borderRadius: '6px'
-              }}
-            >
-              Biểu đồ 27 – 28
-            </span>
-          </div>
         </div>
 
         {/* Section Subcards Grid */}
@@ -750,86 +813,122 @@ export default function InternalExternalRevenueChart({
               />
             </div>
           </div>
+
+          {/* Chú giải cho Cơ cấu DT trong nước và quốc tế */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '24px',
+              flexWrap: 'wrap',
+              padding: '10px 18px',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              marginTop: '4px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '3px',
+                  backgroundColor: '#0284c7'
+                }}
+              />
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
+                DT trong nước
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '3px',
+                  backgroundColor: '#ea580c'
+                }}
+              />
+              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
+                DT quốc tế
+              </span>
+            </div>
+
+            <div style={{ height: '18px', width: '1px', backgroundColor: '#cbd5e1' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  color: '#1d4ed8',
+                  backgroundColor: '#dbeafe',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }}
+              >
+                TH
+              </span>
+              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
+                Thực hiện
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  color: '#b91c1c',
+                  backgroundColor: '#fee2e2',
+                  padding: '2px 8px',
+                  borderRadius: '4px'
+                }}
+              >
+                KH
+              </span>
+              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
+                Kế hoạch
+              </span>
+            </div>
+          </div>
+
+          {/* BẢNG DỮ LIỆU CHI TIẾT CƠ CẤU DOANH THU TRONG NƯỚC VÀ QUỐC TẾ */}
+          <DomesticInternationalDetailTable
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+          />
       </div>
 
       {/* ========================================================
-          CHÚ THÍCH (LEGEND) CHUẨN MOCKUP
+          PHẦN 3: BIỂU ĐỒ 29 – 30 (TỶ LỆ HOÀN THÀNH KẾ HOẠCH TỔNG DOANH THU)
           ======================================================== */}
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '10px',
-          border: '1px solid #e2e8f0',
-          padding: '12px 20px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
-        }}
-      >
-        {/* Hàng trên: TH & KH theo đúng screenshot */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '36px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                width: '14px',
-                height: '14px',
-                borderRadius: '3px',
-                backgroundColor: '#93c5fd'
-              }}
-            />
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#475569' }}>
-              TH: Thực hiện
-            </span>
-          </div>
+      <PlanCompletionRateChart
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        onOpenDetail={onOpenDetail}
+      />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                width: '14px',
-                height: '14px',
-                borderRadius: '3px',
-                backgroundColor: '#fca5a5'
-              }}
-            />
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#475569' }}>
-              KH: Kế hoạch
-            </span>
-          </div>
-        </div>
+      {/* ========================================================
+          PHẦN 4: BIỂU ĐỒ 31 – 32 (TỶ LỆ HOÀN THÀNH KẾ HOẠCH DOANH THU NGOÀI TẬP ĐOÀN)
+          ======================================================== */}
+      <ExternalPlanCompletionRateChart
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        onOpenDetail={onOpenDetail}
+      />
 
-        {/* Hàng dưới: Màu lát cắt Donut để phân biệt cơ cấu chi tiết khi mở rộng biểu đồ */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '24px',
-            flexWrap: 'wrap',
-            paddingTop: '6px',
-            borderTop: '1px dashed #f1f5f9',
-            width: '100%'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#64748b' }} />
-            <span style={{ fontSize: '12px', color: '#64748b' }}>DT nội bộ</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#EE0033' }} />
-            <span style={{ fontSize: '12px', color: '#64748b' }}>DT ngoài Tập đoàn</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#0284c7' }} />
-            <span style={{ fontSize: '12px', color: '#64748b' }}>DT trong nước</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ea580c' }} />
-            <span style={{ fontSize: '12px', color: '#64748b' }}>DT quốc tế</span>
-          </div>
-        </div>
-      </div>
+      {/* ========================================================
+          PHẦN 5: BIỂU ĐỒ 33 – 34 (TỶ LỆ HOÀN THÀNH KẾ HOẠCH DOANH THU QUỐC TẾ)
+          ======================================================== */}
+      <InternationalPlanCompletionRateChart
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        onOpenDetail={onOpenDetail}
+      />
 
       {/* ========================================================
           BẢNG MÔ TẢ ĐẦY ĐỦ SỐ LIỆU NHÓM BIỂU ĐỒ SỐ 7 (B25 – B28)

@@ -11,6 +11,7 @@ import {
   QUARTER_NEXT_PLAN_DATA
 } from '../data/revenueQuarterData';
 import { explainLegend, explainCategory } from '../utils/reportAbbreviations';
+import MonthRatioDetailTable from './MonthRatioDetailTable';
 
 // Helper to format numbers with comma as decimal separator
 const formatVal = (val) => {
@@ -855,6 +856,14 @@ export default function QuarterComparisonChart({
           })}
         />
       </div>
+
+      {/* BẢNG PHÂN TÍCH TỶ SUẤT / TỶ TRỌNG QUÝ */}
+      <MonthRatioDetailTable
+        branchId="quarter"
+        selectedYear={selectedYear}
+        selectedQuarter={selectedQuarter}
+        activeChartKey="chart5_rat"
+      />
     </div>
   );
 }

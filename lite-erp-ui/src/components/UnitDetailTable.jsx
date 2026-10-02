@@ -190,7 +190,6 @@ export default function UnitDetailTable({
               <tr className="spdv-b18-thead-row">
                 <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th style={{ textAlign: 'left', minWidth: '220px' }}>Đơn vị thực hiện</th>
-                <th style={{ width: '85px', textAlign: 'center' }}>Đơn vị</th>
                 <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>KH</th>
                 <th style={{ width: '135px', textAlign: 'right', fontWeight: '700' }}>TH</th>
                 <th style={{ width: '130px', textAlign: 'right' }}>
@@ -218,9 +217,6 @@ export default function UnitDetailTable({
                       <span className="spdv-dot" style={{ backgroundColor: item.color }}></span>
                       <span className="spdv-name-label">{item.name}</span>
                     </td>
-                    <td style={{ textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
-                      Triệu đồng
-                    </td>
                     <td className="spdv-td-num font-semibold">{formatUnitNum(item.kh)}</td>
                     <td className="spdv-td-num font-semibold">{formatUnitNum(item.th)}</td>
                     <td className="spdv-td-num">
@@ -237,7 +233,7 @@ export default function UnitDetailTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
                     Không có dữ liệu phù hợp với bộ lọc
                   </td>
                 </tr>
@@ -245,10 +241,10 @@ export default function UnitDetailTable({
             </tbody>
             <tfoot>
               <tr className="spdv-tr-total">
-                <td colSpan={2} style={{ textAlign: 'left', fontWeight: '800' }}>
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td style={{ textAlign: 'left', fontWeight: '800' }}>
                   Tổng doanh thu
                 </td>
-                <td style={{ textAlign: 'center', fontWeight: '600' }}>Triệu đồng</td>
                 <td style={{ textAlign: 'right', fontWeight: '800' }}>{formatUnitNum(totalKh)}</td>
                 <td style={{ textAlign: 'right', fontWeight: '800' }}>{formatUnitNum(totalTh)}</td>
                 <td style={{ textAlign: 'right', fontWeight: '800' }}>

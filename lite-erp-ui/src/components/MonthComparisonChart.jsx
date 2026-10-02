@@ -10,6 +10,7 @@ import {
   MONTH_NEXT_PLAN_DATA
 } from '../data/revenueMonthData';
 import { explainLegend, explainCategory } from '../utils/reportAbbreviations';
+import MonthRatioDetailTable from './MonthRatioDetailTable';
 
 // Helper to format numbers with comma as decimal separator
 const formatVal = (val) => {
@@ -42,8 +43,10 @@ function MonthValueCard({
   const chartHeight = chartBottom - chartTop; // 190px
   const maxVal = 500;
   const yTicks = isBlank ? [] : [0, 100, 200, 300, 400, 500];
-  const xCenters = [112, 226, 340, 454];
-  const barWidth = 14;
+  const xCenters = data.length === 5
+    ? [101, 193, 285, 377, 469]
+    : [112, 226, 340, 454];
+  const barWidth = data.length === 5 ? 13 : 14;
   const barGap = 2;
 
   return (
@@ -324,8 +327,10 @@ function MonthRatioCard({
   const chartHeight = chartBottom - chartTop; // 190px
   const maxVal = 100;
   const yTicks = isBlank ? [] : [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  const xCenters = [210, 390];
-  const barWidth = 15;
+  const xCenters = data.length === 3
+    ? [132, 285, 438]
+    : [210, 390];
+  const barWidth = data.length === 3 ? 14 : 15;
   const barGap = 2;
 
   return (
@@ -878,6 +883,15 @@ export default function MonthComparisonChart({
           })}
         />
       </div>
+
+      {/* BẢNG PHÂN TÍCH TỶ SUẤT / TỶ TRỌNG THÁNG */}
+      {!isBlank && (
+        <MonthRatioDetailTable
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          activeChartKey="chart1_rat"
+        />
+      )}
     </div>
   );
 }

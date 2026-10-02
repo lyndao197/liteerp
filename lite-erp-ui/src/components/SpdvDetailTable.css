@@ -426,8 +426,13 @@
   text-align: right;
 }
 
-.spdv-th-col:nth-child(even) {
+.spdv-th-share {
   text-align: center !important;
+}
+
+.spdv-th-kh,
+.spdv-th-th {
+  text-align: right !important;
 }
 
 .spdv-th-rate {

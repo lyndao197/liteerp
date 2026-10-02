@@ -153,7 +153,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Tháng 8/2026',
       total: 389.9,
       formattedTotal: '389,9',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 347.1 },
         { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 42.8 }
@@ -163,7 +163,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Quý III/2026 (lũy kế T7–T8)',
       total: 775.0,
       formattedTotal: '775,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.4, formattedPercent: '89,4%', color: '#0284c7', value: 692.9 },
         { name: 'DT quốc tế', percent: 10.6, formattedPercent: '10,6%', color: '#ea580c', value: 82.1 }
@@ -173,7 +173,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Năm 2026 (lũy kế 8T)',
       total: 2976.3,
       formattedTotal: '2.976,3',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.5, formattedPercent: '89,5%', color: '#0284c7', value: 2663.8 },
         { name: 'DT quốc tế', percent: 10.5, formattedPercent: '10,5%', color: '#ea580c', value: 312.5 }
@@ -185,7 +185,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Tháng 8/2026',
       total: 414.0,
       formattedTotal: '414,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.1, formattedPercent: '89,1%', color: '#0284c7', value: 369.0 },
         { name: 'DT quốc tế', percent: 10.9, formattedPercent: '10,9%', color: '#ea580c', value: 45.0 }
@@ -195,7 +195,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Quý III/2026',
       total: 1246.0,
       formattedTotal: '1.246,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 1096.5 },
         { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 149.5 }
@@ -205,7 +205,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Năm 2026',
       total: 4968.1,
       formattedTotal: '4.968,1',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 4421.6 },
         { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 546.5 }
@@ -217,7 +217,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Tháng 8/2025',
       total: 364.4,
       formattedTotal: '364,4',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 324.3 },
         { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 40.1 }
@@ -227,7 +227,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Quý III/2025 (lũy kế T7–T8)',
       total: 712.9,
       formattedTotal: '712,9',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.8, formattedPercent: '88,8%', color: '#0284c7', value: 633.1 },
         { name: 'DT quốc tế', percent: 11.2, formattedPercent: '11,2%', color: '#ea580c', value: 79.8 }
@@ -237,7 +237,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Năm 2025 (lũy kế 8T)',
       total: 2674.5,
       formattedTotal: '2.674,5',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.5, formattedPercent: '88,5%', color: '#0284c7', value: 2367.0 },
         { name: 'DT quốc tế', percent: 11.5, formattedPercent: '11,5%', color: '#ea580c', value: 307.5 }
@@ -247,7 +247,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Tháng 8/2025',
       total: 380.0,
       formattedTotal: '380,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 87.5, formattedPercent: '87,5%', color: '#0284c7', value: 332.5 },
         { name: 'DT quốc tế', percent: 12.5, formattedPercent: '12,5%', color: '#ea580c', value: 47.5 }
@@ -257,7 +257,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Quý III/2025',
       total: 1150.0,
       formattedTotal: '1.150,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 87.5, formattedPercent: '87,5%', color: '#0284c7', value: 1006.3 },
         { name: 'DT quốc tế', percent: 12.5, formattedPercent: '12,5%', color: '#ea580c', value: 143.7 }
@@ -267,7 +267,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Năm 2025',
       total: 4500.0,
       formattedTotal: '4.500,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 87.5, formattedPercent: '87,5%', color: '#0284c7', value: 3937.5 },
         { name: 'DT quốc tế', percent: 12.5, formattedPercent: '12,5%', color: '#ea580c', value: 562.5 }
@@ -279,7 +279,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Tháng 8/2024',
       total: 340.0,
       formattedTotal: '340,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.2, formattedPercent: '89,2%', color: '#0284c7', value: 303.3 },
         { name: 'DT quốc tế', percent: 10.8, formattedPercent: '10,8%', color: '#ea580c', value: 36.7 }
@@ -289,7 +289,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Quý III/2024',
       total: 680.0,
       formattedTotal: '680,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 89.0, formattedPercent: '89,0%', color: '#0284c7', value: 605.2 },
         { name: 'DT quốc tế', percent: 11.0, formattedPercent: '11,0%', color: '#ea580c', value: 74.8 }
@@ -299,7 +299,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'TH – Năm 2024',
       total: 2450.0,
       formattedTotal: '2.450,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.6, formattedPercent: '88,6%', color: '#0284c7', value: 2170.7 },
         { name: 'DT quốc tế', percent: 11.4, formattedPercent: '11,4%', color: '#ea580c', value: 279.3 }
@@ -309,7 +309,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Tháng 8/2024',
       total: 350.0,
       formattedTotal: '350,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 308.0 },
         { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 42.0 }
@@ -319,7 +319,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Quý III/2024',
       total: 1050.0,
       formattedTotal: '1.050,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 924.0 },
         { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 126.0 }
@@ -329,7 +329,7 @@ export const DOMESTIC_INTERNATIONAL_DATA = {
       title: 'KH – Năm 2024',
       total: 4200.0,
       formattedTotal: '4.200,0',
-      unit: 'tỷ đ',
+      unit: 'Triệu đồng',
       slices: [
         { name: 'DT trong nước', percent: 88.0, formattedPercent: '88,0%', color: '#0284c7', value: 3696.0 },
         { name: 'DT quốc tế', percent: 12.0, formattedPercent: '12,0%', color: '#ea580c', value: 504.0 }
