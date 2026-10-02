@@ -320,130 +320,18 @@ function TrendPrevYearCard({
           )}
         </div>
 
-      {/* 12-Month Summary Table */}
-      <div style={{ marginTop: '22px', overflowX: 'auto', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
-        <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span>Bảng tổng hợp xu hướng doanh thu từng tháng năm {selectedYear} so với năm {prevYear}</span>
-          <span style={{ fontSize: '12px', fontWeight: '500', color: '#64748b' }}>Đơn vị tính: Triệu đồng</span>
-        </div>
-        <table className="spdv-matrix-table" style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-              <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: '600', color: '#475569', width: '50px' }}>STT</th>
-              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: '600', color: '#475569' }}>Tháng</th>
-              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#c8102e' }}>TH {selectedYear}</th>
-              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: '#64748b' }}>TH {prevYear}</th>
-              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: '#334155' }}>Chênh lệch (+/-)</th>
-              <th style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#15803d' }}>Tăng trưởng YoY (%)</th>
-              <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: '600', color: '#475569', width: '110px' }}>Đánh giá</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, idx) => {
-              const thCurr = item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : null;
-              const thOld = item.th2025;
-              const diffVal = thCurr !== null ? Number((thCurr - thOld).toFixed(1)) : null;
-              const isPositive = diffVal !== null ? diffVal >= 0 : null;
-
-              return (
-                <tr
-                  key={item.month}
-                  style={{
-                    borderBottom: '1px solid #f1f5f9',
-                    backgroundColor: hoveredIdx === idx ? '#f8fafc' : 'transparent',
-                    transition: 'background-color 0.15s ease'
-                  }}
-                  onMouseEnter={() => setHoveredIdx(idx)}
-                  onMouseLeave={() => setHoveredIdx(null)}
-                >
-                  <td style={{ padding: '8px 10px', textAlign: 'center', color: '#64748b' }}>{idx + 1}</td>
-                  <td style={{ padding: '8px 12px', fontWeight: '600', color: '#1e293b' }}>
-                    {item.name} ({item.month})
-                  </td>
-                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: thCurr !== null ? '#0f172a' : '#94a3b8' }}>
-                    {thCurr !== null ? formatVal(thCurr) : 'Chưa có'}
-                  </td>
-                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '500', color: '#475569' }}>
-                    {formatVal(thOld)}
-                  </td>
-                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '600', color: isPositive === null ? '#94a3b8' : (isPositive ? '#16a34a' : '#dc2626') }}>
-                    {diffVal !== null ? `${diffVal > 0 ? '+' : ''}${formatVal(diffVal)}` : '—'}
-                  </td>
-                  <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#15803d' }}>
-                    {item.growth || '—'}
-                  </td>
-                  <td style={{ padding: '8px 10px', textAlign: 'center' }}>
-                    {thCurr !== null ? (
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '2px 8px',
-                        borderRadius: '999px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        background: isPositive ? '#dcfce7' : '#fee2e2',
-                        color: isPositive ? '#166534' : '#991b1b'
-                      }}>
-                        {isPositive ? 'Tăng trưởng' : 'Giảm'}
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>Chưa đến kỳ</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            {/* Lũy kế 8 tháng đã có dữ liệu thực hiện */}
-            <tr style={{ background: '#f1f5f9', fontWeight: '700', borderTop: '2px solid #cbd5e1' }}>
-              <td colSpan={2} style={{ padding: '10px 12px', color: '#0f172a' }}>
-                Lũy kế 8 tháng thực hiện (T1 - T8)
-              </td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#c8102e', fontSize: '13px' }}>
-                2.976,3
-              </td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#475569' }}>
-                2.638,9
-              </td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#16a34a' }}>
-                +337,4
-              </td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', color: '#15803d', fontSize: '13px' }}>
-                +12,8%
-              </td>
-              <td style={{ padding: '10px 10px', textAlign: 'center' }}>
-                <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '999px', fontSize: '11px', fontWeight: '700', background: '#dcfce7', color: '#166534' }}>
-                  Tăng trưởng
-                </span>
-              </td>
-            </tr>
-            {/* Cả năm 2025 */}
-            <tr style={{ background: '#f8fafc', fontWeight: '600', color: '#64748b', fontSize: '11.5px' }}>
-              <td colSpan={2} style={{ padding: '8px 12px' }}>
-                Tổng thực hiện cả năm {prevYear} (12T)
-              </td>
-              <td style={{ padding: '8px 12px', textAlign: 'right' }}>—</td>
-              <td style={{ padding: '8px 12px', textAlign: 'right', fontWeight: '700', color: '#475569' }}>4.328,9</td>
-              <td colSpan={3} style={{ padding: '8px 12px', textAlign: 'right', color: '#94a3b8' }}>
-                (T9 - T12 đang cập nhật theo kỳ thực hiện)
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-
       {onOpenDetail && (
-        <div className="subcard-bottom-bar" style={{ marginTop: '16px' }}>
+        <div className="subcard-bottom-bar">
           <button
             type="button"
             className="subcard-detail-action-btn"
-            title="Xem chi tiết ma trận doanh thu"
+            title="Xem chi tiết"
             onClick={(e) => {
               e.stopPropagation();
               onOpenDetail();
             }}
           >
-            <span>Xem chi tiết ma trận doanh thu từng tháng</span>
+            <span>Xem chi tiết</span>
             <ArrowRight size={14} />
           </button>
         </div>
