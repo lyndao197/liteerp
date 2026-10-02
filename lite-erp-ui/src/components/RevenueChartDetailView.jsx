@@ -35,7 +35,7 @@ import {
 
 const YEAR_OPTIONS = ['2026', '2025', '2024'];
 
-import { MONTH_TREND_DATA } from '../data/revenueTrendData';
+import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA } from '../data/revenueSpdvData';
 import SpdvDetailTable from './SpdvDetailTable';
 import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA } from '../data/revenueUnitData';
@@ -92,7 +92,8 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart13_rat', label: 'Biểu đồ 13b: Tỷ suất / tỷ trọng ước kết quả năm so với TH năm trước' }
   ],
   trend: [
-    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' }
+    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' },
+    { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu từng tháng so với kế hoạch' }
   ],
   spdv: [
     { id: 'spdv_bar_month', label: 'Biểu đồ 18: Doanh thu 6 nhóm SPDV so với KH (Tháng)' },
@@ -874,26 +875,49 @@ export default function RevenueChartDetailView({
         };
       });
     } else if (activeBranchId === 'trend') {
-      const trendList = MONTH_TREND_DATA[selectedYear] || MONTH_TREND_DATA['2026'] || [];
-      rows = trendList.map((item, idx) => {
-        const thCurr = item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : null;
-        const thOld = item.th2025 !== null && item.th2025 !== undefined ? item.th2025 : null;
-        const diffVal = (thCurr !== null && thOld !== null) ? Number((thCurr - thOld).toFixed(1)) : null;
-        const isPass = diffVal !== null ? diffVal >= 0 : true;
-        return {
-          stt: idx + 1,
-          name: `${item.name} (${item.month})`,
-          unit: 'Triệu đồng',
-          kh: thOld !== null ? thOld : '-',
-          th: thCurr !== null ? thCurr : '-',
-          diff: diffVal !== null ? (diffVal > 0 ? `+${diffVal.toLocaleString('vi-VN')}` : diffVal.toLocaleString('vi-VN')) : '-',
-          diffNum: diffVal || 0,
-          rate: item.growth || '-',
-          rateNum: parseFloat(item.growth?.replace(',', '.') || 0),
-          isPass,
-          share: item.growth || '-'
-        };
-      });
+      if (activeChartKey === 'trend_plan' || chartTitle.includes('kế hoạch')) {
+        const trendPlanList = MONTH_PLAN_TREND_DATA[selectedYear] || MONTH_PLAN_TREND_DATA['2026'] || [];
+        rows = trendPlanList.map((item, idx) => {
+          const khVal = item.kh !== null && item.kh !== undefined ? item.kh : null;
+          const thVal = item.th !== null && item.th !== undefined ? item.th : null;
+          const diffVal = (thVal !== null && khVal !== null) ? Number((thVal - khVal).toFixed(1)) : null;
+          const isPass = diffVal !== null ? diffVal >= 0 : true;
+          return {
+            stt: idx + 1,
+            name: `${item.name} (${item.month})`,
+            unit: 'Triệu đồng',
+            kh: khVal !== null ? khVal : '-',
+            th: thVal !== null ? thVal : '-',
+            diff: diffVal !== null ? (diffVal > 0 ? `+${diffVal.toLocaleString('vi-VN')}` : diffVal.toLocaleString('vi-VN')) : '-',
+            diffNum: diffVal || 0,
+            rate: item.rate || '-',
+            rateNum: parseFloat(item.rate?.replace('%', '').replace(',', '.') || 0),
+            isPass,
+            share: item.rate || '-'
+          };
+        });
+      } else {
+        const trendList = MONTH_TREND_DATA[selectedYear] || MONTH_TREND_DATA['2026'] || [];
+        rows = trendList.map((item, idx) => {
+          const thCurr = item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : null;
+          const thOld = item.th2025 !== null && item.th2025 !== undefined ? item.th2025 : null;
+          const diffVal = (thCurr !== null && thOld !== null) ? Number((thCurr - thOld).toFixed(1)) : null;
+          const isPass = diffVal !== null ? diffVal >= 0 : true;
+          return {
+            stt: idx + 1,
+            name: `${item.name} (${item.month})`,
+            unit: 'Triệu đồng',
+            kh: thOld !== null ? thOld : '-',
+            th: thCurr !== null ? thCurr : '-',
+            diff: diffVal !== null ? (diffVal > 0 ? `+${diffVal.toLocaleString('vi-VN')}` : diffVal.toLocaleString('vi-VN')) : '-',
+            diffNum: diffVal || 0,
+            rate: item.growth || '-',
+            rateNum: parseFloat(item.growth?.replace(',', '.') || 0),
+            isPass,
+            share: item.growth || '-'
+          };
+        });
+      }
     } else if (activeBranchId === 'spdv') {
       const spdvFull = SPDV_STRUCTURE_DATA[selectedYear] || SPDV_STRUCTURE_DATA['2026'];
       const barCompare = SPDV_BAR_COMPARISON_DATA[selectedYear]?.['Tháng 8'] || SPDV_BAR_COMPARISON_DATA['2026']['Tháng 8'];

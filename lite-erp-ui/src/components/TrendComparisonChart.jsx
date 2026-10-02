@@ -22,14 +22,14 @@ function TrendPrevYearCard({
   onToggle,
   onOpenDetail
 }) {
-  const svgWidth = 980;
-  const svgHeight = 330;
-  const chartTop = 50;
-  const chartBottom = 265;
-  const chartHeight = chartBottom - chartTop; // 215px
-  const chartLeft = 55;
-  const chartRight = 940;
-  const chartWidth = chartRight - chartLeft; // 885px
+  const svgWidth = 540;
+  const svgHeight = 310;
+  const chartTop = 52;
+  const chartBottom = 250;
+  const chartHeight = chartBottom - chartTop; // 198px
+  const chartLeft = 45;
+  const chartRight = 515;
+  const chartWidth = chartRight - chartLeft; // 470px
 
   const yMax = 600;
   const yTicks = [0, 100, 200, 300, 400, 500, 600];
@@ -54,7 +54,7 @@ function TrendPrevYearCard({
   const hoveredData = hoveredIdx !== null ? data[hoveredIdx] : null;
 
   return (
-    <div className="month-subcard" style={{ width: '100%', boxSizing: 'border-box' }}>
+    <div className="month-subcard">
       <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
@@ -397,7 +397,7 @@ function TrendPlanCard({
           {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          <span className="month-subcard-tag">Hàng 1 - Khu 2</span>
+          <span className="month-subcard-tag">Biểu đồ 15</span>
         </div>
       </div>
 
@@ -683,9 +683,11 @@ export default function TrendComparisonChart({
   onOpenDetail
 }) {
   const [hoveredIdx14, setHoveredIdx14] = useState(null);
+  const [hoveredIdx15, setHoveredIdx15] = useState(null);
 
   const prevYear = (parseInt(selectedYear, 10) - 1).toString();
   const rawData14 = MONTH_TREND_DATA[selectedYear] || MONTH_TREND_DATA['2026'];
+  const rawData15 = MONTH_PLAN_TREND_DATA[selectedYear] || MONTH_PLAN_TREND_DATA['2026'];
 
   return (
     <div className="month-charts-stack">
@@ -708,8 +710,8 @@ export default function TrendComparisonChart({
         </div>
       </div>
 
-      {/* DÒNG 1 (BIỂU ĐỒ DUY NHẤT): BIỂU ĐỒ 14 - XU HƯỚNG TỔNG DOANH THU SO VỚI NĂM TRƯỚC */}
-      <div style={{ width: '100%' }}>
+      {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 14 & BIỂU ĐỒ 15 */}
+      <div className="month-row-grid">
         <TrendPrevYearCard
           selectedYear={selectedYear}
           prevYear={prevYear}
@@ -719,6 +721,17 @@ export default function TrendComparisonChart({
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'trend_prev_year',
             chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`
+          })}
+        />
+
+        <TrendPlanCard
+          selectedYear={selectedYear}
+          data={rawData15}
+          hoveredIdx={hoveredIdx15}
+          setHoveredIdx={setHoveredIdx15}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'trend_plan',
+            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
           })}
         />
       </div>

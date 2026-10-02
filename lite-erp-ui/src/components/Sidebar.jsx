@@ -98,8 +98,8 @@ const REVENUE_SUB_BRANCHES = [
   {
     id: 'trend',
     title: '4. Xu hướng doanh thu từng tháng',
-    subtitle: 'So sánh TH 2026 và TH 2025',
-    badge: 1,
+    subtitle: 'So với năm trước & Kế hoạch',
+    badge: 2,
     icon: TrendingUp,
     color: '#8b5cf6'
   },
