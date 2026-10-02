@@ -36,7 +36,7 @@ import {
 const YEAR_OPTIONS = ['2026', '2025', '2024'];
 
 import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA } from '../data/revenueSpdvData';
+import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
 import SpdvDetailTable from './SpdvDetailTable';
 import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA } from '../data/revenueUnitData';
 import UnitDetailTable from './UnitDetailTable';
@@ -1943,7 +1943,7 @@ export default function RevenueChartDetailView({
       }
 
       if (activeBranchId === 'spdv') {
-        const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
+        const isBarCompare = (activeChartKey || '').startsWith('spdv_bar_');
         const spdvMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
         const spdvQuarterNum = Math.ceil(spdvMonthNum / 3);
         const spdvQuarterRoman = `${spdvQuarterNum}`;
@@ -1955,6 +1955,83 @@ export default function RevenueChartDetailView({
         const monthCol = `Tháng ${spdvMonthNum}/${selectedYear}`;
         const quarterCol = `Quý ${spdvQuarterRoman}/${selectedYear} (lũy kế ${spdvQuarterCumText})`;
         const yearCol = `Năm ${selectedYear} (lũy kế ${spdvMonthNum}T)`;
+
+        if (isBarCompare) {
+          const barCompareData = getSpdvBarComparisonData(selectedYear, selectedMonth);
+          const mItems = barCompareData.monthItems || [];
+          const qItems = barCompareData.quarterItems || [];
+          const yItems = barCompareData.yearItems || [];
+
+          const exportRows = SPDV_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mTh = Number(m.th ?? 0);
+            const mKh = Number(m.kh ?? 0);
+            const mDiff = Number((mTh - mKh).toFixed(1));
+            const mRate = m.rate || (mKh > 0 ? ((mTh / mKh) * 100).toFixed(1) + '%' : '0%');
+
+            const qTh = Number(q.th ?? 0);
+            const qKh = Number(q.kh ?? 0);
+            const qDiff = Number((qTh - qKh).toFixed(1));
+            const qRate = q.rate || (qKh > 0 ? ((qTh / qKh) * 100).toFixed(1) + '%' : '0%');
+
+            const yTh = Number(y.th ?? 0);
+            const yKh = Number(y.kh ?? 0);
+            const yDiff = Number((yTh - yKh).toFixed(1));
+            const yRate = y.rate || (yKh > 0 ? ((yTh / yKh) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Nhóm SPDV': cat.name,
+              [`${monthCol} - TH`]: mTh,
+              [`${monthCol} - KH`]: mKh,
+              [`${monthCol} - +/- so KH`]: mDiff,
+              [`${monthCol} - % HTKH`]: mRate,
+              [`${quarterCol} - Ước TH`]: qTh,
+              [`${quarterCol} - KH`]: qKh,
+              [`${quarterCol} - +/- so KH`]: qDiff,
+              [`${quarterCol} - % HTKH`]: qRate,
+              [`${yearCol} - Ước TH`]: yTh,
+              [`${yearCol} - KH`]: yKh,
+              [`${yearCol} - +/- so KH`]: yDiff,
+              [`${yearCol} - % HTKH`]: yRate,
+            };
+          });
+
+          const mTotalTh = mItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const mTotalKh = mItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const qTotalTh = qItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const qTotalKh = qItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const yTotalTh = yItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const yTotalKh = yItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Nhóm SPDV': 'Tổng doanh thu 6 nhóm SPDV',
+            [`${monthCol} - TH`]: mTotalTh,
+            [`${monthCol} - KH`]: mTotalKh,
+            [`${monthCol} - +/- so KH`]: Number((mTotalTh - mTotalKh).toFixed(1)),
+            [`${monthCol} - % HTKH`]: mTotalKh > 0 ? ((mTotalTh / mTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - Ước TH`]: qTotalTh,
+            [`${quarterCol} - KH`]: qTotalKh,
+            [`${quarterCol} - +/- so KH`]: Number((qTotalTh - qTotalKh).toFixed(1)),
+            [`${quarterCol} - % HTKH`]: qTotalKh > 0 ? ((qTotalTh / qTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - Ước TH`]: yTotalTh,
+            [`${yearCol} - KH`]: yTotalKh,
+            [`${yearCol} - +/- so KH`]: Number((yTotalTh - yTotalKh).toFixed(1)),
+            [`${yearCol} - % HTKH`]: yTotalKh > 0 ? ((yTotalTh / yTotalKh) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const ws = XLSX.utils.json_to_sheet(exportRows);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'So_Sanh_SPDV');
+          XLSX.writeFile(wb, `Doanh_thu_6_nhom_SPDV_so_voi_KH_${selectedYear}.xlsx`);
+          return;
+        }
+
+        const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
 
         const exportRows = (spdvTableData.rows || []).map(r => ({
           'Nhóm SPDV': r.name,
