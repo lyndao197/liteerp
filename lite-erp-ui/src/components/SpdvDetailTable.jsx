@@ -269,31 +269,34 @@ export default function SpdvDetailTable({
             <thead>
               <tr className="spdv-th-top-row">
                 <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
-                <th colSpan={3} className="spdv-th-period-group spdv-col-period-month">
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
                   {monthHeader}
                 </th>
-                <th colSpan={3} className="spdv-th-period-group spdv-col-period-quarter">
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-quarter">
                   {quarterHeader}
                 </th>
-                <th colSpan={3} className="spdv-th-period-group spdv-col-period-year">
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-year">
                   {yearHeader}
                 </th>
               </tr>
               <tr className="spdv-th-sub-row">
                 {/* Tháng */}
                 <th className="spdv-th-col spdv-th-th spdv-border-left">TH T{monthNum}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-kh">KH T{monthNum}/{selectedYear}</th>
                 <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                <th className="spdv-th-col spdv-th-kh">KH T{monthNum}/{selectedYear}</th>
+                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
 
                 {/* Quý */}
                 <th className="spdv-th-col spdv-th-th spdv-border-left">TH Q{quarterRoman}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-kh">KH Q{quarterRoman}/{selectedYear}</th>
                 <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                <th className="spdv-th-col spdv-th-kh">KH Q{quarterRoman}/{selectedYear}</th>
+                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
 
                 {/* Năm */}
                 <th className="spdv-th-col spdv-th-th spdv-border-left">TH Năm {selectedYear}</th>
-                <th className="spdv-th-col spdv-th-kh">KH Năm {selectedYear}</th>
                 <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                <th className="spdv-th-col spdv-th-kh">KH Năm {selectedYear}</th>
+                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
               </tr>
             </thead>
             <tbody>
@@ -309,33 +312,36 @@ export default function SpdvDetailTable({
                     <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
                       {formatSpdvNum(row.month?.th)}
                     </td>
+                    <td className="spdv-td-share">{row.month?.thShare}</td>
                     <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
                       {formatSpdvNum(row.month?.kh)}
                     </td>
-                    <td className="spdv-td-share">{row.month?.thShare}</td>
+                    <td className="spdv-td-share">{row.month?.khShare}</td>
 
                     {/* Quý */}
                     <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
                       {formatSpdvNum(row.quarter?.th)}
                     </td>
+                    <td className="spdv-td-share">{row.quarter?.thShare}</td>
                     <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
                       {formatSpdvNum(row.quarter?.kh)}
                     </td>
-                    <td className="spdv-td-share">{row.quarter?.thShare}</td>
+                    <td className="spdv-td-share">{row.quarter?.khShare}</td>
 
                     {/* Năm */}
                     <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
                       {formatSpdvNum(row.year?.th)}
                     </td>
+                    <td className="spdv-td-share">{row.year?.thShare}</td>
                     <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
                       {formatSpdvNum(row.year?.kh)}
                     </td>
-                    <td className="spdv-td-share">{row.year?.thShare}</td>
+                    <td className="spdv-td-share">{row.year?.khShare}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={10} className="spdv-no-data-cell">
+                  <td colSpan={13} className="spdv-no-data-cell">
                     Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
                   </td>
                 </tr>
@@ -351,28 +357,31 @@ export default function SpdvDetailTable({
                 <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
                   {formatSpdvNum(structureData.total?.month?.th)}
                 </td>
+                <td className="spdv-td-share font-bold">{structureData.total?.month?.thShare}</td>
                 <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
                   {formatSpdvNum(structureData.total?.month?.kh)}
                 </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.month?.thShare}</td>
+                <td className="spdv-td-share font-bold">{structureData.total?.month?.khShare}</td>
 
                 {/* Quý */}
                 <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
                   {formatSpdvNum(structureData.total?.quarter?.th)}
                 </td>
+                <td className="spdv-td-share font-bold">{structureData.total?.quarter?.thShare}</td>
                 <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
                   {formatSpdvNum(structureData.total?.quarter?.kh)}
                 </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.quarter?.thShare}</td>
+                <td className="spdv-td-share font-bold">{structureData.total?.quarter?.khShare}</td>
 
                 {/* Năm */}
                 <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
                   {formatSpdvNum(structureData.total?.year?.th)}
                 </td>
+                <td className="spdv-td-share font-bold">{structureData.total?.year?.thShare}</td>
                 <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
                   {formatSpdvNum(structureData.total?.year?.kh)}
                 </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.year?.thShare}</td>
+                <td className="spdv-td-share font-bold">{structureData.total?.year?.khShare}</td>
               </tr>
             </tfoot>
           </table>

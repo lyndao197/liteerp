@@ -1958,36 +1958,36 @@ export default function RevenueChartDetailView({
 
         const exportRows = (spdvTableData.rows || []).map(r => ({
           'Nhóm SPDV': r.name,
-          [`${monthCol} - KH`]: r.month?.kh ?? '',
-          [`${monthCol} - Tỷ trọng KH`]: r.month?.khShare ?? '',
           [`${monthCol} - TH`]: r.month?.th ?? '',
           [`${monthCol} - Tỷ trọng TH`]: r.month?.thShare ?? '',
-          [`${quarterCol} - KH`]: r.quarter?.kh ?? '',
-          [`${quarterCol} - Tỷ trọng KH`]: r.quarter?.khShare ?? '',
+          [`${monthCol} - KH`]: r.month?.kh ?? '',
+          [`${monthCol} - Tỷ trọng KH`]: r.month?.khShare ?? '',
           [`${quarterCol} - TH`]: r.quarter?.th ?? '',
           [`${quarterCol} - Tỷ trọng TH`]: r.quarter?.thShare ?? '',
-          [`${yearCol} - KH`]: r.year?.kh ?? '',
-          [`${yearCol} - Tỷ trọng KH`]: r.year?.khShare ?? '',
+          [`${quarterCol} - KH`]: r.quarter?.kh ?? '',
+          [`${quarterCol} - Tỷ trọng KH`]: r.quarter?.khShare ?? '',
           [`${yearCol} - TH`]: r.year?.th ?? '',
           [`${yearCol} - Tỷ trọng TH`]: r.year?.thShare ?? '',
+          [`${yearCol} - KH`]: r.year?.kh ?? '',
+          [`${yearCol} - Tỷ trọng KH`]: r.year?.khShare ?? '',
         }));
 
         if (spdvTableData.total) {
           const tot = spdvTableData.total;
           exportRows.push({
             'Nhóm SPDV': tot.name || 'Tổng doanh thu',
-            [`${monthCol} - KH`]: tot.month?.kh ?? '',
-            [`${monthCol} - Tỷ trọng KH`]: tot.month?.khShare ?? '',
             [`${monthCol} - TH`]: tot.month?.th ?? '',
             [`${monthCol} - Tỷ trọng TH`]: tot.month?.thShare ?? '',
-            [`${quarterCol} - KH`]: tot.quarter?.kh ?? '',
-            [`${quarterCol} - Tỷ trọng KH`]: tot.quarter?.khShare ?? '',
+            [`${monthCol} - KH`]: tot.month?.kh ?? '',
+            [`${monthCol} - Tỷ trọng KH`]: tot.month?.khShare ?? '',
             [`${quarterCol} - TH`]: tot.quarter?.th ?? '',
             [`${quarterCol} - Tỷ trọng TH`]: tot.quarter?.thShare ?? '',
-            [`${yearCol} - KH`]: tot.year?.kh ?? '',
-            [`${yearCol} - Tỷ trọng KH`]: tot.year?.khShare ?? '',
+            [`${quarterCol} - KH`]: tot.quarter?.kh ?? '',
+            [`${quarterCol} - Tỷ trọng KH`]: tot.quarter?.khShare ?? '',
             [`${yearCol} - TH`]: tot.year?.th ?? '',
             [`${yearCol} - Tỷ trọng TH`]: tot.year?.thShare ?? '',
+            [`${yearCol} - KH`]: tot.year?.kh ?? '',
+            [`${yearCol} - Tỷ trọng KH`]: tot.year?.khShare ?? '',
           });
         }
 
