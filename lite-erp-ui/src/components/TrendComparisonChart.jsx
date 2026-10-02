@@ -316,6 +316,14 @@ function TrendPrevYearCard({
                   {hoveredData.th2025 !== null ? `${formatVal(hoveredData.th2025)} Tr.đ` : '-'}
                 </span>
               </div>
+              {hoveredData.growth && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', paddingTop: '4px', borderTop: '1px dashed #e2e8f0' }}>
+                  <span style={{ color: '#475569', fontWeight: '600' }}>% Delta:</span>
+                  <span style={{ fontWeight: '700', color: hoveredData.isPositive ? '#15803d' : '#dc2626' }}>
+                    {hoveredData.growth}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
