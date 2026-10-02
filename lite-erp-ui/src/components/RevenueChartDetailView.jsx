@@ -1819,7 +1819,6 @@ export default function RevenueChartDetailView({
               }
               rowObj[`TH ${lastYear}`] = r.prevTh;
               rowObj[`TH ${selectedYear}`] = r.totalTh;
-              rowObj['Chênh lệch'] = (r.totalTh - r.prevTh) >= 0 ? `+${r.totalTh - r.prevTh}` : (r.totalTh - r.prevTh);
               rowObj['Tỷ lệ tăng trưởng'] = r.growthRate;
             } else {
               for (let m = 1; m <= 12; m++) {
@@ -1857,7 +1856,6 @@ export default function RevenueChartDetailView({
               }
               summaryObj[`TH ${lastYear}`] = data.prevTh;
               summaryObj[`TH ${selectedYear}`] = data.totalTh;
-              summaryObj['Chênh lệch'] = (data.totalTh - data.prevTh) >= 0 ? `+${data.totalTh - data.prevTh}` : (data.totalTh - data.prevTh);
               summaryObj['Tỷ lệ tăng trưởng'] = data.growthRate;
             } else {
               for (let m = 1; m <= 12; m++) {
@@ -2239,7 +2237,7 @@ export default function RevenueChartDetailView({
                         Tháng {m}
                       </th>
                     ))}
-                    <th colSpan={isTrendPrevYear ? 4 : 5} className="th-trend-total-header">
+                    <th colSpan={isTrendPrevYear ? 3 : 5} className="th-trend-total-header">
                       Cả năm {selectedYear}
                     </th>
                   </tr>
@@ -2263,7 +2261,6 @@ export default function RevenueChartDetailView({
                       <>
                         <th className="th-sub-th">TH {selectedYear}</th>
                         <th className="th-sub-prev">TH {lastYear}</th>
-                        <th className="th-sub-diff">Tăng/giảm</th>
                         <th className="th-sub-growth">% Delta</th>
                       </>
                     ) : (
@@ -2320,9 +2317,6 @@ export default function RevenueChartDetailView({
                           <>
                             <td className="td-th text-right font-bold">{row.totalTh}</td>
                             <td className="td-prev text-right font-semibold">{row.prevTh}</td>
-                            <td className={`td-diff text-right font-medium ${(row.totalTh - row.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
-                              {(row.totalTh - row.prevTh) >= 0 ? `+${row.totalTh - row.prevTh}` : (row.totalTh - row.prevTh)}
-                            </td>
                             <td className={`td-growth text-right font-bold ${row.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
                               {row.growthRate}
                             </td>
@@ -2346,7 +2340,7 @@ export default function RevenueChartDetailView({
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={isTrendPrevYear ? 44 : 45} className="table-empty-row">
+                      <td colSpan={isTrendPrevYear ? 43 : 45} className="table-empty-row">
                         Không tìm thấy bản ghi nào phù hợp với bộ lọc tìm kiếm.
                       </td>
                     </tr>
@@ -2391,9 +2385,6 @@ export default function RevenueChartDetailView({
                       <>
                         <td className="td-th text-right font-extrabold">{matrixTotals.total.totalTh}</td>
                         <td className="td-prev text-right font-extrabold">{matrixTotals.total.prevTh}</td>
-                        <td className={`td-diff text-right font-extrabold ${(matrixTotals.total.totalTh - matrixTotals.total.prevTh) >= 0 ? 'text-green' : 'text-red'}`}>
-                          {(matrixTotals.total.totalTh - matrixTotals.total.prevTh) >= 0 ? `+${matrixTotals.total.totalTh - matrixTotals.total.prevTh}` : (matrixTotals.total.totalTh - matrixTotals.total.prevTh)}
-                        </td>
                         <td className={`td-growth text-right font-extrabold ${matrixTotals.total.growthRateNum >= 0 ? 'text-green' : 'text-red'}`}>
                           {matrixTotals.total.growthRate}
                         </td>
