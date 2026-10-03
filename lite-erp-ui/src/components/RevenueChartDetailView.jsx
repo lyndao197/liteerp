@@ -92,8 +92,8 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart13_rat', label: 'Biểu đồ 13b: Tỷ suất / tỷ trọng ước kết quả năm so với TH năm trước' }
   ],
   trend: [
-    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu từng tháng so với năm trước' },
-    { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu từng tháng so với kế hoạch' }
+    { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu theo từng tháng so với năm trước' },
+    { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu theo từng tháng so với kế hoạch' }
   ],
   spdv: [
     { id: 'spdv_th_month', label: 'Biểu đồ 16 (Tháng): Cơ cấu thực hiện' },

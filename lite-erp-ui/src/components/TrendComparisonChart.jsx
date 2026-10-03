@@ -58,9 +58,9 @@ function TrendPrevYearCard({
       <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
-          title={`Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
+          title={`Xu hướng tổng doanh thu theo từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         >
-          {`Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`}
+          {`Xu hướng tổng doanh thu theo từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         </h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">Biểu đồ 14</span>
@@ -390,9 +390,9 @@ function TrendPlanCard({
       <div className="month-subcard-header">
         <h3
           className="month-subcard-title"
-          title={`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
+          title={`Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         >
-          {`Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
+          {`Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         </h3>
         <div className="month-subcard-header-actions">
           <span className="month-subcard-tag">Biểu đồ 15</span>
@@ -731,7 +731,7 @@ export default function TrendComparisonChart({
           setHoveredIdx={setHoveredIdx14}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'trend_prev_year',
-            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`
+            chartTitle: `Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với năm ${prevYear}`
           })}
         />
 
@@ -742,7 +742,7 @@ export default function TrendComparisonChart({
           setHoveredIdx={setHoveredIdx15}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'trend_plan',
-            chartTitle: `Xu hướng doanh thu từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
+            chartTitle: `Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`
           })}
         />
       </div>

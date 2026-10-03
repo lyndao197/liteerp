@@ -97,7 +97,7 @@ const REVENUE_SUB_BRANCHES = [
   },
   {
     id: 'trend',
-    title: '4. Xu hướng doanh thu từng tháng',
+    title: '4. Xu hướng doanh thu theo từng tháng',
     subtitle: 'So với năm trước & Kế hoạch',
     badge: 2,
     icon: TrendingUp,

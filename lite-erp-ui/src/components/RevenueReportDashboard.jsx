@@ -72,7 +72,7 @@ const REVENUE_SUB_BRANCHES = [
   },
   {
     id: 'trend',
-    title: '4. Xu hướng doanh thu từng tháng',
+    title: '4. Xu hướng doanh thu theo từng tháng',
     subtitle: 'So với năm trước (TH 2026 vs TH 2025) & Kế hoạch năm 2026',
     badge: 2,
     icon: TrendingUp,
@@ -3314,7 +3314,7 @@ const RevenueReportDashboard = () => {
                 : (currentView === 'quarter' ? `Báo cáo doanh thu ${selectedQuarter}/${selectedYear}` :
                    currentView === 'year' ? `Báo cáo doanh thu năm ${selectedYear}` :
                    currentView === 'month' ? `Báo cáo doanh thu ${selectedMonth}/${selectedYear}` :
-                   currentView === 'trend' ? `Xu hướng doanh thu từng tháng năm ${selectedYear} so với năm ${(parseInt(selectedYear, 10) - 1).toString()} và so với kế hoạch` :
+                   currentView === 'trend' ? 'Xu hướng doanh thu theo từng tháng' :
                    currentView === 'spdv' ? 'Doanh thu theo nhóm SPDV' :
                    currentView === 'unit' ? 'Doanh thu theo đơn vị' :
                    currentView === 'plan_progress' ? 'Chuyển dịch doanh thu ngoài và doanh thu quốc tế' :
