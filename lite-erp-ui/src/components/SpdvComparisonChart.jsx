@@ -304,7 +304,7 @@ function SpdvSubcard({
   );
 }
 
-// Subcard component for Biểu đồ 18 (2 biểu đồ 1 hàng theo chuẩn hệ thống)
+// Subcard component for Biểu đồ 18, 19, 20 (chuẩn hệ thống 2 biểu đồ 1 hàng hoặc 1 biểu đồ cả hàng)
 function SpdvBarSubcard({
   title,
   tag,
@@ -314,6 +314,9 @@ function SpdvBarSubcard({
   ticks,
   items,
   cardKey,
+  rateLabel = '% HTKH:',
+  diffLabel = '+/- Chênh lệch:',
+  unit = 'Tỷ đ',
   onOpenDetail
 }) {
   const [hoveredItem, setHoveredItem] = useState(null);
@@ -386,7 +389,7 @@ function SpdvBarSubcard({
           />
 
           {/* X Ticks & Labels */}
-          {ticks.map((tick) => {
+          {ticks && ticks.map((tick) => {
             const x = chartLeft + (tick / maxVal) * chartWidth;
             return (
               <g key={`spdv-tick-${cardKey}-${tick}`}>
@@ -417,21 +420,24 @@ function SpdvBarSubcard({
             textAnchor="start"
             style={{ fontSize: '9px', fontWeight: '600', fill: '#64748b' }}
           >
-            Tỷ đ
+            {unit}
           </text>
 
           {/* 6 Horizontal Bar Groups */}
-          {items.map((item, idx) => {
+          {(items || []).map((item, idx) => {
             const yRow = chartTop + idx * 31 + 14;
-            const thW = Math.max((item.th / maxVal) * chartWidth, 2);
-            const khW = Math.max((item.kh / maxVal) * chartWidth, 2);
+            const valTh = Number(item.th !== undefined ? item.th : (item.curr ?? 0));
+            const valKh = Number(item.kh !== undefined ? item.kh : (item.prev ?? 0));
+            const thW = Math.max((valTh / maxVal) * chartWidth, 2);
+            const khW = Math.max((valKh / maxVal) * chartWidth, 2);
+            const maxW = Math.max(thW, khW);
             const isHovered = hoveredItem?.id === item.id;
 
             return (
               <g
                 key={`spdv-bar-group-${cardKey}-${item.id}`}
                 style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredItem(item)}
+                onMouseEnter={() => setHoveredItem({ ...item, valTh, valKh })}
               >
                 {/* Background hover effect */}
                 <rect
@@ -458,7 +464,7 @@ function SpdvBarSubcard({
                   {item.name}
                 </text>
 
-                {/* TH Bar (Red #e11d48) */}
+                {/* Primary Bar (#e11d48) */}
                 <rect
                   x={chartLeft}
                   y={yRow - 9.5}
@@ -472,7 +478,7 @@ function SpdvBarSubcard({
                   }}
                 />
 
-                {/* KH Bar (Slate Gray #94a3b8) */}
+                {/* Secondary Comparison Bar (#94a3b8) */}
                 <rect
                   x={chartLeft}
                   y={yRow + 1.5}
@@ -485,6 +491,22 @@ function SpdvBarSubcard({
                     opacity: isHovered ? 1 : 0.85
                   }}
                 />
+
+                {/* % Rate text displayed right next to the longer bar */}
+                {item.rate && (
+                  <text
+                    x={chartLeft + maxW + 6}
+                    y={yRow + 1}
+                    dominantBaseline="central"
+                    style={{
+                      fontSize: '9.5px',
+                      fontWeight: '700',
+                      fill: item.isRatePositive ? '#16a34a' : '#dc2626'
+                    }}
+                  >
+                    {item.rate}
+                  </text>
+                )}
               </g>
             );
           })}
@@ -505,35 +527,46 @@ function SpdvBarSubcard({
               fontSize: '11.5px',
               pointerEvents: 'none',
               zIndex: 20,
-              minWidth: '180px'
+              minWidth: '185px'
             }}
           >
             <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
               {hoveredItem.name}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span style={{ color: '#64748b', fontWeight: '600' }}>{legendKh}:</span>
-              <strong>{hoveredItem.kh.toFixed(1)} Tỷ đ</strong>
+              <span style={{ color: '#64748b', fontWeight: '600' }}>{legendKhStr}:</span>
+              <strong>{hoveredItem.valKh.toFixed(1)} {unit}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendTh}:</span>
-              <strong>{hoveredItem.th.toFixed(1)} Tỷ đ</strong>
+              <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendThStr}:</span>
+              <strong>{hoveredItem.valTh.toFixed(1)} {unit}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
-              <span>% HTKH:</span>
+              <span>{rateLabel}</span>
               <strong style={{ color: hoveredItem.isRatePositive ? '#16a34a' : '#dc2626' }}>
                 {hoveredItem.rate}
               </strong>
             </div>
             {(() => {
-              const deltaNum = (hoveredItem.th !== null && hoveredItem.kh !== null && hoveredItem.kh > 0)
-                ? ((hoveredItem.th - hoveredItem.kh) / hoveredItem.kh * 100)
+              const deltaNum = (hoveredItem.valTh !== null && hoveredItem.valKh !== null && hoveredItem.valKh > 0)
+                ? ((hoveredItem.valTh - hoveredItem.valKh) / hoveredItem.valKh * 100)
                 : null;
               return (
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
                   <span>% Delta:</span>
                   <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
                     {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                  </strong>
+                </div>
+              );
+            })()}
+            {(() => {
+              const diffVal = hoveredItem.valTh - hoveredItem.valKh;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
+                  <span>{diffLabel}</span>
+                  <strong style={{ color: diffVal >= 0 ? '#16a34a' : '#dc2626' }}>
+                    {diffVal >= 0 ? `+${diffVal.toFixed(1).replace('.', ',')}` : diffVal.toFixed(1).replace('.', ',')} {unit}
                   </strong>
                 </div>
               );
@@ -561,694 +594,6 @@ function SpdvBarSubcard({
     </div>
   );
 }
-
-// ==============================================================================
-// Component Biểu đồ 19: Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước
-// 3 panels side-by-side: Tháng, Quý, Lũy kế (theo ảnh thiết kế mockup)
-// ==============================================================================
-function SpdvYoyThreePanelCard({
-  year = '2026',
-  month = 'Tháng 8',
-  onOpenDetail
-}) {
-  const [hoveredInfo, setHoveredInfo] = useState(null);
-  const data = getSpdvYoyComparisonData(year, month);
-
-  const monthItems = data.monthItems || [];
-  const quarterItems = data.quarterItems || [];
-  const yearItems = data.yearItems || [];
-
-  return (
-    <div className="spdv-yoy-card-container">
-      {/* Header */}
-      <div className="spdv-yoy-header">
-        <div className="spdv-yoy-title-area">
-          <h3 className="spdv-yoy-main-title">
-            Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước
-          </h3>
-          <div className="spdv-yoy-sub-basis">
-            <strong>Cơ sở so sánh:</strong> Tháng: {data.monthBasis} | Quý: {data.quarterBasis} | Năm: {data.yearBasis}
-          </div>
-          <div className="spdv-yoy-sub-desc">
-            Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước (số %: TH/cùng kỳ)
-          </div>
-        </div>
-
-        <div className="spdv-yoy-actions">
-          <span className="month-subcard-tag">Biểu đồ 19</span>
-          {onOpenDetail && (
-            <button
-              type="button"
-              className="subcard-detail-action-btn"
-              title="Xem bảng chi tiết"
-              onClick={() => onOpenDetail({
-                chartKey: 'spdv_yoy_comparison',
-                chartTitle: 'Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước'
-              })}
-            >
-              <span>Xem chi tiết</span>
-              <ArrowRight size={14} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* 3 Panels Side-by-Side */}
-      <div className="spdv-yoy-panels-grid">
-        {/* Panel 1: Tháng */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 395 285" className="spdv-yoy-panel-svg">
-            {/* Title */}
-            <text x={245} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.monthTitle}
-            </text>
-
-            {/* Left Y Axis */}
-            <line x1={118} y1={32} x2={118} y2={234} stroke="#334155" strokeWidth={1.5} />
-            {/* Bottom X Axis */}
-            <line x1={118} y1={234} x2={365} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {/* Ticks */}
-            {data.monthTicks.map((t) => {
-              const x = 118 + (t / data.monthMax) * 235;
-              return (
-                <g key={`m-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={235} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {/* Bars */}
-            {monthItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.monthMax) * 235, 2);
-              const wPrev = Math.max((item.prev / data.monthMax) * 235, 2);
-              const maxW = Math.max(wCurr, wPrev);
-              const isHovered = hoveredInfo?.id === item.id && hoveredInfo?.period === 'month';
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'month', pTitle: data.monthTitle, currLabel: data.monthLegendCurr, prevLabel: data.monthLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  {/* Category Name */}
-                  <text
-                    x={112}
-                    y={y + 8}
-                    textAnchor="end"
-                    style={{ fontSize: '10px', fontWeight: isHovered ? '700' : '600', fill: isHovered ? '#1d4370' : '#334155' }}
-                  >
-                    {item.name}
-                  </text>
-
-                  {/* Curr Bar (Dark Blue) */}
-                  <rect x={118} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  {/* Prev Bar (Light Blue) */}
-                  <rect x={118} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  {/* % Label */}
-                  <text
-                    x={118 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Legend */}
-            <g transform="translate(210, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.monthLegendCurr}
-              </text>
-              <rect x={65} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={83} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.monthLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* Panel 2: Quý */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
-            {/* Title */}
-            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.quarterTitle}
-            </text>
-
-            {/* Left Y Axis */}
-            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
-            {/* Bottom X Axis */}
-            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {/* Ticks */}
-            {data.quarterTicks.map((t) => {
-              const x = 20 + (t / data.quarterMax) * 255;
-              return (
-                <g key={`q-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {/* Bars */}
-            {quarterItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.quarterMax) * 255, 2);
-              const wPrev = Math.max((item.prev / data.quarterMax) * 255, 2);
-              const maxW = Math.max(wCurr, wPrev);
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'quarter', pTitle: data.quarterTitle, currLabel: data.quarterLegendCurr, prevLabel: data.quarterLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  {/* Curr Bar (Dark Blue) */}
-                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  {/* Prev Bar (Light Blue) */}
-                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  {/* % Label */}
-                  <text
-                    x={20 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Legend */}
-            <g transform="translate(120, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.quarterLegendCurr}
-              </text>
-              <rect x={82} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={100} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.quarterLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* Panel 3: Năm / Lũy kế */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
-            {/* Title */}
-            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.yearTitle}
-            </text>
-
-            {/* Left Y Axis */}
-            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
-            {/* Bottom X Axis */}
-            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {/* Ticks */}
-            {data.yearTicks.map((t) => {
-              const x = 20 + (t / data.yearMax) * 255;
-              return (
-                <g key={`y-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {/* Bars */}
-            {yearItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.yearMax) * 255, 2);
-              const wPrev = Math.max((item.prev / data.yearMax) * 255, 2);
-              const maxW = Math.max(wCurr, wPrev);
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'year', pTitle: data.yearTitle, currLabel: data.yearLegendCurr, prevLabel: data.yearLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  {/* Curr Bar (Dark Blue) */}
-                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  {/* Prev Bar (Light Blue) */}
-                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  {/* % Label */}
-                  <text
-                    x={20 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Legend */}
-            <g transform="translate(125, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.yearLegendCurr}
-              </text>
-              <rect x={76} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={94} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.yearLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* Floating Hover Tooltip */}
-      {hoveredInfo && (
-        <div
-          style={{
-            background: '#ffffff',
-            border: '1px solid #cbd5e1',
-            borderRadius: '6px',
-            padding: '10px 14px',
-            boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.12)',
-            fontSize: '12px',
-            maxWidth: '300px',
-            marginTop: '4px'
-          }}
-        >
-          <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>
-            {hoveredInfo.name} ({hoveredInfo.pTitle})
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-            <span style={{ color: '#1d4370', fontWeight: '600' }}>{hoveredInfo.currLabel}:</span>
-            <strong>{hoveredInfo.curr.toFixed(1)} Tỷ đồng</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-            <span style={{ color: '#64748b', fontWeight: '600' }}>{hoveredInfo.prevLabel}:</span>
-            <strong>{hoveredInfo.prev.toFixed(1)} Tỷ đồng</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
-            <span>Tỷ lệ TH / Cùng kỳ:</span>
-            <strong style={{ color: hoveredInfo.isRatePositive ? '#16a34a' : '#dc2626' }}>
-              {hoveredInfo.rate}
-            </strong>
-          </div>
-          {(() => {
-            const deltaNum = (hoveredInfo.curr !== null && hoveredInfo.prev !== null && hoveredInfo.prev > 0)
-              ? ((hoveredInfo.curr - hoveredInfo.prev) / hoveredInfo.prev * 100)
-              : null;
-            return (
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
-                <span>% Delta:</span>
-                <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
-                  {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
-                </strong>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* Bottom Note */}
-      <div className="spdv-yoy-bottom-note">
-        <strong>Nhận xét:</strong> {data.note}
-      </div>
-    </div>
-  );
-}
-
-// ==============================================================================
-// Component Biểu đồ 20: Doanh thu 6 nhóm SPDV so với kỳ trước
-// 3 panels side-by-side: Tháng (T8 vs T7), Quý (Q3 vs Q2), Năm (2026 vs 2025)
-// ==============================================================================
-function SpdvPrevPeriodThreePanelCard({
-  year = '2026',
-  month = 'Tháng 8',
-  onOpenDetail
-}) {
-  const [hoveredInfo, setHoveredInfo] = useState(null);
-  const data = getSpdvPrevPeriodComparisonData(year, month);
-
-  const monthItems = data.monthItems || [];
-  const quarterItems = data.quarterItems || [];
-  const yearItems = data.yearItems || [];
-
-  return (
-    <div className="spdv-yoy-card-container">
-      {/* Header */}
-      <div className="spdv-yoy-header">
-        <div className="spdv-yoy-title-area">
-          <h3 className="spdv-yoy-main-title">
-            Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước
-          </h3>
-          <div className="spdv-yoy-sub-basis">
-            <strong>Cơ sở so sánh:</strong> Tháng: {data.monthBasis} | Quý: {data.quarterBasis} | Năm: {data.yearBasis}
-          </div>
-          <div className="spdv-yoy-sub-desc">
-            Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước (số %: TH/kỳ trước)
-          </div>
-        </div>
-
-        <div className="spdv-yoy-actions">
-          <span className="month-subcard-tag">Biểu đồ 20</span>
-          {onOpenDetail && (
-            <button
-              type="button"
-              className="subcard-detail-action-btn"
-              title="Xem bảng chi tiết"
-              onClick={() => onOpenDetail({
-                chartKey: 'spdv_prev_period',
-                chartTitle: 'Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước'
-              })}
-            >
-              <span>Xem chi tiết</span>
-              <ArrowRight size={14} />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* 3 Panels Side-by-Side */}
-      <div className="spdv-yoy-panels-grid">
-        {/* Panel 1: Tháng */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 395 285" className="spdv-yoy-panel-svg">
-            <text x={245} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.monthTitle}
-            </text>
-
-            <line x1={118} y1={32} x2={118} y2={234} stroke="#334155" strokeWidth={1.5} />
-            <line x1={118} y1={234} x2={365} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {data.monthTicks.map((t) => {
-              const x = 118 + (t / data.monthMax) * 235;
-              return (
-                <g key={`pp-m-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={235} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {monthItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.monthMax) * 235, 2);
-              const wPrev = Math.max((item.prev / data.monthMax) * 235, 2);
-              const maxW = Math.max(wCurr, wPrev);
-              const isHovered = hoveredInfo?.id === item.id && hoveredInfo?.period === 'month';
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'month', pTitle: data.monthTitle, currLabel: data.monthLegendCurr, prevLabel: data.monthLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  <text
-                    x={112}
-                    y={y + 8}
-                    textAnchor="end"
-                    style={{ fontSize: '10px', fontWeight: isHovered ? '700' : '600', fill: isHovered ? '#1d4370' : '#334155' }}
-                  >
-                    {item.name}
-                  </text>
-
-                  <rect x={118} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  <rect x={118} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  <text
-                    x={118 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            <g transform="translate(225, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.monthLegendCurr}
-              </text>
-              <rect x={60} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={78} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.monthLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* Panel 2: Quý */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
-            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.quarterTitle}
-            </text>
-
-            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
-            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {data.quarterTicks.map((t) => {
-              const x = 20 + (t / data.quarterMax) * 255;
-              return (
-                <g key={`pp-q-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {quarterItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.quarterMax) * 255, 2);
-              const wPrev = Math.max((item.prev / data.quarterMax) * 255, 2);
-              const maxW = Math.max(wCurr, wPrev);
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'quarter', pTitle: data.quarterTitle, currLabel: data.quarterLegendCurr, prevLabel: data.quarterLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  <text
-                    x={20 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            <g transform="translate(130, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.quarterLegendCurr}
-              </text>
-              <rect x={70} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={88} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.quarterLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* Panel 3: Năm */}
-        <div className="spdv-yoy-panel-wrap">
-          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
-            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
-              {data.yearTitle}
-            </text>
-
-            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
-            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
-
-            {data.yearTicks.map((t) => {
-              const x = 20 + (t / data.yearMax) * 255;
-              return (
-                <g key={`pp-y-t-${t}`}>
-                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
-                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
-                    {t}
-                  </text>
-                </g>
-              );
-            })}
-            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
-              Tỷ đồng
-            </text>
-
-            {yearItems.map((item, idx) => {
-              const y = 42 + idx * 31;
-              const wCurr = Math.max((item.curr / data.yearMax) * 255, 2);
-              const wPrev = Math.max((item.prev / data.yearMax) * 255, 2);
-              const maxW = Math.max(wCurr, wPrev);
-
-              return (
-                <g
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'year', pTitle: data.yearTitle, currLabel: data.yearLegendCurr, prevLabel: data.yearLegendPrev })}
-                  onMouseLeave={() => setHoveredInfo(null)}
-                >
-                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
-                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
-
-                  <text
-                    x={20 + maxW + 4}
-                    y={y + 11}
-                    textAnchor="start"
-                    style={{
-                      fontSize: '9.5px',
-                      fontWeight: '700',
-                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
-                    }}
-                  >
-                    {item.rate}
-                  </text>
-                </g>
-              );
-            })}
-
-            <g transform="translate(120, 269)">
-              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
-              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.yearLegendCurr}
-              </text>
-              <rect x={76} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
-              <text x={94} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
-                {data.yearLegendPrev}
-              </text>
-            </g>
-          </svg>
-        </div>
-      </div>
-
-      {/* Floating Hover Tooltip */}
-      {hoveredInfo && (
-        <div
-          style={{
-            background: '#ffffff',
-            border: '1px solid #cbd5e1',
-            borderRadius: '6px',
-            padding: '10px 14px',
-            boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.12)',
-            fontSize: '12px',
-            maxWidth: '300px',
-            marginTop: '4px'
-          }}
-        >
-          <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>
-            {hoveredInfo.name} ({hoveredInfo.pTitle})
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-            <span style={{ color: '#1d4370', fontWeight: '600' }}>{hoveredInfo.currLabel}:</span>
-            <strong>{hoveredInfo.curr.toFixed(1)} Tỷ đồng</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-            <span style={{ color: '#64748b', fontWeight: '600' }}>{hoveredInfo.prevLabel}:</span>
-            <strong>{hoveredInfo.prev.toFixed(1)} Tỷ đồng</strong>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
-            <span>Tỷ lệ TH / Kỳ trước:</span>
-            <strong style={{ color: hoveredInfo.isRatePositive ? '#16a34a' : '#dc2626' }}>
-              {hoveredInfo.rate}
-            </strong>
-          </div>
-          {(() => {
-            const deltaNum = (hoveredInfo.curr !== null && hoveredInfo.prev !== null && hoveredInfo.prev > 0)
-              ? ((hoveredInfo.curr - hoveredInfo.prev) / hoveredInfo.prev * 100)
-              : null;
-            return (
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
-                <span>% Delta:</span>
-                <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
-                  {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
-                </strong>
-              </div>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* Bottom Note */}
-      <div className="spdv-yoy-bottom-note">
-        <strong>Nhận xét:</strong> {data.note}
-      </div>
-    </div>
-  );
-}
-
-
 
 export default function SpdvComparisonChart({
   selectedYear = '2026',
@@ -1322,24 +667,42 @@ export default function SpdvComparisonChart({
 
   const data = SPDV_STRUCTURE_DATA[activeYear] || SPDV_STRUCTURE_DATA['2026'];
   const barData = getSpdvBarComparisonData(activeYear, activeMonth);
+  const yoyData = getSpdvYoyComparisonData(activeYear, activeMonth);
+  const prevPeriodData = getSpdvPrevPeriodComparisonData(activeYear, activeMonth);
 
   // Calculate Quarter and Cumulative texts based on activeMonth
-  const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
+  const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || "8", 10);
   const quarterNumber = Math.ceil(monthNum / 3);
   const quarterRoman = `${quarterNumber}`;
   const startMonthOfQuarter = (quarterNumber - 1) * 3 + 1;
+  const lastYear = (parseInt(activeYear, 10) - 1).toString();
+
+  const prevMonthNum = monthNum > 1 ? monthNum - 1 : 12;
+  const prevMonthYear = monthNum > 1 ? activeYear : lastYear;
+  const prevQuarterNum = quarterNumber > 1 ? quarterNumber - 1 : 4;
+  const prevQuarterYear = quarterNumber > 1 ? activeYear : lastYear;
 
   // Formatted subcard titles exactly matching user mockup
   const thMonthTitle = `Cơ cấu thực hiện doanh thu tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
-  const khMonthTitle = `KH – Tháng ${monthNum}/${activeYear}`;
+  const khMonthTitle = `Cơ cấu kế hoạch doanh thu tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
 
   const thQuarterTitle = startMonthOfQuarter === monthNum
-    ? `TH – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter})`
-    : `TH – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum})`;
-  const khQuarterTitle = `KH – Quý ${quarterRoman}/${activeYear}`;
+    ? `Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter}) theo nhóm SPDV`
+    : `Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum}) theo nhóm SPDV`;
+  const khQuarterTitle = `Cơ cấu kế hoạch doanh thu Quý ${quarterRoman}/${activeYear} theo nhóm SPDV`;
 
-  const thYearTitle = `TH – Năm ${activeYear} (lũy kế ${monthNum}T)`;
-  const khYearTitle = `KH – Năm ${activeYear}`;
+  const thYearTitle = `Cơ cấu thực hiện doanh thu năm ${activeYear} (lũy kế ${monthNum}T) theo nhóm SPDV`;
+  const khYearTitle = `Cơ cấu kế hoạch doanh thu năm ${activeYear} theo nhóm SPDV`;
+
+  // Titles for Biểu đồ 19 (So với cùng kỳ năm trước)
+  const yoyMonthTitle = `Biểu đồ 19. Thực hiện Tháng ${monthNum}/${activeYear} so với cùng kỳ Tháng ${monthNum}/${lastYear} theo nhóm SPDV`;
+  const yoyQuarterTitle = `Biểu đồ 19. Ước thực hiện Quý ${quarterNumber}/${activeYear} so với cùng kỳ Quý ${quarterNumber}/${lastYear} theo nhóm SPDV`;
+  const yoyYearTitle = `Biểu đồ 19. Thực hiện lũy kế năm ${activeYear} so với cùng kỳ năm ${lastYear} theo nhóm SPDV`;
+
+  // Titles for Biểu đồ 20 (So với kỳ trước)
+  const prevMonthTitle = `Biểu đồ 20. Thực hiện Tháng ${monthNum}/${activeYear} so với thực hiện Tháng ${prevMonthNum}/${prevMonthYear} theo nhóm SPDV`;
+  const prevQuarterTitle = `Biểu đồ 20. Ước thực hiện Quý ${quarterNumber}/${activeYear} so với thực hiện Quý ${prevQuarterNum}/${prevQuarterYear} theo nhóm SPDV`;
+  const prevYearTitle = `Biểu đồ 20. Ước thực hiện năm ${activeYear} so với thực hiện năm ${lastYear} theo nhóm SPDV`;
 
   const thSubtitle = 'Doanh thu thực hiện theo nhóm SPDV';
   const khSubtitle = 'Doanh thu kế hoạch theo nhóm SPDV';
@@ -1412,7 +775,7 @@ export default function SpdvComparisonChart({
 
         <SpdvSubcard
           title={khMonthTitle}
-          subtitle={khSubtitle}
+          subtitle={null}
           tag="Hàng 1 - Khu 2"
           tagType="kh"
           chart={data.khMonth}
@@ -1434,7 +797,7 @@ export default function SpdvComparisonChart({
       <div className="month-row-grid">
         <SpdvSubcard
           title={thQuarterTitle}
-          subtitle={thSubtitle}
+          subtitle={null}
           tag="Hàng 2 - Khu 1"
           tagType="th"
           chart={data.thQuarter}
@@ -1453,7 +816,7 @@ export default function SpdvComparisonChart({
 
         <SpdvSubcard
           title={khQuarterTitle}
-          subtitle={khSubtitle}
+          subtitle={null}
           tag="Hàng 2 - Khu 2"
           tagType="kh"
           chart={data.khQuarter}
@@ -1475,7 +838,7 @@ export default function SpdvComparisonChart({
       <div className="month-row-grid">
         <SpdvSubcard
           title={thYearTitle}
-          subtitle={thSubtitle}
+          subtitle={null}
           tag="Hàng 3 - Khu 1"
           tagType="th"
           chart={data.thYear}
@@ -1494,7 +857,7 @@ export default function SpdvComparisonChart({
 
         <SpdvSubcard
           title={khYearTitle}
-          subtitle={khSubtitle}
+          subtitle={null}
           tag="Hàng 3 - Khu 2"
           tagType="kh"
           chart={data.khYear}
@@ -1563,19 +926,119 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 6: BIỂU ĐỒ 19 - DOANH THU 6 NHÓM SPDV SO VỚI CÙNG KỲ NĂM TRƯỚC (3 HÌNH TRONG 1 BẢN THIẾT KẾ ĐẸP MẮT) */}
-      <SpdvYoyThreePanelCard
-        year={activeYear}
-        month={activeMonth}
-        onOpenDetail={onOpenDetail}
-      />
+      {/* DÒNG 6: BIỂU ĐỒ 19 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      <div className="month-row-grid">
+        <SpdvBarSubcard
+          title={yoyMonthTitle}
+          tag="Hàng 6 - Khu 1"
+          legendTh={yoyData.monthLegendCurr || `T${monthNum}/${activeYear}`}
+          legendKh={yoyData.monthLegendPrev || `T${monthNum}/${lastYear}`}
+          maxVal={yoyData.monthMax}
+          ticks={yoyData.monthTicks}
+          items={yoyData.monthItems}
+          cardKey="yoy-month"
+          rateLabel="% TH/cùng kỳ:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_yoy_month',
+            chartTitle: yoyMonthTitle
+          })}
+        />
 
-      {/* DÒNG 7: BIỂU ĐỒ 20 - DOANH THU 6 NHÓM SPDV SO VỚI KỲ TRƯỚC (3 HÌNH TRONG 1 BẢN THIẾT KẾ ĐẸP MẮT) */}
-      <SpdvPrevPeriodThreePanelCard
-        year={activeYear}
-        month={activeMonth}
-        onOpenDetail={onOpenDetail}
-      />
+        <SpdvBarSubcard
+          title={yoyQuarterTitle}
+          tag="Hàng 6 - Khu 2"
+          legendTh={yoyData.quarterLegendCurr || `Ước Q${quarterNumber}/${activeYear}`}
+          legendKh={yoyData.quarterLegendPrev || `Q${quarterNumber}/${lastYear}`}
+          maxVal={yoyData.quarterMax}
+          ticks={yoyData.quarterTicks}
+          items={yoyData.quarterItems}
+          cardKey="yoy-quarter"
+          rateLabel="% TH/cùng kỳ:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_yoy_quarter',
+            chartTitle: yoyQuarterTitle
+          })}
+        />
+      </div>
+
+      {/* DÒNG 7: BIỂU ĐỒ 19 - NĂM */}
+      <div className="month-row-grid">
+        <SpdvBarSubcard
+          title={yoyYearTitle}
+          tag="Hàng 7"
+          legendTh={yoyData.yearLegendCurr || `${monthNum}T/${activeYear}`}
+          legendKh={yoyData.yearLegendPrev || `${monthNum}T/${lastYear}`}
+          maxVal={yoyData.yearMax}
+          ticks={yoyData.yearTicks}
+          items={yoyData.yearItems}
+          cardKey="yoy-year"
+          rateLabel="% TH/cùng kỳ:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_yoy_year',
+            chartTitle: yoyYearTitle
+          })}
+        />
+      </div>
+
+      {/* DÒNG 8: BIỂU ĐỒ 20 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      <div className="month-row-grid">
+        <SpdvBarSubcard
+          title={prevMonthTitle}
+          tag="Hàng 8 - Khu 1"
+          legendTh={prevPeriodData.monthLegendCurr || `TH T${monthNum}`}
+          legendKh={prevPeriodData.monthLegendPrev || `TH T${prevMonthNum}`}
+          maxVal={prevPeriodData.monthMax}
+          ticks={prevPeriodData.monthTicks}
+          items={prevPeriodData.monthItems}
+          cardKey="prev-month"
+          rateLabel="% TH/kỳ trước:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_prev_month',
+            chartTitle: prevMonthTitle
+          })}
+        />
+
+        <SpdvBarSubcard
+          title={prevQuarterTitle}
+          tag="Hàng 8 - Khu 2"
+          legendTh={prevPeriodData.quarterLegendCurr || `Ước Q${quarterNumber}`}
+          legendKh={prevPeriodData.quarterLegendPrev || `TH Q${prevQuarterNum}`}
+          maxVal={prevPeriodData.quarterMax}
+          ticks={prevPeriodData.quarterTicks}
+          items={prevPeriodData.quarterItems}
+          cardKey="prev-quarter"
+          rateLabel="% TH/kỳ trước:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_prev_quarter',
+            chartTitle: prevQuarterTitle
+          })}
+        />
+      </div>
+
+      {/* DÒNG 9: BIỂU ĐỒ 20 - NĂM */}
+      <div className="month-row-grid">
+        <SpdvBarSubcard
+          title={prevYearTitle}
+          tag="Hàng 9"
+          legendTh={prevPeriodData.yearLegendCurr || `Ước ${activeYear}`}
+          legendKh={prevPeriodData.yearLegendPrev || `TH ${lastYear}`}
+          maxVal={prevPeriodData.yearMax}
+          ticks={prevPeriodData.yearTicks}
+          items={prevPeriodData.yearItems}
+          cardKey="prev-year"
+          rateLabel="% TH/kỳ trước:"
+          diffLabel="+/- Chênh lệch:"
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_prev_year',
+            chartTitle: prevYearTitle
+          })}
+        />
+      </div>
     </div>
   );
 }
