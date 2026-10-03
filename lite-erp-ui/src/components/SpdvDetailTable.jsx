@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { CheckCircle2, XCircle, Layers, Calendar, BarChart3, PieChart } from 'lucide-react';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData, getSpdvPrevPeriodComparisonData } from '../data/revenueSpdvData';
 import './SpdvDetailTable.css';
 
@@ -18,7 +18,8 @@ export default function SpdvDetailTable({
   activeChartKey = 'spdv_bar_month',
   chartTitle = '',
   searchQuery = '',
-  statusFilter = 'all'
+  statusFilter = 'all',
+  onSelectChartKey
 }) {
   const monthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
   const quarterNum = Math.ceil(monthNum / 3);
@@ -28,7 +29,17 @@ export default function SpdvDetailTable({
     ? `T${quarterStartMonth}`
     : `T${quarterStartMonth}-T${monthNum}`;
 
-  // Check if viewing YoY table (Biểu đồ 19), Prev Period table (Biểu đồ 20), structure table (Biểu đồ 16 & 17), or KH comparison table (Biểu đồ 18)
+  // View modes for toggle when viewing individual charts
+  const [structureViewMode, setStructureViewMode] = useState('single'); // 'single' | 'integrated'
+  const [barViewMode, setBarViewMode] = useState('single'); // 'single' | 'integrated'
+
+  // Reset to single mode whenever activeChartKey changes
+  useEffect(() => {
+    setStructureViewMode('single');
+    setBarViewMode('single');
+  }, [activeChartKey]);
+
+  // Check if viewing YoY table (Biểu đồ 19) or Prev Period table (Biểu đồ 20)
   const isYoyComparison = useMemo(() => {
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
@@ -55,19 +66,164 @@ export default function SpdvDetailTable({
     );
   }, [activeChartKey, chartTitle]);
 
-  const isStructure = useMemo(() => {
-    if (isYoyComparison || isPrevPeriodComparison) return false;
+  // Detect single structure donut chart (Biểu đồ 16 & 17)
+  const singleStructureConfig = useMemo(() => {
+    if (isYoyComparison || isPrevPeriodComparison) return null;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
-    return (
-      key === 'spdv_structure' ||
-      key === 'chart16' ||
-      key === 'chart17' ||
-      key.startsWith('spdv_th_') ||
-      key.startsWith('spdv_kh_') ||
-      title.includes('cơ cấu')
-    );
-  }, [activeChartKey, chartTitle, isYoyComparison, isPrevPeriodComparison]);
+
+    // 1. TH Tháng
+    if (key === 'spdv_th_month' || (key === 'chart16' && (title.includes('tháng') || (!title.includes('quý') && !title.includes('năm'))))) {
+      return {
+        badge: 'Biểu đồ 16 – Thực hiện Tháng',
+        period: 'month',
+        metric: 'th',
+        periodLabel: `Tháng ${monthNum}/${selectedYear}`,
+        metricLabel: `Doanh thu thực hiện (TH)`,
+        shareLabel: 'Tỷ trọng TH',
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#1d4370',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}.`
+      };
+    }
+    // 2. KH Tháng
+    if (key === 'spdv_kh_month' || (key === 'chart17' && (title.includes('tháng') || (!title.includes('quý') && !title.includes('năm'))))) {
+      return {
+        badge: 'Biểu đồ 17 – Kế hoạch Tháng',
+        period: 'month',
+        metric: 'kh',
+        periodLabel: `Tháng ${monthNum}/${selectedYear}`,
+        metricLabel: `Doanh thu kế hoạch (KH)`,
+        shareLabel: 'Tỷ trọng KH',
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#0369a1',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}.`
+      };
+    }
+    // 3. TH Quý
+    if (key === 'spdv_th_quarter' || (key === 'chart16' && (title.includes('quý') || title.includes('q3')))) {
+      return {
+        badge: 'Biểu đồ 16 – Thực hiện Quý',
+        period: 'quarter',
+        metric: 'th',
+        periodLabel: `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`,
+        metricLabel: `Doanh thu thực hiện (TH)`,
+        shareLabel: 'Tỷ trọng TH',
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện theo 6 nhóm SPDV – Quý ${quarterRoman}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#1d4370',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText}).`
+      };
+    }
+    // 4. KH Quý
+    if (key === 'spdv_kh_quarter' || (key === 'chart17' && (title.includes('quý') || title.includes('q3')))) {
+      return {
+        badge: 'Biểu đồ 17 – Kế hoạch Quý',
+        period: 'quarter',
+        metric: 'kh',
+        periodLabel: `Quý ${quarterRoman}/${selectedYear}`,
+        metricLabel: `Doanh thu kế hoạch (KH)`,
+        shareLabel: 'Tỷ trọng KH',
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch theo 6 nhóm SPDV – Quý ${quarterRoman}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#0369a1',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}.`
+      };
+    }
+    // 5. TH Năm
+    if (key === 'spdv_th_year' || (key === 'chart16' && (title.includes('năm') || title.includes('cả năm')))) {
+      return {
+        badge: 'Biểu đồ 16 – Thực hiện Năm',
+        period: 'year',
+        metric: 'th',
+        periodLabel: `Năm ${selectedYear} (lũy kế ${monthNum}T)`,
+        metricLabel: `Doanh thu thực hiện (TH)`,
+        shareLabel: 'Tỷ trọng TH',
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện theo 6 nhóm SPDV – Năm ${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#1d4370',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Năm ${selectedYear} (lũy kế ${monthNum} tháng).`
+      };
+    }
+    // 6. KH Năm
+    if (key === 'spdv_kh_year' || (key === 'chart17' && (title.includes('năm') || title.includes('cả năm')))) {
+      return {
+        badge: 'Biểu đồ 17 – Kế hoạch Năm',
+        period: 'year',
+        metric: 'kh',
+        periodLabel: `Năm ${selectedYear}`,
+        metricLabel: `Doanh thu kế hoạch (KH)`,
+        shareLabel: 'Tỷ trọng KH',
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch theo 6 nhóm SPDV – Năm ${selectedYear}`,
+        unit: 'Triệu đồng',
+        valueColor: '#0369a1',
+        note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong cả Năm ${selectedYear}.`
+      };
+    }
+
+    return null;
+  }, [activeChartKey, chartTitle, isYoyComparison, isPrevPeriodComparison, monthNum, quarterRoman, quarterCumText, selectedYear]);
+
+  // Detect single bar chart (Biểu đồ 18 - Tháng, Quý hoặc Năm)
+  const singleBarConfig = useMemo(() => {
+    if (isYoyComparison || isPrevPeriodComparison || singleStructureConfig) return null;
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+
+    if (key === 'spdv_bar_month' || (key.startsWith('spdv_bar') && title.includes('tháng'))) {
+      return {
+        badge: 'Biểu đồ 18 – Tháng',
+        period: 'month',
+        periodLabel: `Tháng ${monthNum}/${selectedYear}`,
+        thLabel: `TH T${monthNum}/${selectedYear}`,
+        khLabel: `KH T${monthNum}/${selectedYear}`,
+        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Tháng ${monthNum}/${selectedYear}`,
+        unit: 'Tỷ đồng',
+        note: `So sánh thực hiện với kế hoạch doanh thu của 6 nhóm sản phẩm dịch vụ trong Tháng ${monthNum}/${selectedYear}.`
+      };
+    }
+    if (key === 'spdv_bar_quarter' || (key.startsWith('spdv_bar') && title.includes('quý'))) {
+      return {
+        badge: 'Biểu đồ 18 – Quý',
+        period: 'quarter',
+        periodLabel: `Quý ${quarterRoman}/${selectedYear}`,
+        thLabel: `Ước TH Q${quarterRoman}/${selectedYear}`,
+        khLabel: `KH Q${quarterRoman}/${selectedYear}`,
+        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Quý ${quarterRoman}/${selectedYear}`,
+        unit: 'Tỷ đồng',
+        note: `So sánh ước thực hiện với kế hoạch doanh thu của 6 nhóm sản phẩm dịch vụ trong Quý ${quarterRoman}/${selectedYear}.`
+      };
+    }
+    if (key === 'spdv_bar_year' || (key.startsWith('spdv_bar') && (title.includes('năm') || title.includes('cả năm')))) {
+      return {
+        badge: 'Biểu đồ 18 – Năm',
+        period: 'year',
+        periodLabel: `Năm ${selectedYear}`,
+        thLabel: `Ước TH Năm ${selectedYear}`,
+        khLabel: `KH Năm ${selectedYear}`,
+        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`,
+        unit: 'Tỷ đồng',
+        note: `So sánh ước thực hiện cả năm với kế hoạch doanh thu được giao năm ${selectedYear}.`
+      };
+    }
+    return null;
+  }, [activeChartKey, chartTitle, isYoyComparison, isPrevPeriodComparison, singleStructureConfig, monthNum, quarterRoman, selectedYear]);
+
+  // Integrated structure table (Bảng cơ cấu tổng hợp 3 kỳ)
+  const isStructureIntegrated = useMemo(() => {
+    if (isYoyComparison || isPrevPeriodComparison) return false;
+    const key = (activeChartKey || '').toLowerCase();
+    return key === 'spdv_structure' || (singleStructureConfig && structureViewMode === 'integrated');
+  }, [activeChartKey, isYoyComparison, isPrevPeriodComparison, singleStructureConfig, structureViewMode]);
+
+  // Integrated bar table (Bảng so với KH 3 kỳ Biểu đồ 18)
+  const isBarIntegrated = useMemo(() => {
+    if (isYoyComparison || isPrevPeriodComparison || singleStructureConfig || isStructureIntegrated) return false;
+    const key = (activeChartKey || '').toLowerCase();
+    return key === 'spdv_bar_integrated' || (singleBarConfig && barViewMode === 'integrated');
+  }, [activeChartKey, isYoyComparison, isPrevPeriodComparison, singleStructureConfig, isStructureIntegrated, singleBarConfig, barViewMode]);
 
   const formatSpdvNum = (val) => {
     if (val === null || val === undefined) return '—';
@@ -81,7 +237,7 @@ export default function SpdvDetailTable({
   // Get bar comparison data for Biểu đồ 18 (Month, Quarter, Year)
   const barData = getSpdvBarComparisonData(selectedYear, selectedMonth);
 
-  // 3-Period Integrated Data for Biểu đồ 18 (Tích hợp số liệu 3 hình: Tháng, Quý, Năm)
+  // 3-Period Integrated Data for Biểu đồ 18
   const integratedBarRows = useMemo(() => {
     const monthItems = barData.monthItems || [];
     const quarterItems = barData.quarterItems || [];
@@ -282,7 +438,7 @@ export default function SpdvDetailTable({
     };
   }, [yoyData]);
 
-  // Biểu đồ 20 Prev Period Comparison Data (Tích hợp số liệu 3 hình: Tháng, Quý, Năm)
+  // Biểu đồ 20 Prev Period Comparison Data
   const prevPeriodData = getSpdvPrevPeriodComparisonData(selectedYear, selectedMonth);
 
   const integratedPrevPeriodRows = useMemo(() => {
@@ -382,7 +538,7 @@ export default function SpdvDetailTable({
     };
   }, [prevPeriodData]);
 
-  // 3-Period Structure Table Data (Biểu đồ 16 & 17)
+  // Structure Table Data (Biểu đồ 16 & 17)
   const structureData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
   const monthHeader = `Tháng ${monthNum}/${selectedYear}`;
   const quarterHeader = `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`;
@@ -399,46 +555,180 @@ export default function SpdvDetailTable({
     });
   }, [structureData, searchQuery]);
 
+  // Single structure table rows (Filtered for specific chart: TH or KH, Month or Quarter or Year)
+  const singleStructureRows = useMemo(() => {
+    if (!singleStructureConfig) return [];
+    const { period, metric } = singleStructureConfig;
+    return filteredStructureRows.map((r, idx) => {
+      const p = r[period] || {};
+      const val = metric === 'th' ? p.th : p.kh;
+      const share = metric === 'th' ? p.thShare : p.khShare;
+      return {
+        id: r.id,
+        stt: idx + 1,
+        name: r.name,
+        color: r.color,
+        val,
+        share
+      };
+    });
+  }, [singleStructureConfig, filteredStructureRows]);
+
+  const singleStructureTotal = useMemo(() => {
+    if (!singleStructureConfig || !structureData.total) return null;
+    const { period, metric } = singleStructureConfig;
+    const p = structureData.total[period] || {};
+    return {
+      val: metric === 'th' ? p.th : p.kh,
+      share: metric === 'th' ? p.thShare : p.khShare
+    };
+  }, [singleStructureConfig, structureData]);
+
+  // Single bar table rows (Filtered for specific period: Tháng, Quý, or Năm)
+  const singleBarRows = useMemo(() => {
+    if (!singleBarConfig) return [];
+    const period = singleBarConfig.period;
+    return filteredIntegratedRows.map((item, idx) => {
+      const pData = item[period] || {};
+      return {
+        id: item.id,
+        stt: idx + 1,
+        name: item.name,
+        color: item.color,
+        th: pData.th,
+        kh: pData.kh,
+        diff: pData.diff,
+        rate: pData.rate,
+        isPass: pData.isPass
+      };
+    });
+  }, [singleBarConfig, filteredIntegratedRows]);
+
+  const singleBarTotal = useMemo(() => {
+    if (!singleBarConfig || !integratedTotals) return null;
+    return integratedTotals[singleBarConfig.period];
+  }, [singleBarConfig, integratedTotals]);
+
   return (
     <div className="spdv-detail-table-card">
       {/* Top Header with title and controls */}
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
+          {/* Subcard tag */}
+          {singleStructureConfig && structureViewMode === 'single' && (
+            <span className="spdv-badge-chart-label">
+              <PieChart size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+              {singleStructureConfig.badge}
+            </span>
+          )}
+          {singleBarConfig && barViewMode === 'single' && (
+            <span className="spdv-badge-chart-label">
+              <BarChart3 size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+              {singleBarConfig.badge}
+            </span>
+          )}
+          {isYoyComparison && (
+            <span className="spdv-badge-chart-label">Biểu đồ 19 – 3 Kỳ</span>
+          )}
+          {isPrevPeriodComparison && (
+            <span className="spdv-badge-chart-label">Biểu đồ 20 – 3 Kỳ</span>
+          )}
+          {(isStructureIntegrated || isBarIntegrated) && (
+            <span className="spdv-badge-chart-label">
+              <Layers size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+              Bảng ma trận tổng hợp 3 kỳ
+            </span>
+          )}
+
           <h3 className="spdv-detail-title">
             {isYoyComparison
               ? `Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước`
               : isPrevPeriodComparison
               ? `Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước`
-              : isStructure
-              ? `Cơ cấu doanh thu theo nhóm SPDV`
-              : `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`}
+              : singleStructureConfig && structureViewMode === 'single'
+              ? singleStructureConfig.title
+              : singleBarConfig && barViewMode === 'single'
+              ? singleBarConfig.title
+              : isStructureIntegrated
+              ? `Cơ cấu doanh thu theo nhóm SPDV (Bảng tổng hợp cả 3 kỳ)`
+              : `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH (Bảng tổng hợp 3 kỳ)`}
           </h3>
+
           <span className="spdv-detail-unit">
-            {isStructure ? '(Đơn vị: Triệu đồng)' : '(Đơn vị: Tỷ đồng)'}
+            {singleStructureConfig && structureViewMode === 'single'
+              ? `(${singleStructureConfig.unit})`
+              : isStructureIntegrated
+              ? '(Đơn vị: Triệu đồng)'
+              : '(Đơn vị: Tỷ đồng)'}
           </span>
         </div>
+
+        {/* Action Toggle Switchers */}
+        <div className="spdv-header-actions">
+          {/* Switcher for single structure chart (Biểu đồ 16 & 17) */}
+          {singleStructureConfig && (
+            <div className="spdv-period-tab-group">
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structureViewMode === 'single' ? 'active' : ''}`}
+                onClick={() => setStructureViewMode('single')}
+              >
+                Chỉ xem biểu đồ này
+              </button>
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structureViewMode === 'integrated' ? 'active' : ''}`}
+                onClick={() => setStructureViewMode('integrated')}
+              >
+                Xem tổng hợp 3 kỳ (TH & KH)
+              </button>
+            </div>
+          )}
+
+          {/* Switcher for single bar comparison chart (Biểu đồ 18) */}
+          {singleBarConfig && (
+            <div className="spdv-period-tab-group">
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${barViewMode === 'single' ? 'active' : ''}`}
+                onClick={() => setBarViewMode('single')}
+              >
+                Chỉ xem {singleBarConfig.periodLabel}
+              </button>
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${barViewMode === 'integrated' ? 'active' : ''}`}
+                onClick={() => setBarViewMode('integrated')}
+              >
+                Xem tổng hợp cả 3 kỳ
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Note / Basis description */}
         {isYoyComparison && (
-          <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
+          <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
             <strong>Cơ sở so sánh:</strong> {yoyData.monthBasis} | Quý: {yoyData.quarterBasis} | Năm: {yoyData.yearBasis}
           </div>
         )}
         {isPrevPeriodComparison && (
-          <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
+          <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
             <strong>Cơ sở so sánh:</strong> {prevPeriodData.monthBasis} | Quý: {prevPeriodData.quarterBasis} | Năm: {prevPeriodData.yearBasis}
           </div>
         )}
       </div>
 
-      {/* TABLE VIEW */}
+      {/* TABLE VIEWS ROUTING */}
       {isYoyComparison ? (
         /* ===================================================================== */
-        /* BẢNG TỔNG HỢP BIỂU ĐỒ 19: SO VỚI CÙNG KỲ NĂM TRƯỚC (3 KỲ THÁNG, QUÝ, NĂM) */
+        /* VIEW 1: BIỂU ĐỒ 19: SO VỚI CÙNG KỲ NĂM TRƯỚC (3 KỲ THÁNG, QUÝ, NĂM)   */
         /* ===================================================================== */
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
             <thead>
               <tr className="spdv-th-top-row">
-                <th rowSpan={2} style={{ width: '45px', textAlign: 'center' }}>STT</th>
+                <th rowSpan={2} style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
                 <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
                   {yoyData.monthTitle} ({yoyData.monthBasis})
@@ -533,8 +823,8 @@ export default function SpdvDetailTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={14} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-                    Không tìm thấy nhóm sản phẩm dịch vụ nào
+                  <td colSpan={14} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
                   </td>
                 </tr>
               )}
@@ -596,21 +886,16 @@ export default function SpdvDetailTable({
               </tr>
             </tfoot>
           </table>
-
-          {/* Bottom Note */}
-          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #1e3a8a', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
-            <strong>Nhận xét:</strong> {yoyData.note || 'Kỳ năm dùng lũy kế 8 tháng hai năm để so sánh cùng độ dài thời gian.'}
-          </div>
         </div>
       ) : isPrevPeriodComparison ? (
         /* ===================================================================== */
-        /* BẢNG TỔNG HỢP BIỂU ĐỒ 20: SO VỚI KỲ TRƯỚC (3 KỲ THÁNG, QUÝ, NĂM)      */
+        /* VIEW 2: BIỂU ĐỒ 20: SO VỚI KỲ TRƯỚC (3 KỲ THÁNG, QUÝ, NĂM)             */
         /* ===================================================================== */
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
             <thead>
               <tr className="spdv-th-top-row">
-                <th rowSpan={2} style={{ width: '45px', textAlign: 'center' }}>STT</th>
+                <th rowSpan={2} style={{ width: '50px', textAlign: 'center' }}>STT</th>
                 <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
                 <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
                   {prevPeriodData.monthTitle} ({prevPeriodData.monthBasis})
@@ -705,8 +990,8 @@ export default function SpdvDetailTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={14} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
-                    Không tìm thấy nhóm sản phẩm dịch vụ nào
+                  <td colSpan={14} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
                   </td>
                 </tr>
               )}
@@ -768,15 +1053,186 @@ export default function SpdvDetailTable({
               </tr>
             </tfoot>
           </table>
+        </div>
+      ) : singleStructureConfig && structureViewMode === 'single' ? (
+        /* ===================================================================== */
+        /* VIEW 3: BẢNG SỐ LIỆU TƯƠNG ỨNG TỪNG BIỂU ĐỒ TRÒN (TH/KH THEO 1 KỲ)    */
+        /* (Ví dụ: TH - Tháng 8/2026 thì chỉ hiển thị đúng cột TH Tháng 8)       */
+        /* ===================================================================== */
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th style={{ width: '60px', textAlign: 'center' }}>STT</th>
+                <th className="spdv-th-name" style={{ width: '320px' }}>Nhóm SPDV</th>
+                <th style={{ textAlign: 'right', paddingRight: '28px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleStructureConfig.metricLabel} – {singleStructureConfig.periodLabel} ({singleStructureConfig.unit})
+                </th>
+                <th style={{ textAlign: 'center', width: '180px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleStructureConfig.shareLabel} (%)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {singleStructureRows.length > 0 ? (
+                singleStructureRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+                    <td className="spdv-td-num font-bold" style={{ color: singleStructureConfig.valueColor, paddingRight: '28px', fontSize: '14.5px' }}>
+                      {formatSpdvNum(row.val)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span
+                        className="spdv-rate-pill"
+                        style={{
+                          backgroundColor: '#eff6ff',
+                          color: '#1d4ed8',
+                          border: '1px solid #bfdbfe',
+                          fontWeight: '800'
+                        }}
+                      >
+                        {row.share}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện tìm kiếm
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">
+                  {structureData.total?.name || 'Tổng doanh thu 6 nhóm SPDV'}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: singleStructureConfig.valueColor, paddingRight: '28px', fontSize: '15px' }}>
+                  {formatSpdvNum(singleStructureTotal?.val)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span
+                    className="spdv-rate-pill spdv-rate-pill-total"
+                    style={{
+                      backgroundColor: '#dbeafe',
+                      color: '#1e3a8a',
+                      border: '1px solid #93c5fd',
+                      fontWeight: '800'
+                    }}
+                  >
+                    {singleStructureTotal?.share || '100%'}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
 
-          {/* Bottom Note */}
-          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #1e3a8a', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
-            <strong>Nhận xét:</strong> {prevPeriodData.note || 'Với kỳ năm, kỳ trước chính là năm 2025.'}
+          {/* Under-table Note */}
+          <div style={{ marginTop: '14px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #2563eb', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
+            <strong>Ghi chú:</strong> {singleStructureConfig.note}
           </div>
         </div>
-      ) : !isStructure ? (
+      ) : singleBarConfig && barViewMode === 'single' ? (
         /* ===================================================================== */
-        /* BẢNG TỔNG HỢP BIỂU ĐỒ 18 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
+        /* VIEW 4: BẢNG SỐ LIỆU TƯƠNG ỨNG 1 KỲ BIỂU ĐỒ 18 (THÁNG, QUÝ HOẶC NĂM)   */
+        /* (Ví dụ: Biểu đồ 18 Tháng 8 thì chỉ hiển thị đúng cột của Tháng 8)     */
+        /* ===================================================================== */
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
+                <th className="spdv-th-name" style={{ width: '280px' }}>Nhóm SPDV</th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleBarConfig.thLabel} ({singleBarConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleBarConfig.khLabel} ({singleBarConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  +/- so KH ({singleBarConfig.unit})
+                </th>
+                <th style={{ textAlign: 'center', width: '150px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  % HTKH
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {singleBarRows.length > 0 ? (
+                singleBarRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+                    <td className="spdv-td-num font-bold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                      {formatSpdvNum(row.th)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#334155', paddingRight: '20px' }}>
+                      {formatSpdvNum(row.kh)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                      {row.diff >= 0 ? `+${formatSpdvNum(row.diff)}` : formatSpdvNum(row.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.rate}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">
+                  Tổng doanh thu 6 nhóm SPDV
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                  {formatSpdvNum(singleBarTotal?.th)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#1e293b', paddingRight: '20px' }}>
+                  {formatSpdvNum(singleBarTotal?.kh)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${singleBarTotal?.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                  {singleBarTotal?.diff >= 0 ? `+${formatSpdvNum(singleBarTotal?.diff)}` : formatSpdvNum(singleBarTotal?.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${singleBarTotal?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {singleBarTotal?.rate}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          {/* Under-table Note */}
+          <div style={{ marginTop: '14px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #1e40af', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
+            <strong>Ghi chú:</strong> {singleBarConfig.note}
+          </div>
+        </div>
+      ) : isBarIntegrated ? (
+        /* ===================================================================== */
+        /* VIEW 5: BẢNG TỔNG HỢP BIỂU ĐỒ 18 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM     */
         /* ===================================================================== */
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
@@ -943,7 +1399,7 @@ export default function SpdvDetailTable({
         </div>
       ) : (
         /* ===================================================================== */
-        /* BẢNG TỔNG HỢP CƠ CẤU 3 KỲ (CÓ CỘT KH, TH VÀ TỶ TRỌNG TH)             */
+        /* VIEW 6: BẢNG TỔNG HỢP CƠ CẤU 3 KỲ (CÓ CỘT KH, TH VÀ TỶ TRỌNG TH/KH)   */
         /* ===================================================================== */
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
@@ -1031,7 +1487,7 @@ export default function SpdvDetailTable({
             <tfoot>
               <tr className="spdv-tr-total">
                 <td className="spdv-td-name font-bold">
-                  {structureData.total?.name || 'Tổng doanh thu'}
+                  {structureData.total?.name || 'Tổng doanh thu 6 nhóm SPDV'}
                 </td>
 
                 {/* Tháng */}
