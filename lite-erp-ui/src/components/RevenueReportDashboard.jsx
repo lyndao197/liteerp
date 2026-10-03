@@ -2451,11 +2451,8 @@ const RevenueReportDashboard = () => {
         }
       } else if (currentView === 'spdv') {
         const spdvData = SPDV_STRUCTURE_DATA[selectedYear] || SPDV_STRUCTURE_DATA['2026'];
-        const isExportC18 = !selectedKeys || selectedKeys.includes('c18');
         const isExportC19 = !selectedKeys || selectedKeys.includes('c19_spdv');
         const isExportC20 = !selectedKeys || selectedKeys.includes('c20_spdv');
-        const isExportStruct = !selectedKeys || selectedKeys.includes('c15_17');
-
         const spdvMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
         const spdvQuarterNum = Math.ceil(spdvMonthNum / 3);
         const spdvQuarterRoman = `${spdvQuarterNum}`;
@@ -2471,9 +2468,119 @@ const RevenueReportDashboard = () => {
         const wb = XLSX.utils.book_new();
         let sheetCount = 0;
 
-        // Sheet 1: Biểu đồ 18 - So sánh 6 nhóm SPDV với KH
-        if (isExportC18) {
-          const spdvBarData = getSpdvBarComparisonData(selectedYear, selectedMonth);
+        const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
+        const spdvBarData = getSpdvBarComparisonData(selectedYear, selectedMonth);
+
+        // Helper: Build single structure sheet for Biểu đồ 16 & 17
+        const buildStructureSheet = (periodKey, metricKey, metricLabel, periodLabel) => {
+          const rows = (spdvTableData.rows || []).map((r, idx) => {
+            const p = r[periodKey] || {};
+            const val = metricKey === 'th' ? p.th : p.kh;
+            const share = metricKey === 'th' ? p.thShare : p.khShare;
+            return {
+              'STT': idx + 1,
+              'Nhóm SPDV': r.name,
+              [`Doanh thu ${metricLabel} (${periodLabel})`]: val ?? '',
+              [`Tỷ trọng ${metricLabel} (%)`]: share ?? '',
+            };
+          });
+          if (spdvTableData.total) {
+            const tot = spdvTableData.total;
+            const p = tot[periodKey] || {};
+            const val = metricKey === 'th' ? p.th : p.kh;
+            const share = metricKey === 'th' ? p.thShare : p.khShare;
+            rows.push({
+              'STT': 'Σ',
+              'Nhóm SPDV': tot.name || 'Tổng doanh thu',
+              [`Doanh thu ${metricLabel} (${periodLabel})`]: val ?? '',
+              [`Tỷ trọng ${metricLabel} (%)`]: share ?? '100%',
+            });
+          }
+          return XLSX.utils.json_to_sheet(rows);
+        };
+
+        // Helper: Build single bar sheet for Biểu đồ 18
+        const buildBarSheet = (itemKey, thHeader, periodLabel) => {
+          const items = spdvBarData[itemKey] || [];
+          const rows = SPDV_CATEGORIES.map((cat, idx) => {
+            const it = items.find((x) => x.id === cat.id) || {};
+            const th = Number(it.th ?? 0);
+            const kh = Number(it.kh ?? 0);
+            const diff = Number((th - kh).toFixed(1));
+            const rate = it.rate || (kh > 0 ? ((th / kh) * 100).toFixed(1) + '%' : '0%');
+            return {
+              'STT': idx + 1,
+              'Nhóm SPDV': cat.name,
+              [thHeader]: th,
+              [`Kế hoạch (${periodLabel})`]: kh,
+              ['+/- so KH']: diff,
+              ['% HTKH']: rate,
+            };
+          });
+          const totalTh = items.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const totalKh = items.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          rows.push({
+            'STT': 'Σ',
+            'Nhóm SPDV': 'Tổng doanh thu 6 nhóm SPDV',
+            [thHeader]: totalTh,
+            [`Kế hoạch (${periodLabel})`]: totalKh,
+            ['+/- so KH']: Number((totalTh - totalKh).toFixed(1)),
+            ['% HTKH']: totalKh > 0 ? ((totalTh / totalKh) * 100).toFixed(1) + '%' : '0%',
+          });
+          return XLSX.utils.json_to_sheet(rows);
+        };
+
+        // Biểu đồ 16 & 17 - Các sheet cơ cấu tỷ trọng riêng biệt từng kỳ
+        if (!selectedKeys || selectedKeys.includes('c16_m')) {
+          const ws = buildStructureSheet('month', 'th', 'TH', monthCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD16_TyTrong_TH_Thang');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c17_m')) {
+          const ws = buildStructureSheet('month', 'kh', 'KH', monthCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD17_TyTrong_KH_Thang');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c16_q')) {
+          const ws = buildStructureSheet('quarter', 'th', 'TH', quarterCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD16_TyTrong_TH_Quy');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c17_q')) {
+          const ws = buildStructureSheet('quarter', 'kh', 'KH', quarterCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD17_TyTrong_KH_Quy');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c16_y')) {
+          const ws = buildStructureSheet('year', 'th', 'TH', yearCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD16_TyTrong_TH_Nam');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c17_y')) {
+          const ws = buildStructureSheet('year', 'kh', 'KH', yearCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD17_TyTrong_KH_Nam');
+          sheetCount++;
+        }
+
+        // Biểu đồ 18 - Các sheet so sánh với KH riêng biệt từng kỳ
+        if (!selectedKeys || selectedKeys.includes('c18_m')) {
+          const ws = buildBarSheet('monthItems', `Thực hiện (${monthCol})`, monthCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD18_SoSanh_KH_Thang');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c18_q')) {
+          const ws = buildBarSheet('quarterItems', `Ước TH (${quarterCol})`, quarterCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD18_SoSanh_KH_Quy');
+          sheetCount++;
+        }
+        if (!selectedKeys || selectedKeys.includes('c18_y')) {
+          const ws = buildBarSheet('yearItems', `Ước TH (${yearCol})`, yearCol);
+          XLSX.utils.book_append_sheet(wb, ws, 'BD18_SoSanh_KH_Nam');
+          sheetCount++;
+        }
+
+        // Hỗ trợ legacy keys nếu được chọn cụ thể: c18 (tổng hợp 3 kỳ) & c15_17 (tổng hợp 3 kỳ)
+        if (selectedKeys && selectedKeys.includes('c18')) {
           const mItems = spdvBarData.monthItems || [];
           const qItems = spdvBarData.quarterItems || [];
           const yItems = spdvBarData.yearItems || [];
@@ -2541,13 +2648,11 @@ const RevenueReportDashboard = () => {
           });
 
           const wsC18 = XLSX.utils.json_to_sheet(exportRows);
-          XLSX.utils.book_append_sheet(wb, wsC18, 'So_Sanh_SPDV');
+          XLSX.utils.book_append_sheet(wb, wsC18, 'So_Sanh_SPDV_3Ky');
           sheetCount++;
         }
 
-        // Sheet 2: Biểu đồ 15-17 - Cơ cấu 6 nhóm SPDV
-        if (isExportStruct) {
-          const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
+        if (selectedKeys && selectedKeys.includes('c15_17')) {
           const exportRows = (spdvTableData.rows || []).map(r => ({
             'Nhóm SPDV': r.name,
             [`${monthCol} - TH`]: r.month?.th ?? '',
@@ -2584,7 +2689,7 @@ const RevenueReportDashboard = () => {
           }
 
           const wsStruct = XLSX.utils.json_to_sheet(exportRows);
-          XLSX.utils.book_append_sheet(wb, wsStruct, 'Co_Cau_SPDV');
+          XLSX.utils.book_append_sheet(wb, wsStruct, 'Co_Cau_SPDV_3Ky');
           sheetCount++;
         }
 

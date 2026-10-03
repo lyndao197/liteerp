@@ -26,6 +26,8 @@ export function getExportChartList({
   const lastYear = (parseInt(selectedYear, 10) - 1).toString();
   const nextMonthNum = monthNum === 12 ? 1 : monthNum + 1;
   const nextShortMonth = `T${nextMonthNum}`;
+  const quarterNum = Math.ceil(monthNum / 3);
+  const quarterRoman = `${quarterNum}`;
 
   return [
     // NHÓM 1: THEO THÁNG
@@ -150,20 +152,76 @@ export function getExportChartList({
 
     // NHÓM 5: SPDV
     {
-      key: 'c15_17',
+      key: 'c16_m',
       branchId: 'spdv',
-      chartNumber: 'Biểu đồ 16-17',
-      title: `Biểu đồ 16-17. Cơ cấu doanh thu theo 6 nhóm SPDV (Tháng, Quý, Năm)`,
-      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu của 6 nhóm SPDV theo 3 kỳ thời gian`,
-      period: `Tháng, Quý, Năm ${selectedYear}`
+      chartNumber: 'Biểu đồ 16 (Tháng)',
+      title: `Biểu đồ 16. Cơ cấu tỷ trọng TH theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
+      period: `Tháng ${monthNum}/${selectedYear}`
     },
     {
-      key: 'c18',
+      key: 'c17_m',
       branchId: 'spdv',
-      chartNumber: 'Biểu đồ 18',
+      chartNumber: 'Biểu đồ 17 (Tháng)',
+      title: `Biểu đồ 17. Cơ cấu tỷ trọng KH theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
+      period: `Tháng ${monthNum}/${selectedYear}`
+    },
+    {
+      key: 'c16_q',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 16 (Quý)',
+      title: `Biểu đồ 16. Cơ cấu tỷ trọng TH theo 6 nhóm SPDV – Quý ${quarterRoman}/${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
+      period: `Quý ${quarterRoman}/${selectedYear}`
+    },
+    {
+      key: 'c17_q',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 17 (Quý)',
+      title: `Biểu đồ 17. Cơ cấu tỷ trọng KH theo 6 nhóm SPDV – Quý ${quarterRoman}/${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
+      period: `Quý ${quarterRoman}/${selectedYear}`
+    },
+    {
+      key: 'c16_y',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 16 (Năm)',
+      title: `Biểu đồ 16. Cơ cấu tỷ trọng TH theo 6 nhóm SPDV – Năm ${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV cả Năm ${selectedYear}`,
+      period: `Năm ${selectedYear}`
+    },
+    {
+      key: 'c17_y',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 17 (Năm)',
+      title: `Biểu đồ 17. Cơ cấu tỷ trọng KH theo 6 nhóm SPDV – Năm ${selectedYear}`,
+      desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV cả Năm ${selectedYear}`,
+      period: `Năm ${selectedYear}`
+    },
+    {
+      key: 'c18_m',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 18 (Tháng)',
+      title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Tháng ${monthNum}/${selectedYear}`,
+      desc: `So sánh TH, KH, +/- so KH, % HTKH 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
+      period: `Tháng ${monthNum}/${selectedYear}`
+    },
+    {
+      key: 'c18_q',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 18 (Quý)',
+      title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Quý ${quarterRoman}/${selectedYear}`,
+      desc: `So sánh ước TH, KH, +/- so KH, % HTKH 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
+      period: `Quý ${quarterRoman}/${selectedYear}`
+    },
+    {
+      key: 'c18_y',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 18 (Năm)',
       title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`,
-      desc: `Bảng tích hợp so sánh TH, KH, +/- so KH, % HTKH 6 nhóm SPDV cả 3 kỳ (Tháng, Quý, Năm)`,
-      period: `Ma trận 3 kỳ năm ${selectedYear}`
+      desc: `So sánh ước TH cả năm, KH cả năm, +/- so KH, % HTKH 6 nhóm SPDV Năm ${selectedYear}`,
+      period: `Năm ${selectedYear}`
     },
     {
       key: 'c19_spdv',
@@ -178,8 +236,8 @@ export function getExportChartList({
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 20',
       title: `Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước`,
-      desc: `So sánh thực hiện 6 nhóm SPDV với kỳ liền trước (Tháng vs Tháng trước, Quý vs Quý trước, Năm vs Năm trước)`,
-      period: `Tháng, Quý, Năm ${selectedYear}`
+      desc: `So sánh thực hiện 6 nhóm SPDV với kỳ trước cho cả 3 kỳ: Tháng, Quý, Lũy kế (số %: TH/kỳ trước)`,
+      period: `Tháng, Quý, Lũy kế ${selectedYear}`
     },
 
     // NHÓM 6: ĐƠN VỊ THỰC HIỆN

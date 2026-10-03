@@ -663,48 +663,7 @@ export default function SpdvDetailTable({
           </span>
         </div>
 
-        {/* Action Toggle Switchers */}
-        <div className="spdv-header-actions">
-          {/* Switcher for single structure chart (Biểu đồ 16 & 17) */}
-          {singleStructureConfig && (
-            <div className="spdv-period-tab-group">
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structureViewMode === 'single' ? 'active' : ''}`}
-                onClick={() => setStructureViewMode('single')}
-              >
-                Chỉ xem biểu đồ này
-              </button>
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structureViewMode === 'integrated' ? 'active' : ''}`}
-                onClick={() => setStructureViewMode('integrated')}
-              >
-                Xem tổng hợp 3 kỳ (TH & KH)
-              </button>
-            </div>
-          )}
 
-          {/* Switcher for single bar comparison chart (Biểu đồ 18) */}
-          {singleBarConfig && (
-            <div className="spdv-period-tab-group">
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${barViewMode === 'single' ? 'active' : ''}`}
-                onClick={() => setBarViewMode('single')}
-              >
-                Chỉ xem {singleBarConfig.periodLabel}
-              </button>
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${barViewMode === 'integrated' ? 'active' : ''}`}
-                onClick={() => setBarViewMode('integrated')}
-              >
-                Xem tổng hợp cả 3 kỳ
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* Note / Basis description */}
         {isYoyComparison && (
