@@ -13,6 +13,7 @@ const formatVal = (val) => {
 // BIỂU ĐỒ 14: XU HƯỚNG TỔNG DOANH THU TỪNG THÁNG SO VỚI NĂM TRƯỚC
 // ==============================================================================
 function TrendPrevYearCard({
+  tag = 'Hàng 1 - Khu 1',
   selectedYear,
   prevYear,
   data,
@@ -63,7 +64,7 @@ function TrendPrevYearCard({
           {`Xu hướng tổng doanh thu theo từng tháng năm ${selectedYear} so với năm ${prevYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          <span className="month-subcard-tag">Biểu đồ 14</span>
+          <span className="month-subcard-tag" title="Biểu đồ 14">{tag}</span>
         </div>
       </div>
 
@@ -350,6 +351,7 @@ function TrendPrevYearCard({
 // BIỂU ĐỒ 15: XU HƯỚNG TỔNG DOANH THU TỪNG THÁNG SO VỚI KẾ HOẠCH
 // ==============================================================================
 function TrendPlanCard({
+  tag = 'Hàng 1 - Khu 2',
   selectedYear,
   data,
   hoveredIdx,
@@ -395,7 +397,7 @@ function TrendPlanCard({
           {`Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`}
         </h3>
         <div className="month-subcard-header-actions">
-          <span className="month-subcard-tag">Biểu đồ 15</span>
+          <span className="month-subcard-tag" title="Biểu đồ 15">{tag}</span>
         </div>
       </div>
 
@@ -724,6 +726,7 @@ export default function TrendComparisonChart({
       {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 14 & BIỂU ĐỒ 15 */}
       <div className="month-row-grid">
         <TrendPrevYearCard
+          tag="Hàng 1 - Khu 1"
           selectedYear={selectedYear}
           prevYear={prevYear}
           data={rawData14}
@@ -736,6 +739,7 @@ export default function TrendComparisonChart({
         />
 
         <TrendPlanCard
+          tag="Hàng 1 - Khu 2"
           selectedYear={selectedYear}
           data={rawData15}
           hoveredIdx={hoveredIdx15}
