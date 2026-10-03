@@ -650,19 +650,6 @@ function TrendPlanCard({
                   <span style={{ fontWeight: '700', color: hoveredData.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredData.rate}</span>
                 </div>
               )}
-              {(() => {
-                const deltaNum = (hoveredData.th !== null && hoveredData.kh !== null && hoveredData.kh > 0)
-                  ? ((hoveredData.th - hoveredData.kh) / hoveredData.kh * 100)
-                  : null;
-                return (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: !hoveredData.rate ? '1px dashed #e2e8f0' : 'none' }}>
-                    <span style={{ color: '#475569', fontWeight: '600' }}>% Delta:</span>
-                    <span style={{ fontWeight: '700', color: deltaNum !== null ? (deltaNum >= 0 ? '#15803d' : '#b91c1c') : '#64748b' }}>
-                      {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
-                    </span>
-                  </div>
-                );
-              })()}
             </div>
           )}
         </div>
