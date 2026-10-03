@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
-import { SPDV_STRUCTURE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData } from '../data/revenueSpdvData';
+import { SPDV_STRUCTURE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData, getSpdvPrevPeriodComparisonData } from '../data/revenueSpdvData';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -872,6 +872,322 @@ function SpdvYoyThreePanelCard({
   );
 }
 
+// ==============================================================================
+// Component Biểu đồ 20: Doanh thu 6 nhóm SPDV so với kỳ trước
+// 3 panels side-by-side: Tháng (T8 vs T7), Quý (Q3 vs Q2), Năm (2026 vs 2025)
+// ==============================================================================
+function SpdvPrevPeriodThreePanelCard({
+  year = '2026',
+  month = 'Tháng 8',
+  onOpenDetail
+}) {
+  const [hoveredInfo, setHoveredInfo] = useState(null);
+  const data = getSpdvPrevPeriodComparisonData(year, month);
+
+  const monthItems = data.monthItems || [];
+  const quarterItems = data.quarterItems || [];
+  const yearItems = data.yearItems || [];
+
+  return (
+    <div className="spdv-yoy-card-container">
+      {/* Header */}
+      <div className="spdv-yoy-header">
+        <div className="spdv-yoy-title-area">
+          <h3 className="spdv-yoy-main-title">
+            Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước
+          </h3>
+          <div className="spdv-yoy-sub-basis">
+            <strong>Cơ sở so sánh:</strong> Tháng: {data.monthBasis} | Quý: {data.quarterBasis} | Năm: {data.yearBasis}
+          </div>
+          <div className="spdv-yoy-sub-desc">
+            Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước (số %: TH/kỳ trước)
+          </div>
+        </div>
+
+        <div className="spdv-yoy-actions">
+          <span className="month-subcard-tag">Biểu đồ 20</span>
+          {onOpenDetail && (
+            <button
+              type="button"
+              className="subcard-detail-action-btn"
+              title="Xem bảng chi tiết"
+              onClick={() => onOpenDetail({
+                chartKey: 'spdv_prev_period',
+                chartTitle: 'Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước'
+              })}
+            >
+              <span>Xem chi tiết</span>
+              <ArrowRight size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 3 Panels Side-by-Side */}
+      <div className="spdv-yoy-panels-grid">
+        {/* Panel 1: Tháng */}
+        <div className="spdv-yoy-panel-wrap">
+          <svg viewBox="0 0 395 285" className="spdv-yoy-panel-svg">
+            <text x={245} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
+              {data.monthTitle}
+            </text>
+
+            <line x1={118} y1={32} x2={118} y2={234} stroke="#334155" strokeWidth={1.5} />
+            <line x1={118} y1={234} x2={365} y2={234} stroke="#334155" strokeWidth={1.5} />
+
+            {data.monthTicks.map((t) => {
+              const x = 118 + (t / data.monthMax) * 235;
+              return (
+                <g key={`pp-m-t-${t}`}>
+                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
+                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
+                    {t}
+                  </text>
+                </g>
+              );
+            })}
+            <text x={235} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
+              Tỷ đồng
+            </text>
+
+            {monthItems.map((item, idx) => {
+              const y = 42 + idx * 31;
+              const wCurr = Math.max((item.curr / data.monthMax) * 235, 2);
+              const wPrev = Math.max((item.prev / data.monthMax) * 235, 2);
+              const maxW = Math.max(wCurr, wPrev);
+              const isHovered = hoveredInfo?.id === item.id && hoveredInfo?.period === 'month';
+
+              return (
+                <g
+                  key={item.id}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'month', pTitle: data.monthTitle, currLabel: data.monthLegendCurr, prevLabel: data.monthLegendPrev })}
+                  onMouseLeave={() => setHoveredInfo(null)}
+                >
+                  <text
+                    x={112}
+                    y={y + 8}
+                    textAnchor="end"
+                    style={{ fontSize: '10px', fontWeight: isHovered ? '700' : '600', fill: isHovered ? '#1d4370' : '#334155' }}
+                  >
+                    {item.name}
+                  </text>
+
+                  <rect x={118} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
+                  <rect x={118} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
+
+                  <text
+                    x={118 + maxW + 4}
+                    y={y + 11}
+                    textAnchor="start"
+                    style={{
+                      fontSize: '9.5px',
+                      fontWeight: '700',
+                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
+                    }}
+                  >
+                    {item.rate}
+                  </text>
+                </g>
+              );
+            })}
+
+            <g transform="translate(225, 269)">
+              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
+              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.monthLegendCurr}
+              </text>
+              <rect x={60} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
+              <text x={78} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.monthLegendPrev}
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* Panel 2: Quý */}
+        <div className="spdv-yoy-panel-wrap">
+          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
+            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
+              {data.quarterTitle}
+            </text>
+
+            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
+            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
+
+            {data.quarterTicks.map((t) => {
+              const x = 20 + (t / data.quarterMax) * 255;
+              return (
+                <g key={`pp-q-t-${t}`}>
+                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
+                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
+                    {t}
+                  </text>
+                </g>
+              );
+            })}
+            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
+              Tỷ đồng
+            </text>
+
+            {quarterItems.map((item, idx) => {
+              const y = 42 + idx * 31;
+              const wCurr = Math.max((item.curr / data.quarterMax) * 255, 2);
+              const wPrev = Math.max((item.prev / data.quarterMax) * 255, 2);
+              const maxW = Math.max(wCurr, wPrev);
+
+              return (
+                <g
+                  key={item.id}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'quarter', pTitle: data.quarterTitle, currLabel: data.quarterLegendCurr, prevLabel: data.quarterLegendPrev })}
+                  onMouseLeave={() => setHoveredInfo(null)}
+                >
+                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
+                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
+
+                  <text
+                    x={20 + maxW + 4}
+                    y={y + 11}
+                    textAnchor="start"
+                    style={{
+                      fontSize: '9.5px',
+                      fontWeight: '700',
+                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
+                    }}
+                  >
+                    {item.rate}
+                  </text>
+                </g>
+              );
+            })}
+
+            <g transform="translate(130, 269)">
+              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
+              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.quarterLegendCurr}
+              </text>
+              <rect x={70} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
+              <text x={88} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.quarterLegendPrev}
+              </text>
+            </g>
+          </svg>
+        </div>
+
+        {/* Panel 3: Năm */}
+        <div className="spdv-yoy-panel-wrap">
+          <svg viewBox="0 0 315 285" className="spdv-yoy-panel-svg">
+            <text x={155} y={19} textAnchor="middle" style={{ fontSize: '13px', fontWeight: '700', fill: '#1e293b' }}>
+              {data.yearTitle}
+            </text>
+
+            <line x1={20} y1={32} x2={20} y2={234} stroke="#334155" strokeWidth={1.5} />
+            <line x1={20} y1={234} x2={290} y2={234} stroke="#334155" strokeWidth={1.5} />
+
+            {data.yearTicks.map((t) => {
+              const x = 20 + (t / data.yearMax) * 255;
+              return (
+                <g key={`pp-y-t-${t}`}>
+                  <line x1={x} y1={234} x2={x} y2={239} stroke="#64748b" strokeWidth={1} />
+                  <text x={x} y={249} textAnchor="middle" style={{ fontSize: '9px', fill: '#475569', fontWeight: '500' }}>
+                    {t}
+                  </text>
+                </g>
+              );
+            })}
+            <text x={155} y={262} textAnchor="middle" style={{ fontSize: '9.5px', fill: '#64748b', fontWeight: '500' }}>
+              Tỷ đồng
+            </text>
+
+            {yearItems.map((item, idx) => {
+              const y = 42 + idx * 31;
+              const wCurr = Math.max((item.curr / data.yearMax) * 255, 2);
+              const wPrev = Math.max((item.prev / data.yearMax) * 255, 2);
+              const maxW = Math.max(wCurr, wPrev);
+
+              return (
+                <g
+                  key={item.id}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredInfo({ ...item, period: 'year', pTitle: data.yearTitle, currLabel: data.yearLegendCurr, prevLabel: data.yearLegendPrev })}
+                  onMouseLeave={() => setHoveredInfo(null)}
+                >
+                  <rect x={20} y={y} width={wCurr} height={7.5} fill="#1d4370" rx={1} />
+                  <rect x={20} y={y + 9} width={wPrev} height={7.5} fill="#9cb9dc" rx={1} />
+
+                  <text
+                    x={20 + maxW + 4}
+                    y={y + 11}
+                    textAnchor="start"
+                    style={{
+                      fontSize: '9.5px',
+                      fontWeight: '700',
+                      fill: item.isRatePositive ? '#15803d' : '#dc2626'
+                    }}
+                  >
+                    {item.rate}
+                  </text>
+                </g>
+              );
+            })}
+
+            <g transform="translate(120, 269)">
+              <rect x={0} y={0} width={14} height={7} fill="#1d4370" rx={1} />
+              <text x={18} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.yearLegendCurr}
+              </text>
+              <rect x={76} y={0} width={14} height={7} fill="#9cb9dc" rx={1} />
+              <text x={94} y={7} style={{ fontSize: '9px', fontWeight: '600', fill: '#334155' }}>
+                {data.yearLegendPrev}
+              </text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      {/* Floating Hover Tooltip */}
+      {hoveredInfo && (
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px solid #cbd5e1',
+            borderRadius: '6px',
+            padding: '10px 14px',
+            boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.12)',
+            fontSize: '12px',
+            maxWidth: '300px',
+            marginTop: '4px'
+          }}
+        >
+          <div style={{ fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>
+            {hoveredInfo.name} ({hoveredInfo.pTitle})
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+            <span style={{ color: '#1d4370', fontWeight: '600' }}>{hoveredInfo.currLabel}:</span>
+            <strong>{hoveredInfo.curr.toFixed(1)} Tỷ đồng</strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+            <span style={{ color: '#64748b', fontWeight: '600' }}>{hoveredInfo.prevLabel}:</span>
+            <strong>{hoveredInfo.prev.toFixed(1)} Tỷ đồng</strong>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
+            <span>Tỷ lệ TH / Kỳ trước:</span>
+            <strong style={{ color: hoveredInfo.isRatePositive ? '#16a34a' : '#dc2626' }}>
+              {hoveredInfo.rate}
+            </strong>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Note */}
+      <div className="spdv-yoy-bottom-note">
+        <strong>Nhận xét:</strong> {data.note}
+      </div>
+    </div>
+  );
+}
+
 
 
 export default function SpdvComparisonChart({
@@ -1183,6 +1499,13 @@ export default function SpdvComparisonChart({
 
       {/* DÒNG 6: BIỂU ĐỒ 19 - DOANH THU 6 NHÓM SPDV SO VỚI CÙNG KỲ NĂM TRƯỚC (3 HÌNH TRONG 1 BẢN THIẾT KẾ ĐẸP MẮT) */}
       <SpdvYoyThreePanelCard
+        year={activeYear}
+        month={activeMonth}
+        onOpenDetail={onOpenDetail}
+      />
+
+      {/* DÒNG 7: BIỂU ĐỒ 20 - DOANH THU 6 NHÓM SPDV SO VỚI KỲ TRƯỚC (3 HÌNH TRONG 1 BẢN THIẾT KẾ ĐẸP MẮT) */}
+      <SpdvPrevPeriodThreePanelCard
         year={activeYear}
         month={activeMonth}
         onOpenDetail={onOpenDetail}

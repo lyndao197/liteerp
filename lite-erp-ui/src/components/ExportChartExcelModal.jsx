@@ -173,6 +173,14 @@ export function getExportChartList({
       desc: `So sánh thực hiện 6 nhóm SPDV với cùng kỳ năm trước cho cả 3 kỳ: Tháng, Quý, Lũy kế (số %: TH/cùng kỳ)`,
       period: `Tháng, Quý, Lũy kế ${selectedYear}`
     },
+    {
+      key: 'c20_spdv',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 20',
+      title: `Biểu đồ 20. Doanh thu 6 nhóm SPDV so với kỳ trước`,
+      desc: `So sánh thực hiện 6 nhóm SPDV với kỳ liền trước (Tháng vs Tháng trước, Quý vs Quý trước, Năm vs Năm trước)`,
+      period: `Tháng, Quý, Năm ${selectedYear}`
+    },
 
     // NHÓM 6: ĐƠN VỊ THỰC HIỆN
     {
