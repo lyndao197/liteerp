@@ -155,7 +155,7 @@ export function getExportChartList({
       key: 'c16_m',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 16 (Tháng)',
-      title: `Biểu đồ 16. Cơ cấu tỷ trọng TH theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+      title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
       period: `Tháng ${monthNum}/${selectedYear}`
     },

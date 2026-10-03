@@ -81,7 +81,7 @@ export default function SpdvDetailTable({
         periodLabel: `Tháng ${monthNum}/${selectedYear}`,
         metricLabel: `Doanh thu thực hiện (TH)`,
         shareLabel: 'Tỷ trọng TH',
-        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện theo 6 nhóm SPDV – Tháng ${monthNum}/${selectedYear}`,
+        title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#1d4370',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}.`

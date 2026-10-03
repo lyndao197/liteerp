@@ -188,7 +188,7 @@ function SpdvSubcard({
           <span
             style={{
               width: '4px',
-              height: '32px',
+              height: subtitle ? '32px' : '22px',
               borderRadius: '2px',
               backgroundColor: tagType === 'th' ? '#e11d48' : '#94a3b8',
               flexShrink: 0
@@ -201,9 +201,9 @@ function SpdvSubcard({
                 fontWeight: '700',
                 color: '#0f172a',
                 margin: 0,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
+                lineHeight: '1.35',
+                whiteSpace: 'normal',
+                wordBreak: 'break-word'
               }}
               title={title}
             >
@@ -1324,7 +1324,7 @@ export default function SpdvComparisonChart({
   const startMonthOfQuarter = (quarterNumber - 1) * 3 + 1;
 
   // Formatted subcard titles exactly matching user mockup
-  const thMonthTitle = `TH – Tháng ${monthNum}/${activeYear}`;
+  const thMonthTitle = `Cơ cấu thực hiện doanh thu tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
   const khMonthTitle = `KH – Tháng ${monthNum}/${activeYear}`;
 
   const thQuarterTitle = startMonthOfQuarter === monthNum
@@ -1387,7 +1387,7 @@ export default function SpdvComparisonChart({
       <div className="month-row-grid">
         <SpdvSubcard
           title={thMonthTitle}
-          subtitle={thSubtitle}
+          subtitle={null}
           tag="Hàng 1 - Khu 1"
           tagType="th"
           chart={data.thMonth}

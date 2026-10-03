@@ -96,7 +96,7 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu theo từng tháng so với kế hoạch' }
   ],
   spdv: [
-    { id: 'spdv_th_month', label: 'Biểu đồ 16 (Tháng): Cơ cấu tỷ trọng TH' },
+    { id: 'spdv_th_month', label: 'Biểu đồ 16 (Tháng): Cơ cấu thực hiện doanh thu theo nhóm SPDV' },
     { id: 'spdv_kh_month', label: 'Biểu đồ 17 (Tháng): Cơ cấu tỷ trọng KH' },
     { id: 'spdv_th_quarter', label: 'Biểu đồ 16 (Quý): Cơ cấu tỷ trọng TH' },
     { id: 'spdv_kh_quarter', label: 'Biểu đồ 17 (Quý): Cơ cấu tỷ trọng KH' },
