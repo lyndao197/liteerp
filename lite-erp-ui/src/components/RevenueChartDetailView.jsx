@@ -38,7 +38,7 @@ const YEAR_OPTIONS = ['2026', '2025', '2024'];
 import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
 import SpdvDetailTable from './SpdvDetailTable';
-import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA } from '../data/revenueUnitData';
+import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
 import UnitDetailTable from './UnitDetailTable';
 import PlanProgressDetailTable from './PlanProgressDetailTable';
 import MonthRatioDetailTable from './MonthRatioDetailTable';
@@ -2072,6 +2072,126 @@ export default function RevenueChartDetailView({
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Co_Cau_SPDV');
         XLSX.writeFile(wb, `Co_cau_doanh_thu_theo_Nhom_SPDV_${selectedYear}.xlsx`);
+        return;
+      }
+
+      if (activeBranchId === 'unit') {
+        const isBarCompare = !activeChartKey.includes('struct') && !activeChartKey.includes('cơ cấu') && activeChartKey !== 'chart21';
+        const unitMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
+        const unitQuarterNum = Math.ceil(unitMonthNum / 3);
+        const unitQuarterRoman = `${unitQuarterNum}`;
+        const unitQuarterStartMonth = (unitQuarterNum - 1) * 3 + 1;
+        const unitQuarterCumText = unitQuarterStartMonth === unitMonthNum
+          ? `T${unitQuarterStartMonth}`
+          : `T${unitQuarterStartMonth}-T${unitMonthNum}`;
+
+        const monthCol = `Tháng ${unitMonthNum}/${selectedYear}`;
+        const quarterCol = `Quý ${unitQuarterRoman}/${selectedYear} (lũy kế ${unitQuarterCumText})`;
+        const yearCol = `Năm ${selectedYear} (lũy kế ${unitMonthNum}T)`;
+
+        if (isBarCompare) {
+          const yearPlanData = UNIT_PLAN_COMPARISON_DATA[selectedYear] || UNIT_PLAN_COMPARISON_DATA['2026'];
+          const mItems = yearPlanData?.month?.items || [];
+          const qItems = yearPlanData?.quarter?.items || [];
+          const yItems = yearPlanData?.year?.items || [];
+
+          const exportRows = UNIT_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mTh = Number(m.th ?? 0);
+            const mKh = Number(m.kh ?? 0);
+            const mDiff = Number((mTh - mKh).toFixed(1));
+            const mRate = m.rate || (mKh > 0 ? ((mTh / mKh) * 100).toFixed(1) + '%' : '0%');
+
+            const qTh = Number(q.th ?? 0);
+            const qKh = Number(q.kh ?? 0);
+            const qDiff = Number((qTh - qKh).toFixed(1));
+            const qRate = q.rate || (qKh > 0 ? ((qTh / qKh) * 100).toFixed(1) + '%' : '0%');
+
+            const yTh = Number(y.th ?? 0);
+            const yKh = Number(y.kh ?? 0);
+            const yDiff = Number((yTh - yKh).toFixed(1));
+            const yRate = y.rate || (yKh > 0 ? ((yTh / yKh) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Đơn vị thực hiện': cat.name,
+              [`${monthCol} - TH`]: mTh,
+              [`${monthCol} - KH`]: mKh,
+              [`${monthCol} - +/- so KH`]: mDiff,
+              [`${monthCol} - % HTKH`]: mRate,
+              [`${quarterCol} - Ước TH`]: qTh,
+              [`${quarterCol} - KH`]: qKh,
+              [`${quarterCol} - +/- so KH`]: qDiff,
+              [`${quarterCol} - % HTKH`]: qRate,
+              [`${yearCol} - Ước TH`]: yTh,
+              [`${yearCol} - KH`]: yKh,
+              [`${yearCol} - +/- so KH`]: yDiff,
+              [`${yearCol} - % HTKH`]: yRate,
+            };
+          });
+
+          const mTotalTh = mItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const mTotalKh = mItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const qTotalTh = qItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const qTotalKh = qItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const yTotalTh = yItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const yTotalKh = yItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Đơn vị thực hiện': 'Tổng doanh thu',
+            [`${monthCol} - TH`]: mTotalTh,
+            [`${monthCol} - KH`]: mTotalKh,
+            [`${monthCol} - +/- so KH`]: Number((mTotalTh - mTotalKh).toFixed(1)),
+            [`${monthCol} - % HTKH`]: mTotalKh > 0 ? ((mTotalTh / mTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - Ước TH`]: qTotalTh,
+            [`${quarterCol} - KH`]: qTotalKh,
+            [`${quarterCol} - +/- so KH`]: Number((qTotalTh - qTotalKh).toFixed(1)),
+            [`${quarterCol} - % HTKH`]: qTotalKh > 0 ? ((qTotalTh / qTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - Ước TH`]: yTotalTh,
+            [`${yearCol} - KH`]: yTotalKh,
+            [`${yearCol} - +/- so KH`]: Number((yTotalTh - yTotalKh).toFixed(1)),
+            [`${yearCol} - % HTKH`]: yTotalKh > 0 ? ((yTotalTh / yTotalKh) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const ws = XLSX.utils.json_to_sheet(exportRows);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'So_Sanh_Don_Vi');
+          XLSX.writeFile(wb, `Doanh_thu_theo_Don_vi_so_voi_KH_${selectedYear}.xlsx`);
+          return;
+        }
+
+        const unitTableData = UNIT_STRUCTURE_TABLE_DATA[selectedYear] || UNIT_STRUCTURE_TABLE_DATA['2026'];
+        const exportRows = (unitTableData.rows || []).map(r => ({
+          'Đơn vị thực hiện': r.name,
+          [`${monthCol} - TH`]: r.month?.th ?? '',
+          [`${monthCol} - Tỷ trọng TH`]: r.month?.thShare ?? '',
+          [`${quarterCol} - TH`]: r.quarter?.th ?? '',
+          [`${quarterCol} - Tỷ trọng TH`]: r.quarter?.thShare ?? '',
+          [`${yearCol} - TH`]: r.year?.th ?? '',
+          [`${yearCol} - Tỷ trọng TH`]: r.year?.thShare ?? '',
+        }));
+
+        if (unitTableData.total) {
+          const tot = unitTableData.total;
+          exportRows.push({
+            'Đơn vị thực hiện': tot.name || 'Tổng doanh thu',
+            [`${monthCol} - TH`]: tot.month?.th ?? '',
+            [`${monthCol} - Tỷ trọng TH`]: tot.month?.thShare ?? '',
+            [`${quarterCol} - TH`]: tot.quarter?.th ?? '',
+            [`${quarterCol} - Tỷ trọng TH`]: tot.quarter?.thShare ?? '',
+            [`${yearCol} - TH`]: tot.year?.th ?? '',
+            [`${yearCol} - Tỷ trọng TH`]: tot.year?.thShare ?? '',
+          });
+        }
+
+        const ws = XLSX.utils.json_to_sheet(exportRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Co_Cau_Don_Vi');
+        XLSX.writeFile(wb, `Co_cau_doanh_thu_theo_Don_vi_${selectedYear}.xlsx`);
         return;
       }
 
