@@ -152,8 +152,8 @@ export function getExportChartList({
     {
       key: 'c15_17',
       branchId: 'spdv',
-      chartNumber: 'Biểu đồ 15-17',
-      title: `Biểu đồ 15-17. Cơ cấu doanh thu theo 6 nhóm SPDV (Tháng, Quý, Năm)`,
+      chartNumber: 'Biểu đồ 16-17',
+      title: `Biểu đồ 16-17. Cơ cấu doanh thu theo 6 nhóm SPDV (Tháng, Quý, Năm)`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu của 6 nhóm SPDV theo 3 kỳ thời gian`,
       period: `Tháng, Quý, Năm ${selectedYear}`
     },
@@ -457,27 +457,20 @@ export default function ExportChartExcelModal({
                   </div>
                 )}
 
-                <div className="ece-chart-cards-list">
+                <div className="ece-chart-grid">
                   {group.items.map((chart) => {
                     const isChecked = selectedKeys.includes(chart.key);
                     return (
                       <div
                         key={chart.key}
-                        className={`ece-chart-card ${isChecked ? 'selected' : ''}`}
+                        className={`ece-chart-cell ${isChecked ? 'selected' : ''}`}
                         onClick={() => handleToggleChart(chart.key)}
+                        title={chart.title}
                       >
                         <div className={`ece-checkbox-custom ${isChecked ? 'checked' : ''}`}>
                           {isChecked && <Check size={13} strokeWidth={3} />}
                         </div>
-
-                        <div className="ece-chart-card-content">
-                          <div className="ece-chart-card-top">
-                            <span className="ece-chart-number-badge">{chart.chartNumber}</span>
-                            <span className="ece-chart-period-tag">{chart.period}</span>
-                          </div>
-                          <div className="ece-chart-title">{chart.title}</div>
-                          {chart.desc && <div className="ece-chart-desc">{chart.desc}</div>}
-                        </div>
+                        <span className="ece-chart-cell-title">{chart.title}</span>
                       </div>
                     );
                   })}
