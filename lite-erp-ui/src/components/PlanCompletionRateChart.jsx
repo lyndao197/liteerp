@@ -100,14 +100,17 @@ function CompletionGaugeDonut({
           stroke="#ffffff"
           strokeWidth={1.5}
           style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
-          onMouseEnter={() =>
+          onMouseEnter={() => {
+            const timeDelta = ratePercent - timeElapsedPercent;
             setHoveredPart({
               chartId,
               part: 'done',
               label: 'Đã thực hiện',
-              val: `${ratePercent.toFixed(1).replace('.', ',')}% (${actualVal} ${unit})`
-            })
-          }
+              val: `${ratePercent.toFixed(1).replace('.', ',')}% (${actualVal} ${unit})`,
+              delta: `${timeDelta >= 0 ? '+' : ''}${timeDelta.toFixed(1).replace('.', ',')}%`,
+              isPositive: timeDelta >= 0
+            });
+          }}
           onMouseLeave={() => setHoveredPart(null)}
         />
 
@@ -118,14 +121,17 @@ function CompletionGaugeDonut({
           stroke="#ffffff"
           strokeWidth={1.5}
           style={{ cursor: 'pointer', transition: 'all 0.2s ease' }}
-          onMouseEnter={() =>
+          onMouseEnter={() => {
+            const remainPercent = 100 - ratePercent;
             setHoveredPart({
               chartId,
               part: 'remain',
               label: 'Còn phải thực hiện để đạt KH',
-              val: `${(100 - ratePercent).toFixed(1).replace('.', ',')}%`
-            })
-          }
+              val: `${remainPercent.toFixed(1).replace('.', ',')}%`,
+              delta: `-${remainPercent.toFixed(1).replace('.', ',')}%`,
+              isPositive: false
+            });
+          }}
           onMouseLeave={() => setHoveredPart(null)}
         />
 
@@ -225,8 +231,18 @@ function CompletionGaugeDonut({
             pointerEvents: 'none'
           }}
         >
-          <span style={{ fontWeight: 600 }}>{hoveredPart.label}: </span>
-          <span style={{ color: '#93c5fd' }}>{hoveredPart.val}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <div>
+              <span style={{ fontWeight: 600 }}>{hoveredPart.label}: </span>
+              <span style={{ color: '#93c5fd' }}>{hoveredPart.val}</span>
+            </div>
+            {hoveredPart.delta && (
+              <div>
+                <span style={{ fontWeight: 600 }}>% Delta (so mốc tgian): </span>
+                <span style={{ color: hoveredPart.isPositive ? '#4ade80' : '#f87171', fontWeight: 700 }}>{hoveredPart.delta}</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -42,7 +42,7 @@ function getDonutSlicePath(cx, cy, innerR, outerR, startAngle, endAngle) {
 }
 
 // Single Donut Chart Component
-function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey }) {
+function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey, compareChart }) {
   const cx = 110;
   const cy = 105;
   const outerRadius = 82;
@@ -83,13 +83,20 @@ function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey }) {
               key={`slice-${sIdx}`}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => {
+                const compSlice = compareChart?.slices?.find((s) => s.name === slice.name);
+                let sliceDelta = null;
+                if (compSlice && compSlice.value > 0 && slice.value !== undefined && slice.value !== null) {
+                  sliceDelta = ((slice.value - compSlice.value) / compSlice.value) * 100;
+                }
                 setHoveredSlice({
                   cardKey,
                   sliceName: slice.name,
                   percent: slice.formattedPercent,
                   value: slice.value,
                   color: slice.color,
-                  unit: chart.unit || 'Triệu đồng'
+                  unit: chart.unit || 'Triệu đồng',
+                  delta: sliceDelta !== null ? sliceDelta.toFixed(1).replace('.', ',') : null,
+                  isDeltaPositive: sliceDelta !== null ? sliceDelta >= 0 : null
                 });
               }}
               onMouseLeave={() => setHoveredSlice(null)}
@@ -160,6 +167,7 @@ function InternalExternalSubcard({
   tag,
   tagType = 'th',
   chart,
+  compareChart,
   hoveredSlice,
   setHoveredSlice,
   cardKey,
@@ -251,6 +259,7 @@ function InternalExternalSubcard({
         >
           <SingleDonut
             chart={chart}
+            compareChart={compareChart}
             hoveredSlice={hoveredSlice}
             setHoveredSlice={setHoveredSlice}
             cardKey={cardKey}
@@ -260,11 +269,17 @@ function InternalExternalSubcard({
               <div className="tooltip-item-title">{hoveredSlice.sliceName}</div>
               <div className="tooltip-stat-row">
                 <span>Tỷ trọng:</span>
-                <strong>{hoveredSlice.percent}</strong>
+                <strong>{hoveredSlice.percent || '-'}</strong>
               </div>
               <div className="tooltip-stat-row">
                 <span>Giá trị:</span>
-                <strong>{hoveredSlice.value} {hoveredSlice.unit || chart.unit || 'Triệu đồng'}</strong>
+                <strong>{hoveredSlice.value !== null && hoveredSlice.value !== undefined ? `${hoveredSlice.value} ${hoveredSlice.unit || chart.unit || 'Triệu đồng'}` : '-'}</strong>
+              </div>
+              <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
+                <span>% Delta:</span>
+                <strong style={{ color: hoveredSlice.delta ? (hoveredSlice.isDeltaPositive ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                  {hoveredSlice.delta ? `${hoveredSlice.isDeltaPositive ? '+' : ''}${hoveredSlice.delta}%` : '-'}
+                </strong>
               </div>
             </div>
           )}
@@ -484,6 +499,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 1 - Khu 1"
                 tagType="th"
                 chart={data.thMonth}
+                compareChart={data.khMonth}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-month"
@@ -499,6 +515,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 1 - Khu 2"
                 tagType="kh"
                 chart={data.khMonth}
+                compareChart={data.thMonth}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-month"
@@ -518,6 +535,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 2 - Khu 1"
                 tagType="th"
                 chart={data.thQuarter}
+                compareChart={data.khQuarter}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-quarter"
@@ -533,6 +551,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 2 - Khu 2"
                 tagType="kh"
                 chart={data.khQuarter}
+                compareChart={data.thQuarter}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-quarter"
@@ -552,6 +571,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 3 - Khu 1"
                 tagType="th"
                 chart={data.thYear}
+                compareChart={data.khYear}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-year"
@@ -567,6 +587,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 3 - Khu 2"
                 tagType="kh"
                 chart={data.khYear}
+                compareChart={data.thYear}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-year"
@@ -717,6 +738,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 1 - Khu 1"
                 tagType="th"
                 chart={data27.thMonth}
+                compareChart={data27.khMonth}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-month-27"
@@ -732,6 +754,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 1 - Khu 2"
                 tagType="kh"
                 chart={data27.khMonth}
+                compareChart={data27.thMonth}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-month-28"
@@ -751,6 +774,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 2 - Khu 1"
                 tagType="th"
                 chart={data27.thQuarter}
+                compareChart={data27.khQuarter}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-quarter-27"
@@ -766,6 +790,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 2 - Khu 2"
                 tagType="kh"
                 chart={data27.khQuarter}
+                compareChart={data27.thQuarter}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-quarter-28"
@@ -785,6 +810,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 3 - Khu 1"
                 tagType="th"
                 chart={data27.thYear}
+                compareChart={data27.khYear}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-year-27"
@@ -800,6 +826,7 @@ export default function InternalExternalRevenueChart({
                 tag="Hàng 3 - Khu 2"
                 tagType="kh"
                 chart={data27.khYear}
+                compareChart={data27.thYear}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-year-28"

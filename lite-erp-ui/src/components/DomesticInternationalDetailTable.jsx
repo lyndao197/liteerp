@@ -41,7 +41,7 @@ export default function DomesticInternationalDetailTable({
 
   // Helper format cho các năm khác nếu chuyển đổi
   const formatNum = (v) => {
-    if (v === undefined || v === null) return '—';
+    if (v === undefined || v === null || v === '') return '-';
     return Number(v).toLocaleString('vi-VN', {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1

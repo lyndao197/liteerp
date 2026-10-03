@@ -34,7 +34,7 @@ function getDonutSlicePath(cx, cy, innerR, outerR, startAngle, endAngle) {
 }
 
 // Single Donut Chart Component
-function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKey }) {
+function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKey, compareChart }) {
   const cx = 110;
   const cy = 105;
   const outerRadius = 78;
@@ -75,12 +75,19 @@ function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKe
               key={`slice-${sIdx}`}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => {
+                const compSlice = compareChart?.slices?.find((s) => s.name === slice.name);
+                let sliceDelta = null;
+                if (compSlice && compSlice.value > 0 && slice.value !== undefined && slice.value !== null) {
+                  sliceDelta = ((slice.value - compSlice.value) / compSlice.value) * 100;
+                }
                 setHoveredSlice({
                   cardKey,
                   sliceName: slice.name,
                   percent: slice.percent,
                   value: slice.value,
-                  color: slice.color
+                  color: slice.color,
+                  delta: sliceDelta !== null ? sliceDelta.toFixed(1).replace('.', ',') : null,
+                  isDeltaPositive: sliceDelta !== null ? sliceDelta >= 0 : null
                 });
               }}
               onMouseLeave={() => setHoveredSlice(null)}
@@ -140,6 +147,7 @@ function SpdvSubcard({
   tag,
   tagType = 'th',
   chart,
+  compareChart,
   centerLabel,
   hoveredSlice,
   setHoveredSlice,
@@ -249,6 +257,7 @@ function SpdvSubcard({
       >
           <SingleDonut
             chart={chart}
+            compareChart={compareChart}
             centerLabel={centerLabel}
             hoveredSlice={hoveredSlice}
             setHoveredSlice={setHoveredSlice}
@@ -259,11 +268,17 @@ function SpdvSubcard({
               <div className="tooltip-item-title">{hoveredSlice.sliceName}</div>
               <div className="tooltip-stat-row">
                 <span>Tỷ trọng:</span>
-                <strong>{hoveredSlice.percent}%</strong>
+                <strong>{hoveredSlice.percent !== null && hoveredSlice.percent !== undefined ? `${hoveredSlice.percent}%` : '-'}</strong>
               </div>
               <div className="tooltip-stat-row">
                 <span>Giá trị:</span>
-                <strong>{hoveredSlice.value} Triệu đồng</strong>
+                <strong>{hoveredSlice.value !== null && hoveredSlice.value !== undefined ? `${hoveredSlice.value} Triệu đồng` : '-'}</strong>
+              </div>
+              <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
+                <span>% Delta:</span>
+                <strong style={{ color: hoveredSlice.delta ? (hoveredSlice.isDeltaPositive ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                  {hoveredSlice.delta ? `${hoveredSlice.isDeltaPositive ? '+' : ''}${hoveredSlice.delta}%` : '-'}
+                </strong>
               </div>
             </div>
           )}
@@ -504,6 +519,19 @@ function SpdvBarSubcard({
                 {hoveredItem.rate}
               </strong>
             </div>
+            {(() => {
+              const deltaNum = (hoveredItem.th !== null && hoveredItem.kh !== null && hoveredItem.kh > 0)
+                ? ((hoveredItem.th - hoveredItem.kh) / hoveredItem.kh * 100)
+                : null;
+              return (
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
+                  <span>% Delta:</span>
+                  <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                    {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                  </strong>
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>
@@ -861,6 +889,19 @@ function SpdvYoyThreePanelCard({
               {hoveredInfo.rate}
             </strong>
           </div>
+          {(() => {
+            const deltaNum = (hoveredInfo.curr !== null && hoveredInfo.prev !== null && hoveredInfo.prev > 0)
+              ? ((hoveredInfo.curr - hoveredInfo.prev) / hoveredInfo.prev * 100)
+              : null;
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
+                <span>% Delta:</span>
+                <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                  {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                </strong>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -1177,6 +1218,19 @@ function SpdvPrevPeriodThreePanelCard({
               {hoveredInfo.rate}
             </strong>
           </div>
+          {(() => {
+            const deltaNum = (hoveredInfo.curr !== null && hoveredInfo.prev !== null && hoveredInfo.prev > 0)
+              ? ((hoveredInfo.curr - hoveredInfo.prev) / hoveredInfo.prev * 100)
+              : null;
+            return (
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
+                <span>% Delta:</span>
+                <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                  {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                </strong>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -1337,6 +1391,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 1 - Khu 1"
           tagType="th"
           chart={data.thMonth}
+          compareChart={data.khMonth}
           centerLabel={centerThMonth}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
@@ -1355,6 +1410,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 1 - Khu 2"
           tagType="kh"
           chart={data.khMonth}
+          compareChart={data.thMonth}
           centerLabel={centerKhMonth}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
@@ -1376,6 +1432,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 2 - Khu 1"
           tagType="th"
           chart={data.thQuarter}
+          compareChart={data.khQuarter}
           centerLabel={centerThQuarter}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
@@ -1394,6 +1451,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 2 - Khu 2"
           tagType="kh"
           chart={data.khQuarter}
+          compareChart={data.thQuarter}
           centerLabel={centerKhQuarter}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
@@ -1415,6 +1473,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 3 - Khu 1"
           tagType="th"
           chart={data.thYear}
+          compareChart={data.khYear}
           centerLabel={centerThYear}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
@@ -1433,6 +1492,7 @@ export default function SpdvComparisonChart({
           tag="Hàng 3 - Khu 2"
           tagType="kh"
           chart={data.khYear}
+          compareChart={data.thYear}
           centerLabel={centerKhYear}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}

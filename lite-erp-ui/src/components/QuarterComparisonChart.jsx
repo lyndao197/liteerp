@@ -280,7 +280,7 @@ function QuarterValueCard({
                 <span className={`tooltip-dot ${isCol1Primary ? 'red' : 'gray'}`}></span>
                 <span>{col1Label}:</span>
                 <strong>
-                  {col1Val !== null && col1Val !== undefined ? formatVal(col1Val) : '—'}{' '}
+                  {col1Val !== null && col1Val !== undefined ? formatVal(col1Val) : '-'}{' '}
                   {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
@@ -288,7 +288,7 @@ function QuarterValueCard({
                 <span className={`tooltip-dot ${isCol1Primary ? 'gray' : 'red'}`}></span>
                 <span>{col2Label}:</span>
                 <strong>
-                  {col2Val !== null && col2Val !== undefined ? formatVal(col2Val) : '—'}{' '}
+                  {col2Val !== null && col2Val !== undefined ? formatVal(col2Val) : '-'}{' '}
                   {hoveredItem.unit || unitLabel}
                 </strong>
               </div>
@@ -300,6 +300,19 @@ function QuarterValueCard({
                   </strong>
                 </div>
               )}
+              {(() => {
+                const deltaNum = (col1Val !== null && col1Val !== undefined && col2Val !== null && col2Val !== undefined && Number(col2Val) > 0)
+                  ? ((Number(col1Val) - Number(col2Val)) / Number(col2Val) * 100)
+                  : null;
+                return (
+                  <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
+                    <span>% Delta:</span>
+                    <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                      {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                    </strong>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>
@@ -549,7 +562,7 @@ function QuarterRatioCard({
                   : hoveredItem.khNext));
 
             const formatPercent = (val) => {
-              if (val === null || val === undefined || val === '') return '—';
+              if (val === null || val === undefined || val === '') return '-';
               const num = Number(val);
               if (isNaN(num)) return `${val}%`;
               return `${num.toFixed(1).replace('.', ',')}%`;
@@ -578,6 +591,10 @@ function QuarterRatioCard({
                   ? Number(val1) >= Number(val2)
                   : true);
 
+            const deltaNum = (val1 !== null && val1 !== undefined && val2 !== null && val2 !== undefined && Number(val2) > 0)
+              ? ((Number(val1) - Number(val2)) / Number(val2) * 100)
+              : null;
+
             return (
               <div className="ratio-subcard-tooltip">
                 <div className="ratio-tooltip-header">
@@ -595,6 +612,20 @@ function QuarterRatioCard({
                   <span className="ratio-tooltip-label">{secondaryLabel}</span>
                   <strong className="ratio-tooltip-val">
                     {formatPercent(val2)}
+                  </strong>
+                </div>
+                {diffDisplay && diffDisplay !== '-' && (
+                  <div className="ratio-tooltip-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
+                    <span className="ratio-tooltip-label">Chênh lệch:</span>
+                    <strong className={`ratio-tooltip-val ${isPositive ? 'diff-positive' : 'diff-negative'}`}>
+                      {diffDisplay}
+                    </strong>
+                  </div>
+                )}
+                <div className="ratio-tooltip-row" style={!diffDisplay || diffDisplay === '-' ? { borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' } : {}}>
+                  <span className="ratio-tooltip-label">% Delta:</span>
+                  <strong className={`ratio-tooltip-val ${deltaNum !== null ? (deltaNum >= 0 ? 'diff-positive' : 'diff-negative') : ''}`} style={deltaNum === null ? { color: '#64748b' } : {}}>
+                    {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
                   </strong>
                 </div>
               </div>

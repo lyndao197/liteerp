@@ -23,7 +23,7 @@ import {
 
 // Helper to format float with 1 decimal digit and comma decimal separator
 const formatNum = (val) => {
-  if (val === null || val === undefined || val === '') return '—';
+  if (val === null || val === undefined || val === '') return '-';
   if (typeof val === 'string') return val;
   return Number(val).toLocaleString('vi-VN', {
     minimumFractionDigits: 1,
@@ -338,27 +338,27 @@ export default function MonthRatioDetailTable({
           name: 'Doanh thu ngoài Tập đoàn',
           th: getPrimaryVal(extVal),
           kh: getSecondaryVal(extVal),
-          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '—',
-          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '—',
-          diff: extRat?.diff || '—'
+          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '-',
+          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '-',
+          diff: extRat?.diff || '-'
         },
         {
           id: 'global',
           name: 'Doanh thu quốc tế',
           th: getPrimaryVal(globVal),
           kh: getSecondaryVal(globVal),
-          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
-          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
-          diff: globRat?.diff || '—'
+          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '-',
+          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '-',
+          diff: globRat?.diff || '-'
         },
         {
           id: 'profit',
           name: 'Lợi nhuận trước thuế',
           th: profTh,
           kh: profKh,
-          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '—',
-          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '—',
-          diff: profitRat?.diff || '—'
+          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '-',
+          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '-',
+          diff: profitRat?.diff || '-'
         },
         {
           id: 'total',
@@ -403,27 +403,27 @@ export default function MonthRatioDetailTable({
           name: 'Doanh thu ngoài Tập đoàn',
           th: getPrimaryVal(extVal),
           kh: getSecondaryVal(extVal),
-          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '—',
-          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '—',
-          diff: extRat?.diff || '—'
+          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '-',
+          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '-',
+          diff: extRat?.diff || '-'
         },
         {
           id: 'global',
           name: 'Doanh thu quốc tế',
           th: getPrimaryVal(globVal),
           kh: getSecondaryVal(globVal),
-          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
-          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
-          diff: globRat?.diff || '—'
+          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '-',
+          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '-',
+          diff: globRat?.diff || '-'
         },
         {
           id: 'profit',
           name: 'Lợi nhuận trước thuế',
           th: profTh,
           kh: profKh,
-          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '—',
-          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '—',
-          diff: profitRat?.diff || '—'
+          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '-',
+          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '-',
+          diff: profitRat?.diff || '-'
         },
         {
           id: 'total',
@@ -467,27 +467,27 @@ export default function MonthRatioDetailTable({
           name: 'Doanh thu ngoài Tập đoàn',
           th: getPrimaryVal(extVal),
           kh: getSecondaryVal(extVal),
-          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '—',
-          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '—',
-          diff: extRat?.diff || '—'
+          thShare: extRat ? `${formatNum(getPrimaryVal(extRat))}%` : '-',
+          khShare: extRat ? `${formatNum(getSecondaryVal(extRat))}%` : '-',
+          diff: extRat?.diff || '-'
         },
         {
           id: 'global',
           name: 'Doanh thu quốc tế',
           th: getPrimaryVal(globVal),
           kh: getSecondaryVal(globVal),
-          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '—',
-          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '—',
-          diff: globRat?.diff || '—'
+          thShare: globRat ? `${formatNum(getPrimaryVal(globRat))}%` : '-',
+          khShare: globRat ? `${formatNum(getSecondaryVal(globRat))}%` : '-',
+          diff: globRat?.diff || '-'
         },
         {
           id: 'profit',
           name: 'Lợi nhuận trước thuế',
           th: profTh,
           kh: profKh,
-          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '—',
-          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '—',
-          diff: profitRat?.diff || '—'
+          thShare: profitRat ? `${formatNum(getPrimaryVal(profitRat))}%` : '-',
+          khShare: profitRat ? `${formatNum(getSecondaryVal(profitRat))}%` : '-',
+          diff: profitRat?.diff || '-'
         },
         {
           id: 'total',

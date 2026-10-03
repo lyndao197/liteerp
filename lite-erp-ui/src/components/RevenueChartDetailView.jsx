@@ -1313,9 +1313,9 @@ export default function RevenueChartDetailView({
               th: null,
               thCurrent: null,
               thPrev,
-              growth: '—',
+              growth: '-',
               growthNum: null,
-              rate: '—',
+              rate: '-',
               rateNum: null,
               diff: null
             };
@@ -1418,13 +1418,13 @@ export default function RevenueChartDetailView({
             : null;
           const monthGrowth = monthGrowthNum !== null
             ? `${monthGrowthNum >= 0 ? '+' : ''}${monthGrowthNum.toFixed(1).replace('.', ',')}%`
-            : '—';
+            : '-';
           const monthRateNum = (sumTh !== null && sumKh > 0)
             ? Number(((sumTh / sumKh) * 100).toFixed(1))
             : null;
           const monthRate = monthRateNum !== null
             ? `${monthRateNum.toFixed(1).replace('.', ',')}%`
-            : '—';
+            : '-';
           const monthDiff = sumTh !== null ? sumTh - sumKh : null;
           const monthIsPass = monthRateNum !== null ? monthRateNum >= 100 : false;
 
@@ -1496,13 +1496,13 @@ export default function RevenueChartDetailView({
             : null;
           const mGrowth = mGrowthNum !== null
             ? `${mGrowthNum >= 0 ? '+' : ''}${mGrowthNum.toFixed(1).replace('.', ',')}%`
-            : '—';
+            : '-';
           const mRateNum = (mTh !== null && mKh > 0)
             ? Number(((mTh / mKh) * 100).toFixed(1))
             : null;
           const mRate = mRateNum !== null
             ? `${mRateNum.toFixed(1).replace('.', ',')}%`
-            : '—';
+            : '-';
           const mDiff = mTh !== null ? mTh - mKh : null;
           const mIsPass = isProfit
             ? (mRateNum !== null ? mRateNum >= 100 : false)

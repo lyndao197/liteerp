@@ -1235,8 +1235,8 @@ const ExecutiveGaugeMasterCard = ({
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +3,5%', growthPrev: '▲ +3,6%', share: '32,6%', status: 'Vượt KH', statusType: 'success' },
             { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 250000, plan: 373800, rate: 66.9, diff: -123800, growthYear: '▲ +4,2%', growthPrev: '▲ +4,0%', share: '32,3%', status: 'Đạt tiến độ', statusType: 'warning' },
-            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 953500, plan: 912900, rate: 104.4, diff: 40600, growthYear: '▲ +6,8%', growthPrev: '—', share: '32,0%', status: 'Vượt KH', statusType: 'success' },
-            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 953500, plan: 1490400, rate: 64.0, diff: -536900, growthYear: '▲ +4,1%', growthPrev: '—', share: '30,0%', status: 'Tiến độ tốt', statusType: 'success' }
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 953500, plan: 912900, rate: 104.4, diff: 40600, growthYear: '▲ +6,8%', growthPrev: '-', share: '32,0%', status: 'Vượt KH', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 953500, plan: 1490400, rate: 64.0, diff: -536900, growthYear: '▲ +4,1%', growthPrev: '-', share: '30,0%', status: 'Tiến độ tốt', statusType: 'success' }
           ],
           monthlyList: [
             { monthName: 'Tháng 1', monthNum: 1, actual: 102800, plan: 100500, rate: 102.3, diff: 2300, growth: '▲ +3,1%', share: '32,6%' },
@@ -1247,10 +1247,10 @@ const ExecutiveGaugeMasterCard = ({
             { monthName: 'Tháng 6', monthNum: 6, actual: 133700, plan: 130000, rate: 102.8, diff: 3700, growth: '▲ +3,9%', share: '32,6%' },
             { monthName: 'Tháng 7', monthNum: 7, actual: 122800, plan: 120000, rate: 102.3, diff: 2800, growth: '▲ +3,4%', share: '32,6%' },
             { monthName: 'Tháng 8', monthNum: 8, actual: 127200, plan: 124200, rate: 102.4, diff: 3000, growth: '▲ +3,5%', share: '32,6%' },
-            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 129600, rate: null, diff: null, growth: '—', share: '30,0%' },
-            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 131000, rate: null, diff: null, growth: '—', share: '30,0%' },
-            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 132000, rate: null, diff: null, growth: '—', share: '30,0%' },
-            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 134900, rate: null, diff: null, growth: '—', share: '30,0%' }
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 129600, rate: null, diff: null, growth: '-', share: '30,0%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 131000, rate: null, diff: null, growth: '-', share: '30,0%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 132000, rate: null, diff: null, growth: '-', share: '30,0%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 134900, rate: null, diff: null, growth: '-', share: '30,0%' }
           ],
           qForecast: '375.000',
           qRate: '100,3%',
@@ -1313,8 +1313,8 @@ const ExecutiveGaugeMasterCard = ({
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +8,8%', growthPrev: '▲ +0,2%', share: '67,4%', status: 'Cần tăng tốc', statusType: 'warning' },
             { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 525000, plan: 872200, rate: 60.2, diff: -347200, growthYear: '▲ +11,6%', growthPrev: '▲ +9,5%', share: '67,7%', status: 'Cần tăng tốc', statusType: 'warning' },
-            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2022800, plan: 2130200, rate: 95.0, diff: -107400, growthYear: '▲ +17,5%', growthPrev: '—', share: '68,0%', status: 'Bám sát KH', statusType: 'warning' },
-            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2022800, plan: 3477700, rate: 58.2, diff: -1454900, growthYear: '▲ +7,4%', growthPrev: '—', share: '70,0%', status: 'Tập trung Q4', statusType: 'warning' }
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2022800, plan: 2130200, rate: 95.0, diff: -107400, growthYear: '▲ +17,5%', growthPrev: '-', share: '68,0%', status: 'Bám sát KH', statusType: 'warning' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2022800, plan: 3477700, rate: 58.2, diff: -1454900, growthYear: '▲ +7,4%', growthPrev: '-', share: '70,0%', status: 'Tập trung Q4', statusType: 'warning' }
           ],
           monthlyList: [
             { monthName: 'Tháng 1', monthNum: 1, actual: 212600, plan: 234500, rate: 90.7, diff: -21900, growth: '▲ +7,2%', share: '67,4%' },
@@ -1325,10 +1325,10 @@ const ExecutiveGaugeMasterCard = ({
             { monthName: 'Tháng 6', monthNum: 6, actual: 276500, plan: 304000, rate: 91.0, diff: -27500, growth: '▲ +9,0%', share: '67,4%' },
             { monthName: 'Tháng 7', monthNum: 7, actual: 262300, plan: 289000, rate: 90.8, diff: -26700, growth: '▲ +8,7%', share: '67,4%' },
             { monthName: 'Tháng 8', monthNum: 8, actual: 262700, plan: 289800, rate: 90.6, diff: -27100, growth: '▲ +8,8%', share: '67,4%' },
-            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 292600, rate: null, diff: null, growth: '—', share: '70,0%' },
-            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 345000, rate: null, diff: null, growth: '—', share: '70,0%' },
-            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 350000, rate: null, diff: null, growth: '—', share: '70,0%' },
-            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 359900, rate: null, diff: null, growth: '—', share: '70,0%' }
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 292600, rate: null, diff: null, growth: '-', share: '70,0%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 345000, rate: null, diff: null, growth: '-', share: '70,0%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 350000, rate: null, diff: null, growth: '-', share: '70,0%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 359900, rate: null, diff: null, growth: '-', share: '70,0%' }
           ],
           qForecast: '787.500',
           qRate: '90,3%',
@@ -1386,8 +1386,8 @@ const ExecutiveGaugeMasterCard = ({
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +18,2%', growthPrev: '▲ +2,9%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
             { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 82100, plan: 149500, rate: 54.9, diff: -67400, growthYear: '▲ +16,5%', growthPrev: '▲ +12,0%', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
-            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 312500, plan: 330000, rate: 94.7, diff: -17500, growthYear: '▲ +19,4%', growthPrev: '—', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
-            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 312500, plan: 540100, rate: 57.9, diff: -227600, growthYear: '▲ +15,2%', growthPrev: '—', share: '10,9%', status: 'Tăng trưởng tốt', statusType: 'success' }
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 312500, plan: 330000, rate: 94.7, diff: -17500, growthYear: '▲ +19,4%', growthPrev: '-', share: '11,0%', status: 'Tăng trưởng cao', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 312500, plan: 540100, rate: 57.9, diff: -227600, growthYear: '▲ +15,2%', growthPrev: '-', share: '10,9%', status: 'Tăng trưởng tốt', statusType: 'success' }
           ],
           monthlyList: [
             { monthName: 'Tháng 1', monthNum: 1, actual: 34700, plan: 36800, rate: 94.3, diff: -2100, growth: '▲ +17,5%', share: '11,0%' },
@@ -1398,10 +1398,10 @@ const ExecutiveGaugeMasterCard = ({
             { monthName: 'Tháng 6', monthNum: 6, actual: 45120, plan: 47400, rate: 95.2, diff: -2280, growth: '▲ +19,0%', share: '11,0%' },
             { monthName: 'Tháng 7', monthNum: 7, actual: 39300, plan: 41500, rate: 94.7, diff: -2200, growth: '▲ +17,9%', share: '11,0%' },
             { monthName: 'Tháng 8', monthNum: 8, actual: 42800, plan: 45000, rate: 95.1, diff: -2200, growth: '▲ +18,2%', share: '11,0%' },
-            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 63000, rate: null, diff: null, growth: '—', share: '10,9%' },
-            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 70000, rate: null, diff: null, growth: '—', share: '10,9%' },
-            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 70000, rate: null, diff: null, growth: '—', share: '10,9%' },
-            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 70100, rate: null, diff: null, growth: '—', share: '10,9%' }
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 63000, rate: null, diff: null, growth: '-', share: '10,9%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 70000, rate: null, diff: null, growth: '-', share: '10,9%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 70000, rate: null, diff: null, growth: '-', share: '10,9%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 70100, rate: null, diff: null, growth: '-', share: '10,9%' }
           ],
           qForecast: '135.000',
           qRate: '90,3%',
@@ -1467,8 +1467,8 @@ const ExecutiveGaugeMasterCard = ({
           detailedRows: [
             { period: `Tháng ${monthNum}/${selectedYear}`, isHighlight: true, actual: actual, plan: plan, rate: rate, diff: +(actual - plan), growthYear: '▲ +5,8%', growthPrev: '▲ +1,0%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
             { period: `Quý 3/${selectedYear}`, isHighlight: false, actual: 690000, plan: 1110000, rate: 62.2, diff: -420000, growthYear: '▲ +8,2%', growthPrev: '▲ +7,8%', share: '89,0%', status: 'Đạt tiến độ', statusType: 'success' },
-            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2650000, plan: 2710000, rate: 97.8, diff: -60000, growthYear: '▲ +12,5%', growthPrev: '—', share: '89,0%', status: 'Hoàn thành tốt', statusType: 'success' },
-            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2650000, plan: 4428000, rate: 59.8, diff: -1778000, growthYear: '▲ +5,8%', growthPrev: '—', share: '89,1%', status: 'Bám sát KH', statusType: 'success' }
+            { period: `Luỹ kế năm ${selectedYear} (8T)`, isHighlight: false, actual: 2650000, plan: 2710000, rate: 97.8, diff: -60000, growthYear: '▲ +12,5%', growthPrev: '-', share: '89,0%', status: 'Hoàn thành tốt', statusType: 'success' },
+            { period: `Kế hoạch cả năm ${selectedYear}`, isHighlight: false, actual: 2650000, plan: 4428000, rate: 59.8, diff: -1778000, growthYear: '▲ +5,8%', growthPrev: '-', share: '89,1%', status: 'Bám sát KH', statusType: 'success' }
           ],
           monthlyList: [
             { monthName: 'Tháng 1', monthNum: 1, actual: 280700, plan: 298200, rate: 94.1, diff: -17500, growth: '▲ +5,1%', share: '89,0%' },
@@ -1479,10 +1479,10 @@ const ExecutiveGaugeMasterCard = ({
             { monthName: 'Tháng 6', monthNum: 6, actual: 365080, plan: 386600, rate: 94.4, diff: -21520, growth: '▲ +6,0%', share: '89,0%' },
             { monthName: 'Tháng 7', monthNum: 7, actual: 345800, plan: 367500, rate: 94.1, diff: -21700, growth: '▲ +5,6%', share: '89,0%' },
             { monthName: 'Tháng 8', monthNum: 8, actual: 347100, plan: 369000, rate: 94.1, diff: -21900, growth: '▲ +5,8%', share: '89,0%' },
-            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 359200, rate: null, diff: null, growth: '—', share: '89,1%' },
-            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 406000, rate: null, diff: null, growth: '—', share: '89,1%' },
-            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 412000, rate: null, diff: null, growth: '—', share: '89,1%' },
-            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 424700, rate: null, diff: null, growth: '—', share: '89,1%' }
+            { monthName: 'Tháng 9 (KH)', monthNum: 9, actual: null, plan: 359200, rate: null, diff: null, growth: '-', share: '89,1%' },
+            { monthName: 'Tháng 10 (KH)', monthNum: 10, actual: null, plan: 406000, rate: null, diff: null, growth: '-', share: '89,1%' },
+            { monthName: 'Tháng 11 (KH)', monthNum: 11, actual: null, plan: 412000, rate: null, diff: null, growth: '-', share: '89,1%' },
+            { monthName: 'Tháng 12 (KH)', monthNum: 12, actual: null, plan: 424700, rate: null, diff: null, growth: '-', share: '89,1%' }
           ],
           qForecast: '1.027.500',
           qRate: '93,7%',

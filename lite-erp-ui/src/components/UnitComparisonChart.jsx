@@ -34,7 +34,7 @@ function getDonutSlicePath(cx, cy, innerR, outerR, startAngle, endAngle) {
 }
 
 // Single Donut Chart Component (Biểu đồ 21)
-function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey }) {
+function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey, planItems }) {
   const cx = 110;
   const cy = 105;
   const outerRadius = 82;
@@ -75,12 +75,19 @@ function SingleDonut({ chart, hoveredSlice, setHoveredSlice, cardKey }) {
               key={`slice-${sIdx}`}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => {
+                const item = planItems?.find((it) => it.name === slice.name);
+                let delta = null;
+                if (item && item.kh > 0 && item.th !== null && item.th !== undefined) {
+                  delta = ((item.th - item.kh) / item.kh) * 100;
+                }
                 setHoveredSlice({
                   cardKey,
                   sliceName: slice.name,
                   percent: slice.percent,
                   value: slice.value,
-                  color: slice.color
+                  color: slice.color,
+                  delta: delta !== null ? delta.toFixed(1).replace('.', ',') : null,
+                  isDeltaPositive: delta !== null ? delta >= 0 : null
                 });
               }}
               onMouseLeave={() => setHoveredSlice(null)}
@@ -150,6 +157,7 @@ function UnitStructureSubcard({
   title,
   tag = 'Thực hiện',
   chart,
+  planItems,
   hoveredSlice,
   setHoveredSlice,
   cardKey,
@@ -169,6 +177,7 @@ function UnitStructureSubcard({
       <div className="spdv-subcard-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           <SingleDonut
             chart={chart}
+            planItems={planItems}
             hoveredSlice={hoveredSlice}
             setHoveredSlice={setHoveredSlice}
             cardKey={cardKey}
@@ -178,11 +187,17 @@ function UnitStructureSubcard({
               <div className="tooltip-item-title">{hoveredSlice.sliceName}</div>
               <div className="tooltip-stat-row">
                 <span>Tỷ trọng:</span>
-                <strong>{hoveredSlice.percent}%</strong>
+                <strong>{hoveredSlice.percent !== null && hoveredSlice.percent !== undefined ? `${hoveredSlice.percent}%` : '-'}</strong>
               </div>
               <div className="tooltip-stat-row">
                 <span>Giá trị:</span>
-                <strong>{hoveredSlice.value} Triệu đồng</strong>
+                <strong>{hoveredSlice.value !== null && hoveredSlice.value !== undefined ? `${hoveredSlice.value} Triệu đồng` : '-'}</strong>
+              </div>
+              <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
+                <span>% Delta:</span>
+                <strong style={{ color: hoveredSlice.delta ? (hoveredSlice.isDeltaPositive ? '#16a34a' : '#dc2626') : '#64748b' }}>
+                  {hoveredSlice.delta ? `${hoveredSlice.isDeltaPositive ? '+' : ''}${hoveredSlice.delta}%` : '-'}
+                </strong>
               </div>
             </div>
           )}
@@ -397,6 +412,19 @@ function UnitPlanSubcard({
                 <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
                 <span style={{ fontWeight: '700', color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredUnit.rate}</span>
               </div>
+              {(() => {
+                const deltaNum = (hoveredUnit.th !== null && hoveredUnit.kh !== null && hoveredUnit.kh > 0)
+                  ? ((hoveredUnit.th - hoveredUnit.kh) / hoveredUnit.kh * 100)
+                  : null;
+                return (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px', paddingTop: '2px' }}>
+                    <span style={{ color: '#475569', fontWeight: '600' }}>% Delta:</span>
+                    <span style={{ fontWeight: '700', color: deltaNum !== null ? (deltaNum >= 0 ? '#15803d' : '#b91c1c') : '#64748b' }}>
+                      {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>
@@ -545,6 +573,7 @@ export default function UnitComparisonChart({
           title={`Cơ cấu theo từng đơn vị – ${activeMonth}/${activeYear}`}
           tag="Hàng 1 - Khu 1"
           chart={data21.thMonth}
+          planItems={data22.month.items}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
           cardKey="u21-month"
@@ -576,6 +605,7 @@ export default function UnitComparisonChart({
           title={`Cơ cấu theo từng đơn vị – ${quarterText}`}
           tag="Hàng 2 - Khu 1"
           chart={data21.thQuarter}
+          planItems={data22.quarter.items}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
           cardKey="u21-quarter"
@@ -607,6 +637,7 @@ export default function UnitComparisonChart({
           title={`Cơ cấu theo từng đơn vị – Năm ${activeYear}`}
           tag="Hàng 3 - Khu 1"
           chart={data21.thYear}
+          planItems={data22.year.items}
           hoveredSlice={hoveredSlice}
           setHoveredSlice={setHoveredSlice}
           cardKey="u21-year"

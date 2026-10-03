@@ -44,7 +44,7 @@ export default function PlanProgressDetailTable({
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   const formatNum = (val) => {
-    if (val === null || val === undefined) return '—';
+    if (val === null || val === undefined || val === '') return '-';
     if (typeof val === 'string') return val;
     return Number(val).toLocaleString('vi-VN', {
       minimumFractionDigits: 1,

@@ -36,7 +36,7 @@ export default function UnitDetailTable({
   }, [activeChartKey, chartTitle]);
 
   const formatUnitNum = (val) => {
-    if (val === null || val === undefined) return '—';
+    if (val === null || val === undefined || val === '') return '-';
     if (typeof val === 'string') return val;
     return Number(val).toLocaleString('vi-VN', {
       minimumFractionDigits: 1,
