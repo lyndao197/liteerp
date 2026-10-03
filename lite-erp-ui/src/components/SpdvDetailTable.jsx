@@ -179,7 +179,7 @@ export default function SpdvDetailTable({
         periodLabel: `Tháng ${monthNum}/${selectedYear}`,
         thLabel: `TH T${monthNum}/${selectedYear}`,
         khLabel: `KH T${monthNum}/${selectedYear}`,
-        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Tháng ${monthNum}/${selectedYear}`,
+        title: `Biểu đồ 18. Thực hiện Tháng ${monthNum}/${selectedYear} so với kế hoạch Tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
         note: `So sánh thực hiện với kế hoạch doanh thu của 6 nhóm sản phẩm dịch vụ trong Tháng ${monthNum}/${selectedYear}.`
       };
@@ -191,7 +191,7 @@ export default function SpdvDetailTable({
         periodLabel: `Quý ${quarterRoman}/${selectedYear}`,
         thLabel: `Ước TH Q${quarterRoman}/${selectedYear}`,
         khLabel: `KH Q${quarterRoman}/${selectedYear}`,
-        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Quý ${quarterRoman}/${selectedYear}`,
+        title: `Biểu đồ 18. Ước thực hiện Quý ${quarterRoman}/${selectedYear} so với kế hoạch Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
         note: `So sánh ước thực hiện với kế hoạch doanh thu của 6 nhóm sản phẩm dịch vụ trong Quý ${quarterRoman}/${selectedYear}.`
       };
@@ -203,7 +203,7 @@ export default function SpdvDetailTable({
         periodLabel: `Năm ${selectedYear}`,
         thLabel: `Ước TH Năm ${selectedYear}`,
         khLabel: `KH Năm ${selectedYear}`,
-        title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`,
+        title: `Biểu đồ 18. Ước thực hiện Năm ${selectedYear} so với kế hoạch Năm ${selectedYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
         note: `So sánh ước thực hiện cả năm với kế hoạch doanh thu được giao năm ${selectedYear}.`
       };
@@ -651,7 +651,7 @@ export default function SpdvDetailTable({
               ? singleBarConfig.title
               : isStructureIntegrated
               ? `Cơ cấu doanh thu theo nhóm SPDV (Bảng tổng hợp cả 3 kỳ)`
-              : `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH (Bảng tổng hợp 3 kỳ)`}
+              : `Biểu đồ 18. Thực hiện so với kế hoạch theo nhóm SPDV (Bảng tổng hợp 3 kỳ)`}
           </h3>
 
           <span className="spdv-detail-unit">

@@ -203,24 +203,24 @@ export function getExportChartList({
       key: 'c18_m',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 18 (Tháng)',
-      title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Tháng ${monthNum}/${selectedYear}`,
-      desc: `So sánh TH, KH, +/- so KH, % HTKH 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
+      title: `Biểu đồ 18. Thực hiện Tháng ${monthNum}/${selectedYear} so với kế hoạch Tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
+      desc: `So sánh thực hiện và kế hoạch doanh thu của 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
       period: `Tháng ${monthNum}/${selectedYear}`
     },
     {
       key: 'c18_q',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 18 (Quý)',
-      title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Quý ${quarterRoman}/${selectedYear}`,
-      desc: `So sánh ước TH, KH, +/- so KH, % HTKH 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
+      title: `Biểu đồ 18. Ước thực hiện Quý ${quarterRoman}/${selectedYear} so với kế hoạch Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
+      desc: `So sánh ước thực hiện và kế hoạch doanh thu của 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
       period: `Quý ${quarterRoman}/${selectedYear}`
     },
     {
       key: 'c18_y',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 18 (Năm)',
-      title: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`,
-      desc: `So sánh ước TH cả năm, KH cả năm, +/- so KH, % HTKH 6 nhóm SPDV Năm ${selectedYear}`,
+      title: `Biểu đồ 18. Ước thực hiện Năm ${selectedYear} so với kế hoạch Năm ${selectedYear} theo nhóm SPDV`,
+      desc: `So sánh ước thực hiện cả năm và kế hoạch doanh thu của 6 nhóm SPDV cả Năm ${selectedYear}`,
       period: `Năm ${selectedYear}`
     },
     {

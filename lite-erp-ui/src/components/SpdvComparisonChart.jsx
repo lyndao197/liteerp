@@ -333,9 +333,15 @@ function SpdvBarSubcard({
 
   return (
     <div className="month-subcard spdv-card-item">
-      <div className="month-subcard-header">
-        <h3 className="month-subcard-title" title={title}>{title}</h3>
-        <div className="month-subcard-header-actions">
+      <div className="month-subcard-header" style={{ alignItems: 'flex-start', gap: '12px' }}>
+        <h3
+          className="month-subcard-title"
+          title={title}
+          style={{ whiteSpace: 'normal', lineHeight: '1.35', wordBreak: 'break-word' }}
+        >
+          {title}
+        </h3>
+        <div className="month-subcard-header-actions" style={{ flexShrink: 0, marginTop: '2px' }}>
           <span className="month-subcard-tag">{tag}</span>
         </div>
       </div>
@@ -1509,7 +1515,7 @@ export default function SpdvComparisonChart({
       {/* DÒNG 4: BIỂU ĐỒ 18 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
       <div className="month-row-grid">
         <SpdvBarSubcard
-          title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.monthTitle}`}
+          title={`Biểu đồ 18. Thực hiện ${barData.monthTitle} so với kế hoạch ${barData.monthTitle} theo nhóm SPDV`}
           tag="Hàng 4 - Khu 1"
           legendTh={`TH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
           legendKh={`KH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
@@ -1519,12 +1525,12 @@ export default function SpdvComparisonChart({
           cardKey="month"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_bar_month',
-            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.monthTitle}`
+            chartTitle: `Biểu đồ 18. Thực hiện ${barData.monthTitle} so với kế hoạch ${barData.monthTitle} theo nhóm SPDV`
           })}
         />
 
         <SpdvBarSubcard
-          title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.quarterTitle}`}
+          title={`Biểu đồ 18. Ước thực hiện ${barData.quarterTitle} so với kế hoạch ${barData.quarterTitle} theo nhóm SPDV`}
           tag="Hàng 4 - Khu 2"
           legendTh={`Ước TH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
           legendKh={`KH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
@@ -1534,7 +1540,7 @@ export default function SpdvComparisonChart({
           cardKey="quarter"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_bar_quarter',
-            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.quarterTitle}`
+            chartTitle: `Biểu đồ 18. Ước thực hiện ${barData.quarterTitle} so với kế hoạch ${barData.quarterTitle} theo nhóm SPDV`
           })}
         />
       </div>
@@ -1542,7 +1548,7 @@ export default function SpdvComparisonChart({
       {/* DÒNG 5: BIỂU ĐỒ 18 - NĂM */}
       <div className="month-row-grid">
         <SpdvBarSubcard
-          title={`Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`}
+          title={`Biểu đồ 18. Ước thực hiện ${barData.yearTitle} so với kế hoạch ${barData.yearTitle} theo nhóm SPDV`}
           tag="Hàng 5"
           legendTh={`Ước TH ${barData.yearTitle?.replace('Năm ', '')}`}
           legendKh={`KH ${barData.yearTitle?.replace('Năm ', '')}`}
@@ -1552,7 +1558,7 @@ export default function SpdvComparisonChart({
           cardKey="year"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_bar_year',
-            chartTitle: `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – ${barData.yearTitle}`
+            chartTitle: `Biểu đồ 18. Ước thực hiện ${barData.yearTitle} so với kế hoạch ${barData.yearTitle} theo nhóm SPDV`
           })}
         />
       </div>

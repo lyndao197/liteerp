@@ -102,9 +102,9 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'spdv_kh_quarter', label: 'Biểu đồ 17 (Quý): Cơ cấu tỷ trọng KH' },
     { id: 'spdv_th_year', label: 'Biểu đồ 16 (Năm): Cơ cấu tỷ trọng TH' },
     { id: 'spdv_kh_year', label: 'Biểu đồ 17 (Năm): Cơ cấu tỷ trọng KH' },
-    { id: 'spdv_bar_month', label: 'Biểu đồ 18 (Tháng): Doanh thu 6 nhóm SPDV so với KH' },
-    { id: 'spdv_bar_quarter', label: 'Biểu đồ 18 (Quý): Doanh thu 6 nhóm SPDV so với KH' },
-    { id: 'spdv_bar_year', label: 'Biểu đồ 18 (Năm): Doanh thu 6 nhóm SPDV so với KH' },
+    { id: 'spdv_bar_month', label: 'Biểu đồ 18 (Tháng): Thực hiện so với kế hoạch theo nhóm SPDV' },
+    { id: 'spdv_bar_quarter', label: 'Biểu đồ 18 (Quý): Ước thực hiện so với kế hoạch theo nhóm SPDV' },
+    { id: 'spdv_bar_year', label: 'Biểu đồ 18 (Năm): Ước thực hiện so với kế hoạch theo nhóm SPDV' },
     { id: 'spdv_yoy_comparison', label: 'Biểu đồ 19: Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước' },
     { id: 'spdv_prev_period', label: 'Biểu đồ 20: Doanh thu 6 nhóm SPDV so với kỳ trước' }
   ],
