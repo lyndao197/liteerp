@@ -310,6 +310,146 @@ export const getSpdvBarComparisonData = (year = '2026', month = 'Tháng 8') => {
   };
 };
 
+// ==============================================================================
+// DỮ LIỆU BIỂU ĐỒ 19: DOANH THU 6 NHÓM SPDV SO VỚI CÙNG KỲ NĂM TRƯỚC
+// Cơ sở so sánh:
+// Tháng: T8/2026 – T8/2025 | Quý: Ước Q3/2026 – Q3/2025 | Năm: 8T/2026 – 8T/2025
+// Số %: TH/cùng kỳ
+// ==============================================================================
+export const SPDV_YOY_COMPARISON_DATA = {
+  '2026': {
+    'Tháng 8': {
+      monthTitle: 'Tháng 8',
+      monthBasis: 'T8/2026 – T8/2025',
+      monthLegendCurr: 'T8/2026',
+      monthLegendPrev: 'T8/2025',
+      monthMax: 125,
+      monthTicks: [0, 25, 50, 75, 100, 125],
+      monthItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 103.0, prev: 102.0, rate: '101%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 84.0, prev: 77.0, rate: '109%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 73.0, prev: 58.0, rate: '126%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 57.0, prev: 58.0, rate: '99%', isRatePositive: false },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 44.0, prev: 43.0, rate: '103%', isRatePositive: true },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 28.0, prev: 26.0, rate: '108%', isRatePositive: true }
+      ],
+
+      quarterTitle: 'Quý III',
+      quarterBasis: 'Ước Q3/2026 – Q3/2025',
+      quarterLegendCurr: 'Ước Q3/2026',
+      quarterLegendPrev: 'Q3/2025',
+      quarterMax: 350,
+      quarterTicks: [0, 100, 200, 300],
+      quarterItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 319.0, prev: 299.0, rate: '107%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 246.0, prev: 241.0, rate: '102%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 222.0, prev: 173.0, rate: '128%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 171.0, prev: 168.0, rate: '102%', isRatePositive: true },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 130.0, prev: 131.0, rate: '99%', isRatePositive: false },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 85.0, prev: 77.0, rate: '110%', isRatePositive: true }
+      ],
+
+      yearTitle: 'Lũy kế 8 tháng',
+      yearBasis: '8T/2026 – 8T/2025',
+      yearLegendCurr: '8T/2026',
+      yearLegendPrev: '8T/2025',
+      yearMax: 1000,
+      yearTicks: [0, 200, 400, 600, 800, 1000],
+      yearItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 810.0, prev: 741.0, rate: '109%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 627.0, prev: 571.0, rate: '110%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 562.0, prev: 416.0, rate: '135%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 438.0, prev: 405.0, rate: '108%', isRatePositive: true },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 325.0, prev: 317.0, rate: '103%', isRatePositive: true },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 212.0, prev: 188.0, rate: '113%', isRatePositive: true }
+      ],
+      note: 'Nhận xét: Kỳ năm dùng lũy kế 8 tháng hai năm để so sánh cùng độ dài thời gian.'
+    }
+  },
+  '2025': {
+    'Tháng 8': {
+      monthTitle: 'Tháng 8',
+      monthBasis: 'T8/2025 – T8/2024',
+      monthLegendCurr: 'T8/2025',
+      monthLegendPrev: 'T8/2024',
+      monthMax: 125,
+      monthTicks: [0, 25, 50, 75, 100, 125],
+      monthItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 102.0, prev: 92.7, rate: '110%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 77.0, prev: 70.0, rate: '110%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 58.0, prev: 45.0, rate: '129%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 58.0, prev: 56.0, rate: '104%', isRatePositive: true },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 43.0, prev: 40.0, rate: '108%', isRatePositive: true },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 26.0, prev: 24.0, rate: '108%', isRatePositive: true }
+      ],
+
+      quarterTitle: 'Quý III',
+      quarterBasis: 'Ước Q3/2025 – Q3/2024',
+      quarterLegendCurr: 'Ước Q3/2025',
+      quarterLegendPrev: 'Q3/2024',
+      quarterMax: 350,
+      quarterTicks: [0, 100, 200, 300],
+      quarterItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 299.0, prev: 275.0, rate: '109%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 241.0, prev: 220.0, rate: '110%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 173.0, prev: 140.0, rate: '124%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 168.0, prev: 160.0, rate: '105%', isRatePositive: true },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 131.0, prev: 125.0, rate: '105%', isRatePositive: true },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 77.0, prev: 70.0, rate: '110%', isRatePositive: true }
+      ],
+
+      yearTitle: 'Lũy kế 8 tháng',
+      yearBasis: '8T/2025 – 8T/2024',
+      yearLegendCurr: '8T/2025',
+      yearLegendPrev: '8T/2024',
+      yearMax: 1000,
+      yearTicks: [0, 200, 400, 600, 800, 1000],
+      yearItems: [
+        { id: 'gppm', name: 'Giải pháp phần mềm', curr: 741.0, prev: 680.0, rate: '109%', isRatePositive: true },
+        { id: 'htcntt', name: 'Hạ tầng CNTT', curr: 571.0, prev: 520.0, rate: '110%', isRatePositive: true },
+        { id: 'dvs', name: 'Dịch vụ số', curr: 416.0, prev: 330.0, rate: '126%', isRatePositive: true },
+        { id: 'tvth', name: 'Tư vấn & tích hợp', curr: 405.0, prev: 380.0, rate: '107%', isRatePositive: true },
+        { id: 'vhbt', name: 'Vận hành & bảo trì', curr: 317.0, prev: 300.0, rate: '106%', isRatePositive: true },
+        { id: 'dtk', name: 'Đào tạo & khác', curr: 188.0, prev: 170.0, rate: '111%', isRatePositive: true }
+      ],
+      note: 'Nhận xét: Kỳ năm dùng lũy kế 8 tháng hai năm để so sánh cùng độ dài thời gian.'
+    }
+  }
+};
+
+export const getSpdvYoyComparisonData = (year = '2026', month = 'Tháng 8') => {
+  const defaultYear = '2026';
+  const defaultMonth = 'Tháng 8';
+  const yearData = SPDV_YOY_COMPARISON_DATA[year] || SPDV_YOY_COMPARISON_DATA[defaultYear];
+  if (yearData && yearData[month]) {
+    return yearData[month];
+  }
+
+  const base = (yearData && yearData[defaultMonth]) || SPDV_YOY_COMPARISON_DATA[defaultYear][defaultMonth];
+  const mNum = parseInt(month?.match(/\d+/)?.[0] || '8', 10);
+  const qNum = Math.ceil(mNum / 3);
+  const romanQuarters = ['', 'I', 'II', 'III', 'IV'];
+  const qRoman = romanQuarters[qNum] || `${qNum}`;
+  const lastYear = (parseInt(year, 10) - 1).toString();
+
+  return {
+    ...base,
+    monthTitle: `Tháng ${mNum}`,
+    monthBasis: `T${mNum}/${year} – T${mNum}/${lastYear}`,
+    monthLegendCurr: `T${mNum}/${year}`,
+    monthLegendPrev: `T${mNum}/${lastYear}`,
+    quarterTitle: `Quý ${qRoman}`,
+    quarterBasis: `Ước Q${qRoman}/${year} – Q${qRoman}/${lastYear}`,
+    quarterLegendCurr: `Ước Q${qRoman}/${year}`,
+    quarterLegendPrev: `Q${qRoman}/${lastYear}`,
+    yearTitle: `Lũy kế ${mNum} tháng`,
+    yearBasis: `${mNum}T/${year} – ${mNum}T/${lastYear}`,
+    yearLegendCurr: `${mNum}T/${year}`,
+    yearLegendPrev: `${mNum}T/${lastYear}`,
+    note: `Nhận xét: Kỳ năm dùng lũy kế ${mNum} tháng hai năm để so sánh cùng độ dài thời gian.`
+  };
+};
+
 export const SPDV_STRUCTURE_TABLE_DATA = {
   '2026': {
     rows: [

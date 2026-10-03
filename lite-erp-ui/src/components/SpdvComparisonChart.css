@@ -278,3 +278,110 @@
 .spdv-card-item.is-collapsed {
   min-height: auto;
 }
+
+/* ==============================================================================
+   BIỂU ĐỒ 19: DOANH THU 6 NHÓM SPDV SO VỚI CÙNG KỲ NĂM TRƯỚC
+   ============================================================================== */
+.spdv-yoy-card-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 22px 26px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.spdv-yoy-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.spdv-yoy-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spdv-yoy-main-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.spdv-yoy-sub-basis {
+  font-size: 13px;
+  color: #334155;
+}
+
+.spdv-yoy-sub-basis strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.spdv-yoy-sub-desc {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.spdv-yoy-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.spdv-yoy-panels-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.92fr 0.92fr;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .spdv-yoy-panels-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spdv-yoy-panel-wrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 8px 8px 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.spdv-yoy-panel-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.spdv-yoy-bottom-note {
+  font-size: 13.5px;
+  color: #1e293b;
+  padding: 10px 14px;
+  background-color: #f1f5f9;
+  border-radius: 6px;
+  border-left: 4px solid #1e3a8a;
+}
+
+.spdv-yoy-bottom-note strong {
+  font-weight: 700;
+  color: #0f172a;
+}

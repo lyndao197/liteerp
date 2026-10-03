@@ -165,6 +165,14 @@ export function getExportChartList({
       desc: `Bảng tích hợp so sánh TH, KH, +/- so KH, % HTKH 6 nhóm SPDV cả 3 kỳ (Tháng, Quý, Năm)`,
       period: `Ma trận 3 kỳ năm ${selectedYear}`
     },
+    {
+      key: 'c19_spdv',
+      branchId: 'spdv',
+      chartNumber: 'Biểu đồ 19',
+      title: `Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước`,
+      desc: `So sánh thực hiện 6 nhóm SPDV với cùng kỳ năm trước cho cả 3 kỳ: Tháng, Quý, Lũy kế (số %: TH/cùng kỳ)`,
+      period: `Tháng, Quý, Lũy kế ${selectedYear}`
+    },
 
     // NHÓM 6: ĐƠN VỊ THỰC HIỆN
     {

@@ -24,7 +24,7 @@ import { YEAR_CUMULATIVE_DATA, YEAR_PLAN_FULL_DATA, YEAR_ESTIMATE_DATA } from '.
 import TrendComparisonChart from './TrendComparisonChart';
 import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 import SpdvComparisonChart from './SpdvComparisonChart';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
+import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData } from '../data/revenueSpdvData';
 import UnitComparisonChart from './UnitComparisonChart';
 import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
 import ExportChartExcelModal from './ExportChartExcelModal';
@@ -2452,6 +2452,7 @@ const RevenueReportDashboard = () => {
       } else if (currentView === 'spdv') {
         const spdvData = SPDV_STRUCTURE_DATA[selectedYear] || SPDV_STRUCTURE_DATA['2026'];
         const isExportC18 = !selectedKeys || selectedKeys.includes('c18');
+        const isExportC19 = !selectedKeys || selectedKeys.includes('c19_spdv');
         const isExportStruct = !selectedKeys || selectedKeys.includes('c15_17');
 
         const spdvMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
@@ -2583,6 +2584,80 @@ const RevenueReportDashboard = () => {
 
           const wsStruct = XLSX.utils.json_to_sheet(exportRows);
           XLSX.utils.book_append_sheet(wb, wsStruct, 'Co_Cau_SPDV');
+          sheetCount++;
+        }
+
+        // Sheet 3: Biểu đồ 19 - Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước
+        if (isExportC19) {
+          const yoyData = getSpdvYoyComparisonData(selectedYear, selectedMonth);
+          const mItems = yoyData.monthItems || [];
+          const qItems = yoyData.quarterItems || [];
+          const yItems = yoyData.yearItems || [];
+
+          const exportRows = SPDV_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mCurr = Number(m.curr ?? 0);
+            const mPrev = Number(m.prev ?? 0);
+            const mDiff = Number((mCurr - mPrev).toFixed(1));
+            const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const qCurr = Number(q.curr ?? 0);
+            const qPrev = Number(q.prev ?? 0);
+            const qDiff = Number((qCurr - qPrev).toFixed(1));
+            const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const yCurr = Number(y.curr ?? 0);
+            const yPrev = Number(y.prev ?? 0);
+            const yDiff = Number((yCurr - yPrev).toFixed(1));
+            const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Nhóm SPDV': cat.name,
+              [`${monthCol} - ${yoyData.monthLegendCurr}`]: mCurr,
+              [`${monthCol} - ${yoyData.monthLegendPrev}`]: mPrev,
+              [`${monthCol} - +/- Chênh lệch`]: mDiff,
+              [`${monthCol} - % TH/cùng kỳ`]: mRate,
+              [`${quarterCol} - ${yoyData.quarterLegendCurr}`]: qCurr,
+              [`${quarterCol} - ${yoyData.quarterLegendPrev}`]: qPrev,
+              [`${quarterCol} - +/- Chênh lệch`]: qDiff,
+              [`${quarterCol} - % TH/cùng kỳ`]: qRate,
+              [`${yearCol} - ${yoyData.yearLegendCurr}`]: yCurr,
+              [`${yearCol} - ${yoyData.yearLegendPrev}`]: yPrev,
+              [`${yearCol} - +/- Chênh lệch`]: yDiff,
+              [`${yearCol} - % TH/cùng kỳ`]: yRate,
+            };
+          });
+
+          const mTotalCurr = mItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const mTotalPrev = mItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const qTotalCurr = qItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const qTotalPrev = qItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const yTotalCurr = yItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const yTotalPrev = yItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Nhóm SPDV': 'Tổng doanh thu 6 nhóm SPDV',
+            [`${monthCol} - ${yoyData.monthLegendCurr}`]: mTotalCurr,
+            [`${monthCol} - ${yoyData.monthLegendPrev}`]: mTotalPrev,
+            [`${monthCol} - +/- Chênh lệch`]: Number((mTotalCurr - mTotalPrev).toFixed(1)),
+            [`${monthCol} - % TH/cùng kỳ`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - ${yoyData.quarterLegendCurr}`]: qTotalCurr,
+            [`${quarterCol} - ${yoyData.quarterLegendPrev}`]: qTotalPrev,
+            [`${quarterCol} - +/- Chênh lệch`]: Number((qTotalCurr - qTotalPrev).toFixed(1)),
+            [`${quarterCol} - % TH/cùng kỳ`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - ${yoyData.yearLegendCurr}`]: yTotalCurr,
+            [`${yearCol} - ${yoyData.yearLegendPrev}`]: yTotalPrev,
+            [`${yearCol} - +/- Chênh lệch`]: Number((yTotalCurr - yTotalPrev).toFixed(1)),
+            [`${yearCol} - % TH/cùng kỳ`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const wsC19 = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsC19, 'So_Sanh_Cung_Ky');
           sheetCount++;
         }
 

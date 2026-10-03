@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
+import { SPDV_CATEGORIES, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData } from '../data/revenueSpdvData';
 import './SpdvDetailTable.css';
 
 const SPDV_COLOR_MAP = {
@@ -28,8 +28,22 @@ export default function SpdvDetailTable({
     ? `T${quarterStartMonth}`
     : `T${quarterStartMonth}-T${monthNum}`;
 
-  // Check if viewing structure table (Biểu đồ 16 & 17) or comparison table (Biểu đồ 18)
+  // Check if viewing YoY table (Biểu đồ 19), structure table (Biểu đồ 16 & 17), or KH comparison table (Biểu đồ 18)
+  const isYoyComparison = useMemo(() => {
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+    return (
+      key === 'spdv_yoy_comparison' ||
+      key === 'chart19' ||
+      key.includes('cung_ky') ||
+      key.includes('cùng kỳ') ||
+      title.includes('cùng kỳ') ||
+      title.includes('19')
+    );
+  }, [activeChartKey, chartTitle]);
+
   const isStructure = useMemo(() => {
+    if (isYoyComparison) return false;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
     return (
@@ -40,7 +54,7 @@ export default function SpdvDetailTable({
       key.startsWith('spdv_kh_') ||
       title.includes('cơ cấu')
     );
-  }, [activeChartKey, chartTitle]);
+  }, [activeChartKey, chartTitle, isYoyComparison]);
 
   const formatSpdvNum = (val) => {
     if (val === null || val === undefined) return '—';
@@ -154,6 +168,107 @@ export default function SpdvDetailTable({
     };
   }, [barData]);
 
+  // Biểu đồ 19 YoY Comparison Data (Tích hợp số liệu 3 hình: Tháng, Quý, Lũy kế)
+  const yoyData = getSpdvYoyComparisonData(selectedYear, selectedMonth);
+  const lastYear = (parseInt(selectedYear, 10) - 1).toString();
+
+  const integratedYoyRows = useMemo(() => {
+    const mItems = yoyData.monthItems || [];
+    const qItems = yoyData.quarterItems || [];
+    const yItems = yoyData.yearItems || [];
+
+    return SPDV_CATEGORIES.map((cat, idx) => {
+      const m = mItems.find((it) => it.id === cat.id) || {};
+      const q = qItems.find((it) => it.id === cat.id) || {};
+      const y = yItems.find((it) => it.id === cat.id) || {};
+
+      const mCurr = Number(m.curr ?? 0);
+      const mPrev = Number(m.prev ?? 0);
+      const mDiff = Number((mCurr - mPrev).toFixed(1));
+      const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const mIsPass = m.isRatePositive !== undefined ? m.isRatePositive : (mCurr >= mPrev);
+
+      const qCurr = Number(q.curr ?? 0);
+      const qPrev = Number(q.prev ?? 0);
+      const qDiff = Number((qCurr - qPrev).toFixed(1));
+      const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const qIsPass = q.isRatePositive !== undefined ? q.isRatePositive : (qCurr >= qPrev);
+
+      const yCurr = Number(y.curr ?? 0);
+      const yPrev = Number(y.prev ?? 0);
+      const yDiff = Number((yCurr - yPrev).toFixed(1));
+      const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const yIsPass = y.isRatePositive !== undefined ? y.isRatePositive : (yCurr >= yPrev);
+
+      return {
+        id: cat.id,
+        stt: idx + 1,
+        name: cat.name,
+        color: cat.color,
+        month: { curr: mCurr, prev: mPrev, diff: mDiff, rate: mRate, isPass: mIsPass },
+        quarter: { curr: qCurr, prev: qPrev, diff: qDiff, rate: qRate, isPass: qIsPass },
+        year: { curr: yCurr, prev: yPrev, diff: yDiff, rate: yRate, isPass: yIsPass }
+      };
+    });
+  }, [yoyData]);
+
+  const filteredYoyRows = useMemo(() => {
+    return integratedYoyRows.filter((item) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase().trim();
+        if (!item.name.toLowerCase().includes(q)) return false;
+      }
+      if (statusFilter === 'pass' && !item.year.isPass) return false;
+      if (statusFilter === 'fail' && item.year.isPass) return false;
+      return true;
+    });
+  }, [integratedYoyRows, searchQuery, statusFilter]);
+
+  const yoyTotals = useMemo(() => {
+    const mItems = yoyData.monthItems || [];
+    const qItems = yoyData.quarterItems || [];
+    const yItems = yoyData.yearItems || [];
+
+    const mTotalCurr = mItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+    const mTotalPrev = mItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+    const mTotalDiff = Number((mTotalCurr - mTotalPrev).toFixed(1));
+    const mTotalRate = mTotalPrev > 0 ? (mTotalCurr / mTotalPrev) * 100 : 0;
+
+    const qTotalCurr = qItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+    const qTotalPrev = qItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+    const qTotalDiff = Number((qTotalCurr - qTotalPrev).toFixed(1));
+    const qTotalRate = qTotalPrev > 0 ? (qTotalCurr / qTotalPrev) * 100 : 0;
+
+    const yTotalCurr = yItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+    const yTotalPrev = yItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+    const yTotalDiff = Number((yTotalCurr - yTotalPrev).toFixed(1));
+    const yTotalRate = yTotalPrev > 0 ? (yTotalCurr / yTotalPrev) * 100 : 0;
+
+    return {
+      month: {
+        curr: mTotalCurr,
+        prev: mTotalPrev,
+        diff: mTotalDiff,
+        rate: mTotalRate.toFixed(1).replace('.', ',') + '%',
+        isPass: mTotalRate >= 100
+      },
+      quarter: {
+        curr: qTotalCurr,
+        prev: qTotalPrev,
+        diff: qTotalDiff,
+        rate: qTotalRate.toFixed(1).replace('.', ',') + '%',
+        isPass: qTotalRate >= 100
+      },
+      year: {
+        curr: yTotalCurr,
+        prev: yTotalPrev,
+        diff: yTotalDiff,
+        rate: yTotalRate.toFixed(1).replace('.', ',') + '%',
+        isPass: yTotalRate >= 100
+      }
+    };
+  }, [yoyData]);
+
   // 3-Period Structure Table Data (Biểu đồ 16 & 17)
   const structureData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
   const monthHeader = `Tháng ${monthNum}/${selectedYear}`;
@@ -177,7 +292,9 @@ export default function SpdvDetailTable({
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
           <h3 className="spdv-detail-title">
-            {isStructure
+            {isYoyComparison
+              ? `Biểu đồ 19. Doanh thu 6 nhóm SPDV so với cùng kỳ năm trước`
+              : isStructure
               ? `Cơ cấu doanh thu theo nhóm SPDV`
               : `Biểu đồ 18. Doanh thu 6 nhóm SPDV so với KH – Năm ${selectedYear}`}
           </h3>
@@ -185,10 +302,187 @@ export default function SpdvDetailTable({
             {isStructure ? '(Đơn vị: Triệu đồng)' : '(Đơn vị: Tỷ đồng)'}
           </span>
         </div>
+        {isYoyComparison && (
+          <div style={{ fontSize: '13px', color: '#475569', marginTop: '4px' }}>
+            <strong>Cơ sở so sánh:</strong> {yoyData.monthBasis} | Quý: {yoyData.quarterBasis} | Năm: {yoyData.yearBasis}
+          </div>
+        )}
       </div>
 
       {/* TABLE VIEW */}
-      {!isStructure ? (
+      {isYoyComparison ? (
+        /* ===================================================================== */
+        /* BẢNG TỔNG HỢP BIỂU ĐỒ 19: SO VỚI CÙNG KỲ NĂM TRƯỚC (3 KỲ THÁNG, QUÝ, NĂM) */
+        /* ===================================================================== */
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th rowSpan={2} style={{ width: '45px', textAlign: 'center' }}>STT</th>
+                <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
+                  {yoyData.monthTitle} ({yoyData.monthBasis})
+                </th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-quarter">
+                  {yoyData.quarterTitle} ({yoyData.quarterBasis})
+                </th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-year">
+                  {yoyData.yearTitle} ({yoyData.yearBasis})
+                </th>
+              </tr>
+              <tr className="spdv-th-sub-row">
+                {/* Tháng */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">{yoyData.monthLegendCurr}</th>
+                <th className="spdv-th-col spdv-th-kh">{yoyData.monthLegendPrev}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/cùng kỳ</th>
+
+                {/* Quý */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">{yoyData.quarterLegendCurr}</th>
+                <th className="spdv-th-col spdv-th-kh">{yoyData.quarterLegendPrev}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/cùng kỳ</th>
+
+                {/* Năm */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">{yoyData.yearLegendCurr}</th>
+                <th className="spdv-th-col spdv-th-kh">{yoyData.yearLegendPrev}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/cùng kỳ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredYoyRows.length > 0 ? (
+                filteredYoyRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+
+                    {/* Tháng */}
+                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#1d4370' }}>
+                      {formatSpdvNum(row.month?.curr)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#475569' }}>
+                      {formatSpdvNum(row.month?.prev)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.month?.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.month?.diff >= 0 ? `+${formatSpdvNum(row.month?.diff)}` : formatSpdvNum(row.month?.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.month?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.month?.rate}
+                      </span>
+                    </td>
+
+                    {/* Quý */}
+                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#1d4370' }}>
+                      {formatSpdvNum(row.quarter?.curr)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#475569' }}>
+                      {formatSpdvNum(row.quarter?.prev)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.quarter?.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.quarter?.diff >= 0 ? `+${formatSpdvNum(row.quarter?.diff)}` : formatSpdvNum(row.quarter?.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.quarter?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.quarter?.rate}
+                      </span>
+                    </td>
+
+                    {/* Năm */}
+                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#1d4370' }}>
+                      {formatSpdvNum(row.year?.curr)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#475569' }}>
+                      {formatSpdvNum(row.year?.prev)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.year?.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.year?.diff >= 0 ? `+${formatSpdvNum(row.year?.diff)}` : formatSpdvNum(row.year?.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.year?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.year?.rate}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={14} style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
+                    Không tìm thấy nhóm sản phẩm dịch vụ nào
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">
+                  Tổng doanh thu 6 nhóm SPDV
+                </td>
+
+                {/* Tháng */}
+                <td className="spdv-td-num font-extrabold spdv-border-left" style={{ color: '#1d4370' }}>
+                  {formatSpdvNum(yoyTotals.month.curr)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#475569' }}>
+                  {formatSpdvNum(yoyTotals.month.prev)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${yoyTotals.month.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {yoyTotals.month.diff >= 0 ? `+${formatSpdvNum(yoyTotals.month.diff)}` : formatSpdvNum(yoyTotals.month.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${yoyTotals.month.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {yoyTotals.month.rate}
+                  </span>
+                </td>
+
+                {/* Quý */}
+                <td className="spdv-td-num font-extrabold spdv-border-left" style={{ color: '#1d4370' }}>
+                  {formatSpdvNum(yoyTotals.quarter.curr)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#475569' }}>
+                  {formatSpdvNum(yoyTotals.quarter.prev)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${yoyTotals.quarter.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {yoyTotals.quarter.diff >= 0 ? `+${formatSpdvNum(yoyTotals.quarter.diff)}` : formatSpdvNum(yoyTotals.quarter.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${yoyTotals.quarter.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {yoyTotals.quarter.rate}
+                  </span>
+                </td>
+
+                {/* Năm */}
+                <td className="spdv-td-num font-extrabold spdv-border-left" style={{ color: '#1d4370' }}>
+                  {formatSpdvNum(yoyTotals.year.curr)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#475569' }}>
+                  {formatSpdvNum(yoyTotals.year.prev)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${yoyTotals.year.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {yoyTotals.year.diff >= 0 ? `+${formatSpdvNum(yoyTotals.year.diff)}` : formatSpdvNum(yoyTotals.year.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${yoyTotals.year.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {yoyTotals.year.rate}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          {/* Bottom Note */}
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #1e3a8a', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
+            <strong>Nhận xét:</strong> {yoyData.note || 'Kỳ năm dùng lũy kế 8 tháng hai năm để so sánh cùng độ dài thời gian.'}
+          </div>
+        </div>
+      ) : !isStructure ? (
         /* ===================================================================== */
         /* BẢNG TỔNG HỢP BIỂU ĐỒ 18 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
         /* ===================================================================== */
