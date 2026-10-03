@@ -1,0 +1,464 @@
+/* Export Chart Excel Modal Styles */
+
+.ece-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: eceFadeIn 0.2s ease-out;
+}
+
+@keyframes eceFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ece-modal-container {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 620px;
+  max-width: 95vw;
+  max-height: 88vh;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  animation: eceScaleIn 0.22s ease-out;
+}
+
+@keyframes eceScaleIn {
+  from {
+    transform: scale(0.96) translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header */
+.ece-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ece-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ece-header-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ece-excel-icon {
+  color: #059669;
+}
+
+.ece-modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ece-modal-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.ece-btn-close {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: #94a3b8;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.ece-btn-close:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Body */
+.ece-modal-body {
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Filter Tabs */
+.ece-filter-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.ece-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ece-tab-btn:hover {
+  color: #1e293b;
+}
+
+.ece-tab-btn.active {
+  background-color: #ffffff;
+  color: #e11d48;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.ece-tab-count {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+.ece-tab-btn.active .ece-tab-count {
+  background-color: #ffe4e6;
+  color: #e11d48;
+  font-weight: 700;
+}
+
+/* Select All Banner */
+.ece-select-all-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ece-select-all-banner:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.ece-select-all-info {
+  flex: 1;
+}
+
+.ece-select-all-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.ece-select-all-sub {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 1px;
+}
+
+.ece-btn-clear-selection {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #e11d48;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s;
+}
+
+.ece-btn-clear-selection:hover {
+  background-color: #ffe4e6;
+}
+
+/* Custom Checkbox */
+.ece-checkbox-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.ece-checkbox-custom.checked {
+  background-color: #e11d48;
+  border-color: #e11d48;
+}
+
+.ece-checkbox-custom.small {
+  width: 16px;
+  height: 16px;
+}
+
+/* Scroll Area */
+.ece-charts-scroll-area {
+  overflow-y: auto;
+  max-height: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 4px;
+}
+
+.ece-charts-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ece-charts-scroll-area::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* Group Section */
+.ece-chart-group-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ece-group-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 2px;
+}
+
+.ece-group-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e11d48;
+  background-color: #ffe4e6;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.ece-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Chart Cards List */
+.ece-chart-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ece-chart-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ece-chart-card:hover {
+  border-color: #f43f5e;
+  background-color: #fff1f2;
+}
+
+.ece-chart-card.selected {
+  border-color: #f43f5e;
+  background-color: #fff8f8;
+  box-shadow: 0 1px 3px rgba(225, 29, 72, 0.08);
+}
+
+.ece-chart-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ece-chart-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.ece-chart-number-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0369a1;
+  background-color: #e0f2fe;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.ece-chart-period-tag {
+  font-size: 11px;
+  color: #64748b;
+  background-color: #f1f5f9;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+
+.ece-chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+.ece-chart-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* Export Options */
+.ece-export-options-box {
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+
+.ece-option-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ece-option-text {
+  font-size: 12.5px;
+  color: #475569;
+  font-weight: 500;
+}
+
+/* Footer */
+.ece-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.ece-footer-summary {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.ece-footer-summary strong {
+  color: #0f172a;
+}
+
+.ece-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ece-btn-cancel {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ece-btn-cancel:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.ece-btn-export-submit {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #e11d48;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(225, 29, 72, 0.25);
+  transition: all 0.15s ease;
+}
+
+.ece-btn-export-submit:hover:not(:disabled) {
+  background-color: #be123c;
+  box-shadow: 0 4px 6px rgba(225, 29, 72, 0.35);
+}
+
+.ece-btn-export-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}

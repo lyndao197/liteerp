@@ -22,11 +22,12 @@ import { QUARTER_CUMULATIVE_DATA, QUARTER_ESTIMATE_DATA, QUARTER_PREV_DATA, QUAR
 import YearComparisonChart from './YearComparisonChart';
 import { YEAR_CUMULATIVE_DATA, YEAR_PLAN_FULL_DATA, YEAR_ESTIMATE_DATA } from '../data/revenueYearData';
 import TrendComparisonChart from './TrendComparisonChart';
-import { MONTH_TREND_DATA } from '../data/revenueTrendData';
+import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 import SpdvComparisonChart from './SpdvComparisonChart';
-import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA } from '../data/revenueSpdvData';
+import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData } from '../data/revenueSpdvData';
 import UnitComparisonChart from './UnitComparisonChart';
-import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA } from '../data/revenueUnitData';
+import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
+import ExportChartExcelModal from './ExportChartExcelModal';
 import InternalExternalRevenueChart from './InternalExternalRevenueChart';
 import {
   INTERNAL_EXTERNAL_CATEGORIES,
@@ -1454,7 +1455,8 @@ const RevenueReportDashboard = () => {
   };
 
   // Export to Excel (kèm ảnh biểu đồ trên từng sheet)
-  const handleExportExcel = async () => {
+  const handleExportExcel = async (exportConfig = {}) => {
+    const { selectedKeys = null, includeVisualCharts = true } = exportConfig;
     try {
       if (currentView === 'month') {
         const monthNum = parseInt(selectedMonth.match(/\d+/)?.[0] || '8', 10);
@@ -1534,14 +1536,17 @@ const RevenueReportDashboard = () => {
           }
         ];
 
-        // Lọc CHỈ biểu đồ không bị ẩn
-        const activeCharts = ALL_MONTH_CHARTS.filter(c => c.isVisible);
+        // Lọc biểu đồ được chọn hoặc không bị ẩn
+        const activeCharts = selectedKeys
+          ? ALL_MONTH_CHARTS.filter(c => selectedKeys.includes(c.key))
+          : ALL_MONTH_CHARTS.filter(c => c.isVisible);
+
         if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
-        showToast(`Đang chụp hình ảnh và xuất ${activeCharts.length} biểu đồ sang Excel...`);
+        showToast(`Đang xuất ${activeCharts.length} biểu đồ sang Excel...`);
 
         let excelJSSucceeded = false;
         try {
@@ -1810,13 +1815,17 @@ const RevenueReportDashboard = () => {
           }
         ];
 
-        const activeCharts = ALL_QUARTER_CHARTS.filter(c => c.isVisible);
+        // Lọc biểu đồ được chọn hoặc không bị ẩn
+        const activeCharts = selectedKeys
+          ? ALL_QUARTER_CHARTS.filter(c => selectedKeys.includes(c.key))
+          : ALL_QUARTER_CHARTS.filter(c => c.isVisible);
+
         if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
-        showToast(`Đang chụp hình ảnh và xuất ${activeCharts.length} biểu đồ Quý sang Excel...`);
+        showToast(`Đang xuất ${activeCharts.length} biểu đồ Quý sang Excel...`);
 
         let excelJSSucceeded = false;
         try {
@@ -2046,13 +2055,17 @@ const RevenueReportDashboard = () => {
           }
         ];
 
-        const activeCharts = ALL_YEAR_CHARTS.filter(c => c.isVisible);
+        // Lọc biểu đồ được chọn hoặc không bị ẩn
+        const activeCharts = selectedKeys
+          ? ALL_YEAR_CHARTS.filter(c => selectedKeys.includes(c.key))
+          : ALL_YEAR_CHARTS.filter(c => c.isVisible);
+
         if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
-        showToast(`Đang chụp hình ảnh và xuất ${activeCharts.length} biểu đồ Năm sang Excel...`);
+        showToast(`Đang xuất ${activeCharts.length} biểu đồ Năm sang Excel...`);
 
         let excelJSSucceeded = false;
         try {
@@ -2383,297 +2396,334 @@ const RevenueReportDashboard = () => {
 
         if (!excelJSSucceeded) {
           const wb = XLSX.utils.book_new();
-          const sheetRows = [
-            ['BÁO CÁO DOANH THU - XU HƯỚNG THEO THỜI GIAN'],
-            [`Biểu đồ 14. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`],
-            [`Kỳ báo cáo: 12 Tháng năm ${selectedYear}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
-            [],
-            [`I. BẢNG XU HƯỚNG DOANH THU TỪNG THÁNG NĂM ${selectedYear} SO VỚI NĂM ${prevYear} (Đơn vị: Triệu đồng)`],
-            ['STT', 'Tháng', 'Đơn vị tính', `TH ${selectedYear}`, `TH ${prevYear}`, 'Chênh lệch (TH - CK)', 'Tăng trưởng YoY (%)'],
-            ...trendData.map((item, idx) => [
-              idx + 1,
-              `${item.name} (${item.month})`,
-              'Triệu đồng',
-              item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : '-',
-              item.th2025,
-              item.th2026 !== null && item.th2026 !== undefined ? Number((item.th2026 - item.th2025).toFixed(1)) : '-',
-              item.growth || '-'
-            ])
-          ];
-          const ws = XLSX.utils.aoa_to_sheet(sheetRows);
-          ws['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 24 }, { wch: 22 }];
-          XLSX.utils.book_append_sheet(wb, ws, 'BieuDo_14_XuHuong_DT_12Thang');
+          const exportC14 = !selectedKeys || selectedKeys.includes('c14');
+          const exportC14Plan = !selectedKeys || selectedKeys.includes('c14_plan');
+
+          if (exportC14) {
+            const sheetRows = [
+              ['BÁO CÁO DOANH THU - XU HƯỚNG THEO THỜI GIAN'],
+              [`Biểu đồ 14. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevYear}`],
+              [`Kỳ báo cáo: 12 Tháng năm ${selectedYear}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
+              [],
+              [`I. BẢNG XU HƯỚNG DOANH THU TỪNG THÁNG NĂM ${selectedYear} SO VỚI NĂM ${prevYear} (Đơn vị: Triệu đồng)`],
+              ['STT', 'Tháng', 'Đơn vị tính', `TH ${selectedYear}`, `TH ${prevYear}`, 'Chênh lệch (TH - CK)', 'Tăng trưởng YoY (%)'],
+              ...trendData.map((item, idx) => [
+                idx + 1,
+                `${item.name} (${item.month})`,
+                'Triệu đồng',
+                item.th2026 !== null && item.th2026 !== undefined ? item.th2026 : '-',
+                item.th2025,
+                item.th2026 !== null && item.th2026 !== undefined ? Number((item.th2026 - item.th2025).toFixed(1)) : '-',
+                item.growth || '-'
+              ])
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+            ws['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 24 }, { wch: 22 }];
+            XLSX.utils.book_append_sheet(wb, ws, 'BieuDo_14_XuHuong_DT_12Thang');
+          }
+
+          if (exportC14Plan) {
+            const planTrendData = MONTH_PLAN_TREND_DATA[selectedYear] || MONTH_PLAN_TREND_DATA['2026'];
+            const planSheetRows = [
+              ['BÁO CÁO DOANH THU - XU HƯỚNG THEO THỜI GIAN'],
+              [`Biểu đồ 14b. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với kế hoạch`],
+              [`Kỳ báo cáo: 12 Tháng năm ${selectedYear}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
+              [],
+              [`I. BẢNG XU HƯỚNG DOANH THU TỪNG THÁNG NĂM ${selectedYear} SO VỚI KẾ HOẠCH (Đơn vị: Triệu đồng)`],
+              ['STT', 'Tháng', 'Đơn vị tính', `TH ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (TH - KH)', 'Tỷ lệ HTKH (%)'],
+              ...planTrendData.map((item, idx) => [
+                idx + 1,
+                `${item.name} (${item.month})`,
+                'Triệu đồng',
+                item.th !== null && item.th !== undefined ? item.th : '-',
+                item.kh,
+                item.th !== null && item.th !== undefined ? Number((item.th - item.kh).toFixed(1)) : '-',
+                item.rate || '-'
+              ])
+            ];
+            const wsPlan = XLSX.utils.aoa_to_sheet(planSheetRows);
+            wsPlan['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 24 }, { wch: 22 }];
+            XLSX.utils.book_append_sheet(wb, wsPlan, 'BieuDo_14b_XuHuong_vs_KH');
+          }
+
           XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Xu_Huong_12_Thang_${selectedYear}.xlsx`);
-          showToast(`Đã xuất Excel: Biểu đồ 14 thành công!`);
+          showToast(`Đã xuất Excel báo cáo xu hướng thành công!`);
         }
       } else if (currentView === 'spdv') {
         const spdvData = SPDV_STRUCTURE_DATA[selectedYear] || SPDV_STRUCTURE_DATA['2026'];
+        const isExportC18 = !selectedKeys || selectedKeys.includes('c18');
+        const isExportStruct = !selectedKeys || selectedKeys.includes('c15_17');
 
-        const ALL_SPDV_CHARTS = [
-          {
-            key: 'thMonth',
-            sheetName: 'TH_Thang8',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu thực hiện theo nhóm SPDV',
-            subtitle: `Thực hiện - ${selectedMonth}/${selectedYear} (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedMonth}/${selectedYear}`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: spdvData.thMonth
-          },
-          {
-            key: 'khMonth',
-            sheetName: 'KH_Thang8',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu kế hoạch theo nhóm SPDV',
-            subtitle: `Kế hoạch - ${selectedMonth}/${selectedYear} (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedMonth}/${selectedYear}`,
-            tag: 'Kế hoạch',
-            tagType: 'kh',
-            chart: spdvData.khMonth
-          },
-          {
-            key: 'thQuarter',
-            sheetName: 'TH_Quy3_LK',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu thực hiện theo nhóm SPDV',
-            subtitle: `Thực hiện - ${selectedQuarter}/${selectedYear} (lũy kế) (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedQuarter}/${selectedYear} (lũy kế)`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: spdvData.thQuarter
-          },
-          {
-            key: 'khQuarter',
-            sheetName: 'KH_Quy3',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu kế hoạch theo nhóm SPDV',
-            subtitle: `Kế hoạch - ${selectedQuarter}/${selectedYear} (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedQuarter}/${selectedYear}`,
-            tag: 'Kế hoạch',
-            tagType: 'kh',
-            chart: spdvData.khQuarter
-          },
-          {
-            key: 'thYear',
-            sheetName: 'TH_Nam_LK',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu thực hiện theo nhóm SPDV',
-            subtitle: `Thực hiện - Năm ${selectedYear} (lũy kế) (Đơn vị: Triệu đồng)`,
-            periodText: `Năm ${selectedYear} (lũy kế)`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: spdvData.thYear
-          },
-          {
-            key: 'khYear',
-            sheetName: 'KH_Nam',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO NHÓM SPDV',
-            chartTitle: 'Cơ cấu doanh thu kế hoạch theo nhóm SPDV',
-            subtitle: `Kế hoạch - Năm ${selectedYear} (Đơn vị: Triệu đồng)`,
-            periodText: `Năm ${selectedYear}`,
-            tag: 'Kế hoạch',
-            tagType: 'kh',
-            chart: spdvData.khYear
+        const spdvMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
+        const spdvQuarterNum = Math.ceil(spdvMonthNum / 3);
+        const spdvQuarterRoman = `${spdvQuarterNum}`;
+        const spdvQuarterStartMonth = (spdvQuarterNum - 1) * 3 + 1;
+        const spdvQuarterCumText = spdvQuarterStartMonth === spdvMonthNum
+          ? `T${spdvQuarterStartMonth}`
+          : `T${spdvQuarterStartMonth}-T${spdvMonthNum}`;
+
+        const monthCol = `Tháng ${spdvMonthNum}/${selectedYear}`;
+        const quarterCol = `Quý ${spdvQuarterRoman}/${selectedYear} (lũy kế ${spdvQuarterCumText})`;
+        const yearCol = `Năm ${selectedYear} (lũy kế ${spdvMonthNum}T)`;
+
+        const wb = XLSX.utils.book_new();
+        let sheetCount = 0;
+
+        // Sheet 1: Biểu đồ 18 - So sánh 6 nhóm SPDV với KH
+        if (isExportC18) {
+          const spdvBarData = getSpdvBarComparisonData(selectedYear, selectedMonth);
+          const mItems = spdvBarData.monthItems || [];
+          const qItems = spdvBarData.quarterItems || [];
+          const yItems = spdvBarData.yearItems || [];
+
+          const exportRows = SPDV_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mTh = Number(m.th ?? 0);
+            const mKh = Number(m.kh ?? 0);
+            const mDiff = Number((mTh - mKh).toFixed(1));
+            const mRate = m.rate || (mKh > 0 ? ((mTh / mKh) * 100).toFixed(1) + '%' : '0%');
+
+            const qTh = Number(q.th ?? 0);
+            const qKh = Number(q.kh ?? 0);
+            const qDiff = Number((qTh - qKh).toFixed(1));
+            const qRate = q.rate || (qKh > 0 ? ((qTh / qKh) * 100).toFixed(1) + '%' : '0%');
+
+            const yTh = Number(y.th ?? 0);
+            const yKh = Number(y.kh ?? 0);
+            const yDiff = Number((yTh - yKh).toFixed(1));
+            const yRate = y.rate || (yKh > 0 ? ((yTh / yKh) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Nhóm SPDV': cat.name,
+              [`${monthCol} - TH`]: mTh,
+              [`${monthCol} - KH`]: mKh,
+              [`${monthCol} - +/- so KH`]: mDiff,
+              [`${monthCol} - % HTKH`]: mRate,
+              [`${quarterCol} - Ước TH`]: qTh,
+              [`${quarterCol} - KH`]: qKh,
+              [`${quarterCol} - +/- so KH`]: qDiff,
+              [`${quarterCol} - % HTKH`]: qRate,
+              [`${yearCol} - Ước TH`]: yTh,
+              [`${yearCol} - KH`]: yKh,
+              [`${yearCol} - +/- so KH`]: yDiff,
+              [`${yearCol} - % HTKH`]: yRate,
+            };
+          });
+
+          const mTotalTh = mItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const mTotalKh = mItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const qTotalTh = qItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const qTotalKh = qItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const yTotalTh = yItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const yTotalKh = yItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Nhóm SPDV': 'Tổng doanh thu 6 nhóm SPDV',
+            [`${monthCol} - TH`]: mTotalTh,
+            [`${monthCol} - KH`]: mTotalKh,
+            [`${monthCol} - +/- so KH`]: Number((mTotalTh - mTotalKh).toFixed(1)),
+            [`${monthCol} - % HTKH`]: mTotalKh > 0 ? ((mTotalTh / mTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - Ước TH`]: qTotalTh,
+            [`${quarterCol} - KH`]: qTotalKh,
+            [`${quarterCol} - +/- so KH`]: Number((qTotalTh - qTotalKh).toFixed(1)),
+            [`${quarterCol} - % HTKH`]: qTotalKh > 0 ? ((qTotalTh / qTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - Ước TH`]: yTotalTh,
+            [`${yearCol} - KH`]: yTotalKh,
+            [`${yearCol} - +/- so KH`]: Number((yTotalTh - yTotalKh).toFixed(1)),
+            [`${yearCol} - % HTKH`]: yTotalKh > 0 ? ((yTotalTh / yTotalKh) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const wsC18 = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsC18, 'So_Sanh_SPDV');
+          sheetCount++;
+        }
+
+        // Sheet 2: Biểu đồ 15-17 - Cơ cấu 6 nhóm SPDV
+        if (isExportStruct) {
+          const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
+          const exportRows = (spdvTableData.rows || []).map(r => ({
+            'Nhóm SPDV': r.name,
+            [`${monthCol} - TH`]: r.month?.th ?? '',
+            [`${monthCol} - Tỷ trọng TH`]: r.month?.thShare ?? '',
+            [`${monthCol} - KH`]: r.month?.kh ?? '',
+            [`${monthCol} - Tỷ trọng KH`]: r.month?.khShare ?? '',
+            [`${quarterCol} - TH`]: r.quarter?.th ?? '',
+            [`${quarterCol} - Tỷ trọng TH`]: r.quarter?.thShare ?? '',
+            [`${quarterCol} - KH`]: r.quarter?.kh ?? '',
+            [`${quarterCol} - Tỷ trọng KH`]: r.quarter?.khShare ?? '',
+            [`${yearCol} - TH`]: r.year?.th ?? '',
+            [`${yearCol} - Tỷ trọng TH`]: r.year?.thShare ?? '',
+            [`${yearCol} - KH`]: r.year?.kh ?? '',
+            [`${yearCol} - Tỷ trọng KH`]: r.year?.khShare ?? '',
+          }));
+
+          if (spdvTableData.total) {
+            const tot = spdvTableData.total;
+            exportRows.push({
+              'Nhóm SPDV': tot.name || 'Tổng doanh thu',
+              [`${monthCol} - TH`]: tot.month?.th ?? '',
+              [`${monthCol} - Tỷ trọng TH`]: tot.month?.thShare ?? '',
+              [`${monthCol} - KH`]: tot.month?.kh ?? '',
+              [`${monthCol} - Tỷ trọng KH`]: tot.month?.khShare ?? '',
+              [`${quarterCol} - TH`]: tot.quarter?.th ?? '',
+              [`${quarterCol} - Tỷ trọng TH`]: tot.quarter?.thShare ?? '',
+              [`${quarterCol} - KH`]: tot.quarter?.kh ?? '',
+              [`${quarterCol} - Tỷ trọng KH`]: tot.quarter?.khShare ?? '',
+              [`${yearCol} - TH`]: tot.year?.th ?? '',
+              [`${yearCol} - Tỷ trọng TH`]: tot.year?.thShare ?? '',
+              [`${yearCol} - KH`]: tot.year?.kh ?? '',
+              [`${yearCol} - Tỷ trọng KH`]: tot.year?.khShare ?? '',
+            });
           }
-        ];
 
-        // Lọc CHỈ các biểu đồ không bị ẩn (chỉ export các biểu đồ đang mở)
-        const activeCharts = ALL_SPDV_CHARTS.filter(c => spdvVisibleCards[c.key]);
+          const wsStruct = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsStruct, 'Co_Cau_SPDV');
+          sheetCount++;
+        }
 
-        if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+        if (sheetCount === 0) {
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
-        showToast(`Đang xuất ${activeCharts.length} biểu đồ sang ${activeCharts.length} sheet Excel (kèm bảng số liệu bên cạnh)...`);
-
-        let excelJSSucceeded = false;
-        try {
-          const ExcelJS = await getExcelJS();
-          if (ExcelJS) {
-            const workbook = new ExcelJS.Workbook();
-            workbook.creator = 'Lite ERP Viettel';
-            workbook.created = new Date();
-
-            for (const item of activeCharts) {
-              const png = generateSingleDonutPng({
-                title: item.chartTitle,
-                subtitle: item.subtitle,
-                tag: item.tag,
-                tagType: item.tagType,
-                chart: item.chart
-              });
-
-              addSideBySideDonutSheet(workbook, {
-                sheetName: item.sheetName,
-                mainTitle: item.mainTitle,
-                chartTitle: item.chartTitle,
-                periodText: item.periodText,
-                chart: item.chart,
-                pngData: png
-              });
-            }
-
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Bao_Cao_Doanh_Thu_Nhom_SPDV_${selectedYear}_(${activeCharts.length}_Bieu_Do).xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            showToast(`Đã xuất ${activeCharts.length} biểu đồ sang ${activeCharts.length} sheet Excel (kèm bảng chi tiết bên cạnh) thành công!`);
-            excelJSSucceeded = true;
-          }
-        } catch (excelErr) {
-          console.warn('ExcelJS SPDV export failed, falling back to XLSX:', excelErr);
-        }
-
-        if (!excelJSSucceeded) {
-          const wb = XLSX.utils.book_new();
-          for (const item of activeCharts) {
-            const sheetRows = [
-              [item.mainTitle],
-              [item.chartTitle],
-              [`Kỳ báo cáo: ${item.periodText}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
-              [],
-              [`I. BẢNG SỐ LIỆU CHI TIẾT (Đơn vị: ${item.chart.unit || 'Triệu đồng'})`],
-              ['STT', 'Tên nhóm SPDV', 'Tỷ trọng (%)', `Giá trị (${item.chart.unit || 'Tr.đ'})`],
-              ...item.chart.slices.map((sl, idx) => [
-                idx + 1,
-                sl.name,
-                sl.formattedPercent || `${sl.percent}%`,
-                sl.value
-              ]),
-              ['', 'TỔNG CỘNG', '100,0%', item.chart.formattedTotal || item.chart.total]
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(sheetRows);
-            ws['!cols'] = [{ wch: 6 }, { wch: 34 }, { wch: 16 }, { wch: 22 }];
-            XLSX.utils.book_append_sheet(wb, ws, item.sheetName.slice(0, 31));
-          }
-          XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Nhom_SPDV_${selectedYear}_(${activeCharts.length}_Bieu_Do).xlsx`);
-          showToast(`Đã xuất Excel: ${activeCharts.length} biểu đồ (${activeCharts.length} Sheet) thành công!`);
-        }
+        XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Nhom_SPDV_${selectedYear}.xlsx`);
+        showToast(`Đã xuất Excel: ${sheetCount} biểu đồ/bảng thành công!`);
       } else if (currentView === 'unit') {
-        const unitData = UNIT_STRUCTURE_DATA[selectedYear] || UNIT_STRUCTURE_DATA['2026'];
-        const ALL_UNIT_CHARTS = [
-          {
-            key: 'c21Month',
-            sheetName: 'TH_DonVi_Thang8',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO ĐƠN VỊ THỰC HIỆN',
-            chartTitle: 'Cơ cấu doanh thu theo đơn vị thực hiện',
-            subtitle: `Thực hiện - ${selectedMonth}/${selectedYear} (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedMonth}/${selectedYear}`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: unitData.thMonth
-          },
-          {
-            key: 'c21Quarter',
-            sheetName: 'TH_DonVi_Quy3_LK',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO ĐƠN VỊ THỰC HIỆN',
-            chartTitle: 'Cơ cấu doanh thu theo đơn vị thực hiện',
-            subtitle: `Thực hiện - ${selectedQuarter}/${selectedYear} (lũy kế) (Đơn vị: Triệu đồng)`,
-            periodText: `${selectedQuarter}/${selectedYear} (lũy kế)`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: unitData.thQuarter
-          },
-          {
-            key: 'c21Year',
-            sheetName: 'TH_DonVi_Nam_LK',
-            mainTitle: 'BÁO CÁO DOANH THU - THEO ĐƠN VỊ THỰC HIỆN',
-            chartTitle: 'Cơ cấu doanh thu theo đơn vị thực hiện',
-            subtitle: `Thực hiện - Năm ${selectedYear} (lũy kế) (Đơn vị: Triệu đồng)`,
-            periodText: `Năm ${selectedYear} (lũy kế)`,
-            tag: 'Thực hiện',
-            tagType: 'th',
-            chart: unitData.thYear
-          }
-        ];
+        const wb = XLSX.utils.book_new();
+        let sheetCount = 0;
 
-        const activeCharts = ALL_UNIT_CHARTS.filter(c => unitVisibleCards[c.key]);
-        if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+        const isExportC22 = !selectedKeys || selectedKeys.includes('c22');
+        const isExportC21 = !selectedKeys || selectedKeys.includes('c21');
+
+        const unitMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
+        const unitQuarterNum = Math.ceil(unitMonthNum / 3);
+        const unitQuarterRoman = `${unitQuarterNum}`;
+        const unitQuarterStartMonth = (unitQuarterNum - 1) * 3 + 1;
+        const unitQuarterCumText = unitQuarterStartMonth === unitMonthNum
+          ? `T${unitQuarterStartMonth}`
+          : `T${unitQuarterStartMonth}-T${unitMonthNum}`;
+
+        const monthCol = `Tháng ${unitMonthNum}/${selectedYear}`;
+        const quarterCol = `Quý ${unitQuarterRoman}/${selectedYear} (lũy kế ${unitQuarterCumText})`;
+        const yearCol = `Năm ${selectedYear} (lũy kế ${unitMonthNum}T)`;
+
+        // Sheet 1: Biểu đồ 22 - Doanh thu theo đơn vị so với KH
+        if (isExportC22) {
+          const yearPlanData = UNIT_PLAN_COMPARISON_DATA[selectedYear] || UNIT_PLAN_COMPARISON_DATA['2026'];
+          const mItems = yearPlanData?.month?.items || [];
+          const qItems = yearPlanData?.quarter?.items || [];
+          const yItems = yearPlanData?.year?.items || [];
+
+          const exportRows = UNIT_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mTh = Number(m.th ?? 0);
+            const mKh = Number(m.kh ?? 0);
+            const mDiff = Number((mTh - mKh).toFixed(1));
+            const mRate = m.rate || (mKh > 0 ? ((mTh / mKh) * 100).toFixed(1) + '%' : '0%');
+
+            const qTh = Number(q.th ?? 0);
+            const qKh = Number(q.kh ?? 0);
+            const qDiff = Number((qTh - qKh).toFixed(1));
+            const qRate = q.rate || (qKh > 0 ? ((qTh / qKh) * 100).toFixed(1) + '%' : '0%');
+
+            const yTh = Number(y.th ?? 0);
+            const yKh = Number(y.kh ?? 0);
+            const yDiff = Number((yTh - yKh).toFixed(1));
+            const yRate = y.rate || (yKh > 0 ? ((yTh / yKh) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Đơn vị thực hiện': cat.name,
+              [`${monthCol} - TH`]: mTh,
+              [`${monthCol} - KH`]: mKh,
+              [`${monthCol} - +/- so KH`]: mDiff,
+              [`${monthCol} - % HTKH`]: mRate,
+              [`${quarterCol} - Ước TH`]: qTh,
+              [`${quarterCol} - KH`]: qKh,
+              [`${quarterCol} - +/- so KH`]: qDiff,
+              [`${quarterCol} - % HTKH`]: qRate,
+              [`${yearCol} - Ước TH`]: yTh,
+              [`${yearCol} - KH`]: yKh,
+              [`${yearCol} - +/- so KH`]: yDiff,
+              [`${yearCol} - % HTKH`]: yRate,
+            };
+          });
+
+          const mTotalTh = mItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const mTotalKh = mItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const qTotalTh = qItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const qTotalKh = qItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+          const yTotalTh = yItems.reduce((acc, it) => acc + (Number(it.th) || 0), 0);
+          const yTotalKh = yItems.reduce((acc, it) => acc + (Number(it.kh) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Đơn vị thực hiện': 'Tổng doanh thu',
+            [`${monthCol} - TH`]: mTotalTh,
+            [`${monthCol} - KH`]: mTotalKh,
+            [`${monthCol} - +/- so KH`]: Number((mTotalTh - mTotalKh).toFixed(1)),
+            [`${monthCol} - % HTKH`]: mTotalKh > 0 ? ((mTotalTh / mTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - Ước TH`]: qTotalTh,
+            [`${quarterCol} - KH`]: qTotalKh,
+            [`${quarterCol} - +/- so KH`]: Number((qTotalTh - qTotalKh).toFixed(1)),
+            [`${quarterCol} - % HTKH`]: qTotalKh > 0 ? ((qTotalTh / qTotalKh) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - Ước TH`]: yTotalTh,
+            [`${yearCol} - KH`]: yTotalKh,
+            [`${yearCol} - +/- so KH`]: Number((yTotalTh - yTotalKh).toFixed(1)),
+            [`${yearCol} - % HTKH`]: yTotalKh > 0 ? ((yTotalTh / yTotalKh) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const wsC22 = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsC22, 'So_Sanh_Don_Vi');
+          sheetCount++;
+        }
+
+        // Sheet 2: Biểu đồ 21 - Cơ cấu theo đơn vị
+        if (isExportC21) {
+          const unitTableData = UNIT_STRUCTURE_TABLE_DATA[selectedYear] || UNIT_STRUCTURE_TABLE_DATA['2026'];
+          const exportRows = (unitTableData.rows || []).map(r => ({
+            'Đơn vị thực hiện': r.name,
+            [`${monthCol} - TH`]: r.month?.th ?? '',
+            [`${monthCol} - Tỷ trọng TH`]: r.month?.thShare ?? '',
+            [`${quarterCol} - TH`]: r.quarter?.th ?? '',
+            [`${quarterCol} - Tỷ trọng TH`]: r.quarter?.thShare ?? '',
+            [`${yearCol} - TH`]: r.year?.th ?? '',
+            [`${yearCol} - Tỷ trọng TH`]: r.year?.thShare ?? '',
+          }));
+
+          if (unitTableData.total) {
+            const tot = unitTableData.total;
+            exportRows.push({
+              'Đơn vị thực hiện': tot.name || 'Tổng doanh thu',
+              [`${monthCol} - TH`]: tot.month?.th ?? '',
+              [`${monthCol} - Tỷ trọng TH`]: tot.month?.thShare ?? '',
+              [`${quarterCol} - TH`]: tot.quarter?.th ?? '',
+              [`${quarterCol} - Tỷ trọng TH`]: tot.quarter?.thShare ?? '',
+              [`${yearCol} - TH`]: tot.year?.th ?? '',
+              [`${yearCol} - Tỷ trọng TH`]: tot.year?.thShare ?? '',
+            });
+          }
+
+          const wsC21 = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsC21, 'Co_Cau_Don_Vi');
+          sheetCount++;
+        }
+
+        if (sheetCount === 0) {
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
-        showToast(`Đang xuất ${activeCharts.length} biểu đồ sang ${activeCharts.length} sheet Excel (kèm bảng số liệu bên cạnh)...`);
-
-        let excelJSSucceeded = false;
-        try {
-          const ExcelJS = await getExcelJS();
-          if (ExcelJS) {
-            const workbook = new ExcelJS.Workbook();
-            workbook.creator = 'Lite ERP Viettel';
-            workbook.created = new Date();
-
-            for (const item of activeCharts) {
-              const png = generateSingleDonutPng({
-                title: item.chartTitle,
-                subtitle: item.subtitle,
-                tag: item.tag,
-                tagType: item.tagType,
-                chart: item.chart
-              });
-
-              addSideBySideDonutSheet(workbook, {
-                sheetName: item.sheetName,
-                mainTitle: item.mainTitle,
-                chartTitle: item.chartTitle,
-                periodText: item.periodText,
-                chart: item.chart,
-                pngData: png
-              });
-            }
-
-            const buffer = await workbook.xlsx.writeBuffer();
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Bao_Cao_Doanh_Thu_Don_Vi_${selectedYear}_(${activeCharts.length}_Bieu_Do).xlsx`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            showToast(`Đã xuất ${activeCharts.length} biểu đồ sang ${activeCharts.length} sheet Excel (kèm bảng chi tiết bên cạnh) thành công!`);
-            excelJSSucceeded = true;
-          }
-        } catch (excelErr) {
-          console.warn('ExcelJS Unit export failed, falling back to XLSX:', excelErr);
-        }
-
-        if (!excelJSSucceeded) {
-          const wb = XLSX.utils.book_new();
-          for (const item of activeCharts) {
-            const sheetRows = [
-              [item.mainTitle],
-              [item.chartTitle],
-              [`Kỳ báo cáo: ${item.periodText}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
-              [],
-              [`I. BẢNG SỐ LIỆU CHI TIẾT (Đơn vị: ${item.chart.unit || 'Triệu đồng'})`],
-              ['STT', 'Đơn vị / Trung tâm', 'Tỷ trọng (%)', `Giá trị (${item.chart.unit || 'Tr.đ'})`],
-              ...item.chart.slices.map((sl, idx) => [
-                idx + 1,
-                sl.name,
-                sl.formattedPercent || `${sl.percent}%`,
-                sl.value
-              ]),
-              ['', 'TỔNG CỘNG', '100,0%', item.chart.formattedTotal || item.chart.total]
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(sheetRows);
-            ws['!cols'] = [{ wch: 6 }, { wch: 34 }, { wch: 16 }, { wch: 22 }];
-            XLSX.utils.book_append_sheet(wb, ws, item.sheetName.slice(0, 31));
-          }
-          XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Don_Vi_${selectedYear}_(${activeCharts.length}_Bieu_Do).xlsx`);
-          showToast(`Đã xuất Excel: ${activeCharts.length} biểu đồ (${activeCharts.length} Sheet) thành công!`);
-        }
+        XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Don_Vi_${selectedYear}.xlsx`);
+        showToast(`Đã xuất Excel: ${sheetCount} biểu đồ/bảng thành công!`);
       } else if (currentView === 'plan_progress') {
         const inExData = INTERNAL_EXTERNAL_DATA[selectedYear] || INTERNAL_EXTERNAL_DATA['2026'];
         const domIntData = DOMESTIC_INTERNATIONAL_DATA[selectedYear] || DOMESTIC_INTERNATIONAL_DATA['2026'];
@@ -2816,11 +2866,13 @@ const RevenueReportDashboard = () => {
           }
         ];
 
-        // Lọc CHỈ các biểu đồ không bị ẩn (chỉ export các biểu đồ đang mở)
-        const activeCharts = ALL_INEX_CHARTS.filter(c => inExVisibleCards[c.key]);
+        // Lọc biểu đồ được chọn hoặc không bị ẩn
+        const activeCharts = selectedKeys
+          ? ALL_INEX_CHARTS.filter(c => selectedKeys.includes(c.key) || (selectedKeys.includes('c23_24') && !c.key.includes('27') && !c.key.includes('28')) || (selectedKeys.includes('c25_26') && (c.key.includes('27') || c.key.includes('28'))))
+          : ALL_INEX_CHARTS.filter(c => inExVisibleCards[c.key]);
 
         if (activeCharts.length === 0) {
-          showToast('Vui lòng mở ít nhất 1 biểu đồ cần xuất báo cáo (hoặc bấm "Mở rộng tất cả")!');
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
           return;
         }
 
@@ -2898,89 +2950,112 @@ const RevenueReportDashboard = () => {
         }
       } else if (currentView === 'debt') {
         const wb = XLSX.utils.book_new();
+        let sheetCount = 0;
+
+        const isExportAging = !selectedKeys || selectedKeys.includes('debt_aging');
+        const isExportGroup = !selectedKeys || selectedKeys.includes('debt_group');
+        const isExportRecovery = !selectedKeys || selectedKeys.includes('debt_recovery');
+        const isExportTop = !selectedKeys || selectedKeys.includes('debt_top');
 
         // Sheet 1: Phân tích tuổi nợ
-        const agingRows = [
-          ['BÁO CÁO CÔNG NỢ - PHÂN TÍCH TUỔI NỢ (AR AGING)'],
-          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
-          [],
-          ['STT', 'Tuổi nợ', 'Số dư thực tế (Tỷ đồng)', 'Định mức / Kế hoạch', 'Tỷ trọng (%)', 'Mức độ rủi ro'],
-          ...DEBT_AGING_DATA.map((item, idx) => [
-            idx + 1,
-            item.range,
-            item.amount,
-            item.khAmount,
-            `${item.percent}%`,
-            item.riskLevel
-          ]),
-          ['', 'TỔNG CỘNG', DEBT_SUMMARY_METRICS.totalReceivable, 1247.0, '100.0%', '']
-        ];
-        const ws1 = XLSX.utils.aoa_to_sheet(agingRows);
-        ws1['!cols'] = [{ wch: 6 }, { wch: 25 }, { wch: 24 }, { wch: 22 }, { wch: 15 }, { wch: 18 }];
-        XLSX.utils.book_append_sheet(wb, ws1, 'Phan_Tich_Tuoi_No');
+        if (isExportAging) {
+          const agingRows = [
+            ['BÁO CÁO CÔNG NỢ - PHÂN TÍCH TUỔI NỢ (AR AGING)'],
+            [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+            [],
+            ['STT', 'Tuổi nợ', 'Số dư thực tế (Tỷ đồng)', 'Định mức / Kế hoạch', 'Tỷ trọng (%)', 'Mức độ rủi ro'],
+            ...DEBT_AGING_DATA.map((item, idx) => [
+              idx + 1,
+              item.range,
+              item.amount,
+              item.khAmount,
+              `${item.percent}%`,
+              item.riskLevel
+            ]),
+            ['', 'TỔNG CỘNG', DEBT_SUMMARY_METRICS.totalReceivable, 1247.0, '100.0%', '']
+          ];
+          const ws1 = XLSX.utils.aoa_to_sheet(agingRows);
+          ws1['!cols'] = [{ wch: 6 }, { wch: 25 }, { wch: 24 }, { wch: 22 }, { wch: 15 }, { wch: 18 }];
+          XLSX.utils.book_append_sheet(wb, ws1, 'Phan_Tich_Tuoi_No');
+          sheetCount++;
+        }
 
         // Sheet 2: Công nợ theo nhóm đối tượng
-        const groupRows = [
-          ['CÔNG NỢ THEO NHÓM ĐỐI TƯỢNG KHÁCH HÀNG'],
-          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
-          [],
-          ['STT', 'Nhóm đối tượng', 'Tổng nợ phải thu', 'Trong hạn', 'Quá hạn', 'Tỷ lệ quá hạn (%)'],
-          ...DEBT_BY_CUSTOMER_GROUP.map((item, idx) => [
-            idx + 1,
-            item.groupName,
-            item.receivable,
-            item.inTerm,
-            item.overdue,
-            `${item.overdueRatio}%`
-          ])
-        ];
-        const ws2 = XLSX.utils.aoa_to_sheet(groupRows);
-        ws2['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 20 }, { wch: 16 }, { wch: 16 }, { wch: 20 }];
-        XLSX.utils.book_append_sheet(wb, ws2, 'Nhom_Doi_Tuong');
+        if (isExportGroup) {
+          const groupRows = [
+            ['CÔNG NỢ THEO NHÓM ĐỐI TƯỢNG KHÁCH HÀNG'],
+            [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+            [],
+            ['STT', 'Nhóm đối tượng', 'Tổng nợ phải thu', 'Trong hạn', 'Quá hạn', 'Tỷ lệ quá hạn (%)'],
+            ...DEBT_BY_CUSTOMER_GROUP.map((item, idx) => [
+              idx + 1,
+              item.groupName,
+              item.receivable,
+              item.inTerm,
+              item.overdue,
+              `${item.overdueRatio}%`
+            ])
+          ];
+          const ws2 = XLSX.utils.aoa_to_sheet(groupRows);
+          ws2['!cols'] = [{ wch: 6 }, { wch: 28 }, { wch: 20 }, { wch: 16 }, { wch: 16 }, { wch: 20 }];
+          XLSX.utils.book_append_sheet(wb, ws2, 'Nhom_Doi_Tuong');
+          sheetCount++;
+        }
 
         // Sheet 3: Tiến độ thu hồi nợ từng tháng
-        const recRows = [
-          ['TIẾN ĐỘ THU HỒI CÔNG NỢ TỪNG THÁNG'],
-          [`Năm ${selectedYear} (Đơn vị: Tỷ đồng)`],
-          [],
-          ['Tháng', 'Thực hiện thu hồi', 'Kế hoạch thu hồi', 'Tỷ lệ đạt (%)', 'Thu hồi nợ quá hạn'],
-          ...DEBT_MONTHLY_RECOVERY.map(item => [
-            item.month,
-            item.actual,
-            item.plan,
-            item.rate,
-            item.overdueRecovery
-          ])
-        ];
-        const ws3 = XLSX.utils.aoa_to_sheet(recRows);
-        ws3['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 18 }, { wch: 22 }];
-        XLSX.utils.book_append_sheet(wb, ws3, 'Tien_Do_Thu_Hoi');
+        if (isExportRecovery) {
+          const recRows = [
+            ['TIẾN ĐỘ THU HỒI CÔNG NỢ TỪNG THÁNG'],
+            [`Năm ${selectedYear} (Đơn vị: Tỷ đồng)`],
+            [],
+            ['Tháng', 'Thực hiện thu hồi', 'Kế hoạch thu hồi', 'Tỷ lệ đạt (%)', 'Thu hồi nợ quá hạn'],
+            ...DEBT_MONTHLY_RECOVERY.map(item => [
+              item.month,
+              item.actual,
+              item.plan,
+              item.rate,
+              item.overdueRecovery
+            ])
+          ];
+          const ws3 = XLSX.utils.aoa_to_sheet(recRows);
+          ws3['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 18 }, { wch: 22 }];
+          XLSX.utils.book_append_sheet(wb, ws3, 'Tien_Do_Thu_Hoi');
+          sheetCount++;
+        }
 
         // Sheet 4: Top khách hàng công nợ
-        const custRows = [
-          ['DANH SÁCH TOP KHÁCH HÀNG SỐ DƯ CÔNG NỢ LỚN'],
-          [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
-          [],
-          ['STT', 'Mã KH', 'Tên khách hàng', 'Phân nhóm', 'Tổng nợ (Tỷ)', 'Trong hạn', 'Quá hạn', 'DSO (ngày)', 'Trạng thái', 'Hành động xử lý'],
-          ...DEBT_TOP_CUSTOMERS.map(c => [
-            c.stt,
-            c.code,
-            c.name,
-            c.group,
-            c.totalDebt,
-            c.inTerm,
-            c.overdue,
-            c.dso,
-            c.status,
-            c.action
-          ])
-        ];
-        const ws4 = XLSX.utils.aoa_to_sheet(custRows);
-        ws4['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 42 }, { wch: 20 }, { wch: 15 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 38 }];
-        XLSX.utils.book_append_sheet(wb, ws4, 'Top_Khach_Hang');
+        if (isExportTop) {
+          const custRows = [
+            ['DANH SÁCH TOP KHÁCH HÀNG SỐ DƯ CÔNG NỢ LỚN'],
+            [`Kỳ báo cáo: ${selectedMonth}/${selectedYear} (Đơn vị: Tỷ đồng)`],
+            [],
+            ['STT', 'Mã KH', 'Tên khách hàng', 'Phân nhóm', 'Tổng nợ (Tỷ)', 'Trong hạn', 'Quá hạn', 'DSO (ngày)', 'Trạng thái', 'Hành động xử lý'],
+            ...DEBT_TOP_CUSTOMERS.map(c => [
+              c.stt,
+              c.code,
+              c.name,
+              c.group,
+              c.totalDebt,
+              c.inTerm,
+              c.overdue,
+              c.dso,
+              c.status,
+              c.action
+            ])
+          ];
+          const ws4 = XLSX.utils.aoa_to_sheet(custRows);
+          ws4['!cols'] = [{ wch: 6 }, { wch: 12 }, { wch: 42 }, { wch: 20 }, { wch: 15 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 38 }];
+          XLSX.utils.book_append_sheet(wb, ws4, 'Top_Khach_Hang');
+          sheetCount++;
+        }
+
+        if (sheetCount === 0) {
+          showToast('Vui lòng chọn ít nhất 1 biểu đồ cần xuất báo cáo!');
+          return;
+        }
 
         XLSX.writeFile(wb, `Bao_Cao_Cong_No_${selectedYear}_${selectedMonth}.xlsx`);
-        showToast('Đã xuất file Excel Báo cáo công nợ (4 Sheet) thành công!');
+        showToast(`Đã xuất file Excel Báo cáo công nợ (${sheetCount} Sheet) thành công!`);
       } else {
         const wb = XLSX.utils.book_new();
         // Sheet 1: Tổng hợp theo dòng
@@ -3053,6 +3128,7 @@ const RevenueReportDashboard = () => {
   };
 
   const [detailChartInfo, setDetailChartInfo] = useState(null);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Reset detail chart view whenever user clicks a different sub-branch
   React.useEffect(() => {
@@ -3098,13 +3174,11 @@ const RevenueReportDashboard = () => {
           </div>
         </div>
 
-        {!detailChartInfo && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button className="clean-export-excel-btn" onClick={handleExportExcel}>
-              Xuất Excel
-            </button>
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button className="clean-export-excel-btn" onClick={() => setShowExportModal(true)}>
+            Xuất Excel
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area: Detail Table Screen OR Chart Subcards */}
@@ -3391,6 +3465,18 @@ const RevenueReportDashboard = () => {
       )}
         </div>
       )}
+
+      {/* Export Chart Selection Modal Popup */}
+      <ExportChartExcelModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        currentBranch={currentView}
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        selectedQuarter={selectedQuarter}
+        selectedCumulativeMonth={selectedCumulativeMonth}
+        onExport={handleExportExcel}
+      />
     </div>
   );
 };
