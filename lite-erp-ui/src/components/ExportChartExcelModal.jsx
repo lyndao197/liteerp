@@ -228,7 +228,7 @@ export function getExportChartList({
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 19',
       title: `Biểu đồ 19. Thực hiện năm ${selectedYear} so với cùng kỳ năm ${lastYear} theo nhóm SPDV`,
-      desc: `So sánh thực hiện 6 nhóm SPDV với cùng kỳ năm trước cho cả 3 kỳ: Tháng, Quý, Lũy kế (số %: TH/cùng kỳ)`,
+      desc: `So sánh thực hiện 6 nhóm SPDV với cùng kỳ năm trước cho cả 3 kỳ: Tháng, Quý, Lũy kế (số %: % delta)`,
       period: `Tháng, Quý, Lũy kế ${selectedYear}`
     },
     {

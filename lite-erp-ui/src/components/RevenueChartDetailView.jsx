@@ -2037,15 +2037,15 @@ export default function RevenueChartDetailView({
               [`${monthCol} - ${yoyData.monthLegendCurr}`]: mCurr,
               [`${monthCol} - ${yoyData.monthLegendPrev}`]: mPrev,
               [`${monthCol} - +/- Chênh lệch`]: mDiff,
-              [`${monthCol} - % TH/cùng kỳ`]: mRate,
+              [`${monthCol} - % delta`]: mRate,
               [`${quarterCol} - ${yoyData.quarterLegendCurr}`]: qCurr,
               [`${quarterCol} - ${yoyData.quarterLegendPrev}`]: qPrev,
               [`${quarterCol} - +/- Chênh lệch`]: qDiff,
-              [`${quarterCol} - % TH/cùng kỳ`]: qRate,
+              [`${quarterCol} - % delta`]: qRate,
               [`${yearCol} - ${yoyData.yearLegendCurr}`]: yCurr,
               [`${yearCol} - ${yoyData.yearLegendPrev}`]: yPrev,
               [`${yearCol} - +/- Chênh lệch`]: yDiff,
-              [`${yearCol} - % TH/cùng kỳ`]: yRate,
+              [`${yearCol} - % delta`]: yRate,
             };
           });
 
@@ -2062,15 +2062,15 @@ export default function RevenueChartDetailView({
             [`${monthCol} - ${yoyData.monthLegendCurr}`]: mTotalCurr,
             [`${monthCol} - ${yoyData.monthLegendPrev}`]: mTotalPrev,
             [`${monthCol} - +/- Chênh lệch`]: Number((mTotalCurr - mTotalPrev).toFixed(1)),
-            [`${monthCol} - % TH/cùng kỳ`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${monthCol} - % delta`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
             [`${quarterCol} - ${yoyData.quarterLegendCurr}`]: qTotalCurr,
             [`${quarterCol} - ${yoyData.quarterLegendPrev}`]: qTotalPrev,
             [`${quarterCol} - +/- Chênh lệch`]: Number((qTotalCurr - qTotalPrev).toFixed(1)),
-            [`${quarterCol} - % TH/cùng kỳ`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - % delta`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
             [`${yearCol} - ${yoyData.yearLegendCurr}`]: yTotalCurr,
             [`${yearCol} - ${yoyData.yearLegendPrev}`]: yTotalPrev,
             [`${yearCol} - +/- Chênh lệch`]: Number((yTotalCurr - yTotalPrev).toFixed(1)),
-            [`${yearCol} - % TH/cùng kỳ`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - % delta`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
           });
 
           const ws = XLSX.utils.json_to_sheet(exportRows);
