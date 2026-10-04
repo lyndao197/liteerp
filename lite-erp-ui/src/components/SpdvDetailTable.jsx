@@ -27,7 +27,7 @@ export default function SpdvDetailTable({
   const quarterStartMonth = (quarterNum - 1) * 3 + 1;
   const quarterCumText = quarterStartMonth === monthNum
     ? `T${quarterStartMonth}`
-    : `T${quarterStartMonth}-T${monthNum}`;
+    : `T${quarterStartMonth}–T${monthNum}`;
 
   const lastYear = (parseInt(selectedYear, 10) - 1).toString();
   const prevMonthNum = monthNum > 1 ? monthNum - 1 : 12;
@@ -680,10 +680,13 @@ export default function SpdvDetailTable({
     };
   }, [prevPeriodData]);
 
-  // Structure Table Data (Biểu đồ 16 & 17)
   const monthHeader = `Tháng ${monthNum}/${selectedYear}`;
-  const quarterHeader = `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`;
-  const yearHeader = `Năm ${selectedYear} (lũy kế ${monthNum}T)`;
+  const quarterHeader = isKhStructure
+    ? `Quý ${quarterRoman}/${selectedYear}`
+    : `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`;
+  const yearHeader = isKhStructure
+    ? `Năm ${selectedYear}`
+    : `Năm ${selectedYear} (lũy kế ${monthNum}T)`;
 
   const filteredStructureRows = useMemo(() => {
     const rows = structureData.rows || [];
@@ -881,17 +884,17 @@ export default function SpdvDetailTable({
                 <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
                 {(structurePeriod === 'month' || structurePeriod === 'all') && (
                   <th colSpan={2} className="spdv-th-period-group spdv-col-period-month">
-                    Tháng {monthNum}/{selectedYear}
+                    {monthHeader}
                   </th>
                 )}
                 {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
                   <th colSpan={2} className="spdv-th-period-group spdv-col-period-quarter">
-                    Quý {quarterRoman}/{selectedYear}
+                    {quarterHeader}
                   </th>
                 )}
                 {(structurePeriod === 'year' || structurePeriod === 'all') && (
                   <th colSpan={2} className="spdv-th-period-group spdv-col-period-year">
-                    Năm {selectedYear}
+                    {yearHeader}
                   </th>
                 )}
               </tr>

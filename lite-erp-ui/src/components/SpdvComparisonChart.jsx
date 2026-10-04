@@ -724,7 +724,7 @@ export default function SpdvComparisonChart({
 
   const thQuarterTitle = startMonthOfQuarter === monthNum
     ? `Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter}) theo nhóm SPDV`
-    : `Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum}) theo nhóm SPDV`;
+    : `Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter}–T${monthNum}) theo nhóm SPDV`;
   const khQuarterTitle = `Cơ cấu doanh thu kế hoạch Quý ${quarterRoman}/${activeYear} theo nhóm SPDV`;
 
   const thYearTitle = `Cơ cấu doanh thu thực hiện năm ${activeYear} (lũy kế ${monthNum}T) theo nhóm SPDV`;

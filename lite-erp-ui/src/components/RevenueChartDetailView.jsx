@@ -2033,7 +2033,7 @@ export default function RevenueChartDetailView({
         const spdvQuarterStartMonth = (spdvQuarterNum - 1) * 3 + 1;
         const spdvQuarterCumText = spdvQuarterStartMonth === spdvMonthNum
           ? `T${spdvQuarterStartMonth}`
-          : `T${spdvQuarterStartMonth}-T${spdvMonthNum}`;
+          : `T${spdvQuarterStartMonth}–T${spdvMonthNum}`;
 
         const monthCol = `Tháng ${spdvMonthNum}/${selectedYear}`;
         const quarterCol = `Quý ${spdvQuarterRoman}/${selectedYear} (lũy kế ${spdvQuarterCumText})`;
@@ -2463,7 +2463,7 @@ export default function RevenueChartDetailView({
         const unitQuarterStartMonth = (unitQuarterNum - 1) * 3 + 1;
         const unitQuarterCumText = unitQuarterStartMonth === unitMonthNum
           ? `T${unitQuarterStartMonth}`
-          : `T${unitQuarterStartMonth}-T${unitMonthNum}`;
+          : `T${unitQuarterStartMonth}–T${unitMonthNum}`;
 
         const monthCol = `Tháng ${unitMonthNum}/${selectedYear}`;
         const quarterCol = `Quý ${unitQuarterRoman}/${selectedYear} (lũy kế ${unitQuarterCumText})`;

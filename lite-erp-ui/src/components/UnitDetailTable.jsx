@@ -22,7 +22,7 @@ export default function UnitDetailTable({
   const quarterStartMonth = (quarterNum - 1) * 3 + 1;
   const quarterCumText = quarterStartMonth === monthNum
     ? `T${quarterStartMonth}`
-    : `T${quarterStartMonth}-T${monthNum}`;
+    : `T${quarterStartMonth}–T${monthNum}`;
 
   const lastYear = (parseInt(selectedYear, 10) - 1).toString();
   const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
