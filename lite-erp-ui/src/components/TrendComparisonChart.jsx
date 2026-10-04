@@ -616,8 +616,8 @@ function TrendPlanCard({
             <div
               style={{
                 position: 'absolute',
-                left: `${Math.min(Math.max(getX(hoveredIdx) - 20, 20), svgWidth - 170)}px`,
-                top: `${Math.max(getY(hoveredData.th || hoveredData.kh) - 80, 20)}px`,
+                left: `${Math.min(Math.max(getX(hoveredIdx) - 20, 20), svgWidth - 185)}px`,
+                top: `${Math.max(getY(hoveredData.th || hoveredData.kh) - 95, 20)}px`,
                 background: '#ffffff',
                 border: '1px solid #cbd5e1',
                 borderRadius: '6px',
@@ -626,30 +626,33 @@ function TrendPlanCard({
                 fontSize: '11.5px',
                 pointerEvents: 'none',
                 zIndex: 20,
-                minWidth: '145px'
+                minWidth: '165px'
               }}
             >
               <div style={{ fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '3px', marginBottom: '5px' }}>
                 {hoveredData.name} ({hoveredData.month})
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>KH:</span>
-                <span style={{ fontWeight: '600', color: '#475569' }}>
-                  {hoveredData.kh !== null ? `${formatVal(hoveredData.kh)} Tr.đ` : '-'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#c8102e', fontWeight: '600' }}>TH:</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                <span style={{ color: '#c8102e', fontWeight: '600' }}>TH {selectedYear}:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>
                   {hoveredData.th !== null ? `${formatVal(hoveredData.th)} Tr.đ` : '-'}
                 </span>
               </div>
-              {hoveredData.rate && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
-                  <span style={{ color: hoveredData.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
-                  <span style={{ fontWeight: '700', color: hoveredData.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredData.rate}</span>
-                </div>
-              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>KH {selectedYear}:</span>
+                <span style={{ fontWeight: '600', color: '#475569' }}>
+                  {hoveredData.kh !== null ? `${formatVal(hoveredData.kh)} Tr.đ` : '-'}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', paddingTop: '4px', borderTop: '1px dashed #e2e8f0' }}>
+                <span style={{ color: '#475569', fontWeight: '600' }}>% HTKH:</span>
+                <span style={{ fontWeight: '700', color: hoveredData.rate ? (hoveredData.isPositive ? '#15803d' : '#dc2626') : '#64748b' }}>
+                  {hoveredData.rate || (hoveredData.th !== null && hoveredData.kh ? `${Math.round((hoveredData.th / hoveredData.kh) * 100)}%` : '-')}
+                </span>
+              </div>
+              <div style={{ fontSize: '9.5px', color: '#94a3b8', fontStyle: 'italic', marginTop: '3px', textAlign: 'right' }}>
+                (% HTKH = TH / KH × 100%)
+              </div>
             </div>
           )}
         </div>
