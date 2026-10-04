@@ -534,17 +534,6 @@ function SpdvBarSubcard({
                 {hoveredItem.rate}
               </strong>
             </div>
-            {(() => {
-              const diffVal = hoveredItem.valTh - hoveredItem.valKh;
-              return (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
-                  <span>{diffLabel}</span>
-                  <strong style={{ color: diffVal >= 0 ? '#16a34a' : '#dc2626' }}>
-                    {diffVal >= 0 ? `+${diffVal.toFixed(1).replace('.', ',')}` : diffVal.toFixed(1).replace('.', ',')} {unit}
-                  </strong>
-                </div>
-              );
-            })()}
           </div>
         )}
       </div>
