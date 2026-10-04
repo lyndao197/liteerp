@@ -129,7 +129,7 @@ export default function MonthRatioDetailTable({
           compHeader: `KH ${qCode}/${selectedYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 6b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước thực hiện so với KH ${selectedQuarter}/${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH ${selectedQuarter}/${selectedYear}`
         };
       }
       if (activeChartKey === 'chart7_rat') {
@@ -138,7 +138,7 @@ export default function MonthRatioDetailTable({
           compHeader: `TH ${prevQCode}/${prevQYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng ${prevQCode}`,
           cardTag: 'Biểu đồ 7b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước thực hiện so với ${prevQCode}/${prevQYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với ${prevQCode}/${prevQYear}`
         };
       }
       if (activeChartKey === 'chart8_rat') {
@@ -147,7 +147,7 @@ export default function MonthRatioDetailTable({
           compHeader: `TH ${qCode}/${lastYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng ${qCode}/${lastYear}`,
           cardTag: 'Biểu đồ 8b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước thực hiện so với cùng kỳ ${selectedQuarter}/${lastYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với cùng kỳ ${selectedQuarter}/${lastYear}`
         };
       }
       if (activeChartKey === 'chart9_rat') {
@@ -156,7 +156,7 @@ export default function MonthRatioDetailTable({
           compHeader: `KH ${nextQCode}/${nextQYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 9b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước thực hiện so với KH ${nextQCode}/${nextQYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH ${nextQCode}/${nextQYear}`
         };
       }
       // Default: chart5_rat (Lũy kế quý so với KH)
@@ -165,7 +165,7 @@ export default function MonthRatioDetailTable({
         compHeader: `KH ${qCode}/${selectedYear}`,
         compRatHeader: `Tỷ suất/Tỷ trọng KH`,
         cardTag: 'Biểu đồ 5b',
-        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế thực hiện so với KH ${selectedQuarter}/${selectedYear}`
+        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng TH so với KH ${selectedQuarter}/${selectedYear}`
       };
     }
 
