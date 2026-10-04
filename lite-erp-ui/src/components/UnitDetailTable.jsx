@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   UNIT_CATEGORIES,
   UNIT_STRUCTURE_TABLE_DATA,
@@ -14,7 +13,8 @@ export default function UnitDetailTable({
   activeChartKey = 'unit_plan_month',
   chartTitle = '',
   searchQuery = '',
-  statusFilter = 'all'
+  statusFilter = 'all',
+  onSelectChartKey
 }) {
   const monthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
   const quarterNum = Math.ceil(monthNum / 3);
@@ -24,7 +24,13 @@ export default function UnitDetailTable({
     ? `T${quarterStartMonth}`
     : `T${quarterStartMonth}-T${monthNum}`;
 
-  // Check if viewing structure table (Biểu đồ 21) or comparison table (Biểu đồ 22 / 23)
+  const lastYear = (parseInt(selectedYear, 10) - 1).toString();
+  const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
+  const prevMonthYear = monthNum === 1 ? lastYear : selectedYear;
+  const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
+  const prevQuarterYear = quarterNum === 1 ? lastYear : selectedYear;
+
+  // Determine chart category
   const isStructure = useMemo(() => {
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
@@ -37,6 +43,7 @@ export default function UnitDetailTable({
   }, [activeChartKey, chartTitle]);
 
   const isPrevPeriodComparison = useMemo(() => {
+    if (isStructure) return false;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
     return (
@@ -49,7 +56,41 @@ export default function UnitDetailTable({
       title.includes('quý trước') ||
       title.includes('năm trước')
     );
+  }, [isStructure, activeChartKey, chartTitle]);
+
+  // Initial period based on incoming chartKey or title
+  const initialPeriod = useMemo(() => {
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+    if (key.includes('quarter') || title.includes('quý')) return 'quarter';
+    if (key.includes('year') || title.includes('năm')) return 'year';
+    if (key.includes('month') || title.includes('tháng')) return 'month';
+    return 'month';
   }, [activeChartKey, chartTitle]);
+
+  const [selectedPeriod, setSelectedPeriod] = useState(initialPeriod);
+
+  useEffect(() => {
+    setSelectedPeriod(initialPeriod);
+  }, [initialPeriod]);
+
+  const handlePeriodChange = (period) => {
+    setSelectedPeriod(period);
+    if (!onSelectChartKey) return;
+    if (isStructure) {
+      if (period === 'month') onSelectChartKey('unit_struct_month');
+      else if (period === 'quarter') onSelectChartKey('unit_struct_quarter');
+      else if (period === 'year') onSelectChartKey('unit_struct_year');
+    } else if (isPrevPeriodComparison) {
+      if (period === 'month') onSelectChartKey('unit_prev_month');
+      else if (period === 'quarter') onSelectChartKey('unit_prev_quarter');
+      else if (period === 'year') onSelectChartKey('unit_prev_year');
+    } else {
+      if (period === 'month') onSelectChartKey('unit_plan_month');
+      else if (period === 'quarter') onSelectChartKey('unit_plan_quarter');
+      else if (period === 'year') onSelectChartKey('unit_plan_year');
+    }
+  };
 
   const formatUnitNum = (val) => {
     if (val === null || val === undefined || val === '') return '-';
@@ -60,10 +101,10 @@ export default function UnitDetailTable({
     });
   };
 
-  // Plan comparison data for Biểu đồ 22 (Month, Quarter, Year)
+  // Plan comparison data for Biểu đồ 18 (Month, Quarter, Year)
   const yearPlanData = UNIT_PLAN_COMPARISON_DATA[selectedYear] || UNIT_PLAN_COMPARISON_DATA['2026'];
 
-  // 3-Period Integrated Data for Biểu đồ 22 (Tích hợp số liệu 3 hình: Tháng, Quý, Năm)
+  // 3-Period Integrated Data for Biểu đồ 18
   const integratedUnitRows = useMemo(() => {
     const monthItems = yearPlanData?.month?.items || [];
     const quarterItems = yearPlanData?.quarter?.items || [];
@@ -78,46 +119,36 @@ export default function UnitDetailTable({
       const mKh = Number(m.kh ?? 0);
       const mDiff = Number((mTh - mKh).toFixed(1));
       const mRate = m.rate || (mKh > 0 ? ((mTh / mKh) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
-      const mIsPass = m.isPositive !== undefined ? m.isPositive : (mKh > 0 && mTh >= mKh);
+      const mRateNum = mKh > 0 ? (mTh / mKh) * 100 : 0;
+      const mIsPass = mRateNum >= 100;
 
       const qTh = Number(q.th ?? 0);
       const qKh = Number(q.kh ?? 0);
       const qDiff = Number((qTh - qKh).toFixed(1));
       const qRate = q.rate || (qKh > 0 ? ((qTh / qKh) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
-      const qIsPass = q.isPositive !== undefined ? q.isPositive : (qKh > 0 && qTh >= qKh);
+      const qRateNum = qKh > 0 ? (qTh / qKh) * 100 : 0;
+      const qIsPass = qRateNum >= 100;
 
       const yTh = Number(y.th ?? 0);
       const yKh = Number(y.kh ?? 0);
       const yDiff = Number((yTh - yKh).toFixed(1));
       const yRate = y.rate || (yKh > 0 ? ((yTh / yKh) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
-      const yIsPass = y.isPositive !== undefined ? y.isPositive : (yKh > 0 && yTh >= yKh);
+      const yRateNum = yKh > 0 ? (yTh / yKh) * 100 : 0;
+      const yIsPass = yRateNum >= 100;
 
       return {
         id: cat.id,
         stt: idx + 1,
         name: cat.name,
         color: cat.color,
-        month: { th: mTh, kh: mKh, diff: mDiff, rate: mRate, isPass: mIsPass },
-        quarter: { th: qTh, kh: qKh, diff: qDiff, rate: qRate, isPass: qIsPass },
-        year: { th: yTh, kh: yKh, diff: yDiff, rate: yRate, isPass: yIsPass }
+        month: { th: mTh, kh: mKh, diff: mDiff, rate: mRate, rateNum: mRateNum, isPass: mIsPass },
+        quarter: { th: qTh, kh: qKh, diff: qDiff, rate: qRate, rateNum: qRateNum, isPass: qIsPass },
+        year: { th: yTh, kh: yKh, diff: yDiff, rate: yRate, rateNum: yRateNum, isPass: yIsPass }
       };
     });
   }, [yearPlanData]);
 
-  // Filtering for integrated Biểu đồ 22
-  const filteredIntegratedRows = useMemo(() => {
-    return integratedUnitRows.filter((item) => {
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase().trim();
-        if (!item.name.toLowerCase().includes(q)) return false;
-      }
-      if (statusFilter === 'pass' && !item.year.isPass) return false;
-      if (statusFilter === 'fail' && item.year.isPass) return false;
-      return true;
-    });
-  }, [integratedUnitRows, searchQuery, statusFilter]);
-
-  // Integrated totals for Biểu đồ 22
+  // Integrated totals for Biểu đồ 18
   const integratedTotals = useMemo(() => {
     const monthItems = yearPlanData?.month?.items || [];
     const quarterItems = yearPlanData?.quarter?.items || [];
@@ -180,12 +211,8 @@ export default function UnitDetailTable({
     });
   }, [structureData, searchQuery]);
 
+  // Prev Period Data (Biểu đồ 23)
   const prevPeriodData = UNIT_PREV_PERIOD_COMPARISON_DATA[selectedYear] || UNIT_PREV_PERIOD_COMPARISON_DATA['2026'];
-  const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
-  const prevMonthYear = monthNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
-  const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
-  const prevQuarterYear = quarterNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
-  const lastYear = (parseInt(selectedYear, 10) - 1).toString();
 
   const integratedPrevRows = useMemo(() => {
     const mItems = prevPeriodData?.month?.items || [];
@@ -202,30 +229,30 @@ export default function UnitDetailTable({
       const mDiff = Number((mCurr - mPrev).toFixed(1));
       const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
       const mRateNum = parseFloat(mRate.replace('%', '').replace(',', '.') || '0');
-      const mIsPass = mRateNum > 100;
+      const mIsPass = mDiff >= 0;
 
       const qCurr = Number(q.curr ?? 0);
       const qPrev = Number(q.prev ?? 0);
       const qDiff = Number((qCurr - qPrev).toFixed(1));
       const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
       const qRateNum = parseFloat(qRate.replace('%', '').replace(',', '.') || '0');
-      const qIsPass = qRateNum > 100;
+      const qIsPass = qDiff >= 0;
 
       const yCurr = Number(y.curr ?? 0);
       const yPrev = Number(y.prev ?? 0);
       const yDiff = Number((yCurr - yPrev).toFixed(1));
       const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
       const yRateNum = parseFloat(yRate.replace('%', '').replace(',', '.') || '0');
-      const yIsPass = yRateNum > 100;
+      const yIsPass = yDiff >= 0;
 
       return {
         id: cat.id,
         stt: idx + 1,
         name: cat.name,
         color: cat.color,
-        month: { curr: mCurr, prev: mPrev, diff: mDiff, rate: mRate, isPass: mIsPass },
-        quarter: { curr: qCurr, prev: qPrev, diff: qDiff, rate: qRate, isPass: qIsPass },
-        year: { curr: yCurr, prev: yPrev, diff: yDiff, rate: yRate, isPass: yIsPass }
+        month: { curr: mCurr, prev: mPrev, diff: mDiff, rate: mRate, rateNum: mRateNum, isPass: mIsPass },
+        quarter: { curr: qCurr, prev: qPrev, diff: qDiff, rate: qRate, rateNum: qRateNum, isPass: qIsPass },
+        year: { curr: yCurr, prev: yPrev, diff: yDiff, rate: yRate, rateNum: yRateNum, isPass: yIsPass }
       };
     });
   }, [prevPeriodData]);
@@ -252,11 +279,223 @@ export default function UnitDetailTable({
     const yRate = yPrevTotal > 0 ? ((yCurrTotal / yPrevTotal) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
 
     return {
-      month: { curr: mCurrTotal, prev: mPrevTotal, diff: mDiff, rate: mRate },
-      quarter: { curr: qCurrTotal, prev: qPrevTotal, diff: qDiff, rate: qRate },
-      year: { curr: yCurrTotal, prev: yPrevTotal, diff: yDiff, rate: yRate }
+      month: { curr: mCurrTotal, prev: mPrevTotal, diff: mDiff, rate: mRate, isPass: mDiff >= 0 },
+      quarter: { curr: qCurrTotal, prev: qPrevTotal, diff: qDiff, rate: qRate, isPass: qDiff >= 0 },
+      year: { curr: yCurrTotal, prev: yPrevTotal, diff: yDiff, rate: yRate, isPass: yDiff >= 0 }
     };
   }, [integratedPrevRows]);
+
+  // Active single-period configuration for Plan comparison (Biểu đồ 18)
+  const singlePlanConfig = useMemo(() => {
+    if (isStructure || isPrevPeriodComparison) return null;
+    if (selectedPeriod === 'month') {
+      return {
+        badge: 'Biểu đồ 18 – Tháng',
+        title: `Biểu đồ 18. Thực hiện Tháng ${monthNum}/${selectedYear} so với kế hoạch Tháng ${monthNum}/${selectedYear} theo đơn vị`,
+        unit: 'Triệu đồng',
+        obj1Label: `TH T${monthNum}/${selectedYear}`,
+        obj2Label: `KH T${monthNum}/${selectedYear}`,
+        diffLabel: `+/- so KH`,
+        rateLabel: `% HTKH`,
+        shareLabel: `Tỷ trọng TH`,
+        note: `So sánh thực hiện và kế hoạch doanh thu của các đơn vị trong Tháng ${monthNum}/${selectedYear}.`
+      };
+    }
+    if (selectedPeriod === 'quarter') {
+      return {
+        badge: 'Biểu đồ 18 – Quý',
+        title: `Biểu đồ 18. Ước thực hiện Quý ${quarterRoman}/${selectedYear} so với kế hoạch Quý ${quarterRoman}/${selectedYear} theo đơn vị`,
+        unit: 'Triệu đồng',
+        obj1Label: `Ước TH Q${quarterRoman}/${selectedYear}`,
+        obj2Label: `KH Q${quarterRoman}/${selectedYear}`,
+        diffLabel: `+/- so KH`,
+        rateLabel: `% HTKH`,
+        shareLabel: `Tỷ trọng Ước TH`,
+        note: `So sánh ước thực hiện và kế hoạch doanh thu của các đơn vị trong Quý ${quarterRoman}/${selectedYear}.`
+      };
+    }
+    if (selectedPeriod === 'year') {
+      return {
+        badge: 'Biểu đồ 18 – Năm',
+        title: `Biểu đồ 18. Ước thực hiện năm ${selectedYear} so với kế hoạch năm ${selectedYear} theo đơn vị`,
+        unit: 'Triệu đồng',
+        obj1Label: `Ước TH Năm ${selectedYear}`,
+        obj2Label: `KH Năm ${selectedYear}`,
+        diffLabel: `+/- so KH`,
+        rateLabel: `% HTKH`,
+        shareLabel: `Tỷ trọng Ước TH`,
+        note: `So sánh ước thực hiện cả năm với kế hoạch doanh thu được giao năm ${selectedYear}.`
+      };
+    }
+    return null;
+  }, [isStructure, isPrevPeriodComparison, selectedPeriod, monthNum, quarterRoman, selectedYear]);
+
+  // Active single-period configuration for Prev Period comparison (Biểu đồ 23)
+  const singlePrevPeriodConfig = useMemo(() => {
+    if (isStructure || !isPrevPeriodComparison) return null;
+    if (selectedPeriod === 'month') {
+      return {
+        badge: 'Biểu đồ 23 – Tháng',
+        title: `Biểu đồ 23. Thực hiện Tháng ${monthNum}/${selectedYear} so với thực hiện Tháng ${prevMonthNum}/${prevMonthYear} theo đơn vị (T${monthNum} vs T${prevMonthNum})`,
+        unit: 'Tỷ đồng',
+        obj1Label: `TH T${monthNum}/${selectedYear}`,
+        obj2Label: `TH T${prevMonthNum}/${prevMonthYear}`,
+        diffLabel: `+/- Chênh lệch`,
+        rateLabel: `% delta`,
+        shareLabel: `Tỷ trọng TH`,
+        basis: `Tháng ${monthNum}/${selectedYear} so với Tháng ${prevMonthNum}/${prevMonthYear}`
+      };
+    }
+    if (selectedPeriod === 'quarter') {
+      return {
+        badge: 'Biểu đồ 23 – Quý',
+        title: `Biểu đồ 23. Ước thực hiện Quý ${quarterRoman}/${selectedYear} so với thực hiện Quý ${prevQuarterNum}/${prevQuarterYear} theo đơn vị (Q${quarterRoman} vs Q${prevQuarterNum})`,
+        unit: 'Tỷ đồng',
+        obj1Label: `Ước TH Q${quarterRoman}/${selectedYear}`,
+        obj2Label: `TH Q${prevQuarterNum}/${prevQuarterYear}`,
+        diffLabel: `+/- Chênh lệch`,
+        rateLabel: `% delta`,
+        shareLabel: `Tỷ trọng Ước TH`,
+        basis: `Ước Quý ${quarterRoman}/${selectedYear} so với Thực hiện Quý ${prevQuarterNum}/${prevQuarterYear}`
+      };
+    }
+    if (selectedPeriod === 'year') {
+      return {
+        badge: 'Biểu đồ 23 – Năm',
+        title: `Biểu đồ 23. Ước thực hiện năm ${selectedYear} so với thực hiện năm ${lastYear} theo đơn vị (${selectedYear} vs ${lastYear})`,
+        unit: 'Tỷ đồng',
+        obj1Label: `Ước TH Năm ${selectedYear}`,
+        obj2Label: `TH Năm ${lastYear}`,
+        diffLabel: `+/- Chênh lệch`,
+        rateLabel: `% delta`,
+        shareLabel: `Tỷ trọng Ước TH`,
+        basis: `Ước Năm ${selectedYear} so với Thực hiện Năm ${lastYear}`
+      };
+    }
+    return null;
+  }, [isStructure, isPrevPeriodComparison, selectedPeriod, monthNum, prevMonthNum, prevMonthYear, quarterRoman, prevQuarterNum, prevQuarterYear, lastYear, selectedYear]);
+
+  // Active single-period configuration for Structure (Biểu đồ 21)
+  const singleStructureConfig = useMemo(() => {
+    if (!isStructure) return null;
+    if (selectedPeriod === 'month') {
+      return {
+        badge: 'Biểu đồ 21 – Tháng',
+        title: `Cơ cấu doanh thu TH theo từng đơn vị – Tháng ${monthNum}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        obj1Label: `TH T${monthNum}/${selectedYear}`,
+        shareLabel: `Tỷ trọng TH`
+      };
+    }
+    if (selectedPeriod === 'quarter') {
+      return {
+        badge: 'Biểu đồ 21 – Quý',
+        title: `Cơ cấu doanh thu TH theo từng đơn vị – Quý ${quarterRoman}/${selectedYear}`,
+        unit: 'Triệu đồng',
+        obj1Label: `TH Q${quarterRoman}/${selectedYear}`,
+        shareLabel: `Tỷ trọng TH`
+      };
+    }
+    if (selectedPeriod === 'year') {
+      return {
+        badge: 'Biểu đồ 21 – Năm',
+        title: `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${selectedYear}`,
+        unit: 'Triệu đồng',
+        obj1Label: `TH Năm ${selectedYear}`,
+        shareLabel: `Tỷ trọng TH`
+      };
+    }
+    return null;
+  }, [isStructure, selectedPeriod, monthNum, quarterRoman, selectedYear]);
+
+  // Filter single period plan rows
+  const singlePlanRows = useMemo(() => {
+    if (!singlePlanConfig) return [];
+    const p = selectedPeriod;
+    const totalTh = integratedTotals[p]?.th || 1;
+
+    return integratedUnitRows
+      .filter((item) => {
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase().trim();
+          if (!item.name.toLowerCase().includes(q)) return false;
+        }
+        if (statusFilter === 'pass' && !item[p].isPass) return false;
+        if (statusFilter === 'fail' && item[p].isPass) return false;
+        return true;
+      })
+      .map((item) => {
+        const val1 = item[p].th;
+        const val2 = item[p].kh;
+        const diff = item[p].diff;
+        const rate = item[p].rate;
+        const isPass = item[p].isPass;
+        const share = totalTh > 0 ? `${((val1 / totalTh) * 100).toFixed(1)}%` : '0%';
+        return {
+          id: item.id,
+          stt: item.stt,
+          name: item.name,
+          color: item.color,
+          val1,
+          val2,
+          diff,
+          rate,
+          isPass,
+          share
+        };
+      });
+  }, [singlePlanConfig, selectedPeriod, integratedUnitRows, integratedTotals, searchQuery, statusFilter]);
+
+  // Filter single period prev rows
+  const singlePrevRows = useMemo(() => {
+    if (!singlePrevPeriodConfig) return [];
+    const p = selectedPeriod;
+    const totalCurr = prevPeriodTotals[p]?.curr || 1;
+
+    return integratedPrevRows
+      .filter((item) => {
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase().trim();
+          if (!item.name.toLowerCase().includes(q)) return false;
+        }
+        if (statusFilter === 'pass' && !item[p].isPass) return false;
+        if (statusFilter === 'fail' && item[p].isPass) return false;
+        return true;
+      })
+      .map((item) => {
+        const val1 = item[p].curr;
+        const val2 = item[p].prev;
+        const diff = item[p].diff;
+        const rate = item[p].rate;
+        const isPass = item[p].isPass;
+        const share = totalCurr > 0 ? `${((val1 / totalCurr) * 100).toFixed(1)}%` : '0%';
+        return {
+          id: item.id,
+          stt: item.stt,
+          name: item.name,
+          color: item.color,
+          val1,
+          val2,
+          diff,
+          rate,
+          isPass,
+          share
+        };
+      });
+  }, [singlePrevPeriodConfig, selectedPeriod, integratedPrevRows, prevPeriodTotals, searchQuery, statusFilter]);
+
+  // Filter integrated rows for 3-period table
+  const filteredIntegratedRows = useMemo(() => {
+    return integratedUnitRows.filter((item) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase().trim();
+        if (!item.name.toLowerCase().includes(q)) return false;
+      }
+      if (statusFilter === 'pass' && !item.year.isPass) return false;
+      if (statusFilter === 'fail' && item.year.isPass) return false;
+      return true;
+    });
+  }, [integratedUnitRows, searchQuery, statusFilter]);
 
   const filteredPrevRows = useMemo(() => {
     return integratedPrevRows.filter((item) => {
@@ -270,29 +509,352 @@ export default function UnitDetailTable({
     });
   }, [integratedPrevRows, searchQuery, statusFilter]);
 
+  // Resolve current card display title
+  const currentDisplayTitle = useMemo(() => {
+    if (isStructure) {
+      if (singleStructureConfig) return singleStructureConfig.title;
+      return `Cơ cấu doanh thu TH theo từng đơn vị (Bảng tổng hợp 3 kỳ)`;
+    }
+    if (isPrevPeriodComparison) {
+      if (singlePrevPeriodConfig) return singlePrevPeriodConfig.title;
+      return `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước (Bảng tổng hợp 3 kỳ)`;
+    }
+    if (singlePlanConfig) return singlePlanConfig.title;
+    return `Biểu đồ 18. Thực hiện so với kế hoạch theo đơn vị (Bảng tổng hợp 3 kỳ)`;
+  }, [isStructure, isPrevPeriodComparison, singleStructureConfig, singlePrevPeriodConfig, singlePlanConfig]);
+
+  const currentUnitLabel = isPrevPeriodComparison ? `(Đơn vị: Tỷ đồng)` : `(Đơn vị: Triệu đồng)`;
+
   return (
     <div className="spdv-detail-table-card">
+      {/* Top Header with title and controls */}
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
-          <h3 className="spdv-detail-title">
-            {chartTitle || (
-              isStructure
-                ? `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${selectedYear}`
-                : isPrevPeriodComparison
-                ? `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm ${selectedYear}`
-                : `Biểu đồ 18. Doanh thu theo đơn vị so với kế hoạch – Năm ${selectedYear}`
-            )}
-          </h3>
-          <span className="spdv-detail-unit">
-            {isPrevPeriodComparison ? `(Đơn vị: Tỷ đồng)` : `(Đơn vị: Triệu đồng)`}
-          </span>
+          {singlePlanConfig && (
+            <span className="spdv-badge-chart-label">{singlePlanConfig.badge}</span>
+          )}
+          {singlePrevPeriodConfig && (
+            <span className="spdv-badge-chart-label">{singlePrevPeriodConfig.badge}</span>
+          )}
+          {singleStructureConfig && (
+            <span className="spdv-badge-chart-label">{singleStructureConfig.badge}</span>
+          )}
+          {selectedPeriod === 'all' && (
+            <span className="spdv-badge-chart-label">
+              {isStructure ? 'Biểu đồ 21 – 3 Kỳ' : isPrevPeriodComparison ? 'Biểu đồ 23 – 3 Kỳ' : 'Biểu đồ 18 – 3 Kỳ'}
+            </span>
+          )}
+
+          <h3 className="spdv-detail-title">{currentDisplayTitle}</h3>
+          <span className="spdv-detail-unit">{currentUnitLabel}</span>
+
+          {singlePrevPeriodConfig && (
+            <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
+              <strong>Cơ sở so sánh:</strong> {singlePrevPeriodConfig.basis}
+            </div>
+          )}
+          {isPrevPeriodComparison && selectedPeriod === 'all' && (
+            <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
+              <strong>Cơ sở so sánh:</strong> Tháng (T{monthNum} vs T{prevMonthNum}) | Quý (Q{quarterRoman} vs Q{prevQuarterNum}) | Năm ({selectedYear} vs {lastYear})
+            </div>
+          )}
+        </div>
+
+        {/* Period Switching Tabs (Tháng / Quý / Năm / Tất cả 3 kỳ) */}
+        <div className="spdv-header-actions">
+          <div className="spdv-period-tab-group">
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${selectedPeriod === 'month' ? 'active' : ''}`}
+              onClick={() => handlePeriodChange('month')}
+            >
+              Tháng {monthNum}/{selectedYear}
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${selectedPeriod === 'quarter' ? 'active' : ''}`}
+              onClick={() => handlePeriodChange('quarter')}
+            >
+              Quý {quarterRoman}/{selectedYear}
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${selectedPeriod === 'year' ? 'active' : ''}`}
+              onClick={() => handlePeriodChange('year')}
+            >
+              Năm {selectedYear}
+            </button>
+            <button
+              type="button"
+              className={`spdv-period-tab-btn ${selectedPeriod === 'all' ? 'active' : ''}`}
+              onClick={() => handlePeriodChange('all')}
+            >
+              Tất cả 3 kỳ
+            </button>
+          </div>
         </div>
       </div>
 
-      {isPrevPeriodComparison ? (
-        /* ===================================================================== */
-        /* BẢNG TỔNG HỢP BIỂU ĐỒ 23 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
-        /* ===================================================================== */
+      {/* TABLE VIEWS ROUTING */}
+      {/* 1. SINGLE-PERIOD VIEW FOR PLAN COMPARISON (BIỂU ĐỒ 18) */}
+      {!isStructure && !isPrevPeriodComparison && singlePlanConfig ? (
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
+                <th className="spdv-th-name" style={{ width: '280px' }}>Đơn vị thực hiện</th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePlanConfig.obj1Label} ({singlePlanConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePlanConfig.obj2Label} ({singlePlanConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePlanConfig.diffLabel} ({singlePlanConfig.unit})
+                </th>
+                <th style={{ textAlign: 'center', width: '130px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePlanConfig.rateLabel}
+                </th>
+                <th style={{ textAlign: 'center', width: '110px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePlanConfig.shareLabel}
+                </th>
+                <th style={{ textAlign: 'center', width: '120px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  Đánh giá
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {singlePlanRows.length > 0 ? (
+                singlePlanRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+                    <td className="spdv-td-num font-bold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                      {formatUnitNum(row.val1)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#334155', paddingRight: '20px' }}>
+                      {formatUnitNum(row.val2)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                      {row.diff >= 0 ? `+${formatUnitNum(row.diff)}` : formatUnitNum(row.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.rate}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#475569' }}>
+                      {row.share}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`status-pill ${row.isPass ? 'pass' : 'fail'}`}>
+                        {row.isPass ? 'Đạt KH' : 'Chưa đạt'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu đơn vị phù hợp với điều kiện lọc
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">Tổng doanh thu 6 đơn vị</td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                  {formatUnitNum(integratedTotals[selectedPeriod]?.th)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#1e293b', paddingRight: '20px' }}>
+                  {formatUnitNum(integratedTotals[selectedPeriod]?.kh)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${integratedTotals[selectedPeriod]?.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                  {integratedTotals[selectedPeriod]?.diff >= 0 ? `+${formatUnitNum(integratedTotals[selectedPeriod]?.diff)}` : formatUnitNum(integratedTotals[selectedPeriod]?.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${integratedTotals[selectedPeriod]?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {integratedTotals[selectedPeriod]?.rate}
+                  </span>
+                </td>
+                <td style={{ textAlign: 'center', fontWeight: '700', color: '#0f172a' }}>
+                  100%
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`status-pill ${integratedTotals[selectedPeriod]?.isPass ? 'pass' : 'fail'}`}>
+                    {integratedTotals[selectedPeriod]?.isPass ? 'Đạt KH' : 'Chưa đạt'}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : null}
+
+      {/* 2. SINGLE-PERIOD VIEW FOR PREV PERIOD COMPARISON (BIỂU ĐỒ 23) */}
+      {!isStructure && isPrevPeriodComparison && singlePrevPeriodConfig ? (
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
+                <th className="spdv-th-name" style={{ width: '280px' }}>Đơn vị thực hiện</th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePrevPeriodConfig.obj1Label} ({singlePrevPeriodConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePrevPeriodConfig.obj2Label} ({singlePrevPeriodConfig.unit})
+                </th>
+                <th style={{ textAlign: 'right', paddingRight: '20px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePrevPeriodConfig.diffLabel} ({singlePrevPeriodConfig.unit})
+                </th>
+                <th style={{ textAlign: 'center', width: '130px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePrevPeriodConfig.rateLabel}
+                </th>
+                <th style={{ textAlign: 'center', width: '110px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singlePrevPeriodConfig.shareLabel}
+                </th>
+                <th style={{ textAlign: 'center', width: '120px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  Đánh giá
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {singlePrevRows.length > 0 ? (
+                singlePrevRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+                    <td className="spdv-td-num font-bold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                      {formatUnitNum(row.val1)}
+                    </td>
+                    <td className="spdv-td-num font-semibold" style={{ color: '#334155', paddingRight: '20px' }}>
+                      {formatUnitNum(row.val2)}
+                    </td>
+                    <td className={`spdv-td-num font-bold ${row.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                      {row.diff >= 0 ? `+${formatUnitNum(row.diff)}` : formatUnitNum(row.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.rate}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#475569' }}>
+                      {row.share}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`status-pill ${row.isPass ? 'pass' : 'fail'}`}>
+                        {row.isPass ? 'Tăng trưởng' : 'Suy giảm'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu đơn vị phù hợp với điều kiện lọc
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">Tổng doanh thu 6 đơn vị</td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#0f172a', paddingRight: '20px' }}>
+                  {formatUnitNum(prevPeriodTotals[selectedPeriod]?.curr)}
+                </td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#1e293b', paddingRight: '20px' }}>
+                  {formatUnitNum(prevPeriodTotals[selectedPeriod]?.prev)}
+                </td>
+                <td className={`spdv-td-num font-extrabold ${prevPeriodTotals[selectedPeriod]?.diff >= 0 ? 'text-green' : 'text-red'}`} style={{ paddingRight: '20px' }}>
+                  {prevPeriodTotals[selectedPeriod]?.diff >= 0 ? `+${formatUnitNum(prevPeriodTotals[selectedPeriod]?.diff)}` : formatUnitNum(prevPeriodTotals[selectedPeriod]?.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`spdv-rate-pill spdv-rate-pill-total ${prevPeriodTotals[selectedPeriod]?.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                    {prevPeriodTotals[selectedPeriod]?.rate}
+                  </span>
+                </td>
+                <td style={{ textAlign: 'center', fontWeight: '700', color: '#0f172a' }}>
+                  100%
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`status-pill ${prevPeriodTotals[selectedPeriod]?.isPass ? 'pass' : 'fail'}`}>
+                    {prevPeriodTotals[selectedPeriod]?.isPass ? 'Tăng trưởng' : 'Suy giảm'}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : null}
+
+      {/* 3. SINGLE-PERIOD VIEW FOR STRUCTURE (BIỂU ĐỒ 21) */}
+      {isStructure && singleStructureConfig ? (
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th style={{ width: '50px', textAlign: 'center' }}>STT</th>
+                <th className="spdv-th-name" style={{ width: '320px' }}>Đơn vị thực hiện</th>
+                <th style={{ textAlign: 'right', paddingRight: '24px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleStructureConfig.obj1Label} ({singleStructureConfig.unit})
+                </th>
+                <th style={{ textAlign: 'center', width: '160px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
+                  {singleStructureConfig.shareLabel}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStructureRows.map((row, idx) => (
+                <tr key={row.id} className="spdv-row">
+                  <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                    {idx + 1}
+                  </td>
+                  <td className="spdv-td-name">
+                    <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                    <span className="spdv-name-label">{row.name}</span>
+                  </td>
+                  <td className="spdv-td-num font-bold" style={{ color: '#0f172a', paddingRight: '24px' }}>
+                    {formatUnitNum(row[selectedPeriod]?.th)}
+                  </td>
+                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#2563eb' }}>
+                    {row[selectedPeriod]?.thShare || '-'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
+                <td className="spdv-td-name font-bold">Tổng doanh thu</td>
+                <td className="spdv-td-num font-extrabold" style={{ color: '#0f172a', paddingRight: '24px' }}>
+                  {formatUnitNum(structureData.total?.[selectedPeriod]?.th)}
+                </td>
+                <td style={{ textAlign: 'center', fontWeight: '800', color: '#2563eb' }}>
+                  {structureData.total?.[selectedPeriod]?.thShare || '100%'}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : null}
+
+      {/* 4. INTEGRATED 3-PERIOD TABLE FOR PREV PERIOD (BIỂU ĐỒ 23 - TẤT CẢ 3 KỲ) */}
+      {isPrevPeriodComparison && selectedPeriod === 'all' && (
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
             <thead>
@@ -430,10 +992,10 @@ export default function UnitDetailTable({
             </tfoot>
           </table>
         </div>
-      ) : !isStructure ? (
-        /* ===================================================================== */
-        /* BẢNG TỔNG HỢP BIỂU ĐỒ 22 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
-        /* ===================================================================== */
+      )}
+
+      {/* 5. INTEGRATED 3-PERIOD TABLE FOR PLAN COMPARISON (BIỂU ĐỒ 18 - TẤT CẢ 3 KỲ) */}
+      {!isStructure && !isPrevPeriodComparison && selectedPeriod === 'all' && (
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
             <thead>
@@ -483,50 +1045,38 @@ export default function UnitDetailTable({
                     </td>
 
                     {/* Tháng */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatUnitNum(row.month?.th)}
-                    </td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatUnitNum(row.month?.kh)}
-                    </td>
-                    <td className={`spdv-td-num font-bold ${row.month?.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                      {row.month?.diff >= 0 ? `+${formatUnitNum(row.month?.diff)}` : formatUnitNum(row.month?.diff)}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.month.th)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.month.kh)}</td>
+                    <td className={`spdv-td-num ${row.month.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.month.diff >= 0 ? `+${formatUnitNum(row.month.diff)}` : formatUnitNum(row.month.diff)}
                     </td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className={`spdv-rate-pill ${row.month?.isPass ? 'rate-pass' : 'rate-fail'}`}>
-                        {row.month?.rate}
+                      <span className={`spdv-rate-pill ${row.month.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.month.rate}
                       </span>
                     </td>
 
                     {/* Quý */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatUnitNum(row.quarter?.th)}
-                    </td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatUnitNum(row.quarter?.kh)}
-                    </td>
-                    <td className={`spdv-td-num font-bold ${row.quarter?.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                      {row.quarter?.diff >= 0 ? `+${formatUnitNum(row.quarter?.diff)}` : formatUnitNum(row.quarter?.diff)}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.quarter.th)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.quarter.kh)}</td>
+                    <td className={`spdv-td-num ${row.quarter.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.quarter.diff >= 0 ? `+${formatUnitNum(row.quarter.diff)}` : formatUnitNum(row.quarter.diff)}
                     </td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className={`spdv-rate-pill ${row.quarter?.isPass ? 'rate-pass' : 'rate-fail'}`}>
-                        {row.quarter?.rate}
+                      <span className={`spdv-rate-pill ${row.quarter.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.quarter.rate}
                       </span>
                     </td>
 
                     {/* Năm */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatUnitNum(row.year?.th)}
-                    </td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatUnitNum(row.year?.kh)}
-                    </td>
-                    <td className={`spdv-td-num font-bold ${row.year?.diff >= 0 ? 'text-green' : 'text-red'}`}>
-                      {row.year?.diff >= 0 ? `+${formatUnitNum(row.year?.diff)}` : formatUnitNum(row.year?.diff)}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.year.th)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.year.kh)}</td>
+                    <td className={`spdv-td-num ${row.year.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.year.diff >= 0 ? `+${formatUnitNum(row.year.diff)}` : formatUnitNum(row.year.diff)}
                     </td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className={`spdv-rate-pill ${row.year?.isPass ? 'rate-pass' : 'rate-fail'}`}>
-                        {row.year?.rate}
+                      <span className={`spdv-rate-pill ${row.year.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.year.rate}
                       </span>
                     </td>
                   </tr>
@@ -542,9 +1092,7 @@ export default function UnitDetailTable({
             <tfoot>
               <tr className="spdv-tr-total">
                 <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
-                <td className="spdv-td-name font-bold">
-                  Tổng doanh thu
-                </td>
+                <td className="spdv-td-name font-bold">Tổng doanh thu</td>
 
                 {/* Tháng */}
                 <td className="spdv-td-num font-extrabold spdv-border-left" style={{ color: '#0f172a' }}>
@@ -597,10 +1145,10 @@ export default function UnitDetailTable({
             </tfoot>
           </table>
         </div>
-      ) : (
-        /* ===================================================================== */
-        /* BẢNG DỮ LIỆU CƠ CẤU 3 KỲ (BIỂU ĐỒ 21) - KHÔNG CÓ CỘT KH                */
-        /* ===================================================================== */
+      )}
+
+      {/* 6. INTEGRATED 3-PERIOD TABLE FOR STRUCTURE (BIỂU ĐỒ 21 - TẤT CẢ 3 KỲ) */}
+      {isStructure && selectedPeriod === 'all' && (
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table">
             <thead>

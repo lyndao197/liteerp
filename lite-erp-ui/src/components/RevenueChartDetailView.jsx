@@ -3224,6 +3224,7 @@ export default function RevenueChartDetailView({
             chartTitle={chartTitle}
             searchQuery={searchQuery}
             statusFilter={statusFilter}
+            onSelectChartKey={(newKey) => setActiveChartKey(newKey)}
           />
         ) : activeBranchId === 'plan_progress' ? (
           <PlanProgressDetailTable
