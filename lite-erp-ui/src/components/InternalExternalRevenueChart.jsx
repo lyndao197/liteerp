@@ -168,6 +168,7 @@ function InternalExternalSubcard({
   tagType = 'th',
   chart,
   compareChart,
+  categories,
   hoveredSlice,
   setHoveredSlice,
   cardKey,
@@ -175,6 +176,8 @@ function InternalExternalSubcard({
   onToggle,
   onOpenDetail
 }) {
+  const legendCategories = categories || chart?.slices || [];
+
   return (
     <div
       className="month-subcard spdv-card-item"
@@ -283,6 +286,88 @@ function InternalExternalSubcard({
               </div>
             </div>
           )}
+
+          {/* Chú giải dữ liệu trực tiếp trong từng biểu đồ (Data Legend) */}
+          <div
+            className="in-ex-subcard-legend"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px 16px',
+              padding: '12px 14px 4px',
+              marginTop: '10px',
+              borderTop: '1px solid #f1f5f9',
+              width: '100%'
+            }}
+          >
+            {legendCategories.map((cat) => {
+              const slice = chart?.slices?.find((s) => s.name === cat.name) || cat;
+              const isHovered =
+                hoveredSlice &&
+                hoveredSlice.cardKey === cardKey &&
+                hoveredSlice.sliceName === cat.name;
+
+              return (
+                <div
+                  key={cat.id || cat.name}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    fontSize: '12px',
+                    fontWeight: isHovered ? '700' : '600',
+                    color: isHovered ? '#0f172a' : '#334155',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    padding: '3px 8px',
+                    borderRadius: '5px',
+                    backgroundColor: isHovered ? '#f1f5f9' : 'transparent'
+                  }}
+                  onMouseEnter={() => {
+                    const compSlice = compareChart?.slices?.find((s) => s.name === slice.name);
+                    let sliceDelta = null;
+                    if (compSlice && compSlice.value > 0 && slice.value !== undefined && slice.value !== null) {
+                      sliceDelta = ((slice.value - compSlice.value) / compSlice.value) * 100;
+                    }
+                    setHoveredSlice({
+                      cardKey,
+                      sliceName: slice.name,
+                      percent: slice.formattedPercent || (slice.percent !== undefined ? `${slice.percent}%` : null),
+                      value: slice.value,
+                      color: slice.color,
+                      unit: chart?.unit || 'Triệu đồng',
+                      delta: sliceDelta !== null ? sliceDelta.toFixed(1).replace('.', ',') : null,
+                      isDeltaPositive: sliceDelta !== null ? sliceDelta >= 0 : null
+                    });
+                  }}
+                  onMouseLeave={() => setHoveredSlice(null)}
+                >
+                  <span
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '3px',
+                      backgroundColor: cat.color,
+                      flexShrink: 0,
+                      boxShadow: isHovered ? `0 0 0 2px ${cat.color}` : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  />
+                  <span>{cat.name}:</span>
+                  <strong style={{ color: '#0f172a', fontWeight: '700' }}>
+                    {slice?.formattedPercent || (slice?.percent !== undefined ? `${slice.percent}%` : '-')}
+                  </strong>
+                  {slice?.value !== undefined && slice?.value !== null && (
+                    <span style={{ fontSize: '11px', fontWeight: '500', color: '#64748b' }}>
+                      ({typeof slice.value === 'number' ? slice.value.toLocaleString('vi-VN', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : slice.value} {chart?.unit || 'Triệu đồng'})
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       {onOpenDetail && (
@@ -512,6 +597,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data.thMonth}
                 compareChart={data.khMonth}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-month"
@@ -528,6 +614,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data.khMonth}
                 compareChart={data.thMonth}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-month"
@@ -548,6 +635,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data.thQuarter}
                 compareChart={data.khQuarter}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-quarter"
@@ -564,6 +652,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data.khQuarter}
                 compareChart={data.thQuarter}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-quarter"
@@ -584,6 +673,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data.thYear}
                 compareChart={data.khYear}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-year"
@@ -600,6 +690,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data.khYear}
                 compareChart={data.thYear}
+                categories={INTERNAL_EXTERNAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-year"
@@ -610,88 +701,6 @@ export default function InternalExternalRevenueChart({
                   chartTitle: inExKhYearTitle
                 })}
               />
-            </div>
-          </div>
-
-          {/* Chú giải cho Cơ cấu DT nội bộ và ngoài Tập đoàn */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-              padding: '10px 18px',
-              backgroundColor: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              marginTop: '4px'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  borderRadius: '3px',
-                  backgroundColor: '#EE0033'
-                }}
-              />
-              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
-                DT ngoài Tập đoàn
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  borderRadius: '3px',
-                  backgroundColor: '#64748b'
-                }}
-              />
-              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
-                DT nội bộ
-              </span>
-            </div>
-
-            <div style={{ height: '18px', width: '1px', backgroundColor: '#cbd5e1' }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  color: '#1d4ed8',
-                  backgroundColor: '#dbeafe',
-                  padding: '2px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                TH
-              </span>
-              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
-                Thực hiện
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  color: '#b91c1c',
-                  backgroundColor: '#fee2e2',
-                  padding: '2px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                KH
-              </span>
-              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
-                Kế hoạch
-              </span>
             </div>
           </div>
 
@@ -751,6 +760,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data27.thMonth}
                 compareChart={data27.khMonth}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-month-27"
@@ -767,6 +777,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data27.khMonth}
                 compareChart={data27.thMonth}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-month-28"
@@ -787,6 +798,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data27.thQuarter}
                 compareChart={data27.khQuarter}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-quarter-27"
@@ -803,6 +815,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data27.khQuarter}
                 compareChart={data27.thQuarter}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-quarter-28"
@@ -823,6 +836,7 @@ export default function InternalExternalRevenueChart({
                 tagType="th"
                 chart={data27.thYear}
                 compareChart={data27.khYear}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="th-year-27"
@@ -839,6 +853,7 @@ export default function InternalExternalRevenueChart({
                 tagType="kh"
                 chart={data27.khYear}
                 compareChart={data27.thYear}
+                categories={DOMESTIC_INTERNATIONAL_CATEGORIES}
                 hoveredSlice={hoveredSlice}
                 setHoveredSlice={setHoveredSlice}
                 cardKey="kh-year-28"
@@ -849,88 +864,6 @@ export default function InternalExternalRevenueChart({
                   chartTitle: domIntlKhYearTitle
                 })}
               />
-            </div>
-          </div>
-
-          {/* Chú giải cho Cơ cấu DT trong nước và quốc tế */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-              padding: '10px 18px',
-              backgroundColor: '#f8fafc',
-              border: '1px solid #e2e8f0',
-              borderRadius: '8px',
-              marginTop: '4px'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  borderRadius: '3px',
-                  backgroundColor: '#0284c7'
-                }}
-              />
-              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
-                DT trong nước
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '14px',
-                  height: '14px',
-                  borderRadius: '3px',
-                  backgroundColor: '#ea580c'
-                }}
-              />
-              <span style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b' }}>
-                DT quốc tế
-              </span>
-            </div>
-
-            <div style={{ height: '18px', width: '1px', backgroundColor: '#cbd5e1' }} />
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  color: '#1d4ed8',
-                  backgroundColor: '#dbeafe',
-                  padding: '2px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                TH
-              </span>
-              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
-                Thực hiện
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  color: '#b91c1c',
-                  backgroundColor: '#fee2e2',
-                  padding: '2px 8px',
-                  borderRadius: '4px'
-                }}
-              >
-                KH
-              </span>
-              <span style={{ fontSize: '12.5px', fontWeight: '500', color: '#475569' }}>
-                Kế hoạch
-              </span>
             </div>
           </div>
 

@@ -245,6 +245,71 @@ function CompletionGaugeDonut({
           </div>
         </div>
       )}
+
+      {/* Chú giải dữ liệu trực tiếp trong biểu đồ (Data Legend) */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '8px 14px',
+          marginTop: '6px',
+          fontSize: '12px'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span
+            style={{
+              width: '12px',
+              height: '12px',
+              borderRadius: '2px',
+              backgroundColor: doneColor,
+              display: 'inline-block',
+              flexShrink: 0
+            }}
+          />
+          <span style={{ color: '#475569' }}>Đã TH:</span>
+          <strong style={{ color: '#0f172a' }}>
+            {actualVal} ({ratePercent.toFixed(1).replace('.', ',')}%)
+          </strong>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span
+            style={{
+              width: '12px',
+              height: '12px',
+              borderRadius: '2px',
+              backgroundColor: '#e5e7eb',
+              border: '1px solid #cbd5e1',
+              display: 'inline-block',
+              flexShrink: 0
+            }}
+          />
+          <span style={{ color: '#475569' }}>Còn lại:</span>
+          <strong style={{ color: '#0f172a' }}>
+            {Math.max(0, 100 - ratePercent).toFixed(1).replace('.', ',')}%
+          </strong>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span
+            style={{
+              width: '14px',
+              height: '3px',
+              borderRadius: '1px',
+              backgroundColor: '#b91c1c',
+              display: 'inline-block',
+              flexShrink: 0
+            }}
+          />
+          <span style={{ color: '#475569' }}>Mốc tgian:</span>
+          <strong style={{ color: '#b91c1c' }}>
+            {timeElapsedLabel}
+          </strong>
+        </div>
+      </div>
     </div>
   );
 }
