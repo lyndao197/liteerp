@@ -422,23 +422,14 @@ export default function ExportChartExcelModal({
   if (!isOpen) return null;
 
   const currentBranchName = REPORT_BRANCH_META[currentBranch]?.name || 'Nhóm hiện tại';
+  const selectedVisibleCount = visibleCharts.filter((c) => selectedKeys.includes(c.key)).length;
 
   return (
     <div className="ece-modal-overlay" onClick={onClose}>
       <div className="ece-modal-container" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="ece-modal-header">
-          <div className="ece-header-left">
-            <div className="ece-header-icon-box">
-              <FileSpreadsheet size={22} className="ece-excel-icon" />
-            </div>
-            <div>
-              <h3 className="ece-modal-title">Xuất Báo Cáo Excel</h3>
-              <p className="ece-modal-subtitle">
-                Chọn danh sách các biểu đồ bạn muốn xuất dữ liệu sang định dạng Excel (.xlsx)
-              </p>
-            </div>
-          </div>
+          <h3 className="ece-modal-title">Xuất Excel</h3>
           <button type="button" className="ece-btn-close" onClick={onClose} aria-label="Đóng">
             <X size={18} />
           </button>
@@ -446,31 +437,25 @@ export default function ExportChartExcelModal({
 
         {/* Modal Body */}
         <div className="ece-modal-body">
-          {/* Navigation / Filter Tabs */}
-          <div className="ece-filter-tabs-bar">
-            <button
-              type="button"
-              className={`ece-tab-btn ${activeTab === 'current' ? 'active' : ''}`}
-              onClick={() => setActiveTab('current')}
-            >
-              <span>{currentBranchName}</span>
-              <span className="ece-tab-count">
-                {currentBranchCharts.filter((c) => selectedKeys.includes(c.key)).length}/
-                {currentBranchCharts.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              className={`ece-tab-btn ${activeTab === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveTab('all')}
-            >
-              <span>Tất cả các nhóm</span>
-              <span className="ece-tab-count">
-                {allCharts.filter((c) => selectedKeys.includes(c.key)).length}/{allCharts.length}
-              </span>
-            </button>
-          </div>
+          {/* Navigation / Filter Tabs if multiple branches */}
+          {currentBranch && (
+            <div className="ece-scope-pills">
+              <button
+                type="button"
+                className={`ece-scope-pill ${activeTab === 'current' ? 'active' : ''}`}
+                onClick={() => setActiveTab('current')}
+              >
+                {currentBranchName}
+              </button>
+              <button
+                type="button"
+                className={`ece-scope-pill ${activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => setActiveTab('all')}
+              >
+                Tất cả các nhóm
+              </button>
+            </div>
+          )}
 
           {/* Quick Select All Banner */}
           <div className="ece-select-all-banner" onClick={handleToggleSelectAll}>
@@ -478,33 +463,14 @@ export default function ExportChartExcelModal({
               {isAllVisibleSelected && <Check size={13} strokeWidth={3} />}
             </div>
             <div className="ece-select-all-info">
-              <div className="ece-select-all-title">
-                {isAllVisibleSelected ? 'Bỏ chọn tất cả biểu đồ' : 'Chọn tất cả biểu đồ hiển thị'}
-              </div>
+              <div className="ece-select-all-title">Chọn tất cả các biểu đồ</div>
               <div className="ece-select-all-sub">
-                Đã chọn{' '}
-                <strong>
-                  {visibleCharts.filter((c) => selectedKeys.includes(c.key)).length} /{' '}
-                  {visibleCharts.length}
-                </strong>{' '}
-                biểu đồ trong mục này
+                {selectedVisibleCount} / {visibleCharts.length} biểu đồ được chọn
               </div>
             </div>
-            {selectedKeys.length > 0 && (
-              <button
-                type="button"
-                className="ece-btn-clear-selection"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedKeys([]);
-                }}
-              >
-                Bỏ chọn tất cả
-              </button>
-            )}
           </div>
 
-          {/* Charts List Container */}
+          {/* Charts List Container (Single column list) */}
           <div className="ece-charts-scroll-area">
             {groupedCharts.map((group) => (
               <div key={group.meta.id} className="ece-chart-group-section">
@@ -515,20 +481,23 @@ export default function ExportChartExcelModal({
                   </div>
                 )}
 
-                <div className="ece-chart-grid">
+                <div className="ece-chart-list">
                   {group.items.map((chart) => {
                     const isChecked = selectedKeys.includes(chart.key);
+                    const cleanTitle = (chart.title || '')
+                      .replace(/^Biểu đồ\s*(\d+[a-zA-Z]?|\d+\s*[–-]\s*\d+)(\s*\([^\)]+\))?\s*[\.:\-]\s*/i, '')
+                      .trim();
                     return (
                       <div
                         key={chart.key}
-                        className={`ece-chart-cell ${isChecked ? 'selected' : ''}`}
+                        className={`ece-chart-row ${isChecked ? 'selected' : ''}`}
                         onClick={() => handleToggleChart(chart.key)}
-                        title={chart.title}
+                        title={cleanTitle}
                       >
                         <div className={`ece-checkbox-custom ${isChecked ? 'checked' : ''}`}>
                           {isChecked && <Check size={13} strokeWidth={3} />}
                         </div>
-                        <span className="ece-chart-cell-title">{chart.title}</span>
+                        <span className="ece-chart-row-title">{cleanTitle}</span>
                       </div>
                     );
                   })}
@@ -537,14 +506,14 @@ export default function ExportChartExcelModal({
             ))}
           </div>
 
-          {/* Export Options */}
+          {/* Export Visual Options */}
           <div className="ece-export-options-box">
             <label className="ece-option-label" onClick={() => setIncludeVisualCharts(!includeVisualCharts)}>
               <div className={`ece-checkbox-custom small ${includeVisualCharts ? 'checked' : ''}`}>
                 {includeVisualCharts && <Check size={11} strokeWidth={3} />}
               </div>
               <span className="ece-option-text">
-                Kèm hình ảnh biểu đồ trực quan trong file Excel (chế độ báo cáo chuyên sâu)
+                Kèm hình ảnh biểu đồ trong file Excel
               </span>
             </label>
           </div>
@@ -552,34 +521,23 @@ export default function ExportChartExcelModal({
 
         {/* Modal Footer */}
         <div className="ece-modal-footer">
-          <div className="ece-footer-left">
-            <span className="ece-footer-summary">
-              Tổng số biểu đồ đã chọn: <strong>{selectedKeys.length}</strong>
-            </span>
-          </div>
+          <button
+            type="button"
+            className="ece-btn-cancel"
+            onClick={onClose}
+            disabled={isExporting}
+          >
+            Hủy
+          </button>
 
-          <div className="ece-footer-right">
-            <button
-              type="button"
-              className="ece-btn-cancel"
-              onClick={onClose}
-              disabled={isExporting}
-            >
-              Hủy
-            </button>
-
-            <button
-              type="button"
-              className="ece-btn-export-submit"
-              onClick={handleConfirmExport}
-              disabled={selectedKeys.length === 0 || isExporting}
-            >
-              <Download size={16} />
-              <span>
-                {isExporting ? 'Đang xuất Excel...' : `Xuất Excel (${selectedKeys.length})`}
-              </span>
-            </button>
-          </div>
+          <button
+            type="button"
+            className="ece-btn-export-submit"
+            onClick={handleConfirmExport}
+            disabled={selectedKeys.length === 0 || isExporting}
+          >
+            {isExporting ? 'Đang xuất dữ liệu...' : 'Xuất dữ liệu'}
+          </button>
         </div>
       </div>
     </div>
