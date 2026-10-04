@@ -56,14 +56,13 @@ export default function SpdvDetailTable({
   const [yoyViewMode, setYoyViewMode] = useState('single'); // 'single' | 'integrated'
   const [prevPeriodViewMode, setPrevPeriodViewMode] = useState('single'); // 'single' | 'integrated'
 
-  const getInitialStructurePeriod = () => {
+  const structurePeriod = useMemo(() => {
     const key = (activeChartKey || '').toLowerCase();
-    if (key.includes('quarter')) return 'quarter';
-    if (key.includes('year')) return 'year';
+    const title = (chartTitle || '').toLowerCase();
+    if (key.includes('quarter') || key.includes('q3') || title.includes('quý')) return 'quarter';
+    if (key.includes('year') || title.includes('năm')) return 'year';
     return 'month';
-  };
-
-  const [structurePeriod, setStructurePeriod] = useState(getInitialStructurePeriod);
+  }, [activeChartKey, chartTitle]);
 
   // Reset to single mode whenever activeChartKey changes
   useEffect(() => {
@@ -71,7 +70,6 @@ export default function SpdvDetailTable({
     setBarViewMode('single');
     setYoyViewMode('single');
     setPrevPeriodViewMode('single');
-    setStructurePeriod(getInitialStructurePeriod());
   }, [activeChartKey]);
 
   // Check if viewing Structure table (Biểu đồ 16 & 17)
@@ -861,41 +859,6 @@ export default function SpdvDetailTable({
               : '(Đơn vị: Tỷ đồng)'}
           </span>
         </div>
-
-        {isStructureTable && (
-          <div className="spdv-header-actions">
-            <div className="spdv-period-tab-group">
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structurePeriod === 'month' ? 'active' : ''}`}
-                onClick={() => setStructurePeriod('month')}
-              >
-                Tháng {monthNum}/{selectedYear}
-              </button>
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structurePeriod === 'quarter' ? 'active' : ''}`}
-                onClick={() => setStructurePeriod('quarter')}
-              >
-                Quý {quarterRoman}/{selectedYear}
-              </button>
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structurePeriod === 'year' ? 'active' : ''}`}
-                onClick={() => setStructurePeriod('year')}
-              >
-                Năm {selectedYear}
-              </button>
-              <button
-                type="button"
-                className={`spdv-period-tab-btn ${structurePeriod === 'all' ? 'active' : ''}`}
-                onClick={() => setStructurePeriod('all')}
-              >
-                Tất cả 3 kỳ
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Note / Basis description */}
         {isYoyComparison && (
