@@ -88,14 +88,14 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart9_rat', label: 'Biểu đồ 9b: Tỷ suất / tỷ trọng ước thực hiện so với KH Quý tiếp theo' }
   ],
   year: [
-    { id: 'chart10_val', label: 'Biểu đồ 10: Lũy kế TH so với KH lũy kế' },
-    { id: 'chart10_rat', label: 'Biểu đồ 10b: Tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế' },
-    { id: 'chart11_val', label: 'Biểu đồ 11: Lũy kế TH năm so với KH cả năm' },
-    { id: 'chart11_rat', label: 'Biểu đồ 11b: Tỷ suất / tỷ trọng lũy kế TH năm so với KH cả năm' },
-    { id: 'chart12_val', label: 'Biểu đồ 12: Ước kết quả năm so với KH năm' },
-    { id: 'chart12_rat', label: 'Biểu đồ 12b: Tỷ suất / tỷ trọng ước kết quả năm so với KH năm' },
-    { id: 'chart13_val', label: 'Biểu đồ 13: Ước kết quả năm so với TH năm trước' },
-    { id: 'chart13_rat', label: 'Biểu đồ 13b: Tỷ suất / tỷ trọng ước kết quả năm so với TH năm trước' }
+    { id: 'chart10_val', label: 'Biểu đồ 10: Lũy kế TH so với KH lũy kế năm' },
+    { id: 'chart10_rat', label: 'Biểu đồ 10b: Tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế năm' },
+    { id: 'chart11_val', label: 'Biểu đồ 11: Lũy kế TH so với KH năm' },
+    { id: 'chart11_rat', label: 'Biểu đồ 11b: Tỷ suất / tỷ trọng lũy kế TH so với KH năm' },
+    { id: 'chart12_val', label: 'Biểu đồ 12: Ước TH so với KH năm' },
+    { id: 'chart12_rat', label: 'Biểu đồ 12b: Tỷ suất / tỷ trọng ước TH so với KH năm' },
+    { id: 'chart13_val', label: 'Biểu đồ 13: Ước TH so với TH năm trước' },
+    { id: 'chart13_rat', label: 'Biểu đồ 13b: Tỷ suất / tỷ trọng ước TH so với TH năm trước' }
   ],
   trend: [
     { id: 'trend_prev_year', label: 'Biểu đồ 14: Xu hướng doanh thu theo từng tháng so với năm trước' },
@@ -678,18 +678,7 @@ export default function RevenueChartDetailView({
       return `Quý ${quarterRoman}/${selectedYear}`;
     }
     if (activeBranchId === 'year') {
-      if (
-        activeChartKey === 'chart11' ||
-        activeChartKey === 'chart12' ||
-        activeChartKey === 'chart13' ||
-        activeChartKey === 'chart12_val' ||
-        activeChartKey === 'chart13_val' ||
-        chartTitle.includes('năm trước') ||
-        chartTitle.includes('kế hoạch năm')
-      ) {
-        return `Năm ${selectedYear}`;
-      }
-      return `${selectedCumulativeMonth}/${selectedYear}`;
+      return `Năm ${selectedYear}`;
     }
     return `Tháng ${monthNum}/${selectedYear}`;
   }, [activeBranchId, selectedQuarter, quarterRoman, selectedYear, activeChartKey, chartTitle, selectedCumulativeMonth, selectedMonth, monthNum]);
@@ -731,20 +720,32 @@ export default function RevenueChartDetailView({
     }
 
     if (activeBranchId === 'year') {
-      if (activeChartKey === 'chart10_val' || activeChartKey === 'chart10_rat' || chartTitle.includes('cùng kỳ')) {
-        return `So cùng kỳ Năm ${lastYear}`;
+      if (
+        activeChartKey === 'chart13_val' ||
+        activeChartKey === 'chart13_rat' ||
+        activeChartKey === 'chart13' ||
+        (chartTitle.toLowerCase().includes('ước') && (chartTitle.toLowerCase().includes('năm trước') || chartTitle.toLowerCase().includes('th năm') || chartTitle.includes(lastYear)))
+      ) {
+        return `Ước TH so với TH năm ${lastYear}`;
       }
-      if (isEstVsFullPlan || activeChartKey === 'chart12_val' || activeChartKey === 'chart12_rat') {
-        return `Ước TH cả năm so với KH năm ${selectedYear}`;
+      if (
+        activeChartKey === 'chart12_val' ||
+        activeChartKey === 'chart12_rat' ||
+        activeChartKey === 'chart12' ||
+        (chartTitle.toLowerCase().includes('ước') && (chartTitle.toLowerCase().includes('kh') || chartTitle.toLowerCase().includes('kế hoạch')))
+      ) {
+        return `Ước TH so với KH năm ${selectedYear}`;
       }
-      if (isEstVsPrevYear || activeChartKey === 'chart13_val' || activeChartKey === 'chart13_rat') {
-        return `So Năm ${lastYear}`;
+      if (
+        activeChartKey === 'chart11_val' ||
+        activeChartKey === 'chart11_rat' ||
+        activeChartKey === 'chart11' ||
+        (chartTitle.toLowerCase().includes('cả năm') || (chartTitle.toLowerCase().includes('lũy kế') && chartTitle.toLowerCase().includes('kh năm')))
+      ) {
+        return `Lũy kế TH so với KH năm ${selectedYear}`;
       }
-      if (activeChartKey === 'chart8' || activeChartKey === 'chart11_val' || chartTitle.includes('cả năm')) {
-        return `Lũy kế TH so với KH cả năm ${selectedYear}`;
-      }
-      const cleanMonth = selectedCumulativeMonth?.replace(/lũy kế\s*/i, '').trim() || '8 tháng';
-      return `So với luỹ kế KH ${cleanMonth} ${selectedYear}`;
+      // Default: chart10 (Lũy kế TH so với KH lũy kế)
+      return `Lũy kế TH so với KH lũy kế năm ${selectedYear}`;
     }
 
     // Month branch
@@ -785,17 +786,14 @@ export default function RevenueChartDetailView({
     }
 
     if (activeBranchId === 'year') {
-      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
-        return `so CK ${lastYear}`;
-      }
-      if (isEstVsFullPlan || activeChartKey === 'chart11' || activeChartKey === 'chart11_val') {
-        return `so KH năm`;
-      }
-      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
+      if (activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || activeChartKey === 'chart13_rat' || chartTitle.toLowerCase().includes('năm trước') || chartTitle.toLowerCase().includes('th năm')) {
         return `so Năm ${lastYear}`;
       }
-      if (activeChartKey === 'chart8') {
-        return `so KH ${selectedYear}`;
+      if (activeChartKey === 'chart12' || activeChartKey === 'chart12_val' || activeChartKey === 'chart12_rat' || isEstVsFullPlan) {
+        return `so KH năm`;
+      }
+      if (activeChartKey === 'chart11' || activeChartKey === 'chart11_val' || activeChartKey === 'chart11_rat') {
+        return `so KH năm`;
       }
       return `so KH LK`;
     }
@@ -827,10 +825,7 @@ export default function RevenueChartDetailView({
     }
 
     if (activeBranchId === 'year') {
-      if (activeChartKey === 'chart10' || chartTitle.includes('cùng kỳ')) {
-        return `Tăng trưởng`;
-      }
-      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
+      if (isEstVsPrevYear || activeChartKey === 'chart13' || activeChartKey === 'chart13_val' || activeChartKey === 'chart13_rat' || chartTitle.toLowerCase().includes('năm trước') || chartTitle.toLowerCase().includes('th năm')) {
         return `Tăng trưởng`;
       }
       return 'HTKH';

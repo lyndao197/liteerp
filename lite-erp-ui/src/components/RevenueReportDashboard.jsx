@@ -858,7 +858,7 @@ const RevenueReportDashboard = () => {
     } else if (chartType === 10) {
       const shortCode = data.shortCode || '8T';
       const monthText = data.monthText || '8 tháng';
-      cardTitle = `Biểu đồ 10. Lũy kế TH ${shortCode} năm ${selectedYear} so với luỹ kế KH ${shortCode} năm ${selectedYear}`;
+      cardTitle = `Biểu đồ 10. Lũy kế TH so với KH lũy kế năm ${selectedYear}`;
       subtitleLeft = `Giá trị (số in đậm: TH LK ${shortCode}/${selectedYear} % hoàn thành KH LK ${shortCode})`;
       legend1Label = `TH LK ${shortCode}/${selectedYear}`;
       legend2Label = `KH LK ${shortCode}`;
@@ -2022,6 +2022,7 @@ const RevenueReportDashboard = () => {
         const shortCode = currentYearData.shortCode || '8T';
         const monthText = currentYearData.monthText || '8 tháng';
 
+        const prevYearNum = (parseInt(selectedYear, 10) - 1).toString();
         const ALL_YEAR_CHARTS = [
           {
             key: 'c10',
@@ -2029,7 +2030,7 @@ const RevenueReportDashboard = () => {
             cardIndex: 0,
             chartType: 10,
             sheetName: 'BieuDo_10_LK_vs_KH_LK',
-            chartTitle: `Biểu đồ 10. Lũy kế TH ${shortCode} năm ${selectedYear} so với luỹ kế KH ${shortCode} năm ${selectedYear}`,
+            chartTitle: `Biểu đồ 10. Lũy kế TH so với KH lũy kế năm ${selectedYear}`,
             vHeader: ['STT', 'Chỉ tiêu doanh thu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
             vRows: currentYearData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.kh, Number((item.lk - item.kh).toFixed(1)), item.rate]),
             rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch điểm %'],
@@ -2042,7 +2043,7 @@ const RevenueReportDashboard = () => {
             cardIndex: 1,
             chartType: 11,
             sheetName: 'BieuDo_11_LK_vs_KH_Nam',
-            chartTitle: `Biểu đồ 11. Lũy kế năm ${selectedYear} so với kế hoạch cả năm ${selectedYear}`,
+            chartTitle: `Biểu đồ 11. Lũy kế TH so với KH năm ${selectedYear}`,
             vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế TH (${shortCode})`, 'Kế hoạch năm', 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
             vRows: currentPlanFullData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.khYear, Number((item.lk - item.khYear).toFixed(1)), item.rate]),
             rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế TH (${shortCode})`, 'Kế hoạch năm', 'Chênh lệch điểm %'],
@@ -2055,12 +2056,25 @@ const RevenueReportDashboard = () => {
             cardIndex: 2,
             chartType: 12,
             sheetName: 'BieuDo_12_Uoc_vs_KH_Nam',
-            chartTitle: `Biểu đồ 12. Ước kết quả năm ${selectedYear} so với kế hoạch năm ${selectedYear}`,
+            chartTitle: `Biểu đồ 12. Ước TH so với KH năm ${selectedYear}`,
             vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (Ước - KH)', 'Tỷ lệ hoàn thành (%)'],
             vRows: currentEstimateData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.kh, Number((item.uoc - item.kh).toFixed(1)), item.rate]),
             rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: currentEstimateData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.kh}%`, item.diff]),
             data: currentEstimateData
+          },
+          {
+            key: 'c13',
+            isVisible: yearVisibleCards.c13Val || yearVisibleCards.c13Rat,
+            cardIndex: 3,
+            chartType: 13,
+            sheetName: 'BieuDo_13_Uoc_vs_TH_NamTruoc',
+            chartTitle: `Biểu đồ 13. Ước TH so với TH năm ${prevYearNum}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch (Ước - TH trước)', 'Tỷ lệ tăng trưởng (%)'],
+            vRows: (YEAR_ESTIMATE_DATA[selectedYear]?.values || currentEstimateData.values || []).map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.thPrev || item.thLastYear || item.kh, Number(((item.uoc || 0) - (item.thPrev || item.thLastYear || item.kh || 0)).toFixed(1)), item.rate]),
+            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch điểm %'],
+            rRows: (YEAR_ESTIMATE_DATA[selectedYear]?.ratios || currentEstimateData.ratios || []).map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.thPrev || item.thLastYear || item.kh}%`, item.diff]),
+            data: YEAR_ESTIMATE_DATA[selectedYear] || currentEstimateData
           }
         ];
 

@@ -174,9 +174,9 @@ export default function MonthRatioDetailTable({
         return {
           thHeader: `TH LK ${yearShortCode}/${selectedYear}`,
           compHeader: `KH ${selectedYear}`,
-          compRatHeader: `Tỷ suất/Tỷ trọng KH cả năm`,
+          compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 11b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế TH năm so với KH cả năm ${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế TH so với KH năm ${selectedYear}`
         };
       }
       if (activeChartKey === 'chart12_rat') {
@@ -185,7 +185,7 @@ export default function MonthRatioDetailTable({
           compHeader: `KH ${selectedYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 12b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả năm so với KH năm ${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH năm ${selectedYear}`
         };
       }
       if (activeChartKey === 'chart13_rat') {
@@ -194,7 +194,7 @@ export default function MonthRatioDetailTable({
           compHeader: `TH ${lastYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng ${lastYear}`,
           cardTag: 'Biểu đồ 13b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả năm so với năm trước (${lastYear})`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với TH năm ${lastYear}`
         };
       }
       // Default: chart10_rat (Lũy kế so với KH lũy kế)
@@ -203,7 +203,7 @@ export default function MonthRatioDetailTable({
         compHeader: `KH LK ${yearShortCode}/${selectedYear}`,
         compRatHeader: `Tỷ suất/Tỷ trọng KH LK`,
         cardTag: 'Biểu đồ 10b',
-        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế ${yearShortCode} năm ${selectedYear}`
+        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế năm ${selectedYear}`
       };
     }
 
