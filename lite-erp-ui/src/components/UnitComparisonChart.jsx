@@ -881,7 +881,7 @@ export default function UnitComparisonChart({
         </div>
       </div>
 
-      {/* DÒNG 1: THÁNG (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
+      {/* DÒNG 1: THÁNG & QUÝ - CƠ CẤU DOANH THU TH THEO TỪNG ĐƠN VỊ (BIỂU ĐỒ 21) */}
       <div className="month-row-grid">
         <UnitStructureSubcard
           title={`Cơ cấu doanh thu TH theo từng đơn vị – ${activeMonth}/${activeYear}`}
@@ -899,25 +899,9 @@ export default function UnitComparisonChart({
           })}
         />
 
-        <UnitPlanSubcard
-          title={`Biểu đồ 18. Thực hiện Tháng ${monthNum}/${activeYear} so với kế hoạch Tháng ${monthNum}/${activeYear} theo đơn vị`}
-          tag="Hàng 1 - Khu 2"
-          data={data22.month}
-          cardKey="u22-month"
-          isVisible={visibleCards.c22Month}
-          onToggle={() => toggleCard('c22Month')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'unit_plan_month',
-            chartTitle: `Biểu đồ 18. Thực hiện Tháng ${monthNum}/${activeYear} so với kế hoạch Tháng ${monthNum}/${activeYear} theo đơn vị`
-          })}
-        />
-      </div>
-
-      {/* DÒNG 2: QUÝ (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
-      <div className="month-row-grid">
         <UnitStructureSubcard
           title={`Cơ cấu doanh thu TH theo từng đơn vị – ${quarterText}`}
-          tag="Hàng 2 - Khu 1"
+          tag="Hàng 1 - Khu 2"
           chart={data21.thQuarter}
           planItems={data22.quarter.items}
           hoveredSlice={hoveredSlice}
@@ -930,26 +914,13 @@ export default function UnitComparisonChart({
             chartTitle: `Cơ cấu doanh thu TH theo từng đơn vị – ${quarterText}`
           })}
         />
-
-        <UnitPlanSubcard
-          title={`Biểu đồ 18. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`}
-          tag="Hàng 2 - Khu 2"
-          data={data22.quarter}
-          cardKey="u22-quarter"
-          isVisible={visibleCards.c22Quarter}
-          onToggle={() => toggleCard('c22Quarter')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'unit_plan_quarter',
-            chartTitle: `Biểu đồ 18. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`
-          })}
-        />
       </div>
 
-      {/* DÒNG 3: NĂM (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
+      {/* DÒNG 2: NĂM - CƠ CẤU DOANH THU TH THEO TỪNG ĐƠN VỊ (BIỂU ĐỒ 21) */}
       <div className="month-row-grid">
         <UnitStructureSubcard
           title={`Cơ cấu doanh thu TH theo từng đơn vị – Năm ${activeYear}`}
-          tag="Hàng 3 - Khu 1"
+          tag="Hàng 2 - Khu 1"
           chart={data21.thYear}
           planItems={data22.year.items}
           hoveredSlice={hoveredSlice}
@@ -962,26 +933,58 @@ export default function UnitComparisonChart({
             chartTitle: `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${activeYear}`
           })}
         />
+      </div>
+
+      {/* DÒNG 3: THÁNG & QUÝ - THỰC HIỆN SO VỚI KẾ HOẠCH THEO ĐƠN VỊ (BIỂU ĐỒ 22) */}
+      <div className="month-row-grid">
+        <UnitPlanSubcard
+          title={`Biểu đồ 22. Thực hiện Tháng ${monthNum}/${activeYear} so với kế hoạch Tháng ${monthNum}/${activeYear} theo đơn vị`}
+          tag="Hàng 3 - Khu 1"
+          data={data22.month}
+          cardKey="u22-month"
+          isVisible={visibleCards.c22Month}
+          onToggle={() => toggleCard('c22Month')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_plan_month',
+            chartTitle: `Biểu đồ 22. Thực hiện Tháng ${monthNum}/${activeYear} so với kế hoạch Tháng ${monthNum}/${activeYear} theo đơn vị`
+          })}
+        />
 
         <UnitPlanSubcard
-          title={`Biểu đồ 18. Ước thực hiện năm ${activeYear} so với kế hoạch năm ${activeYear} theo đơn vị`}
+          title={`Biểu đồ 22. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`}
           tag="Hàng 3 - Khu 2"
+          data={data22.quarter}
+          cardKey="u22-quarter"
+          isVisible={visibleCards.c22Quarter}
+          onToggle={() => toggleCard('c22Quarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_plan_quarter',
+            chartTitle: `Biểu đồ 22. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`
+          })}
+        />
+      </div>
+
+      {/* DÒNG 4: NĂM - THỰC HIỆN SO VỚI KẾ HOẠCH THEO ĐƠN VỊ (BIỂU ĐỒ 22) */}
+      <div className="month-row-grid">
+        <UnitPlanSubcard
+          title={`Biểu đồ 22. Ước thực hiện năm ${activeYear} so với kế hoạch năm ${activeYear} theo đơn vị`}
+          tag="Hàng 4 - Khu 1"
           data={data22.year}
           cardKey="u22-year"
           isVisible={visibleCards.c22Year}
           onToggle={() => toggleCard('c22Year')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_year',
-            chartTitle: `Biểu đồ 18. Ước thực hiện năm ${activeYear} so với kế hoạch năm ${activeYear} theo đơn vị`
+            chartTitle: `Biểu đồ 22. Ước thực hiện năm ${activeYear} so với kế hoạch năm ${activeYear} theo đơn vị`
           })}
         />
       </div>
 
-      {/* DÒNG 4: THÁNG & QUÝ (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
+      {/* DÒNG 5: THÁNG & QUÝ (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
       <div className="month-row-grid">
         <UnitPrevPeriodSubcard
           title={prevMonthTitle}
-          tag="Hàng 4 - Khu 1"
+          tag="Hàng 5 - Khu 1"
           data={data23.month}
           cardKey="u23-month"
           isVisible={visibleCards.c23Month}
@@ -994,7 +997,7 @@ export default function UnitComparisonChart({
 
         <UnitPrevPeriodSubcard
           title={prevQuarterTitle}
-          tag="Hàng 4 - Khu 2"
+          tag="Hàng 5 - Khu 2"
           data={data23.quarter}
           cardKey="u23-quarter"
           isVisible={visibleCards.c23Quarter}
@@ -1006,11 +1009,11 @@ export default function UnitComparisonChart({
         />
       </div>
 
-      {/* DÒNG 5: NĂM (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
+      {/* DÒNG 6: NĂM (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
       <div className="month-row-grid">
         <UnitPrevPeriodSubcard
           title={prevYearTitle}
-          tag="Hàng 5"
+          tag="Hàng 6"
           data={data23.year}
           cardKey="u23-year"
           isVisible={visibleCards.c23Year}
