@@ -198,14 +198,75 @@ function UnitStructureSubcard({
                 <span>Giá trị:</span>
                 <strong>{hoveredSlice.value !== null && hoveredSlice.value !== undefined ? `${hoveredSlice.value} Triệu đồng` : '-'}</strong>
               </div>
-              <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
-                <span>% Delta:</span>
-                <strong style={{ color: hoveredSlice.delta ? (hoveredSlice.isDeltaPositive ? '#16a34a' : '#dc2626') : '#64748b' }}>
-                  {hoveredSlice.delta ? `${hoveredSlice.isDeltaPositive ? '+' : ''}${hoveredSlice.delta}%` : '-'}
-                </strong>
-              </div>
             </div>
           )}
+
+          {/* Chú giải theo đơn vị (Legend trực tiếp trong biểu đồ) */}
+          <div
+            className="unit-subcard-legend"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px 18px',
+              padding: '12px 14px 4px',
+              marginTop: '10px',
+              borderTop: '1px solid #f1f5f9',
+              width: '100%'
+            }}
+          >
+            {UNIT_CATEGORIES.map((cat) => {
+              const isHovered =
+                hoveredSlice &&
+                hoveredSlice.cardKey === cardKey &&
+                hoveredSlice.sliceName === cat.name;
+              return (
+                <div
+                  key={cat.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    fontSize: '12px',
+                    fontWeight: isHovered ? '700' : '600',
+                    color: isHovered ? '#0f172a' : '#334155',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    padding: '2px 4px',
+                    borderRadius: '4px',
+                    backgroundColor: isHovered ? '#f1f5f9' : 'transparent'
+                  }}
+                  onMouseEnter={() => {
+                    const slice = chart?.slices?.find((s) => s.name === cat.name);
+                    if (slice) {
+                      setHoveredSlice({
+                        cardKey,
+                        sliceName: slice.name,
+                        percent: slice.percent,
+                        value: slice.value,
+                        color: slice.color
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredSlice(null)}
+                >
+                  <span
+                    style={{
+                      width: '13px',
+                      height: '13px',
+                      borderRadius: '3px',
+                      backgroundColor: cat.color,
+                      flexShrink: 0,
+                      boxShadow: isHovered ? `0 0 0 2px ${cat.color}` : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  />
+                  <span>{cat.name}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       {onOpenDetail && (
@@ -957,20 +1018,6 @@ export default function UnitComparisonChart({
             chartTitle: prevYearTitle
           })}
         />
-      </div>
-
-      {/* LEGEND matching screenshot */}
-      <div className="month-chart-card" style={{ padding: '16px 20px', marginTop: '4px' }}>
-        <div className="spdv-legend-grid" style={{ borderTop: 'none', paddingTop: 0, marginTop: 0 }}>
-          <div className="spdv-legend-row" style={{ gap: '28px' }}>
-            {UNIT_CATEGORIES.map((cat) => (
-              <div key={cat.id} className="spdv-legend-item">
-                <span className="spdv-legend-color-box" style={{ backgroundColor: cat.color }} />
-                <span style={{ fontWeight: '600' }}>{cat.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
