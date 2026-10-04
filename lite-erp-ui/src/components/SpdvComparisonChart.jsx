@@ -75,19 +75,12 @@ function SingleDonut({ chart, centerLabel, hoveredSlice, setHoveredSlice, cardKe
               key={`slice-${sIdx}`}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => {
-                const compSlice = compareChart?.slices?.find((s) => s.name === slice.name);
-                let sliceDelta = null;
-                if (compSlice && compSlice.value > 0 && slice.value !== undefined && slice.value !== null) {
-                  sliceDelta = ((slice.value - compSlice.value) / compSlice.value) * 100;
-                }
                 setHoveredSlice({
                   cardKey,
                   sliceName: slice.name,
                   percent: slice.percent,
                   value: slice.value,
                   color: slice.color,
-                  delta: sliceDelta !== null ? sliceDelta.toFixed(1).replace('.', ',') : null,
-                  isDeltaPositive: sliceDelta !== null ? sliceDelta >= 0 : null
                 });
               }}
               onMouseLeave={() => setHoveredSlice(null)}
@@ -273,12 +266,6 @@ function SpdvSubcard({
               <div className="tooltip-stat-row">
                 <span>Giá trị:</span>
                 <strong>{hoveredSlice.value !== null && hoveredSlice.value !== undefined ? `${hoveredSlice.value} Triệu đồng` : '-'}</strong>
-              </div>
-              <div className="tooltip-stat-row" style={{ borderTop: '1px dashed #e2e8f0', paddingTop: '4px', marginTop: '4px' }}>
-                <span>% Delta:</span>
-                <strong style={{ color: hoveredSlice.delta ? (hoveredSlice.isDeltaPositive ? '#16a34a' : '#dc2626') : '#64748b' }}>
-                  {hoveredSlice.delta ? `${hoveredSlice.isDeltaPositive ? '+' : ''}${hoveredSlice.delta}%` : '-'}
-                </strong>
               </div>
             </div>
           )}
@@ -547,19 +534,6 @@ function SpdvBarSubcard({
                 {hoveredItem.rate}
               </strong>
             </div>
-            {(() => {
-              const deltaNum = (hoveredItem.valTh !== null && hoveredItem.valKh !== null && hoveredItem.valKh > 0)
-                ? ((hoveredItem.valTh - hoveredItem.valKh) / hoveredItem.valKh * 100)
-                : null;
-              return (
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '3px' }}>
-                  <span>% Delta:</span>
-                  <strong style={{ color: deltaNum !== null ? (deltaNum >= 0 ? '#16a34a' : '#dc2626') : '#64748b' }}>
-                    {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
-                  </strong>
-                </div>
-              );
-            })()}
             {(() => {
               const diffVal = hoveredItem.valTh - hoveredItem.valKh;
               return (
