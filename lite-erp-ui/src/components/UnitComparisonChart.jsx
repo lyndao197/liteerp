@@ -540,14 +540,14 @@ function UnitPrevPeriodSubcard({
       </div>
 
       <div className="spdv-subcard-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', position: 'relative' }}>
-        {/* Legends: Primary (Dark navy #1b4570) & Secondary (Light blue #9eb5d0) */}
+        {/* Legends: Primary (Rose red #e11d48) & Secondary (Slate gray #94a3b8) */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '8px', fontSize: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '12px', height: '12px', backgroundColor: '#1b4570', borderRadius: '2px', display: 'inline-block' }} />
+            <span style={{ width: '12px', height: '12px', backgroundColor: '#e11d48', borderRadius: '2px', display: 'inline-block' }} />
             <span style={{ fontWeight: '600', color: '#1e293b' }}>{data.primaryLegend || 'TH'}</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '12px', height: '12px', backgroundColor: '#9eb5d0', borderRadius: '2px', display: 'inline-block' }} />
+            <span style={{ width: '12px', height: '12px', backgroundColor: '#94a3b8', borderRadius: '2px', display: 'inline-block' }} />
             <span style={{ fontWeight: '600', color: '#475569' }}>{data.secondaryLegend || 'Kỳ trước'}</span>
           </div>
         </div>
@@ -636,19 +636,19 @@ function UnitPrevPeriodSubcard({
                   style={{
                     fontSize: '11px',
                     fontWeight: isHovered ? '700' : '600',
-                    fill: isHovered ? '#1b4570' : '#334155'
+                    fill: isHovered ? '#e11d48' : '#334155'
                   }}
                 >
                   {item.name}
                 </text>
 
-                {/* Top Bar: TH Kỳ này (Deep Navy #1b4570) */}
+                {/* Top Bar: TH Kỳ này (Rose Red #e11d48) */}
                 <rect
                   x={chartLeft}
                   y={yRow - 9}
                   width={currW}
                   height={8}
-                  fill="#1b4570"
+                  fill="#e11d48"
                   rx={1.5}
                   style={{
                     transition: 'all 0.15s ease',
@@ -656,13 +656,13 @@ function UnitPrevPeriodSubcard({
                   }}
                 />
 
-                {/* Bottom Bar: TH Kỳ trước (Soft Light Blue #9eb5d0) */}
+                {/* Bottom Bar: TH Kỳ trước (Slate Gray #94a3b8) */}
                 <rect
                   x={chartLeft}
                   y={yRow + 1}
                   width={prevW}
                   height={8}
-                  fill="#9eb5d0"
+                  fill="#94a3b8"
                   rx={1.5}
                   style={{
                     transition: 'all 0.15s ease',
@@ -710,7 +710,7 @@ function UnitPrevPeriodSubcard({
               {hoveredUnit.name}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-              <span style={{ color: '#1b4570', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
+              <span style={{ color: '#e11d48', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
               <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.curr} {unitLabel}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
