@@ -467,12 +467,12 @@ function UnitPlanSubcard({
                 {hoveredUnit.name}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'KH'}:</span>
-                <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.kh} Triệu đồng</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
                 <span style={{ color: '#e11d48', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.th} Triệu đồng</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'KH'}:</span>
+                <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.kh} Triệu đồng</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
                 <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
@@ -710,12 +710,12 @@ function UnitPrevPeriodSubcard({
               {hoveredUnit.name}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-              <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'Kỳ trước'}:</span>
-              <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.prev} {unitLabel}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
               <span style={{ color: '#1b4570', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
               <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.curr} {unitLabel}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+              <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'Kỳ trước'}:</span>
+              <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.prev} {unitLabel}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
               <span style={{ color: '#475569', fontWeight: '600' }}>% delta:</span>

@@ -594,12 +594,12 @@ function SpdvBarSubcard({
               {hoveredItem.name}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
-              <span style={{ color: '#64748b', fontWeight: '600' }}>{legendKhStr}:</span>
-              <strong>{hoveredItem.valKh.toFixed(1)} {unit}</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
               <span style={{ color: '#e11d48', fontWeight: '600' }}>{legendThStr}:</span>
               <strong>{hoveredItem.valTh.toFixed(1)} {unit}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '3px' }}>
+              <span style={{ color: '#64748b', fontWeight: '600' }}>{legendKhStr}:</span>
+              <strong>{hoveredItem.valKh.toFixed(1)} {unit}</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', paddingTop: '4px', borderTop: '1px solid #e2e8f0' }}>
               <span>{rateLabel}</span>
