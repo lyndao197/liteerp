@@ -416,102 +416,44 @@ function PlanGaugeSubcard({
         />
       </div>
 
-      {/* 3. Footer: Chú giải ngang & Nút Xem chi tiết */}
-      <div
-        style={{
-          borderTop: '1px solid #f1f5f9',
-          paddingTop: '12px',
-          marginTop: '12px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px'
-        }}
-      >
+      {/* 3. Footer: Nút Xem chi tiết */}
+      {onOpenDetail && (
         <div
           style={{
+            borderTop: '1px solid #f1f5f9',
+            paddingTop: '10px',
+            marginTop: '12px',
             display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '16px',
-            flexWrap: 'wrap'
+            justifyContent: 'flex-end'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span
-              style={{
-                width: '16px',
-                height: '9px',
-                backgroundColor: data.doneColor,
-                borderRadius: '2px',
-                display: 'inline-block'
-              }}
-            />
-            <span style={{ fontSize: '12px', fontWeight: '600', color: '#1e293b' }}>
-              Đã thực hiện
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span
-              style={{
-                width: '16px',
-                height: '9px',
-                backgroundColor: '#e5e7eb',
-                borderRadius: '2px',
-                display: 'inline-block'
-              }}
-            />
-            <span style={{ fontSize: '12px', fontWeight: '600', color: '#1e293b' }}>
-              Còn phải TH để đạt KH
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span
-              style={{
-                width: '18px',
-                height: '3px',
-                backgroundColor: '#b91c1c',
-                borderRadius: '2px',
-                display: 'inline-block'
-              }}
-            />
-            <span style={{ fontSize: '12px', fontWeight: '600', color: '#1e293b' }}>
-              Mốc tgian ({data.timeElapsedLabel})
-            </span>
-          </div>
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              fontWeight: '600',
+              color: data.doneColor === '#1d4877' ? '#1d4ed8' : data.doneColor,
+              backgroundColor: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              padding: '5px 12px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            onClick={() => onOpenDetail({
+              chartKey,
+              chartTitle: title
+            })}
+          >
+            <span>Xem chi tiết</span>
+            <ArrowRight size={13} />
+          </button>
         </div>
-
-        {onOpenDetail && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '2px' }}>
-            <button
-              type="button"
-              className="subcard-detail-action-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: data.doneColor === '#1d4877' ? '#1d4ed8' : data.doneColor,
-                backgroundColor: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                padding: '5px 12px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onClick={() => onOpenDetail({
-                chartKey,
-                chartTitle: title
-              })}
-            >
-              <span>Xem chi tiết</span>
-              <ArrowRight size={13} />
-            </button>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
