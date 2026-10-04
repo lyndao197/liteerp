@@ -56,13 +56,39 @@ export default function SpdvDetailTable({
   const [yoyViewMode, setYoyViewMode] = useState('single'); // 'single' | 'integrated'
   const [prevPeriodViewMode, setPrevPeriodViewMode] = useState('single'); // 'single' | 'integrated'
 
+  const getInitialStructurePeriod = () => {
+    const key = (activeChartKey || '').toLowerCase();
+    if (key.includes('quarter')) return 'quarter';
+    if (key.includes('year')) return 'year';
+    return 'month';
+  };
+
+  const [structurePeriod, setStructurePeriod] = useState(getInitialStructurePeriod);
+
   // Reset to single mode whenever activeChartKey changes
   useEffect(() => {
     setStructureViewMode('single');
     setBarViewMode('single');
     setYoyViewMode('single');
     setPrevPeriodViewMode('single');
+    setStructurePeriod(getInitialStructurePeriod());
   }, [activeChartKey]);
+
+  // Check if viewing Structure table (Biểu đồ 16 & 17)
+  const isStructureTable = useMemo(() => {
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+    return (
+      key.startsWith('spdv_th') ||
+      key.startsWith('spdv_kh') ||
+      key === 'spdv_structure' ||
+      key === 'chart16' ||
+      key === 'chart17' ||
+      title.includes('cơ cấu') ||
+      title.includes('16') ||
+      title.includes('17')
+    );
+  }, [activeChartKey, chartTitle]);
 
   // Check if viewing YoY table (Biểu đồ 19) or Prev Period table (Biểu đồ 20)
   const isYoyComparison = useMemo(() => {
@@ -768,37 +794,31 @@ export default function SpdvDetailTable({
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
           {/* Subcard tag */}
-          {singleStructureConfig && structureViewMode === 'single' && (
-            <span className="spdv-badge-chart-label">
-              <PieChart size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-              {singleStructureConfig.badge}
-            </span>
-          )}
-          {singleBarConfig && barViewMode === 'single' && (
+          {!isStructureTable && singleBarConfig && barViewMode === 'single' && (
             <span className="spdv-badge-chart-label">
               <BarChart3 size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
               {singleBarConfig.badge}
             </span>
           )}
-          {singleYoyConfig && yoyViewMode === "single" && (
+          {!isStructureTable && singleYoyConfig && yoyViewMode === "single" && (
             <span className="spdv-badge-chart-label">
               <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
               {singleYoyConfig.badge}
             </span>
           )}
-          {isYoyComparison && (!singleYoyConfig || yoyViewMode === "integrated") && (
+          {!isStructureTable && isYoyComparison && (!singleYoyConfig || yoyViewMode === "integrated") && (
             <span className="spdv-badge-chart-label">Biểu đồ 19 – 3 Kỳ</span>
           )}
-          {singlePrevPeriodConfig && prevPeriodViewMode === "single" && (
+          {!isStructureTable && singlePrevPeriodConfig && prevPeriodViewMode === "single" && (
             <span className="spdv-badge-chart-label">
               <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
               {singlePrevPeriodConfig.badge}
             </span>
           )}
-          {isPrevPeriodComparison && (!singlePrevPeriodConfig || prevPeriodViewMode === "integrated") && (
+          {!isStructureTable && isPrevPeriodComparison && (!singlePrevPeriodConfig || prevPeriodViewMode === "integrated") && (
             <span className="spdv-badge-chart-label">Biểu đồ 20 – 3 Kỳ</span>
           )}
-          {(isStructureIntegrated || isBarIntegrated) && (
+          {!isStructureTable && isBarIntegrated && (
             <span className="spdv-badge-chart-label">
               <Layers size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
               Bảng ma trận tổng hợp 3 kỳ
@@ -806,7 +826,9 @@ export default function SpdvDetailTable({
           )}
 
           <h3 className="spdv-detail-title">
-            {singleYoyConfig && yoyViewMode === "single"
+            {isStructureTable
+              ? 'Cơ cấu doanh thu theo nhóm SPDV'
+              : singleYoyConfig && yoyViewMode === "single"
               ? singleYoyConfig.title
               : isYoyComparison
               ? `Biểu đồ 19. Thực hiện năm ${selectedYear} so với cùng kỳ năm ${lastYear} theo nhóm SPDV`
@@ -814,25 +836,52 @@ export default function SpdvDetailTable({
               ? singlePrevPeriodConfig.title
               : isPrevPeriodComparison
               ? `Biểu đồ 20. Thực hiện so với kỳ trước theo nhóm SPDV`
-              : singleStructureConfig && structureViewMode === "single"
-              ? singleStructureConfig.title
               : singleBarConfig && barViewMode === "single"
               ? singleBarConfig.title
-              : isStructureIntegrated
-              ? `Cơ cấu doanh thu theo nhóm SPDV (Bảng tổng hợp cả 3 kỳ)`
               : `Biểu đồ 18. Thực hiện so với kế hoạch theo nhóm SPDV (Bảng tổng hợp 3 kỳ)`}
           </h3>
 
           <span className="spdv-detail-unit">
-            {singleStructureConfig && structureViewMode === 'single'
-              ? `(${singleStructureConfig.unit})`
-              : isStructureIntegrated
+            {isStructureTable
               ? '(Đơn vị: Triệu đồng)'
               : '(Đơn vị: Tỷ đồng)'}
           </span>
         </div>
 
-
+        {isStructureTable && (
+          <div className="spdv-header-actions">
+            <div className="spdv-period-tab-group">
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structurePeriod === 'month' ? 'active' : ''}`}
+                onClick={() => setStructurePeriod('month')}
+              >
+                Tháng {monthNum}/{selectedYear}
+              </button>
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structurePeriod === 'quarter' ? 'active' : ''}`}
+                onClick={() => setStructurePeriod('quarter')}
+              >
+                Quý {quarterRoman}/{selectedYear}
+              </button>
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structurePeriod === 'year' ? 'active' : ''}`}
+                onClick={() => setStructurePeriod('year')}
+              >
+                Năm {selectedYear}
+              </button>
+              <button
+                type="button"
+                className={`spdv-period-tab-btn ${structurePeriod === 'all' ? 'active' : ''}`}
+                onClick={() => setStructurePeriod('all')}
+              >
+                Tất cả 3 kỳ
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Note / Basis description */}
         {isYoyComparison && (
@@ -848,7 +897,161 @@ export default function SpdvDetailTable({
       </div>
 
       {/* TABLE VIEWS ROUTING */}
-      {isYoyComparison && singleYoyConfig && yoyViewMode === "single" ? (
+      {isStructureTable ? (
+        /* ===================================================================== */
+        /* STRUCTURE VIEW: MATCHING EXACT USER DESIGN MOCKUP                     */
+        /* ===================================================================== */
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table spdv-structure-clean-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
+                {(structurePeriod === 'month' || structurePeriod === 'all') && (
+                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-month">
+                    Tháng {monthNum}/{selectedYear}
+                  </th>
+                )}
+                {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
+                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-quarter">
+                    Quý {quarterRoman}/{selectedYear}
+                  </th>
+                )}
+                {(structurePeriod === 'year' || structurePeriod === 'all') && (
+                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-year">
+                    Năm {selectedYear}
+                  </th>
+                )}
+              </tr>
+              <tr className="spdv-th-sub-row">
+                {(structurePeriod === 'month' || structurePeriod === 'all') && (
+                  <>
+                    <th className="spdv-th-col spdv-th-th">TH T{monthNum}/{selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-kh">KH T{monthNum}/{selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                  </>
+                )}
+                {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
+                  <>
+                    <th className="spdv-th-col spdv-th-th spdv-border-left">TH Q{quarterRoman}/{selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-kh">KH Q{quarterRoman}/{selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                  </>
+                )}
+                {(structurePeriod === 'year' || structurePeriod === 'all') && (
+                  <>
+                    <th className="spdv-th-col spdv-th-th spdv-border-left">TH Năm {selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-kh">KH Năm {selectedYear}</th>
+                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStructureRows.length > 0 ? (
+                filteredStructureRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+                    {(structurePeriod === 'month' || structurePeriod === 'all') && (
+                      <>
+                        <td className="spdv-td-num font-bold">
+                          {formatSpdvNum(row.month?.th)}
+                        </td>
+                        <td className="spdv-td-num font-medium">
+                          {formatSpdvNum(row.month?.kh)}
+                        </td>
+                        <td className="spdv-td-share font-medium">
+                          {row.month?.thShare}
+                        </td>
+                      </>
+                    )}
+                    {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
+                      <>
+                        <td className="spdv-td-num font-bold spdv-border-left">
+                          {formatSpdvNum(row.quarter?.th)}
+                        </td>
+                        <td className="spdv-td-num font-medium">
+                          {formatSpdvNum(row.quarter?.kh)}
+                        </td>
+                        <td className="spdv-td-share font-medium">
+                          {row.quarter?.thShare}
+                        </td>
+                      </>
+                    )}
+                    {(structurePeriod === 'year' || structurePeriod === 'all') && (
+                      <>
+                        <td className="spdv-td-num font-bold spdv-border-left">
+                          {formatSpdvNum(row.year?.th)}
+                        </td>
+                        <td className="spdv-td-num font-medium">
+                          {formatSpdvNum(row.year?.kh)}
+                        </td>
+                        <td className="spdv-td-share font-medium">
+                          {row.year?.thShare}
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={structurePeriod === 'all' ? 10 : 4} className="spdv-no-data-cell">
+                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td className="spdv-td-name font-bold">
+                  Tổng doanh thu
+                </td>
+                {(structurePeriod === 'month' || structurePeriod === 'all') && (
+                  <>
+                    <td className="spdv-td-num font-bold">
+                      {formatSpdvNum(structureData.total?.month?.th)}
+                    </td>
+                    <td className="spdv-td-num font-bold">
+                      {formatSpdvNum(structureData.total?.month?.kh)}
+                    </td>
+                    <td className="spdv-td-share font-bold">
+                      {structureData.total?.month?.thShare || '100%'}
+                    </td>
+                  </>
+                )}
+                {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
+                  <>
+                    <td className="spdv-td-num font-bold spdv-border-left">
+                      {formatSpdvNum(structureData.total?.quarter?.th)}
+                    </td>
+                    <td className="spdv-td-num font-bold">
+                      {formatSpdvNum(structureData.total?.quarter?.kh)}
+                    </td>
+                    <td className="spdv-td-share font-bold">
+                      {structureData.total?.quarter?.thShare || '100%'}
+                    </td>
+                  </>
+                )}
+                {(structurePeriod === 'year' || structurePeriod === 'all') && (
+                  <>
+                    <td className="spdv-td-num font-bold spdv-border-left">
+                      {formatSpdvNum(structureData.total?.year?.th)}
+                    </td>
+                    <td className="spdv-td-num font-bold">
+                      {formatSpdvNum(structureData.total?.year?.kh)}
+                    </td>
+                    <td className="spdv-td-share font-bold">
+                      {structureData.total?.year?.thShare || '100%'}
+                    </td>
+                  </>
+                )}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : isYoyComparison && singleYoyConfig && yoyViewMode === "single" ? (
         /* ===================================================================== */
         /* VIEW 1A: BẢNG SỐ LIỆU TƯƠNG ỨNG 1 KỲ BIỂU ĐỒ 19 (THÁNG, QUÝ, HOẶC NĂM) */
         /* ===================================================================== */
@@ -1358,93 +1561,6 @@ export default function SpdvDetailTable({
             </tfoot>
           </table>
         </div>
-      ) : singleStructureConfig && structureViewMode === 'single' ? (
-        /* ===================================================================== */
-        /* VIEW 3: BẢNG SỐ LIỆU TƯƠNG ỨNG TỪNG BIỂU ĐỒ TRÒN (TH/KH THEO 1 KỲ)    */
-        /* (Ví dụ: TH - Tháng 8/2026 thì chỉ hiển thị đúng cột TH Tháng 8)       */
-        /* ===================================================================== */
-        <div className="spdv-detail-table-wrap">
-          <table className="spdv-matrix-table">
-            <thead>
-              <tr className="spdv-th-top-row">
-                <th style={{ width: '60px', textAlign: 'center' }}>STT</th>
-                <th className="spdv-th-name" style={{ width: '320px' }}>Nhóm SPDV</th>
-                <th style={{ textAlign: 'right', paddingRight: '28px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
-                  {singleStructureConfig.metricLabel} – {singleStructureConfig.periodLabel} ({singleStructureConfig.unit})
-                </th>
-                <th style={{ textAlign: 'center', width: '180px', backgroundColor: '#f1f6fd', color: '#0f172a', fontWeight: '800' }}>
-                  {singleStructureConfig.shareLabel} (%)
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {singleStructureRows.length > 0 ? (
-                singleStructureRows.map((row) => (
-                  <tr key={row.id} className="spdv-row">
-                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
-                      {row.stt}
-                    </td>
-                    <td className="spdv-td-name">
-                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
-                      <span className="spdv-name-label">{row.name}</span>
-                    </td>
-                    <td className="spdv-td-num font-bold" style={{ color: singleStructureConfig.valueColor, paddingRight: '28px', fontSize: '14.5px' }}>
-                      {formatSpdvNum(row.val)}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span
-                        className="spdv-rate-pill"
-                        style={{
-                          backgroundColor: '#eff6ff',
-                          color: '#1d4ed8',
-                          border: '1px solid #bfdbfe',
-                          fontWeight: '800'
-                        }}
-                      >
-                        {row.share}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="spdv-no-data-cell">
-                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện tìm kiếm
-                  </td>
-                </tr>
-              )}
-            </tbody>
-            <tfoot>
-              <tr className="spdv-tr-total">
-                <td style={{ textAlign: 'center', fontWeight: '800' }}>Σ</td>
-                <td className="spdv-td-name font-bold">
-                  {structureData.total?.name || 'Tổng doanh thu 6 nhóm SPDV'}
-                </td>
-                <td className="spdv-td-num font-extrabold" style={{ color: singleStructureConfig.valueColor, paddingRight: '28px', fontSize: '15px' }}>
-                  {formatSpdvNum(singleStructureTotal?.val)}
-                </td>
-                <td style={{ textAlign: 'center' }}>
-                  <span
-                    className="spdv-rate-pill spdv-rate-pill-total"
-                    style={{
-                      backgroundColor: '#dbeafe',
-                      color: '#1e3a8a',
-                      border: '1px solid #93c5fd',
-                      fontWeight: '800'
-                    }}
-                  >
-                    {singleStructureTotal?.share || '100%'}
-                  </span>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-
-          {/* Under-table Note */}
-          <div style={{ marginTop: '14px', padding: '10px 14px', background: '#f8fafc', borderLeft: '4px solid #2563eb', borderRadius: '4px', fontSize: '13px', color: '#1e293b' }}>
-            <strong>Ghi chú:</strong> {singleStructureConfig.note}
-          </div>
-        </div>
       ) : singleBarConfig && barViewMode === 'single' ? (
         /* ===================================================================== */
         /* VIEW 4: BẢNG SỐ LIỆU TƯƠNG ỨNG 1 KỲ BIỂU ĐỒ 18 (THÁNG, QUÝ HOẶC NĂM)   */
@@ -1534,7 +1650,7 @@ export default function SpdvDetailTable({
             <strong>Ghi chú:</strong> {singleBarConfig.note}
           </div>
         </div>
-      ) : isBarIntegrated ? (
+      ) : (
         /* ===================================================================== */
         /* VIEW 5: BẢNG TỔNG HỢP BIỂU ĐỒ 18 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM     */
         /* ===================================================================== */
@@ -1697,132 +1813,6 @@ export default function SpdvDetailTable({
                     {integratedTotals.year.rate}
                   </span>
                 </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      ) : (
-        /* ===================================================================== */
-        /* VIEW 6: BẢNG TỔNG HỢP CƠ CẤU 3 KỲ (CÓ CỘT KH, TH VÀ TỶ TRỌNG TH/KH)   */
-        /* ===================================================================== */
-        <div className="spdv-detail-table-wrap">
-          <table className="spdv-matrix-table">
-            <thead>
-              <tr className="spdv-th-top-row">
-                <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
-                <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
-                  {monthHeader}
-                </th>
-                <th colSpan={4} className="spdv-th-period-group spdv-col-period-quarter">
-                  {quarterHeader}
-                </th>
-                <th colSpan={4} className="spdv-th-period-group spdv-col-period-year">
-                  {yearHeader}
-                </th>
-              </tr>
-              <tr className="spdv-th-sub-row">
-                {/* Tháng */}
-                <th className="spdv-th-col spdv-th-th spdv-border-left">TH T{monthNum}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
-                <th className="spdv-th-col spdv-th-kh">KH T{monthNum}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
-
-                {/* Quý */}
-                <th className="spdv-th-col spdv-th-th spdv-border-left">TH Q{quarterRoman}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
-                <th className="spdv-th-col spdv-th-kh">KH Q{quarterRoman}/{selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
-
-                {/* Năm */}
-                <th className="spdv-th-col spdv-th-th spdv-border-left">TH Năm {selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
-                <th className="spdv-th-col spdv-th-kh">KH Năm {selectedYear}</th>
-                <th className="spdv-th-col spdv-th-share">Tỷ trọng KH</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStructureRows.length > 0 ? (
-                filteredStructureRows.map((row) => (
-                  <tr key={row.id} className="spdv-row">
-                    <td className="spdv-td-name">
-                      <span className="spdv-dot" style={{ backgroundColor: row.color }}></span>
-                      <span className="spdv-name-label">{row.name}</span>
-                    </td>
-
-                    {/* Tháng */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatSpdvNum(row.month?.th)}
-                    </td>
-                    <td className="spdv-td-share">{row.month?.thShare}</td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatSpdvNum(row.month?.kh)}
-                    </td>
-                    <td className="spdv-td-share">{row.month?.khShare}</td>
-
-                    {/* Quý */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatSpdvNum(row.quarter?.th)}
-                    </td>
-                    <td className="spdv-td-share">{row.quarter?.thShare}</td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatSpdvNum(row.quarter?.kh)}
-                    </td>
-                    <td className="spdv-td-share">{row.quarter?.khShare}</td>
-
-                    {/* Năm */}
-                    <td className="spdv-td-num spdv-border-left font-bold" style={{ color: '#0f172a' }}>
-                      {formatSpdvNum(row.year?.th)}
-                    </td>
-                    <td className="spdv-td-share">{row.year?.thShare}</td>
-                    <td className="spdv-td-num font-semibold" style={{ color: '#334155' }}>
-                      {formatSpdvNum(row.year?.kh)}
-                    </td>
-                    <td className="spdv-td-share">{row.year?.khShare}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={13} className="spdv-no-data-cell">
-                    Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
-                  </td>
-                </tr>
-              )}
-            </tbody>
-            <tfoot>
-              <tr className="spdv-tr-total">
-                <td className="spdv-td-name font-bold">
-                  {structureData.total?.name || 'Tổng doanh thu 6 nhóm SPDV'}
-                </td>
-
-                {/* Tháng */}
-                <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
-                  {formatSpdvNum(structureData.total?.month?.th)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.month?.thShare}</td>
-                <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
-                  {formatSpdvNum(structureData.total?.month?.kh)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.month?.khShare}</td>
-
-                {/* Quý */}
-                <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
-                  {formatSpdvNum(structureData.total?.quarter?.th)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.quarter?.thShare}</td>
-                <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
-                  {formatSpdvNum(structureData.total?.quarter?.kh)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.quarter?.khShare}</td>
-
-                {/* Năm */}
-                <td className="spdv-td-num font-bold spdv-border-left" style={{ color: '#0f172a' }}>
-                  {formatSpdvNum(structureData.total?.year?.th)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.year?.thShare}</td>
-                <td className="spdv-td-num font-bold" style={{ color: '#1e293b' }}>
-                  {formatSpdvNum(structureData.total?.year?.kh)}
-                </td>
-                <td className="spdv-td-share font-bold">{structureData.total?.year?.khShare}</td>
               </tr>
             </tfoot>
           </table>
