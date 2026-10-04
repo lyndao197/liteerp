@@ -555,7 +555,7 @@ export default function PlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 29. Tỷ lệ hoàn thành KH tổng doanh thu – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    tag: `Quý ${quarterRoman}/${selectedYear}`
+    tag: 'Hàng 1 - Khu 1'
   };
 
   // Chart 30 (Năm): 2.976,3 / 4.968,1 => 59,9%
@@ -570,7 +570,7 @@ export default function PlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 30. Tỷ lệ hoàn thành KH tổng doanh thu – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    tag: `Năm ${selectedYear}`
+    tag: 'Hàng 1 - Khu 2'
   };
 
   return (
@@ -682,7 +682,7 @@ export function ExternalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 31. Tỷ lệ hoàn thành KH doanh thu ngoài Tập đoàn – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    tag: `Quý ${quarterRoman}/${selectedYear}`
+    tag: 'Hàng 1 - Khu 1'
   };
 
   // Chart 32 (Năm): 2.022,8 / 3.477,7 => 58,2%
@@ -697,7 +697,7 @@ export function ExternalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 32. Tỷ lệ hoàn thành KH doanh thu ngoài Tập đoàn – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    tag: `Năm ${selectedYear}`
+    tag: 'Hàng 1 - Khu 2'
   };
 
   return (
@@ -807,7 +807,7 @@ export function InternationalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 33. Tỷ lệ hoàn thành KH doanh thu quốc tế – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    tag: `Quý ${quarterRoman}/${selectedYear}`
+    tag: 'Hàng 1 - Khu 1'
   };
 
   // Chart 34 (Năm): 313,9 / 596,3 => 52,6%
@@ -822,7 +822,7 @@ export function InternationalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 34. Tỷ lệ hoàn thành KH doanh thu quốc tế – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    tag: `Năm ${selectedYear}`
+    tag: 'Hàng 1 - Khu 2'
   };
 
   return (
