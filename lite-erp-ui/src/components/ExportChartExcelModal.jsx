@@ -28,6 +28,16 @@ export function getExportChartList({
   const nextShortMonth = `T${nextMonthNum}`;
   const quarterNum = Math.ceil(monthNum / 3);
   const quarterRoman = `${quarterNum}`;
+  const qNum = (selectedQuarter?.includes('4') || selectedQuarter?.includes('IV')) ? 4
+    : (selectedQuarter?.includes('3') || selectedQuarter?.includes('III')) ? 3
+    : (selectedQuarter?.includes('2') || selectedQuarter?.includes('II')) ? 2
+    : 1;
+  const prevQNum = qNum === 1 ? 4 : qNum - 1;
+  const prevQName = `Quý ${prevQNum}`;
+  const prevQYear = qNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+  const nextQNum = qNum === 4 ? 1 : qNum + 1;
+  const nextQName = `Quý ${nextQNum}`;
+  const nextQYear = qNum === 4 ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
 
   return [
     // NHÓM 1: THEO THÁNG
@@ -69,7 +79,7 @@ export function getExportChartList({
       key: 'c5',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 5',
-      title: `Biểu đồ 5. Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}`,
+      title: `Biểu đồ 5. Lũy kế thực hiện so với KH ${selectedQuarter}/${selectedYear}`,
       desc: `Đánh giá tiến độ lũy kế quý so với chỉ tiêu kế hoạch quý`,
       period: `${selectedQuarter}/${selectedYear}`
     },
@@ -77,7 +87,7 @@ export function getExportChartList({
       key: 'c6',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 6',
-      title: `Biểu đồ 6. Ước thực hiện ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}`,
+      title: `Biểu đồ 6. Ước thực hiện so với KH ${selectedQuarter}/${selectedYear}`,
       desc: `Ước tính cả quý so với kế hoạch được giao của quý`,
       period: `${selectedQuarter}/${selectedYear}`
     },
@@ -85,15 +95,15 @@ export function getExportChartList({
       key: 'c7',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 7',
-      title: `Biểu đồ 7. Ước thực hiện ${selectedQuarter} so với thực hiện quý trước`,
+      title: `Biểu đồ 7. Ước thực hiện so với ${prevQName}/${prevQYear}`,
       desc: `Tăng trưởng ước thực hiện quý hiện tại so với kết quả quý liền trước (QoQ)`,
-      period: `${selectedQuarter} vs Quý trước`
+      period: `${selectedQuarter} vs ${prevQName}`
     },
     {
       key: 'c8',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 8',
-      title: `Biểu đồ 8. Ước thực hiện ${selectedQuarter} so với cùng kỳ năm trước`,
+      title: `Biểu đồ 8. Ước thực hiện so với cùng kỳ ${selectedQuarter}/${lastYear}`,
       desc: `Tăng trưởng ước thực hiện quý hiện tại so với cùng kỳ năm ${lastYear}`,
       period: `${selectedQuarter}/${selectedYear} vs ${selectedQuarter}/${lastYear}`
     },
@@ -101,9 +111,9 @@ export function getExportChartList({
       key: 'c9',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 9',
-      title: `Biểu đồ 9. Ước thực hiện ${selectedQuarter} so với kế hoạch quý sau`,
+      title: `Biểu đồ 9. Ước thực hiện so với KH ${nextQName}/${nextQYear}`,
       desc: `So sánh ước thực hiện quý hiện tại với kế hoạch quý kế tiếp`,
-      period: `${selectedQuarter} vs Quý sau`
+      period: `${selectedQuarter} vs ${nextQName}`
     },
 
     // NHÓM 3: THEO NĂM

@@ -76,16 +76,16 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart4_rat', label: 'Biểu đồ 4b: Tỷ trọng kế hoạch tháng tới' }
   ],
   quarter: [
-    { id: 'chart5_cum_val', label: 'Biểu đồ 5: Lũy kế Quý so với KH Quý (Giá trị)' },
-    { id: 'chart5_rat', label: 'Biểu đồ 5b: Tỷ suất / tỷ trọng lũy kế Quý so với KH Quý' },
-    { id: 'chart6_val', label: 'Biểu đồ 6: Ước Quý so với KH Quý' },
-    { id: 'chart6_rat', label: 'Biểu đồ 6b: Tỷ suất / tỷ trọng ước Quý so với KH Quý' },
-    { id: 'chart7_val', label: 'Biểu đồ 7: Ước Quý so với Quý trước' },
-    { id: 'chart7_rat', label: 'Biểu đồ 7b: Tỷ suất / tỷ trọng ước Quý so với Quý trước' },
-    { id: 'chart8_val', label: 'Biểu đồ 8: Ước Quý so với cùng kỳ năm trước' },
-    { id: 'chart8_rat', label: 'Biểu đồ 8b: Tỷ suất / tỷ trọng ước Quý so với cùng kỳ năm trước' },
-    { id: 'chart9_val', label: 'Biểu đồ 9: Ước Quý so với KH Quý tiếp theo' },
-    { id: 'chart9_rat', label: 'Biểu đồ 9b: Tỷ suất / tỷ trọng ước Quý so với KH Quý tiếp theo' }
+    { id: 'chart5_cum_val', label: 'Biểu đồ 5: Lũy kế thực hiện so với KH Quý (Giá trị)' },
+    { id: 'chart5_rat', label: 'Biểu đồ 5b: Tỷ suất / tỷ trọng lũy kế thực hiện so với KH Quý' },
+    { id: 'chart6_val', label: 'Biểu đồ 6: Ước thực hiện so với KH Quý' },
+    { id: 'chart6_rat', label: 'Biểu đồ 6b: Tỷ suất / tỷ trọng ước thực hiện so với KH Quý' },
+    { id: 'chart7_val', label: 'Biểu đồ 7: Ước thực hiện so với Quý trước' },
+    { id: 'chart7_rat', label: 'Biểu đồ 7b: Tỷ suất / tỷ trọng ước thực hiện so với Quý trước' },
+    { id: 'chart8_val', label: 'Biểu đồ 8: Ước thực hiện so với cùng kỳ năm trước' },
+    { id: 'chart8_rat', label: 'Biểu đồ 8b: Tỷ suất / tỷ trọng ước thực hiện so với cùng kỳ năm trước' },
+    { id: 'chart9_val', label: 'Biểu đồ 9: Ước thực hiện so với KH Quý tiếp theo' },
+    { id: 'chart9_rat', label: 'Biểu đồ 9b: Tỷ suất / tỷ trọng ước thực hiện so với KH Quý tiếp theo' }
   ],
   year: [
     { id: 'chart10_val', label: 'Biểu đồ 10: Lũy kế TH so với KH lũy kế' },
@@ -697,19 +697,37 @@ export default function RevenueChartDetailView({
   // Dynamic header 2: Comparison group title matching chart name with year
   const comparisonGroupTitle = useMemo(() => {
     if (activeBranchId === 'quarter') {
-      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart7_rat' || chartTitle.includes('trước')) {
-        return `So Quý ${prevQuarterRoman} năm ${prevQuarterYear}`;
+      if (
+        activeChartKey === 'chart6_val' ||
+        activeChartKey === 'chart6_rat' ||
+        (chartTitle.toLowerCase().includes('ước') && chartTitle.toLowerCase().includes('kh') && !chartTitle.toLowerCase().includes('tiếp theo') && !chartTitle.toLowerCase().includes('kỳ sau'))
+      ) {
+        return `Ước thực hiện so với KH Quý ${quarterRoman}/${selectedYear}`;
       }
-      if (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.includes('cùng kỳ')) {
-        return `So cùng kỳ Quý ${quarterRoman} năm ${lastYear}`;
+      if (
+        activeChartKey === 'chart7_val' ||
+        activeChartKey === 'chart7_rat' ||
+        chartTitle.toLowerCase().includes('trước')
+      ) {
+        return `Ước thực hiện so với Quý ${prevQuarterRoman}/${prevQuarterYear}`;
       }
-      if (activeChartKey === 'chart9_val' || activeChartKey === 'chart9_rat' || chartTitle.includes('tiếp theo')) {
-        return `So Kế hoạch Quý ${nextQuarterRoman} năm ${nextQuarterYear}`;
+      if (
+        activeChartKey === 'chart8_val' ||
+        activeChartKey === 'chart8_rat' ||
+        chartTitle.toLowerCase().includes('cùng kỳ')
+      ) {
+        return `Ước thực hiện so với cùng kỳ Quý ${quarterRoman}/${lastYear}`;
       }
-      if (activeChartKey === 'chart6_val' || activeChartKey === 'chart6_rat') {
-        return `Ước TH so với KH ${selectedQuarter}/${selectedYear}`;
+      if (
+        activeChartKey === 'chart9_val' ||
+        activeChartKey === 'chart9_rat' ||
+        activeChartKey === 'chart7_next' ||
+        chartTitle.toLowerCase().includes('tiếp theo') ||
+        chartTitle.toLowerCase().includes('kỳ sau')
+      ) {
+        return `Ước thực hiện so với KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
       }
-      return 'Thực hiện so với KH Tập đoàn';
+      return `Lũy kế thực hiện so với KH Quý ${quarterRoman}/${selectedYear}`;
     }
 
     if (activeBranchId === 'year') {
@@ -754,13 +772,13 @@ export default function RevenueChartDetailView({
 
   const diffColumnLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
-      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart7_rat' || chartTitle.toLowerCase().includes('trước')) {
         return `so Q${prevQuarterRoman}/${prevQuarterYear}`;
       }
-      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+      if (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.toLowerCase().includes('cùng kỳ')) {
         return `so CK ${lastYear}`;
       }
-      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || activeChartKey === 'chart9_rat' || chartTitle.toLowerCase().includes('tiếp theo') || chartTitle.toLowerCase().includes('kỳ sau')) {
         return `so Q${nextQuarterRoman}/${nextQuarterYear}`;
       }
       return `so KH`;
@@ -796,13 +814,13 @@ export default function RevenueChartDetailView({
 
   const rateSubLabel = useMemo(() => {
     if (activeBranchId === 'quarter') {
-      if (activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'))) {
+      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart7_rat' || chartTitle.toLowerCase().includes('trước')) {
         return `Tăng trưởng`;
       }
-      if (activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ')) {
+      if (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.toLowerCase().includes('cùng kỳ')) {
         return `Tăng trưởng`;
       }
-      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo')) {
+      if (activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || activeChartKey === 'chart9_rat' || chartTitle.toLowerCase().includes('tiếp theo') || chartTitle.toLowerCase().includes('kỳ sau')) {
         return `so KH tới`;
       }
       return 'HTKH';
@@ -893,10 +911,10 @@ export default function RevenueChartDetailView({
       const qSame = QUARTER_SAME_PERIOD_DATA[selectedQuarter] || QUARTER_SAME_PERIOD_DATA['Quý 3'] || QUARTER_SAME_PERIOD_DATA['Quý III'];
       const qNext = QUARTER_NEXT_PLAN_DATA[selectedQuarter] || QUARTER_NEXT_PLAN_DATA['Quý 3'] || QUARTER_NEXT_PLAN_DATA['Quý III'];
 
-      const raw = activeChartKey === 'chart5_est_val' ? qEst?.values
-        : activeChartKey === 'chart6_val' ? qPrev?.values
-        : activeChartKey === 'chart7_val' ? qSame?.values
-        : activeChartKey === 'chart7_next' ? qNext?.values
+      const raw = (activeChartKey === 'chart6_val' || activeChartKey === 'chart6_rat') ? qEst?.values
+        : (activeChartKey === 'chart7_val' || activeChartKey === 'chart7_rat') ? qPrev?.values
+        : (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat') ? qSame?.values
+        : (activeChartKey === 'chart9_val' || activeChartKey === 'chart9_rat' || activeChartKey === 'chart7_next') ? qNext?.values
         : qCum?.values;
 
       rows = (raw || []).map((item, idx) => {
@@ -1197,9 +1215,9 @@ export default function RevenueChartDetailView({
       const prevQuarterFactor = quarterFactors[prevQuarterName] || 1.05;
       const nextQuarterFactor = quarterFactors[nextQuarterName] || 1.25;
 
-      const isVsPrev = activeChartKey === 'chart6_val' || (activeChartKey === 'chart7_val' && chartTitle.includes('trước'));
-      const isVsSame = activeChartKey === 'chart7_val' || activeChartKey === 'chart8_val' || chartTitle.includes('cùng kỳ');
-      const isVsNext = activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || chartTitle.includes('tiếp theo');
+      const isVsPrev = activeChartKey === 'chart7_val' || activeChartKey === 'chart7_rat' || chartTitle.toLowerCase().includes('trước');
+      const isVsSame = activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.toLowerCase().includes('cùng kỳ');
+      const isVsNext = activeChartKey === 'chart7_next' || activeChartKey === 'chart9_val' || activeChartKey === 'chart9_rat' || chartTitle.toLowerCase().includes('tiếp theo') || chartTitle.toLowerCase().includes('kỳ sau');
 
       processedRows = CUSTOMER_SPDV_MASTER_DATA.map((item, idx) => {
         const scaledKh = Math.round(item.baseKh * currentFactor);
