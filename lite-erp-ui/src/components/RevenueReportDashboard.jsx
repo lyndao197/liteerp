@@ -2800,15 +2800,15 @@ const RevenueReportDashboard = () => {
               [`${monthCol} - ${prevData.monthLegendCurr}`]: mCurr,
               [`${monthCol} - ${prevData.monthLegendPrev}`]: mPrev,
               [`${monthCol} - +/- Chênh lệch`]: mDiff,
-              [`${monthCol} - % TH/kỳ trước`]: mRate,
+              [`${monthCol} - % delta`]: mRate,
               [`${quarterCol} - ${prevData.quarterLegendCurr}`]: qCurr,
               [`${quarterCol} - ${prevData.quarterLegendPrev}`]: qPrev,
               [`${quarterCol} - +/- Chênh lệch`]: qDiff,
-              [`${quarterCol} - % TH/kỳ trước`]: qRate,
+              [`${quarterCol} - % delta`]: qRate,
               [`${yearCol} - ${prevData.yearLegendCurr}`]: yCurr,
               [`${yearCol} - ${prevData.yearLegendPrev}`]: yPrev,
               [`${yearCol} - +/- Chênh lệch`]: yDiff,
-              [`${yearCol} - % TH/kỳ trước`]: yRate,
+              [`${yearCol} - % delta`]: yRate,
             };
           });
 
@@ -2825,15 +2825,15 @@ const RevenueReportDashboard = () => {
             [`${monthCol} - ${prevData.monthLegendCurr}`]: mTotalCurr,
             [`${monthCol} - ${prevData.monthLegendPrev}`]: mTotalPrev,
             [`${monthCol} - +/- Chênh lệch`]: Number((mTotalCurr - mTotalPrev).toFixed(1)),
-            [`${monthCol} - % TH/kỳ trước`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${monthCol} - % delta`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
             [`${quarterCol} - ${prevData.quarterLegendCurr}`]: qTotalCurr,
             [`${quarterCol} - ${prevData.quarterLegendPrev}`]: qTotalPrev,
             [`${quarterCol} - +/- Chênh lệch`]: Number((qTotalCurr - qTotalPrev).toFixed(1)),
-            [`${quarterCol} - % TH/kỳ trước`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - % delta`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
             [`${yearCol} - ${prevData.yearLegendCurr}`]: yTotalCurr,
             [`${yearCol} - ${prevData.yearLegendPrev}`]: yTotalPrev,
             [`${yearCol} - +/- Chênh lệch`]: Number((yTotalCurr - yTotalPrev).toFixed(1)),
-            [`${yearCol} - % TH/kỳ trước`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - % delta`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
           });
 
           const wsC20 = XLSX.utils.json_to_sheet(exportRows);

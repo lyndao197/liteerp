@@ -454,7 +454,7 @@ export const getSpdvYoyComparisonData = (year = '2026', month = 'Tháng 8') => {
 // DỮ LIỆU BIỂU ĐỒ 20: DOANH THU 6 NHÓM SPDV SO VỚI KỲ TRƯỚC
 // Cơ sở so sánh:
 // Tháng: T8 – T7 | Quý: Ước Q3 – TH Q2 | Năm: Ước 2026 – TH 2025
-// Số %: TH/kỳ trước
+// Số %: % delta
 // ==============================================================================
 export const SPDV_PREV_PERIOD_COMPARISON_DATA = {
   '2026': {

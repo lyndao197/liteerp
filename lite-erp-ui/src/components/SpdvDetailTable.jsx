@@ -337,7 +337,7 @@ export default function SpdvDetailTable({
         prevLabel: prevPeriodData.monthLegendPrev || `TH T${prevMonthNum}`,
         title: `Biểu đồ 20. Thực hiện Tháng ${monthNum}/${selectedYear} so với thực hiện Tháng ${prevMonthNum}/${prevMonthYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
-        rateColLabel: '% TH/kỳ trước',
+        rateColLabel: '% delta',
         note: `So sánh thực hiện của 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear} với kỳ trước (Tháng ${prevMonthNum}/${prevMonthYear}).`
       };
     }
@@ -350,7 +350,7 @@ export default function SpdvDetailTable({
         prevLabel: prevPeriodData.quarterLegendPrev || `TH Q${prevQuarterNum}`,
         title: `Biểu đồ 20. Ước thực hiện Quý ${quarterRoman}/${selectedYear} so với thực hiện Quý ${prevQuarterNum}/${prevQuarterYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
-        rateColLabel: '% TH/kỳ trước',
+        rateColLabel: '% delta',
         note: `So sánh ước thực hiện của 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear} với kỳ trước (Quý ${prevQuarterNum}/${prevQuarterYear}).`
       };
     }
@@ -363,7 +363,7 @@ export default function SpdvDetailTable({
         prevLabel: prevPeriodData.yearLegendPrev || `TH ${lastYear}`,
         title: `Biểu đồ 20. Ước thực hiện năm ${selectedYear} so với thực hiện năm ${lastYear} theo nhóm SPDV`,
         unit: 'Tỷ đồng',
-        rateColLabel: '% TH/kỳ trước',
+        rateColLabel: '% delta',
         note: `So sánh ước thực hiện của 6 nhóm SPDV trong năm ${selectedYear} với thực hiện năm trước (${lastYear}).`
       };
     }
@@ -1383,19 +1383,19 @@ export default function SpdvDetailTable({
                 <th className="spdv-th-col spdv-th-th spdv-border-left">{prevPeriodData.monthLegendCurr}</th>
                 <th className="spdv-th-col spdv-th-kh">{prevPeriodData.monthLegendPrev}</th>
                 <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
-                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/kỳ trước</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
 
                 {/* Quý */}
                 <th className="spdv-th-col spdv-th-th spdv-border-left">{prevPeriodData.quarterLegendCurr}</th>
                 <th className="spdv-th-col spdv-th-kh">{prevPeriodData.quarterLegendPrev}</th>
                 <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
-                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/kỳ trước</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
 
                 {/* Năm */}
                 <th className="spdv-th-col spdv-th-th spdv-border-left">{prevPeriodData.yearLegendCurr}</th>
                 <th className="spdv-th-col spdv-th-kh">{prevPeriodData.yearLegendPrev}</th>
                 <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
-                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% TH/kỳ trước</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
               </tr>
             </thead>
             <tbody>

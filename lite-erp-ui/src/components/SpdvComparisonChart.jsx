@@ -957,7 +957,7 @@ export default function SpdvComparisonChart({
           ticks={prevPeriodData.monthTicks}
           items={prevPeriodData.monthItems}
           cardKey="prev-month"
-          rateLabel="% TH/kỳ trước:"
+          rateLabel="% delta:"
           diffLabel="+/- Chênh lệch:"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_prev_month',
@@ -974,7 +974,7 @@ export default function SpdvComparisonChart({
           ticks={prevPeriodData.quarterTicks}
           items={prevPeriodData.quarterItems}
           cardKey="prev-quarter"
-          rateLabel="% TH/kỳ trước:"
+          rateLabel="% delta:"
           diffLabel="+/- Chênh lệch:"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_prev_quarter',
@@ -994,7 +994,7 @@ export default function SpdvComparisonChart({
           ticks={prevPeriodData.yearTicks}
           items={prevPeriodData.yearItems}
           cardKey="prev-year"
-          rateLabel="% TH/kỳ trước:"
+          rateLabel="% delta:"
           diffLabel="+/- Chênh lệch:"
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'spdv_prev_year',
