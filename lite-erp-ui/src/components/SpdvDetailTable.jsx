@@ -803,75 +803,71 @@ export default function SpdvDetailTable({
   return (
     <div className="spdv-detail-table-card">
       {/* Top Header with title and controls */}
-      <div className="spdv-detail-header-wrap">
-        <div className="spdv-header-title-box">
-          {/* Subcard tag */}
-          {!isStructureTable && singleBarConfig && barViewMode === 'single' && (
-            <span className="spdv-badge-chart-label">
-              <BarChart3 size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-              {singleBarConfig.badge}
-            </span>
-          )}
-          {!isStructureTable && singleYoyConfig && yoyViewMode === "single" && (
-            <span className="spdv-badge-chart-label">
-              <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
-              {singleYoyConfig.badge}
-            </span>
-          )}
-          {!isStructureTable && isYoyComparison && (!singleYoyConfig || yoyViewMode === "integrated") && (
-            <span className="spdv-badge-chart-label">Biểu đồ 19 – 3 Kỳ</span>
-          )}
-          {!isStructureTable && singlePrevPeriodConfig && prevPeriodViewMode === "single" && (
-            <span className="spdv-badge-chart-label">
-              <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
-              {singlePrevPeriodConfig.badge}
-            </span>
-          )}
-          {!isStructureTable && isPrevPeriodComparison && (!singlePrevPeriodConfig || prevPeriodViewMode === "integrated") && (
-            <span className="spdv-badge-chart-label">Biểu đồ 20 – 3 Kỳ</span>
-          )}
-          {!isStructureTable && isBarIntegrated && (
-            <span className="spdv-badge-chart-label">
-              <Layers size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-              Bảng ma trận tổng hợp 3 kỳ
-            </span>
-          )}
+      {!isStructureTable && (
+        <div className="spdv-detail-header-wrap">
+          <div className="spdv-header-title-box">
+            {/* Subcard tag */}
+            {singleBarConfig && barViewMode === 'single' && (
+              <span className="spdv-badge-chart-label">
+                <BarChart3 size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                {singleBarConfig.badge}
+              </span>
+            )}
+            {singleYoyConfig && yoyViewMode === "single" && (
+              <span className="spdv-badge-chart-label">
+                <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+                {singleYoyConfig.badge}
+              </span>
+            )}
+            {isYoyComparison && (!singleYoyConfig || yoyViewMode === "integrated") && (
+              <span className="spdv-badge-chart-label">Biểu đồ 19 – 3 Kỳ</span>
+            )}
+            {singlePrevPeriodConfig && prevPeriodViewMode === "single" && (
+              <span className="spdv-badge-chart-label">
+                <BarChart3 size={12} style={{ marginRight: "4px", verticalAlign: "middle" }} />
+                {singlePrevPeriodConfig.badge}
+              </span>
+            )}
+            {isPrevPeriodComparison && (!singlePrevPeriodConfig || prevPeriodViewMode === "integrated") && (
+              <span className="spdv-badge-chart-label">Biểu đồ 20 – 3 Kỳ</span>
+            )}
+            {isBarIntegrated && (
+              <span className="spdv-badge-chart-label">
+                <Layers size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Bảng ma trận tổng hợp 3 kỳ
+              </span>
+            )}
 
-          <h3 className="spdv-detail-title">
-            {isStructureTable
-              ? 'Cơ cấu doanh thu theo nhóm SPDV'
-              : singleYoyConfig && yoyViewMode === "single"
-              ? singleYoyConfig.title
-              : isYoyComparison
-              ? `Biểu đồ 19. Thực hiện năm ${selectedYear} so với cùng kỳ năm ${lastYear} theo nhóm SPDV`
-              : singlePrevPeriodConfig && prevPeriodViewMode === "single"
-              ? singlePrevPeriodConfig.title
-              : isPrevPeriodComparison
-              ? `Biểu đồ 20. Thực hiện so với kỳ trước theo nhóm SPDV`
-              : singleBarConfig && barViewMode === "single"
-              ? singleBarConfig.title
-              : `Biểu đồ 18. Thực hiện so với kế hoạch theo nhóm SPDV (Bảng tổng hợp 3 kỳ)`}
-          </h3>
+            <h3 className="spdv-detail-title">
+              {singleYoyConfig && yoyViewMode === "single"
+                ? singleYoyConfig.title
+                : isYoyComparison
+                ? `Biểu đồ 19. Thực hiện năm ${selectedYear} so với cùng kỳ năm ${lastYear} theo nhóm SPDV`
+                : singlePrevPeriodConfig && prevPeriodViewMode === "single"
+                ? singlePrevPeriodConfig.title
+                : isPrevPeriodComparison
+                ? `Biểu đồ 20. Thực hiện so với kỳ trước theo nhóm SPDV`
+                : singleBarConfig && barViewMode === "single"
+                ? singleBarConfig.title
+                : `Biểu đồ 18. Thực hiện so với kế hoạch theo nhóm SPDV (Bảng tổng hợp 3 kỳ)`}
+            </h3>
 
-          <span className="spdv-detail-unit">
-            {isStructureTable
-              ? '(Đơn vị: Triệu đồng)'
-              : '(Đơn vị: Tỷ đồng)'}
-          </span>
+            <span className="spdv-detail-unit">(Đơn vị: Tỷ đồng)</span>
+          </div>
+
+          {/* Note / Basis description */}
+          {isYoyComparison && (
+            <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
+              <strong>Cơ sở so sánh:</strong> {yoyData.monthBasis} | Quý: {yoyData.quarterBasis} | Năm: {yoyData.yearBasis}
+            </div>
+          )}
+          {isPrevPeriodComparison && (
+            <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
+              <strong>Cơ sở so sánh:</strong> {prevPeriodData.monthBasis} | Quý: {prevPeriodData.quarterBasis} | Năm: {prevPeriodData.yearBasis}
+            </div>
+          )}
         </div>
-
-        {/* Note / Basis description */}
-        {isYoyComparison && (
-          <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
-            <strong>Cơ sở so sánh:</strong> {yoyData.monthBasis} | Quý: {yoyData.quarterBasis} | Năm: {yoyData.yearBasis}
-          </div>
-        )}
-        {isPrevPeriodComparison && (
-          <div style={{ width: '100%', fontSize: '13px', color: '#475569', marginTop: '2px' }}>
-            <strong>Cơ sở so sánh:</strong> {prevPeriodData.monthBasis} | Quý: {prevPeriodData.quarterBasis} | Năm: {prevPeriodData.yearBasis}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* TABLE VIEWS ROUTING */}
       {isStructureTable ? (
