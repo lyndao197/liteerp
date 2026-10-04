@@ -570,7 +570,7 @@ export default function UnitComparisonChart({
       {/* DÒNG 1: THÁNG (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
       <div className="month-row-grid">
         <UnitStructureSubcard
-          title={`Cơ cấu theo từng đơn vị – ${activeMonth}/${activeYear}`}
+          title={`Cơ cấu doanh thu TH theo từng đơn vị – ${activeMonth}/${activeYear}`}
           tag="Hàng 1 - Khu 1"
           chart={data21.thMonth}
           planItems={data22.month.items}
@@ -581,7 +581,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c21Month')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_struct_month',
-            chartTitle: `Cơ cấu theo từng đơn vị – ${activeMonth}/${activeYear}`
+            chartTitle: `Cơ cấu doanh thu TH theo từng đơn vị – ${activeMonth}/${activeYear}`
           })}
         />
 
@@ -602,7 +602,7 @@ export default function UnitComparisonChart({
       {/* DÒNG 2: QUÝ (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
       <div className="month-row-grid">
         <UnitStructureSubcard
-          title={`Cơ cấu theo từng đơn vị – ${quarterText}`}
+          title={`Cơ cấu doanh thu TH theo từng đơn vị – ${quarterText}`}
           tag="Hàng 2 - Khu 1"
           chart={data21.thQuarter}
           planItems={data22.quarter.items}
@@ -613,7 +613,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c21Quarter')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_struct_quarter',
-            chartTitle: `Cơ cấu theo từng đơn vị – ${quarterText}`
+            chartTitle: `Cơ cấu doanh thu TH theo từng đơn vị – ${quarterText}`
           })}
         />
 
@@ -634,7 +634,7 @@ export default function UnitComparisonChart({
       {/* DÒNG 3: NĂM (BIỂU ĐỒ 21 & BIỂU ĐỒ 22) */}
       <div className="month-row-grid">
         <UnitStructureSubcard
-          title={`Cơ cấu theo từng đơn vị – Năm ${activeYear}`}
+          title={`Cơ cấu doanh thu TH theo từng đơn vị – Năm ${activeYear}`}
           tag="Hàng 3 - Khu 1"
           chart={data21.thYear}
           planItems={data22.year.items}
@@ -645,7 +645,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c21Year')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_struct_year',
-            chartTitle: `Cơ cấu theo từng đơn vị – Năm ${activeYear}`
+            chartTitle: `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${activeYear}`
           })}
         />
 
