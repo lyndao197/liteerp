@@ -271,7 +271,7 @@ export function getExportChartList({
       key: 'c23_24',
       branchId: 'plan_progress',
       chartNumber: 'Biểu đồ 23-24',
-      title: `Biểu đồ 23-24. Doanh thu nội bộ và ngoài Tập đoàn`,
+      title: `Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn`,
       desc: `Cơ cấu và tỷ lệ hoàn thành kế hoạch doanh thu nội bộ vs ngoài Tập đoàn`,
       period: `Tháng, Quý, Năm ${selectedYear}`
     },
@@ -279,7 +279,7 @@ export function getExportChartList({
       key: 'c25_26',
       branchId: 'plan_progress',
       chartNumber: 'Biểu đồ 25-26',
-      title: `Biểu đồ 25-26. Doanh thu trong nước và quốc tế`,
+      title: `Cơ cấu doanh thu trong nước và doanh thu quốc tế`,
       desc: `Cơ cấu chuyển dịch doanh thu thị trường trong nước vs nước ngoài`,
       period: `Tháng, Quý, Năm ${selectedYear}`
     },

@@ -132,7 +132,7 @@ export default function InternalExternalDetailTable({
               color: '#0f172a'
             }}
           >
-            Bảng dữ liệu chi tiết – Cơ cấu doanh thu nội bộ và ngoài Tập đoàn
+            Bảng dữ liệu chi tiết – Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn
           </span>
           <span
             style={{

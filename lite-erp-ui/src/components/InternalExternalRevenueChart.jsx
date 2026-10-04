@@ -217,9 +217,9 @@ function InternalExternalSubcard({
               fontWeight: '700',
               color: '#0f172a',
               margin: 0,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              lineHeight: '1.35',
+              whiteSpace: 'normal',
+              wordBreak: 'break-word'
             }}
             title={title}
           >
@@ -404,17 +404,29 @@ export default function InternalExternalRevenueChart({
   const quarterRoman = `${quarterNumber}`;
   const startMonthOfQuarter = (quarterNumber - 1) * 3 + 1;
 
-  // Formatted subcard titles exactly matching user mockup
-  const thMonthTitle = `TH – Tháng ${monthNum}/${activeYear}`;
-  const khMonthTitle = `KH – Tháng ${monthNum}/${activeYear}`;
+  // Tiêu đề các biểu đồ Phần 1: Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn
+  const inExThMonthTitle = `Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn – Tháng ${monthNum}/${activeYear}`;
+  const inExKhMonthTitle = `Cơ cấu doanh thu KH nội bộ và doanh thu ngoài Tập đoàn – Tháng ${monthNum}/${activeYear}`;
 
-  const thQuarterTitle = startMonthOfQuarter === monthNum
-    ? `TH – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter})`
-    : `TH – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum})`;
-  const khQuarterTitle = `KH – Quý ${quarterRoman}/${activeYear}`;
+  const inExThQuarterTitle = startMonthOfQuarter === monthNum
+    ? `Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter})`
+    : `Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum})`;
+  const inExKhQuarterTitle = `Cơ cấu doanh thu KH nội bộ và doanh thu ngoài Tập đoàn – Quý ${quarterRoman}/${activeYear}`;
 
-  const thYearTitle = `TH – Năm ${activeYear} (lũy kế ${monthNum}T)`;
-  const khYearTitle = `KH – Năm ${activeYear}`;
+  const inExThYearTitle = `Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn – Năm ${activeYear} (lũy kế ${monthNum}T)`;
+  const inExKhYearTitle = `Cơ cấu doanh thu KH nội bộ và doanh thu ngoài Tập đoàn – Năm ${activeYear}`;
+
+  // Tiêu đề các biểu đồ Phần 2: Cơ cấu doanh thu trong nước và doanh thu quốc tế
+  const domIntlThMonthTitle = `Cơ cấu doanh thu TH trong nước và doanh thu quốc tế – Tháng ${monthNum}/${activeYear}`;
+  const domIntlKhMonthTitle = `Cơ cấu doanh thu KH trong nước và doanh thu quốc tế – Tháng ${monthNum}/${activeYear}`;
+
+  const domIntlThQuarterTitle = startMonthOfQuarter === monthNum
+    ? `Cơ cấu doanh thu TH trong nước và doanh thu quốc tế – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter})`
+    : `Cơ cấu doanh thu TH trong nước và doanh thu quốc tế – Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum})`;
+  const domIntlKhQuarterTitle = `Cơ cấu doanh thu KH trong nước và doanh thu quốc tế – Quý ${quarterRoman}/${activeYear}`;
+
+  const domIntlThYearTitle = `Cơ cấu doanh thu TH trong nước và doanh thu quốc tế – Năm ${activeYear} (lũy kế ${monthNum}T)`;
+  const domIntlKhYearTitle = `Cơ cấu doanh thu KH trong nước và doanh thu quốc tế – Năm ${activeYear}`;
 
   return (
     <div className="month-charts-stack">
@@ -485,7 +497,7 @@ export default function InternalExternalRevenueChart({
               margin: 0
             }}
           >
-            Cơ cấu doanh thu nội bộ và doanh thu ngoài Tập đoàn
+            Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn
           </h2>
 
         </div>
@@ -495,7 +507,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 1: THÁNG */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thMonthTitle}
+                title={inExThMonthTitle}
                 tag="Hàng 1 - Khu 1"
                 tagType="th"
                 chart={data.thMonth}
@@ -507,11 +519,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thMonth')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_th_month',
-                  chartTitle: `${thMonthTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExThMonthTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khMonthTitle}
+                title={inExKhMonthTitle}
                 tag="Hàng 1 - Khu 2"
                 tagType="kh"
                 chart={data.khMonth}
@@ -523,7 +535,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khMonth')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_kh_month',
-                  chartTitle: `${khMonthTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExKhMonthTitle
                 })}
               />
             </div>
@@ -531,7 +543,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 2: QUÝ */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thQuarterTitle}
+                title={inExThQuarterTitle}
                 tag="Hàng 2 - Khu 1"
                 tagType="th"
                 chart={data.thQuarter}
@@ -543,11 +555,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thQuarter')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_th_quarter',
-                  chartTitle: `${thQuarterTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExThQuarterTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khQuarterTitle}
+                title={inExKhQuarterTitle}
                 tag="Hàng 2 - Khu 2"
                 tagType="kh"
                 chart={data.khQuarter}
@@ -559,7 +571,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khQuarter')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_kh_quarter',
-                  chartTitle: `${khQuarterTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExKhQuarterTitle
                 })}
               />
             </div>
@@ -567,7 +579,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 3: NĂM */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thYearTitle}
+                title={inExThYearTitle}
                 tag="Hàng 3 - Khu 1"
                 tagType="th"
                 chart={data.thYear}
@@ -579,11 +591,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thYear')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_th_year',
-                  chartTitle: `${thYearTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExThYearTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khYearTitle}
+                title={inExKhYearTitle}
                 tag="Hàng 3 - Khu 2"
                 tagType="kh"
                 chart={data.khYear}
@@ -595,7 +607,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khYear')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'in_ex_kh_year',
-                  chartTitle: `${khYearTitle} (Nội bộ & Ngoài Tập đoàn)`
+                  chartTitle: inExKhYearTitle
                 })}
               />
             </div>
@@ -734,7 +746,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 1: THÁNG */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thMonthTitle}
+                title={domIntlThMonthTitle}
                 tag="Hàng 1 - Khu 1"
                 tagType="th"
                 chart={data27.thMonth}
@@ -746,11 +758,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thMonth27')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_th_month',
-                  chartTitle: `${thMonthTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlThMonthTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khMonthTitle}
+                title={domIntlKhMonthTitle}
                 tag="Hàng 1 - Khu 2"
                 tagType="kh"
                 chart={data27.khMonth}
@@ -762,7 +774,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khMonth28')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_kh_month',
-                  chartTitle: `${khMonthTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlKhMonthTitle
                 })}
               />
             </div>
@@ -770,7 +782,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 2: QUÝ */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thQuarterTitle}
+                title={domIntlThQuarterTitle}
                 tag="Hàng 2 - Khu 1"
                 tagType="th"
                 chart={data27.thQuarter}
@@ -782,11 +794,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thQuarter27')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_th_quarter',
-                  chartTitle: `${thQuarterTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlThQuarterTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khQuarterTitle}
+                title={domIntlKhQuarterTitle}
                 tag="Hàng 2 - Khu 2"
                 tagType="kh"
                 chart={data27.khQuarter}
@@ -798,7 +810,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khQuarter28')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_kh_quarter',
-                  chartTitle: `${khQuarterTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlKhQuarterTitle
                 })}
               />
             </div>
@@ -806,7 +818,7 @@ export default function InternalExternalRevenueChart({
             {/* DÒNG 3: NĂM */}
             <div className="month-row-grid">
               <InternalExternalSubcard
-                title={thYearTitle}
+                title={domIntlThYearTitle}
                 tag="Hàng 3 - Khu 1"
                 tagType="th"
                 chart={data27.thYear}
@@ -818,11 +830,11 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('thYear27')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_th_year',
-                  chartTitle: `${thYearTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlThYearTitle
                 })}
               />
               <InternalExternalSubcard
-                title={khYearTitle}
+                title={domIntlKhYearTitle}
                 tag="Hàng 3 - Khu 2"
                 tagType="kh"
                 chart={data27.khYear}
@@ -834,7 +846,7 @@ export default function InternalExternalRevenueChart({
                 onToggle={() => toggleCard('khYear28')}
                 onOpenDetail={() => onOpenDetail && onOpenDetail({
                   chartKey: 'dom_intl_kh_year',
-                  chartTitle: `${khYearTitle} (Trong nước & Quốc tế)`
+                  chartTitle: domIntlKhYearTitle
                 })}
               />
             </div>

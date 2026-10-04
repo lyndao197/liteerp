@@ -132,13 +132,25 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'unit_prev_year', label: 'Biểu đồ 23 (Năm): Ước thực hiện so với kỳ trước theo đơn vị' }
   ],
   plan_progress: [
+    { id: 'in_ex_th_month', label: 'Cơ cấu doanh thu TH nội bộ và ngoài Tập đoàn – Tháng' },
+    { id: 'in_ex_kh_month', label: 'Cơ cấu doanh thu KH nội bộ và ngoài Tập đoàn – Tháng' },
+    { id: 'in_ex_th_quarter', label: 'Cơ cấu doanh thu TH nội bộ và ngoài Tập đoàn – Quý' },
+    { id: 'in_ex_kh_quarter', label: 'Cơ cấu doanh thu KH nội bộ và ngoài Tập đoàn – Quý' },
+    { id: 'in_ex_th_year', label: 'Cơ cấu doanh thu TH nội bộ và ngoài Tập đoàn – Năm' },
+    { id: 'in_ex_kh_year', label: 'Cơ cấu doanh thu KH nội bộ và ngoài Tập đoàn – Năm' },
+    { id: 'dom_intl_th_month', label: 'Cơ cấu doanh thu TH trong nước và quốc tế – Tháng' },
+    { id: 'dom_intl_kh_month', label: 'Cơ cấu doanh thu KH trong nước và quốc tế – Tháng' },
+    { id: 'dom_intl_th_quarter', label: 'Cơ cấu doanh thu TH trong nước và quốc tế – Quý' },
+    { id: 'dom_intl_kh_quarter', label: 'Cơ cấu doanh thu KH trong nước và quốc tế – Quý' },
+    { id: 'dom_intl_th_year', label: 'Cơ cấu doanh thu TH trong nước và quốc tế – Năm' },
+    { id: 'dom_intl_kh_year', label: 'Cơ cấu doanh thu KH trong nước và quốc tế – Năm' },
+    { id: 'chart29_30', label: 'Tỷ lệ hoàn thành KH tổng doanh thu (lũy kế Quý / Năm)' },
+    { id: 'chart31_32', label: 'Tỷ lệ hoàn thành KH DT ngoài Tập đoàn (lũy kế Quý / Năm)' },
+    { id: 'chart33_34', label: 'Tỷ lệ hoàn thành KH DT quốc tế (lũy kế Quý / Năm)' },
     { id: 'chart21', label: 'Biểu đồ 21: Cơ cấu DT nội bộ vs Ngoài tập đoàn' },
     { id: 'chart22', label: 'Biểu đồ 22: Chuyển dịch DT nội bộ vs Ngoài tập đoàn' },
     { id: 'chart23', label: 'Biểu đồ 23: Cơ cấu DT trong nước vs Quốc tế' },
-    { id: 'chart24', label: 'Biểu đồ 24: Chuyển dịch DT trong nước vs Quốc tế' },
-    { id: 'chart29_30', label: 'Biểu đồ 29 – 30: Tỷ lệ hoàn thành KH tổng doanh thu (lũy kế Quý / Năm)' },
-    { id: 'chart31_32', label: 'Biểu đồ 31 – 32: Tỷ lệ hoàn thành KH DT ngoài TĐ (lũy kế Quý / Năm)' },
-    { id: 'chart33_34', label: 'Biểu đồ 33 – 34: Tỷ lệ hoàn thành KH DT quốc tế (lũy kế Quý / Năm)' }
+    { id: 'chart24', label: 'Biểu đồ 24: Chuyển dịch DT trong nước vs Quốc tế' }
   ],
   debt: [
     { id: 'chart25', label: 'Biểu đồ 25: Phân loại tuổi nợ' },
