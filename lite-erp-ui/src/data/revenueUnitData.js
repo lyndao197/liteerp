@@ -318,4 +318,114 @@ export const UNIT_STRUCTURE_TABLE_DATA = {
   }
 };
 
+// ==============================================================================
+// DỮ LIỆU BIỂU ĐỒ 23: DOANH THU THEO TỪNG ĐƠN VỊ SO VỚI KỲ TRƯỚC
+// Cơ sở so sánh: Như biểu đồ 20
+// Tháng: T8 vs T7 | Quý: Ước Q3 vs TH Q2 | Năm: Ước 2026 vs TH 2025
+// Tỷ lệ: % delta
+// ==============================================================================
+export const UNIT_PREV_PERIOD_COMPARISON_DATA = {
+  '2026': {
+    month: {
+      periodLabel: 'Tháng (T8 vs T7)',
+      primaryLegend: 'TH T8',
+      secondaryLegend: 'TH T7',
+      unit: 'Tỷ đồng',
+      maxVal: 120,
+      xTicks: [0, 20, 40, 60, 80, 100, 120],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 105.6, prev: 108.9, rate: '97%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 93.6, prev: 94.5, rate: '99%', isPositive: false },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 50.7, prev: 51.7, rate: '98%', isPositive: false },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 49.0, prev: 48.0, rate: '102%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 54.6, prev: 49.2, rate: '111%', isPositive: true },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 38.0, prev: 35.2, rate: '108%', isPositive: true }
+      ]
+    },
+    quarter: {
+      periodLabel: 'Quý (Q3 vs Q2)',
+      primaryLegend: 'Ước Q3',
+      secondaryLegend: 'TH Q2',
+      unit: 'Tỷ đồng',
+      maxVal: 400,
+      xTicks: [0, 100, 200, 300, 400],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 317.0, prev: 356.2, rate: '89%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 280.8, prev: 292.5, rate: '96%', isPositive: false },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 153.7, prev: 152.2, rate: '101%', isPositive: true },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 145.5, prev: 142.6, rate: '102%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 156.0, prev: 159.2, rate: '98%', isPositive: false },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 109.5, prev: 110.6, rate: '99%', isPositive: false }
+      ]
+    },
+    year: {
+      periodLabel: 'Năm (2026 vs 2025)',
+      primaryLegend: 'Ước 2026',
+      secondaryLegend: 'TH 2025',
+      unit: 'Tỷ đồng',
+      maxVal: 1500,
+      xTicks: [0, 250, 500, 750, 1000, 1250, 1500],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 1290.0, prev: 1290.0, rate: '100%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 1080.0, prev: 1038.5, rate: '104%', isPositive: true },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 578.5, prev: 615.4, rate: '94%', isPositive: false },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 540.0, prev: 519.2, rate: '104%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 588.0, prev: 525.0, rate: '112%', isPositive: true },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 414.0, prev: 356.9, rate: '116%', isPositive: true }
+      ]
+    }
+  },
+  '2025': {
+    month: {
+      periodLabel: 'Tháng (T8 vs T7)',
+      primaryLegend: 'TH T8',
+      secondaryLegend: 'TH T7',
+      unit: 'Tỷ đồng',
+      maxVal: 120,
+      xTicks: [0, 20, 40, 60, 80, 100, 120],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 98.4, prev: 101.5, rate: '97%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 87.5, prev: 88.4, rate: '99%', isPositive: false },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 47.4, prev: 48.4, rate: '98%', isPositive: false },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 47.4, prev: 46.5, rate: '102%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 51.0, prev: 46.0, rate: '111%', isPositive: true },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 36.4, prev: 33.7, rate: '108%', isPositive: true }
+      ]
+    },
+    quarter: {
+      periodLabel: 'Quý (Q3 vs Q2)',
+      primaryLegend: 'Ước Q3',
+      secondaryLegend: 'TH Q2',
+      unit: 'Tỷ đồng',
+      maxVal: 400,
+      xTicks: [0, 100, 200, 300, 400],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 290.0, prev: 325.8, rate: '89%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 255.0, prev: 265.6, rate: '96%', isPositive: false },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 140.0, prev: 138.6, rate: '101%', isPositive: true },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 135.0, prev: 132.4, rate: '102%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 142.0, prev: 144.9, rate: '98%', isPositive: false },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 100.0, prev: 101.0, rate: '99%', isPositive: false }
+      ]
+    },
+    year: {
+      periodLabel: 'Năm (2025 vs 2024)',
+      primaryLegend: 'Ước 2025',
+      secondaryLegend: 'TH 2024',
+      unit: 'Tỷ đồng',
+      maxVal: 1500,
+      xTicks: [0, 250, 500, 750, 1000, 1250, 1500],
+      items: [
+        { id: 'hanoi', name: 'Đơn vị Hà Nội', curr: 1180.0, prev: 1180.0, rate: '100%', isPositive: false },
+        { id: 'hcm', name: 'Đơn vị TP.HCM', curr: 980.0, prev: 942.3, rate: '104%', isPositive: true },
+        { id: 'danang', name: 'Đơn vị Đà Nẵng', curr: 520.0, prev: 553.2, rate: '94%', isPositive: false },
+        { id: 'ttgp', name: 'TT Giải pháp', curr: 490.0, prev: 471.2, rate: '104%', isPositive: true },
+        { id: 'quocte', name: 'Cty con Quốc tế', curr: 530.0, prev: 473.2, rate: '112%', isPositive: true },
+        { id: 'dvs', name: 'Khối Dịch vụ số', curr: 375.0, prev: 323.3, rate: '116%', isPositive: true }
+      ]
+    }
+  }
+};
+
+
 

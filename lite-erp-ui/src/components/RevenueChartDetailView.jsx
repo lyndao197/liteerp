@@ -38,7 +38,13 @@ const YEAR_OPTIONS = ['2026', '2025', '2024'];
 import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendData';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData, getSpdvPrevPeriodComparisonData } from '../data/revenueSpdvData';
 import SpdvDetailTable from './SpdvDetailTable';
-import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
+import {
+  UNIT_CATEGORIES,
+  UNIT_STRUCTURE_DATA,
+  UNIT_STRUCTURE_TABLE_DATA,
+  UNIT_PLAN_COMPARISON_DATA,
+  UNIT_PREV_PERIOD_COMPARISON_DATA
+} from '../data/revenueUnitData';
 import UnitDetailTable from './UnitDetailTable';
 import PlanProgressDetailTable from './PlanProgressDetailTable';
 import MonthRatioDetailTable from './MonthRatioDetailTable';
@@ -2434,6 +2440,89 @@ export default function RevenueChartDetailView({
         const monthCol = `Tháng ${unitMonthNum}/${selectedYear}`;
         const quarterCol = `Quý ${unitQuarterRoman}/${selectedYear} (lũy kế ${unitQuarterCumText})`;
         const yearCol = `Năm ${selectedYear} (lũy kế ${unitMonthNum}T)`;
+
+        const isPrevPeriod = activeChartKey.includes('prev') || activeChartKey.includes('23');
+        if (isPrevPeriod) {
+          const prevData = UNIT_PREV_PERIOD_COMPARISON_DATA[selectedYear] || UNIT_PREV_PERIOD_COMPARISON_DATA['2026'];
+          const mItems = prevData?.month?.items || [];
+          const qItems = prevData?.quarter?.items || [];
+          const yItems = prevData?.year?.items || [];
+
+          const mLegendCurr = prevData?.month?.primaryLegend || `TH T${unitMonthNum}`;
+          const mLegendPrev = prevData?.month?.secondaryLegend || `TH T${unitMonthNum === 1 ? 12 : unitMonthNum - 1}`;
+          const qLegendCurr = prevData?.quarter?.primaryLegend || `Ước Q${unitQuarterRoman}`;
+          const qLegendPrev = prevData?.quarter?.secondaryLegend || `TH Q${unitQuarterNum === 1 ? 4 : unitQuarterNum - 1}`;
+          const yLegendCurr = prevData?.year?.primaryLegend || `Ước ${selectedYear}`;
+          const yLegendPrev = prevData?.year?.secondaryLegend || `TH ${parseInt(selectedYear) - 1}`;
+
+          const exportRows = UNIT_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mCurr = Number(m.curr ?? 0);
+            const mPrev = Number(m.prev ?? 0);
+            const mDiff = Number((mCurr - mPrev).toFixed(1));
+            const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const qCurr = Number(q.curr ?? 0);
+            const qPrev = Number(q.prev ?? 0);
+            const qDiff = Number((qCurr - qPrev).toFixed(1));
+            const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const yCurr = Number(y.curr ?? 0);
+            const yPrev = Number(y.prev ?? 0);
+            const yDiff = Number((yCurr - yPrev).toFixed(1));
+            const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Đơn vị thực hiện': cat.name,
+              [`${monthCol} - ${mLegendCurr}`]: mCurr,
+              [`${monthCol} - ${mLegendPrev}`]: mPrev,
+              [`${monthCol} - +/- Chênh lệch`]: mDiff,
+              [`${monthCol} - % delta`]: mRate,
+              [`${quarterCol} - ${qLegendCurr}`]: qCurr,
+              [`${quarterCol} - ${qLegendPrev}`]: qPrev,
+              [`${quarterCol} - +/- Chênh lệch`]: qDiff,
+              [`${quarterCol} - % delta`]: qRate,
+              [`${yearCol} - ${yLegendCurr}`]: yCurr,
+              [`${yearCol} - ${yLegendPrev}`]: yPrev,
+              [`${yearCol} - +/- Chênh lệch`]: yDiff,
+              [`${yearCol} - % delta`]: yRate,
+            };
+          });
+
+          const mTotalCurr = mItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const mTotalPrev = mItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const qTotalCurr = qItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const qTotalPrev = qItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const yTotalCurr = yItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const yTotalPrev = yItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Đơn vị thực hiện': 'Tổng doanh thu',
+            [`${monthCol} - ${mLegendCurr}`]: mTotalCurr,
+            [`${monthCol} - ${mLegendPrev}`]: mTotalPrev,
+            [`${monthCol} - +/- Chênh lệch`]: Number((mTotalCurr - mTotalPrev).toFixed(1)),
+            [`${monthCol} - % delta`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - ${qLegendCurr}`]: qTotalCurr,
+            [`${quarterCol} - ${qLegendPrev}`]: qTotalPrev,
+            [`${quarterCol} - +/- Chênh lệch`]: Number((qTotalCurr - qTotalPrev).toFixed(1)),
+            [`${quarterCol} - % delta`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - ${yLegendCurr}`]: yTotalCurr,
+            [`${yearCol} - ${yLegendPrev}`]: yTotalPrev,
+            [`${yearCol} - +/- Chênh lệch`]: Number((yTotalCurr - yTotalPrev).toFixed(1)),
+            [`${yearCol} - % delta`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const ws = XLSX.utils.json_to_sheet(exportRows);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'So_Sanh_Ky_Truoc_Don_Vi');
+          XLSX.writeFile(wb, `Doanh_thu_theo_Don_vi_so_voi_ky_truoc_${selectedYear}.xlsx`);
+          return;
+        }
 
         if (isBarCompare) {
           const yearPlanData = UNIT_PLAN_COMPARISON_DATA[selectedYear] || UNIT_PLAN_COMPARISON_DATA['2026'];

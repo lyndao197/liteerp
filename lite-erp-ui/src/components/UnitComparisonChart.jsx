@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
-import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
+import {
+  UNIT_CATEGORIES,
+  UNIT_STRUCTURE_DATA,
+  UNIT_PLAN_COMPARISON_DATA,
+  UNIT_PREV_PERIOD_COMPARISON_DATA
+} from '../data/revenueUnitData';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -450,7 +455,252 @@ function UnitPlanSubcard({
 }
 
 // ==============================================================================
-// MAIN COMPONENT: NHÁNH 6 - DOANH THU THEO ĐƠN VỊ (BIỂU ĐỒ 21 & 22)
+// BIỂU ĐỒ 23 SUBCARD (Horizontal Bar Chart: Doanh thu theo đơn vị so với kỳ trước)
+// Theme: Cột TH kỳ này màu navy (#1b4570), cột TH kỳ trước màu xanh nhạt (#9eb5d0)
+// Tỷ lệ % delta: xanh (#15803d) nếu > 100%, đỏ (#b91c1c) nếu <= 100%
+// ==============================================================================
+function UnitPrevPeriodSubcard({
+  title,
+  tag = 'So kỳ trước',
+  data,
+  cardKey,
+  isVisible = true,
+  onToggle,
+  onOpenDetail
+}) {
+  const [hoveredUnit, setHoveredUnit] = useState(null);
+
+  if (!data) return null;
+
+  const items = data.items || [];
+  const maxVal = data.maxVal || 120;
+  const xTicks = data.xTicks || [0, 20, 40, 60, 80, 100, 120];
+  const unitLabel = data.unit || 'Tỷ đồng';
+
+  const chartLeft = 110;
+  const chartRight = 450;
+  const chartTop = 15;
+  const chartBottom = 205;
+
+  return (
+    <div className="month-subcard spdv-card-item">
+      <div className="month-subcard-header">
+        <h3 className="month-subcard-title">{title}</h3>
+        <div className="month-subcard-header-actions">
+          <span className="month-subcard-tag">{tag}</span>
+        </div>
+      </div>
+
+      <div className="spdv-subcard-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', position: 'relative' }}>
+        {/* Legends: Primary (Dark navy #1b4570) & Secondary (Light blue #9eb5d0) */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '8px', fontSize: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '12px', height: '12px', backgroundColor: '#1b4570', borderRadius: '2px', display: 'inline-block' }} />
+            <span style={{ fontWeight: '600', color: '#1e293b' }}>{data.primaryLegend || 'TH'}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ width: '12px', height: '12px', backgroundColor: '#9eb5d0', borderRadius: '2px', display: 'inline-block' }} />
+            <span style={{ fontWeight: '600', color: '#475569' }}>{data.secondaryLegend || 'Kỳ trước'}</span>
+          </div>
+        </div>
+
+        {/* SVG Horizontal Bar Chart */}
+        <svg
+          viewBox="0 0 520 235"
+          style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}
+          onMouseLeave={() => setHoveredUnit(null)}
+        >
+          {/* Vertical axis line at X=0 */}
+          <line
+            x1={chartLeft}
+            y1={chartTop}
+            x2={chartLeft}
+            y2={chartBottom}
+            stroke="#475569"
+            strokeWidth={1.2}
+          />
+          {/* Bottom axis line */}
+          <line
+            x1={chartLeft}
+            y1={chartBottom}
+            x2={chartRight}
+            y2={chartBottom}
+            stroke="#475569"
+            strokeWidth={1.2}
+          />
+
+          {/* Vertical Grid lines & X-ticks */}
+          {xTicks.map((val) => {
+            const xPos = chartLeft + (val / maxVal) * (chartRight - chartLeft);
+            return (
+              <g key={`x-tick-${cardKey}-${val}`}>
+                <line
+                  x1={xPos}
+                  y1={chartBottom}
+                  x2={xPos}
+                  y2={chartBottom + 4}
+                  stroke="#64748b"
+                  strokeWidth={1}
+                />
+                <text
+                  x={xPos}
+                  y={chartBottom + 16}
+                  textAnchor="middle"
+                  style={{ fontSize: '10.5px', fill: '#475569', fontWeight: '500' }}
+                >
+                  {val}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Unit text at bottom center */}
+          <text
+            x={chartLeft + (chartRight - chartLeft) / 2}
+            y={chartBottom + 28}
+            textAnchor="middle"
+            style={{ fontSize: '10.5px', fontWeight: '600', fill: '#475569' }}
+          >
+            {unitLabel}
+          </text>
+
+          {/* 6 Horizontal Bar Groups */}
+          {items.map((item, idx) => {
+            const yRow = chartTop + idx * 31 + 14;
+            const currW = Math.max(((item.curr || 0) / maxVal) * (chartRight - chartLeft), 0);
+            const prevW = Math.max(((item.prev || 0) / maxVal) * (chartRight - chartLeft), 0);
+            const rateX = chartLeft + Math.max(currW, prevW) + 8;
+            const isHovered = hoveredUnit?.id === item.id;
+            const rateNum = parseFloat(item.rate?.replace('%', '') || '0');
+            const isPositive = rateNum > 100;
+
+            return (
+              <g
+                key={`u23-bar-group-${cardKey}-${item.id}`}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setHoveredUnit(item)}
+              >
+                {/* Category Name on Y-axis */}
+                <text
+                  x={chartLeft - 8}
+                  y={yRow + 4}
+                  textAnchor="end"
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: isHovered ? '700' : '600',
+                    fill: isHovered ? '#1b4570' : '#334155'
+                  }}
+                >
+                  {item.name}
+                </text>
+
+                {/* Top Bar: TH Kỳ này (Deep Navy #1b4570) */}
+                <rect
+                  x={chartLeft}
+                  y={yRow - 9}
+                  width={currW}
+                  height={8}
+                  fill="#1b4570"
+                  rx={1.5}
+                  style={{
+                    transition: 'all 0.15s ease',
+                    opacity: isHovered ? 1 : 0.95
+                  }}
+                />
+
+                {/* Bottom Bar: TH Kỳ trước (Soft Light Blue #9eb5d0) */}
+                <rect
+                  x={chartLeft}
+                  y={yRow + 1}
+                  width={prevW}
+                  height={8}
+                  fill="#9eb5d0"
+                  rx={1.5}
+                  style={{
+                    transition: 'all 0.15s ease',
+                    opacity: isHovered ? 1 : 0.85
+                  }}
+                />
+
+                {/* % delta Label on the right */}
+                <text
+                  x={rateX}
+                  y={yRow + 4}
+                  textAnchor="start"
+                  style={{
+                    fontSize: '10.5px',
+                    fontWeight: '700',
+                    fill: isPositive ? '#15803d' : '#b91c1c'
+                  }}
+                >
+                  {item.rate}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Floating Tooltip */}
+        {hoveredUnit && (
+          <div
+            style={{
+              position: 'absolute',
+              right: '18px',
+              top: '40px',
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: '6px',
+              padding: '8px 12px',
+              boxShadow: '0 6px 16px -2px rgba(0, 0, 0, 0.12)',
+              fontSize: '11.5px',
+              pointerEvents: 'none',
+              zIndex: 20,
+              minWidth: '160px'
+            }}
+          >
+            <div style={{ fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '3px', marginBottom: '5px' }}>
+              {hoveredUnit.name}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+              <span style={{ color: '#64748b', fontWeight: '500' }}>{data.secondaryLegend || 'Kỳ trước'}:</span>
+              <span style={{ fontWeight: '600', color: '#475569' }}>{hoveredUnit.prev} {unitLabel}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+              <span style={{ color: '#1b4570', fontWeight: '600' }}>{data.primaryLegend || 'TH'}:</span>
+              <span style={{ fontWeight: '700', color: '#0f172a' }}>{hoveredUnit.curr} {unitLabel}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', paddingTop: '3px', borderTop: '1px dashed #e2e8f0' }}>
+              <span style={{ color: '#475569', fontWeight: '600' }}>% delta:</span>
+              <span style={{ fontWeight: '700', color: (parseFloat(hoveredUnit.rate?.replace('%', '') || '0') > 100) ? '#15803d' : '#b91c1c' }}>
+                {hoveredUnit.rate}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {onOpenDetail && (
+        <div className="subcard-bottom-bar">
+          <button
+            type="button"
+            className="subcard-detail-action-btn"
+            title="Xem chi tiết"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDetail();
+            }}
+          >
+            <span>Xem chi tiết</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==============================================================================
+// MAIN COMPONENT: NHÁNH 6 - DOANH THU THEO ĐƠN VỊ (BIỂU ĐỒ 21, 22 & 23)
 // ==============================================================================
 export default function UnitComparisonChart({
   selectedYear = '2026',
@@ -465,14 +715,17 @@ export default function UnitComparisonChart({
   const [internalMonth, setInternalMonth] = useState('Tháng 8');
   const [hoveredSlice, setHoveredSlice] = useState(null);
 
-  // Independent toggle states for each of the 6 subcards
+  // Independent toggle states for each of the 9 subcards
   const [internalVisibleCards, setInternalVisibleCards] = useState({
     c21Month: true,
     c22Month: true,
     c21Quarter: true,
     c22Quarter: true,
     c21Year: true,
-    c22Year: true
+    c22Year: true,
+    c23Month: true,
+    c23Quarter: true,
+    c23Year: true
   });
 
   const visibleCards = externalVisibleCards !== undefined ? externalVisibleCards : internalVisibleCards;
@@ -504,7 +757,10 @@ export default function UnitComparisonChart({
       c21Quarter: nextState,
       c22Quarter: nextState,
       c21Year: nextState,
-      c22Year: nextState
+      c22Year: nextState,
+      c23Month: nextState,
+      c23Quarter: nextState,
+      c23Year: nextState
     });
   };
 
@@ -523,12 +779,20 @@ export default function UnitComparisonChart({
 
   const data21 = UNIT_STRUCTURE_DATA[activeYear] || UNIT_STRUCTURE_DATA['2026'];
   const data22 = UNIT_PLAN_COMPARISON_DATA[activeYear] || UNIT_PLAN_COMPARISON_DATA['2026'];
+  const data23 = UNIT_PREV_PERIOD_COMPARISON_DATA[activeYear] || UNIT_PREV_PERIOD_COMPARISON_DATA['2026'];
 
   // Calculate Quarter and Cumulative texts based on activeMonth
   const monthNum = parseInt(activeMonth.match(/\d+/)?.[0] || '8', 10);
+  const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
   const quarterNumber = Math.ceil(monthNum / 3);
+  const prevQuarterNum = quarterNumber === 1 ? 4 : quarterNumber - 1;
   const quarterRoman = `${quarterNumber}`;
   const quarterText = `Quý ${quarterRoman}/${activeYear}`;
+  const lastYear = (parseInt(activeYear, 10) - 1).toString();
+
+  const prevMonthTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Tháng (T${monthNum} vs T${prevMonthNum})`;
+  const prevQuarterTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Quý (Q${quarterRoman} vs Q${prevQuarterNum})`;
+  const prevYearTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm (${activeYear} vs ${lastYear})`;
 
   return (
     <div className="month-charts-stack">
@@ -659,6 +923,51 @@ export default function UnitComparisonChart({
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_year',
             chartTitle: `Doanh thu theo đơn vị so với kế hoạch – Năm ${activeYear}`
+          })}
+        />
+      </div>
+
+      {/* DÒNG 4: THÁNG & QUÝ (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
+      <div className="month-row-grid">
+        <UnitPrevPeriodSubcard
+          title={prevMonthTitle}
+          tag="Hàng 4 - Khu 1"
+          data={data23.month}
+          cardKey="u23-month"
+          isVisible={visibleCards.c23Month}
+          onToggle={() => toggleCard('c23Month')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_prev_month',
+            chartTitle: prevMonthTitle
+          })}
+        />
+
+        <UnitPrevPeriodSubcard
+          title={prevQuarterTitle}
+          tag="Hàng 4 - Khu 2"
+          data={data23.quarter}
+          cardKey="u23-quarter"
+          isVisible={visibleCards.c23Quarter}
+          onToggle={() => toggleCard('c23Quarter')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_prev_quarter',
+            chartTitle: prevQuarterTitle
+          })}
+        />
+      </div>
+
+      {/* DÒNG 5: NĂM (BIỂU ĐỒ 23 - SO VỚI KỲ TRƯỚC THEO ĐƠN VỊ) */}
+      <div className="month-row-grid">
+        <UnitPrevPeriodSubcard
+          title={prevYearTitle}
+          tag="Hàng 5"
+          data={data23.year}
+          cardKey="u23-year"
+          isVisible={visibleCards.c23Year}
+          onToggle={() => toggleCard('c23Year')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'unit_prev_year',
+            chartTitle: prevYearTitle
           })}
         />
       </div>

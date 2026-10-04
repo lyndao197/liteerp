@@ -257,6 +257,14 @@ export function getExportChartList({
       desc: `Bảng tích hợp so sánh TH, KH, +/- so KH, % HTKH theo đơn vị cả 3 kỳ (Tháng, Quý, Năm)`,
       period: `Ma trận 3 kỳ năm ${selectedYear}`
     },
+    {
+      key: 'c23_unit',
+      branchId: 'unit',
+      chartNumber: 'Biểu đồ 23',
+      title: `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước`,
+      desc: `So sánh thực hiện theo đơn vị với kỳ trước cho cả 3 kỳ: Tháng, Quý, Năm (số %: % delta)`,
+      period: `Tháng, Quý, Năm ${selectedYear}`
+    },
 
     // NHÓM 7: CHUYỂN DỊCH DOANH THU
     {

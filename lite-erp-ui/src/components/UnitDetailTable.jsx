@@ -3,7 +3,8 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import {
   UNIT_CATEGORIES,
   UNIT_STRUCTURE_TABLE_DATA,
-  UNIT_PLAN_COMPARISON_DATA
+  UNIT_PLAN_COMPARISON_DATA,
+  UNIT_PREV_PERIOD_COMPARISON_DATA
 } from '../data/revenueUnitData';
 import './SpdvDetailTable.css';
 
@@ -23,7 +24,7 @@ export default function UnitDetailTable({
     ? `T${quarterStartMonth}`
     : `T${quarterStartMonth}-T${monthNum}`;
 
-  // Check if viewing structure table (Biểu đồ 21) or comparison table (Biểu đồ 22)
+  // Check if viewing structure table (Biểu đồ 21) or comparison table (Biểu đồ 22 / 23)
   const isStructure = useMemo(() => {
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
@@ -32,6 +33,18 @@ export default function UnitDetailTable({
       key.includes('struct') ||
       key.includes('cơ cấu') ||
       title.includes('cơ cấu')
+    );
+  }, [activeChartKey, chartTitle]);
+
+  const isPrevPeriodComparison = useMemo(() => {
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+    return (
+      key === 'chart23' ||
+      key.includes('prev') ||
+      key.includes('23') ||
+      title.includes('23') ||
+      title.includes('kỳ trước')
     );
   }, [activeChartKey, chartTitle]);
 
@@ -164,6 +177,96 @@ export default function UnitDetailTable({
     });
   }, [structureData, searchQuery]);
 
+  const prevPeriodData = UNIT_PREV_PERIOD_COMPARISON_DATA[selectedYear] || UNIT_PREV_PERIOD_COMPARISON_DATA['2026'];
+  const prevMonthNum = monthNum === 1 ? 12 : monthNum - 1;
+  const prevMonthYear = monthNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+  const prevQuarterNum = quarterNum === 1 ? 4 : quarterNum - 1;
+  const prevQuarterYear = quarterNum === 1 ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
+  const lastYear = (parseInt(selectedYear, 10) - 1).toString();
+
+  const integratedPrevRows = useMemo(() => {
+    const mItems = prevPeriodData?.month?.items || [];
+    const qItems = prevPeriodData?.quarter?.items || [];
+    const yItems = prevPeriodData?.year?.items || [];
+
+    return UNIT_CATEGORIES.map((cat, idx) => {
+      const m = mItems.find((it) => it.id === cat.id) || {};
+      const q = qItems.find((it) => it.id === cat.id) || {};
+      const y = yItems.find((it) => it.id === cat.id) || {};
+
+      const mCurr = Number(m.curr ?? 0);
+      const mPrev = Number(m.prev ?? 0);
+      const mDiff = Number((mCurr - mPrev).toFixed(1));
+      const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const mRateNum = parseFloat(mRate.replace('%', '').replace(',', '.') || '0');
+      const mIsPass = mRateNum > 100;
+
+      const qCurr = Number(q.curr ?? 0);
+      const qPrev = Number(q.prev ?? 0);
+      const qDiff = Number((qCurr - qPrev).toFixed(1));
+      const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const qRateNum = parseFloat(qRate.replace('%', '').replace(',', '.') || '0');
+      const qIsPass = qRateNum > 100;
+
+      const yCurr = Number(y.curr ?? 0);
+      const yPrev = Number(y.prev ?? 0);
+      const yDiff = Number((yCurr - yPrev).toFixed(1));
+      const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1).replace('.', ',') + '%' : '0%');
+      const yRateNum = parseFloat(yRate.replace('%', '').replace(',', '.') || '0');
+      const yIsPass = yRateNum > 100;
+
+      return {
+        id: cat.id,
+        stt: idx + 1,
+        name: cat.name,
+        color: cat.color,
+        month: { curr: mCurr, prev: mPrev, diff: mDiff, rate: mRate, isPass: mIsPass },
+        quarter: { curr: qCurr, prev: qPrev, diff: qDiff, rate: qRate, isPass: qIsPass },
+        year: { curr: yCurr, prev: yPrev, diff: yDiff, rate: yRate, isPass: yIsPass }
+      };
+    });
+  }, [prevPeriodData]);
+
+  const prevPeriodTotals = useMemo(() => {
+    let mCurrTotal = 0, mPrevTotal = 0;
+    let qCurrTotal = 0, qPrevTotal = 0;
+    let yCurrTotal = 0, yPrevTotal = 0;
+
+    integratedPrevRows.forEach((r) => {
+      mCurrTotal += r.month.curr;
+      mPrevTotal += r.month.prev;
+      qCurrTotal += r.quarter.curr;
+      qPrevTotal += r.quarter.prev;
+      yCurrTotal += r.year.curr;
+      yPrevTotal += r.year.prev;
+    });
+
+    const mDiff = Number((mCurrTotal - mPrevTotal).toFixed(1));
+    const mRate = mPrevTotal > 0 ? ((mCurrTotal / mPrevTotal) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+    const qDiff = Number((qCurrTotal - qPrevTotal).toFixed(1));
+    const qRate = qPrevTotal > 0 ? ((qCurrTotal / qPrevTotal) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+    const yDiff = Number((yCurrTotal - yPrevTotal).toFixed(1));
+    const yRate = yPrevTotal > 0 ? ((yCurrTotal / yPrevTotal) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+
+    return {
+      month: { curr: mCurrTotal, prev: mPrevTotal, diff: mDiff, rate: mRate },
+      quarter: { curr: qCurrTotal, prev: qPrevTotal, diff: qDiff, rate: qRate },
+      year: { curr: yCurrTotal, prev: yPrevTotal, diff: yDiff, rate: yRate }
+    };
+  }, [integratedPrevRows]);
+
+  const filteredPrevRows = useMemo(() => {
+    return integratedPrevRows.filter((item) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase().trim();
+        if (!item.name.toLowerCase().includes(q)) return false;
+      }
+      if (statusFilter === 'pass' && !item.year.isPass) return false;
+      if (statusFilter === 'fail' && item.year.isPass) return false;
+      return true;
+    });
+  }, [integratedPrevRows, searchQuery, statusFilter]);
+
   return (
     <div className="spdv-detail-table-card">
       <div className="spdv-detail-header-wrap">
@@ -171,13 +274,158 @@ export default function UnitDetailTable({
           <h3 className="spdv-detail-title">
             {isStructure
               ? `Cơ cấu doanh thu theo đơn vị thực hiện`
+              : isPrevPeriodComparison
+              ? `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm ${selectedYear}`
               : `Biểu đồ 22. Doanh thu theo đơn vị so với KH – Năm ${selectedYear}`}
           </h3>
-          <span className="spdv-detail-unit">(Đơn vị: Triệu đồng)</span>
+          <span className="spdv-detail-unit">
+            {isPrevPeriodComparison ? `(Đơn vị: Tỷ đồng)` : `(Đơn vị: Triệu đồng)`}
+          </span>
         </div>
       </div>
 
-      {!isStructure ? (
+      {isPrevPeriodComparison ? (
+        /* ===================================================================== */
+        /* BẢNG TỔNG HỢP BIỂU ĐỒ 23 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
+        /* ===================================================================== */
+        <div className="spdv-detail-table-wrap">
+          <table className="spdv-matrix-table">
+            <thead>
+              <tr className="spdv-th-top-row">
+                <th rowSpan={2} style={{ width: '45px', textAlign: 'center' }}>STT</th>
+                <th rowSpan={2} className="spdv-th-name">Đơn vị thực hiện</th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-month">
+                  Tháng (T{monthNum} vs T{prevMonthNum})
+                </th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-quarter">
+                  Quý (Q{quarterRoman} vs Q{prevQuarterNum})
+                </th>
+                <th colSpan={4} className="spdv-th-period-group spdv-col-period-year">
+                  Năm ({selectedYear} vs {lastYear})
+                </th>
+              </tr>
+              <tr className="spdv-th-sub-row">
+                {/* Tháng */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">TH T{monthNum}</th>
+                <th className="spdv-th-col spdv-th-kh">TH T{prevMonthNum}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
+
+                {/* Quý */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">Ước Q{quarterRoman}</th>
+                <th className="spdv-th-col spdv-th-kh">TH Q{prevQuarterNum}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
+
+                {/* Năm */}
+                <th className="spdv-th-col spdv-th-th spdv-border-left">Ước {selectedYear}</th>
+                <th className="spdv-th-col spdv-th-kh">TH {lastYear}</th>
+                <th className="spdv-th-col spdv-th-th">+/- Chênh lệch</th>
+                <th className="spdv-th-col spdv-th-rate" style={{ textAlign: 'center' }}>% delta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPrevRows.length > 0 ? (
+                filteredPrevRows.map((row) => (
+                  <tr key={row.id} className="spdv-row">
+                    <td style={{ textAlign: 'center', fontWeight: '600', color: '#64748b' }}>
+                      {row.stt}
+                    </td>
+                    <td className="spdv-td-name">
+                      <span className="spdv-dot" style={{ backgroundColor: row.color }} />
+                      <span className="spdv-name-label">{row.name}</span>
+                    </td>
+
+                    {/* Tháng */}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.month.curr)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.month.prev)}</td>
+                    <td className={`spdv-td-num ${row.month.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.month.diff >= 0 ? `+${formatUnitNum(row.month.diff)}` : formatUnitNum(row.month.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.month.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.month.rate}
+                      </span>
+                    </td>
+
+                    {/* Quý */}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.quarter.curr)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.quarter.prev)}</td>
+                    <td className={`spdv-td-num ${row.quarter.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.quarter.diff >= 0 ? `+${formatUnitNum(row.quarter.diff)}` : formatUnitNum(row.quarter.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.quarter.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.quarter.rate}
+                      </span>
+                    </td>
+
+                    {/* Năm */}
+                    <td className="spdv-td-num spdv-border-left">{formatUnitNum(row.year.curr)}</td>
+                    <td className="spdv-td-num spdv-td-kh">{formatUnitNum(row.year.prev)}</td>
+                    <td className={`spdv-td-num ${row.year.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                      {row.year.diff >= 0 ? `+${formatUnitNum(row.year.diff)}` : formatUnitNum(row.year.diff)}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className={`spdv-rate-pill ${row.year.isPass ? 'rate-pass' : 'rate-fail'}`}>
+                        {row.year.rate}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={14} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
+                    Không tìm thấy đơn vị nào phù hợp
+                  </td>
+                </tr>
+              )}
+            </tbody>
+            <tfoot>
+              <tr className="spdv-tr-total">
+                <td style={{ textAlign: 'center', fontWeight: '700' }}>Σ</td>
+                <td className="spdv-td-name font-bold">Tổng doanh thu 6 đơn vị</td>
+
+                {/* Tháng Total */}
+                <td className="spdv-td-num font-bold spdv-border-left">{formatUnitNum(prevPeriodTotals.month.curr)}</td>
+                <td className="spdv-td-num font-bold spdv-td-kh">{formatUnitNum(prevPeriodTotals.month.prev)}</td>
+                <td className={`spdv-td-num font-bold ${prevPeriodTotals.month.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {prevPeriodTotals.month.diff >= 0 ? `+${formatUnitNum(prevPeriodTotals.month.diff)}` : formatUnitNum(prevPeriodTotals.month.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className="spdv-rate-pill spdv-rate-pill-total rate-pass font-bold">
+                    {prevPeriodTotals.month.rate}
+                  </span>
+                </td>
+
+                {/* Quý Total */}
+                <td className="spdv-td-num font-bold spdv-border-left">{formatUnitNum(prevPeriodTotals.quarter.curr)}</td>
+                <td className="spdv-td-num font-bold spdv-td-kh">{formatUnitNum(prevPeriodTotals.quarter.prev)}</td>
+                <td className={`spdv-td-num font-bold ${prevPeriodTotals.quarter.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {prevPeriodTotals.quarter.diff >= 0 ? `+${formatUnitNum(prevPeriodTotals.quarter.diff)}` : formatUnitNum(prevPeriodTotals.quarter.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className="spdv-rate-pill spdv-rate-pill-total rate-pass font-bold">
+                    {prevPeriodTotals.quarter.rate}
+                  </span>
+                </td>
+
+                {/* Năm Total */}
+                <td className="spdv-td-num font-bold spdv-border-left">{formatUnitNum(prevPeriodTotals.year.curr)}</td>
+                <td className="spdv-td-num font-bold spdv-td-kh">{formatUnitNum(prevPeriodTotals.year.prev)}</td>
+                <td className={`spdv-td-num font-bold ${prevPeriodTotals.year.diff >= 0 ? 'text-green' : 'text-red'}`}>
+                  {prevPeriodTotals.year.diff >= 0 ? `+${formatUnitNum(prevPeriodTotals.year.diff)}` : formatUnitNum(prevPeriodTotals.year.diff)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className="spdv-rate-pill spdv-rate-pill-total rate-pass font-bold">
+                    {prevPeriodTotals.year.rate}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      ) : !isStructure ? (
         /* ===================================================================== */
         /* BẢNG TỔNG HỢP BIỂU ĐỒ 22 TÍCH HỢP 3 HÌNH: THÁNG, QUÝ, NĂM             */
         /* ===================================================================== */

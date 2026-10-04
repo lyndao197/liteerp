@@ -26,7 +26,13 @@ import { MONTH_TREND_DATA, MONTH_PLAN_TREND_DATA } from '../data/revenueTrendDat
 import SpdvComparisonChart from './SpdvComparisonChart';
 import { SPDV_CATEGORIES, SPDV_STRUCTURE_DATA, SPDV_BAR_COMPARISON_DATA, SPDV_STRUCTURE_TABLE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData, getSpdvPrevPeriodComparisonData } from '../data/revenueSpdvData';
 import UnitComparisonChart from './UnitComparisonChart';
-import { UNIT_CATEGORIES, UNIT_STRUCTURE_DATA, UNIT_STRUCTURE_TABLE_DATA, UNIT_PLAN_COMPARISON_DATA } from '../data/revenueUnitData';
+import {
+  UNIT_CATEGORIES,
+  UNIT_STRUCTURE_DATA,
+  UNIT_STRUCTURE_TABLE_DATA,
+  UNIT_PLAN_COMPARISON_DATA,
+  UNIT_PREV_PERIOD_COMPARISON_DATA
+} from '../data/revenueUnitData';
 import ExportChartExcelModal from './ExportChartExcelModal';
 import InternalExternalRevenueChart from './InternalExternalRevenueChart';
 import {
@@ -256,7 +262,10 @@ const RevenueReportDashboard = () => {
     c21Quarter: true,
     c22Quarter: true,
     c21Year: true,
-    c22Year: true
+    c22Year: true,
+    c23Month: true,
+    c23Quarter: true,
+    c23Year: true
   });
 
   const [monthVisibleMap, setMonthVisibleMap] = useState({
@@ -2854,6 +2863,7 @@ const RevenueReportDashboard = () => {
 
         const isExportC22 = !selectedKeys || selectedKeys.includes('c22');
         const isExportC21 = !selectedKeys || selectedKeys.includes('c21');
+        const isExportC23 = !selectedKeys || selectedKeys.includes('c23_unit') || selectedKeys.includes('c23');
 
         const unitMonthNum = parseInt(selectedMonth?.match(/\d+/)?.[0] || '8', 10);
         const unitQuarterNum = Math.ceil(unitMonthNum / 3);
@@ -2969,6 +2979,87 @@ const RevenueReportDashboard = () => {
 
           const wsC21 = XLSX.utils.json_to_sheet(exportRows);
           XLSX.utils.book_append_sheet(wb, wsC21, 'Co_Cau_Don_Vi');
+          sheetCount++;
+        }
+
+        // Sheet 3: Biểu đồ 23 - Doanh thu theo đơn vị so với kỳ trước
+        if (isExportC23) {
+          const prevData = UNIT_PREV_PERIOD_COMPARISON_DATA[selectedYear] || UNIT_PREV_PERIOD_COMPARISON_DATA['2026'];
+          const mItems = prevData?.month?.items || [];
+          const qItems = prevData?.quarter?.items || [];
+          const yItems = prevData?.year?.items || [];
+
+          const mLegendCurr = prevData?.month?.primaryLegend || `TH T${unitMonthNum}`;
+          const mLegendPrev = prevData?.month?.secondaryLegend || `TH T${unitMonthNum === 1 ? 12 : unitMonthNum - 1}`;
+          const qLegendCurr = prevData?.quarter?.primaryLegend || `Ước Q${unitQuarterRoman}`;
+          const qLegendPrev = prevData?.quarter?.secondaryLegend || `TH Q${unitQuarterNum === 1 ? 4 : unitQuarterNum - 1}`;
+          const yLegendCurr = prevData?.year?.primaryLegend || `Ước ${selectedYear}`;
+          const yLegendPrev = prevData?.year?.secondaryLegend || `TH ${parseInt(selectedYear) - 1}`;
+
+          const exportRows = UNIT_CATEGORIES.map((cat, idx) => {
+            const m = mItems.find((it) => it.id === cat.id) || {};
+            const q = qItems.find((it) => it.id === cat.id) || {};
+            const y = yItems.find((it) => it.id === cat.id) || {};
+
+            const mCurr = Number(m.curr ?? 0);
+            const mPrev = Number(m.prev ?? 0);
+            const mDiff = Number((mCurr - mPrev).toFixed(1));
+            const mRate = m.rate || (mPrev > 0 ? ((mCurr / mPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const qCurr = Number(q.curr ?? 0);
+            const qPrev = Number(q.prev ?? 0);
+            const qDiff = Number((qCurr - qPrev).toFixed(1));
+            const qRate = q.rate || (qPrev > 0 ? ((qCurr / qPrev) * 100).toFixed(1) + '%' : '0%');
+
+            const yCurr = Number(y.curr ?? 0);
+            const yPrev = Number(y.prev ?? 0);
+            const yDiff = Number((yCurr - yPrev).toFixed(1));
+            const yRate = y.rate || (yPrev > 0 ? ((yCurr / yPrev) * 100).toFixed(1) + '%' : '0%');
+
+            return {
+              'STT': idx + 1,
+              'Đơn vị thực hiện': cat.name,
+              [`${monthCol} - ${mLegendCurr}`]: mCurr,
+              [`${monthCol} - ${mLegendPrev}`]: mPrev,
+              [`${monthCol} - +/- Chênh lệch`]: mDiff,
+              [`${monthCol} - % delta`]: mRate,
+              [`${quarterCol} - ${qLegendCurr}`]: qCurr,
+              [`${quarterCol} - ${qLegendPrev}`]: qPrev,
+              [`${quarterCol} - +/- Chênh lệch`]: qDiff,
+              [`${quarterCol} - % delta`]: qRate,
+              [`${yearCol} - ${yLegendCurr}`]: yCurr,
+              [`${yearCol} - ${yLegendPrev}`]: yPrev,
+              [`${yearCol} - +/- Chênh lệch`]: yDiff,
+              [`${yearCol} - % delta`]: yRate,
+            };
+          });
+
+          const mTotalCurr = mItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const mTotalPrev = mItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const qTotalCurr = qItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const qTotalPrev = qItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+          const yTotalCurr = yItems.reduce((acc, it) => acc + (Number(it.curr) || 0), 0);
+          const yTotalPrev = yItems.reduce((acc, it) => acc + (Number(it.prev) || 0), 0);
+
+          exportRows.push({
+            'STT': 'Σ',
+            'Đơn vị thực hiện': 'Tổng doanh thu',
+            [`${monthCol} - ${mLegendCurr}`]: mTotalCurr,
+            [`${monthCol} - ${mLegendPrev}`]: mTotalPrev,
+            [`${monthCol} - +/- Chênh lệch`]: Number((mTotalCurr - mTotalPrev).toFixed(1)),
+            [`${monthCol} - % delta`]: mTotalPrev > 0 ? ((mTotalCurr / mTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${quarterCol} - ${qLegendCurr}`]: qTotalCurr,
+            [`${quarterCol} - ${qLegendPrev}`]: qTotalPrev,
+            [`${quarterCol} - +/- Chênh lệch`]: Number((qTotalCurr - qTotalPrev).toFixed(1)),
+            [`${quarterCol} - % delta`]: qTotalPrev > 0 ? ((qTotalCurr / qTotalPrev) * 100).toFixed(1) + '%' : '0%',
+            [`${yearCol} - ${yLegendCurr}`]: yTotalCurr,
+            [`${yearCol} - ${yLegendPrev}`]: yTotalPrev,
+            [`${yearCol} - +/- Chênh lệch`]: Number((yTotalCurr - yTotalPrev).toFixed(1)),
+            [`${yearCol} - % delta`]: yTotalPrev > 0 ? ((yTotalCurr / yTotalPrev) * 100).toFixed(1) + '%' : '0%',
+          });
+
+          const wsC23 = XLSX.utils.json_to_sheet(exportRows);
+          XLSX.utils.book_append_sheet(wb, wsC23, 'So_Sanh_Ky_Truoc_Don_Vi');
           sheetCount++;
         }
 
