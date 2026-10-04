@@ -32,9 +32,9 @@ export default function PlanProgressDetailTable({
     if (initialPeriod) return initialPeriod;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
-    if (key.includes('chart29_30') || key.includes('29_30') || (title.includes('29') && title.includes('30'))) return 'total_plan';
-    if (key.includes('chart31_32') || key.includes('31_32') || (title.includes('31') && title.includes('32'))) return 'external_plan';
-    if (key.includes('chart33_34') || key.includes('33_34') || (title.includes('33') && title.includes('34')) || (title.includes('tiến độ') && title.includes('quốc tế'))) return 'intl_plan';
+    if (key.includes('chart29') || key.includes('chart30') || key.includes('29_30') || ((title.includes('29') || title.includes('30')) && (title.includes('tổng') || title.includes('kế hoạch')))) return 'total_plan';
+    if (key.includes('chart31') || key.includes('chart32') || key.includes('31_32') || ((title.includes('31') || title.includes('32')) && title.includes('ngoài'))) return 'external_plan';
+    if (key.includes('chart33') || key.includes('chart34') || key.includes('33_34') || ((title.includes('33') || title.includes('34')) && title.includes('quốc tế')) || (title.includes('tiến độ') && title.includes('quốc tế'))) return 'intl_plan';
     if (key.includes('chart21') || key.includes('chart22') || key.includes('in_ex') || (title.includes('nội bộ') && title.includes('ngoài'))) return 'in_ex';
     if (key.includes('quarter') || title.includes('quý')) return 'quarter';
     if (key.includes('year') || title.includes('năm')) return 'year';
