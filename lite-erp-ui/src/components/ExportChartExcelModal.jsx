@@ -155,7 +155,7 @@ export function getExportChartList({
       key: 'c16_m',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 16 (Tháng)',
-      title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
       period: `Tháng ${monthNum}/${selectedYear}`
     },
@@ -163,7 +163,7 @@ export function getExportChartList({
       key: 'c17_m',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 17 (Tháng)',
-      title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}`,
       period: `Tháng ${monthNum}/${selectedYear}`
     },
@@ -171,7 +171,7 @@ export function getExportChartList({
       key: 'c16_q',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 16 (Quý)',
-      title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
       period: `Quý ${quarterRoman}/${selectedYear}`
     },
@@ -179,7 +179,7 @@ export function getExportChartList({
       key: 'c17_q',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 17 (Quý)',
-      title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}`,
       period: `Quý ${quarterRoman}/${selectedYear}`
     },
@@ -187,7 +187,7 @@ export function getExportChartList({
       key: 'c16_y',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 16 (Năm)',
-      title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu năm ${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện năm ${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu thực hiện 6 nhóm SPDV cả Năm ${selectedYear}`,
       period: `Năm ${selectedYear}`
     },
@@ -195,7 +195,7 @@ export function getExportChartList({
       key: 'c17_y',
       branchId: 'spdv',
       chartNumber: 'Biểu đồ 17 (Năm)',
-      title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu năm ${selectedYear} theo nhóm SPDV`,
+      title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch năm ${selectedYear} theo nhóm SPDV`,
       desc: `Cơ cấu tỷ trọng % và giá trị doanh thu kế hoạch 6 nhóm SPDV cả Năm ${selectedYear}`,
       period: `Năm ${selectedYear}`
     },

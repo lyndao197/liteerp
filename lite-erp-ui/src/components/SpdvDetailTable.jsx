@@ -144,7 +144,7 @@ export default function SpdvDetailTable({
         periodLabel: `Tháng ${monthNum}/${selectedYear}`,
         metricLabel: `Doanh thu thực hiện (TH)`,
         shareLabel: 'Tỷ trọng TH',
-        title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#1d4370',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}.`
@@ -159,7 +159,7 @@ export default function SpdvDetailTable({
         periodLabel: `Tháng ${monthNum}/${selectedYear}`,
         metricLabel: `Doanh thu kế hoạch (KH)`,
         shareLabel: 'Tỷ trọng KH',
-        title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch tháng ${monthNum}/${selectedYear} theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#0369a1',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong Tháng ${monthNum}/${selectedYear}.`
@@ -174,7 +174,7 @@ export default function SpdvDetailTable({
         periodLabel: `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`,
         metricLabel: `Doanh thu thực hiện (TH)`,
         shareLabel: 'Tỷ trọng TH',
-        title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText}) theo nhóm SPDV`,
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText}) theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#1d4370',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText}).`
@@ -189,7 +189,7 @@ export default function SpdvDetailTable({
         periodLabel: `Quý ${quarterRoman}/${selectedYear}`,
         metricLabel: `Doanh thu kế hoạch (KH)`,
         shareLabel: 'Tỷ trọng KH',
-        title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch Quý ${quarterRoman}/${selectedYear} theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#0369a1',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong Quý ${quarterRoman}/${selectedYear}.`
@@ -204,7 +204,7 @@ export default function SpdvDetailTable({
         periodLabel: `Năm ${selectedYear} (lũy kế ${monthNum}T)`,
         metricLabel: `Doanh thu thực hiện (TH)`,
         shareLabel: 'Tỷ trọng TH',
-        title: `Biểu đồ 16. Cơ cấu thực hiện doanh thu năm ${selectedYear} (lũy kế ${monthNum}T) theo nhóm SPDV`,
+        title: `Biểu đồ 16. Cơ cấu doanh thu thực hiện năm ${selectedYear} (lũy kế ${monthNum}T) theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#1d4370',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng doanh thu thực hiện của 6 nhóm SPDV trong Năm ${selectedYear} (lũy kế ${monthNum} tháng).`
@@ -219,7 +219,7 @@ export default function SpdvDetailTable({
         periodLabel: `Năm ${selectedYear}`,
         metricLabel: `Doanh thu kế hoạch (KH)`,
         shareLabel: 'Tỷ trọng KH',
-        title: `Biểu đồ 17. Cơ cấu kế hoạch doanh thu năm ${selectedYear} theo nhóm SPDV`,
+        title: `Biểu đồ 17. Cơ cấu doanh thu kế hoạch năm ${selectedYear} theo nhóm SPDV`,
         unit: 'Triệu đồng',
         valueColor: '#0369a1',
         note: `Biểu đồ tròn thể hiện cơ cấu tỷ trọng kế hoạch doanh thu giao cho 6 nhóm SPDV trong cả Năm ${selectedYear}.`

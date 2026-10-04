@@ -102,12 +102,12 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'trend_plan', label: 'Biểu đồ 15: Xu hướng doanh thu theo từng tháng so với kế hoạch' }
   ],
   spdv: [
-    { id: 'spdv_th_month', label: 'Biểu đồ 16 (Tháng): Cơ cấu thực hiện doanh thu theo nhóm SPDV' },
-    { id: 'spdv_kh_month', label: 'Biểu đồ 17 (Tháng): Cơ cấu kế hoạch doanh thu theo nhóm SPDV' },
-    { id: 'spdv_th_quarter', label: 'Biểu đồ 16 (Quý): Cơ cấu thực hiện doanh thu theo nhóm SPDV' },
-    { id: 'spdv_kh_quarter', label: 'Biểu đồ 17 (Quý): Cơ cấu kế hoạch doanh thu theo nhóm SPDV' },
-    { id: 'spdv_th_year', label: 'Biểu đồ 16 (Năm): Cơ cấu thực hiện doanh thu theo nhóm SPDV' },
-    { id: 'spdv_kh_year', label: 'Biểu đồ 17 (Năm): Cơ cấu kế hoạch doanh thu theo nhóm SPDV' },
+    { id: 'spdv_th_month', label: 'Biểu đồ 16 (Tháng): Cơ cấu doanh thu thực hiện theo nhóm SPDV' },
+    { id: 'spdv_kh_month', label: 'Biểu đồ 17 (Tháng): Cơ cấu doanh thu kế hoạch theo nhóm SPDV' },
+    { id: 'spdv_th_quarter', label: 'Biểu đồ 16 (Quý): Cơ cấu doanh thu thực hiện theo nhóm SPDV' },
+    { id: 'spdv_kh_quarter', label: 'Biểu đồ 17 (Quý): Cơ cấu doanh thu kế hoạch theo nhóm SPDV' },
+    { id: 'spdv_th_year', label: 'Biểu đồ 16 (Năm): Cơ cấu doanh thu thực hiện theo nhóm SPDV' },
+    { id: 'spdv_kh_year', label: 'Biểu đồ 17 (Năm): Cơ cấu doanh thu kế hoạch theo nhóm SPDV' },
     { id: 'spdv_bar_month', label: 'Biểu đồ 18 (Tháng): Thực hiện so với kế hoạch theo nhóm SPDV' },
     { id: 'spdv_bar_quarter', label: 'Biểu đồ 18 (Quý): Ước thực hiện so với kế hoạch theo nhóm SPDV' },
     { id: 'spdv_bar_year', label: 'Biểu đồ 18 (Năm): Ước thực hiện so với kế hoạch theo nhóm SPDV' },

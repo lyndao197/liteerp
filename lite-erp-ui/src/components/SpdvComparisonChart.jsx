@@ -719,16 +719,16 @@ export default function SpdvComparisonChart({
   const prevQuarterYear = quarterNumber > 1 ? activeYear : lastYear;
 
   // Formatted subcard titles exactly matching user mockup
-  const thMonthTitle = `Cơ cấu thực hiện doanh thu tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
-  const khMonthTitle = `Cơ cấu kế hoạch doanh thu tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
+  const thMonthTitle = `Cơ cấu doanh thu thực hiện tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
+  const khMonthTitle = `Cơ cấu doanh thu kế hoạch tháng ${monthNum}/${activeYear} theo nhóm SPDV`;
 
   const thQuarterTitle = startMonthOfQuarter === monthNum
-    ? `Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter}) theo nhóm SPDV`
-    : `Cơ cấu thực hiện doanh thu Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum}) theo nhóm SPDV`;
-  const khQuarterTitle = `Cơ cấu kế hoạch doanh thu Quý ${quarterRoman}/${activeYear} theo nhóm SPDV`;
+    ? `Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter}) theo nhóm SPDV`
+    : `Cơ cấu doanh thu thực hiện Quý ${quarterRoman}/${activeYear} (lũy kế T${startMonthOfQuarter} – T${monthNum}) theo nhóm SPDV`;
+  const khQuarterTitle = `Cơ cấu doanh thu kế hoạch Quý ${quarterRoman}/${activeYear} theo nhóm SPDV`;
 
-  const thYearTitle = `Cơ cấu thực hiện doanh thu năm ${activeYear} (lũy kế ${monthNum}T) theo nhóm SPDV`;
-  const khYearTitle = `Cơ cấu kế hoạch doanh thu năm ${activeYear} theo nhóm SPDV`;
+  const thYearTitle = `Cơ cấu doanh thu thực hiện năm ${activeYear} (lũy kế ${monthNum}T) theo nhóm SPDV`;
+  const khYearTitle = `Cơ cấu doanh thu kế hoạch năm ${activeYear} theo nhóm SPDV`;
 
   // Titles for Biểu đồ 19 (So với cùng kỳ năm trước)
   const yoyMonthTitle = `Biểu đồ 19. Thực hiện Tháng ${monthNum}/${activeYear} so với cùng kỳ Tháng ${monthNum}/${lastYear} theo nhóm SPDV`;
