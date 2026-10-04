@@ -279,8 +279,8 @@ export default function UnitDetailTable({
               isStructure
                 ? `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${selectedYear}`
                 : isPrevPeriodComparison
-                ? `Doanh thu ước thực hiện theo đơn vị so với năm trước – Năm ${selectedYear}`
-                : `Doanh thu ước thực hiện theo đơn vị so với kế hoạch – Năm ${selectedYear}`
+                ? `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm ${selectedYear}`
+                : `Biểu đồ 18. Doanh thu theo đơn vị so với kế hoạch – Năm ${selectedYear}`
             )}
           </h3>
           <span className="spdv-detail-unit">

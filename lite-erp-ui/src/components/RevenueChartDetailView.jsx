@@ -121,8 +121,15 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'spdv_prev_period', label: 'Biểu đồ 20: Tổng hợp so với kỳ trước theo nhóm SPDV' }
   ],
   unit: [
-    { id: 'chart19', label: 'Biểu đồ 19: Doanh thu theo khối / đơn vị' },
-    { id: 'chart20', label: 'Biểu đồ 20: Tỷ lệ hoàn thành kế hoạch theo đơn vị' }
+    { id: 'unit_struct_month', label: 'Biểu đồ 21 (Tháng): Cơ cấu doanh thu TH theo từng đơn vị' },
+    { id: 'unit_struct_quarter', label: 'Biểu đồ 21 (Quý): Cơ cấu doanh thu TH theo từng đơn vị' },
+    { id: 'unit_struct_year', label: 'Biểu đồ 21 (Năm): Cơ cấu doanh thu TH theo từng đơn vị' },
+    { id: 'unit_plan_month', label: 'Biểu đồ 18 (Tháng): Thực hiện so với kế hoạch theo đơn vị' },
+    { id: 'unit_plan_quarter', label: 'Biểu đồ 18 (Quý): Ước thực hiện so với kế hoạch theo đơn vị' },
+    { id: 'unit_plan_year', label: 'Biểu đồ 18 (Năm): Ước thực hiện so với kế hoạch theo đơn vị' },
+    { id: 'unit_prev_month', label: 'Biểu đồ 23 (Tháng): Thực hiện so với kỳ trước theo đơn vị' },
+    { id: 'unit_prev_quarter', label: 'Biểu đồ 23 (Quý): Ước thực hiện so với kỳ trước theo đơn vị' },
+    { id: 'unit_prev_year', label: 'Biểu đồ 23 (Năm): Ước thực hiện so với kỳ trước theo đơn vị' }
   ],
   plan_progress: [
     { id: 'chart21', label: 'Biểu đồ 21: Cơ cấu DT nội bộ vs Ngoài tập đoàn' },
