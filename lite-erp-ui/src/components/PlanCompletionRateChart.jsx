@@ -320,7 +320,6 @@ function CompletionGaugeDonut({
 function PlanGaugeSubcard({
   title,
   subtitle,
-  note,
   tag,
   data,
   hoveredPart,
@@ -352,7 +351,7 @@ function PlanGaugeSubcard({
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             gap: '12px',
-            marginBottom: '8px'
+            marginBottom: '12px'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, minWidth: 0 }}>
@@ -400,22 +399,6 @@ function PlanGaugeSubcard({
           >
             {tag}
           </span>
-        </div>
-
-        {/* Note / Cơ sở so sánh */}
-        <div
-          style={{
-            fontSize: '12.5px',
-            color: '#475569',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #f1f5f9',
-            borderRadius: '6px',
-            padding: '6px 10px',
-            marginBottom: '10px',
-            lineHeight: 1.45
-          }}
-        >
-          <strong>Cơ sở so sánh:</strong> {note}
         </div>
 
         {/* 2. Donut Gauge Chart */}
@@ -572,7 +555,6 @@ export default function PlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 29. Tỷ lệ hoàn thành KH tổng doanh thu – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    note: `TH ${quarterCumText} – KH Quý ${quarterRoman}; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedQuarterLabel})`,
     tag: `Quý ${quarterRoman}/${selectedYear}`
   };
 
@@ -588,7 +570,6 @@ export default function PlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 30. Tỷ lệ hoàn thành KH tổng doanh thu – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    note: `TH ${monthNum} tháng – KH cả năm; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedYearLabel})`,
     tag: `Năm ${selectedYear}`
   };
 
@@ -633,7 +614,6 @@ export default function PlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart29Data.title}
           subtitle={chart29Data.subtitle}
-          note={chart29Data.note}
           tag={chart29Data.tag}
           data={chart29Data}
           hoveredPart={hoveredPart}
@@ -645,7 +625,6 @@ export default function PlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart30Data.title}
           subtitle={chart30Data.subtitle}
-          note={chart30Data.note}
           tag={chart30Data.tag}
           data={chart30Data}
           hoveredPart={hoveredPart}
@@ -703,7 +682,6 @@ export function ExternalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 31. Tỷ lệ hoàn thành KH doanh thu ngoài Tập đoàn – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    note: `TH ${quarterCumText} – KH Quý ${quarterRoman}; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedQuarterLabel})`,
     tag: `Quý ${quarterRoman}/${selectedYear}`
   };
 
@@ -719,7 +697,6 @@ export function ExternalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 32. Tỷ lệ hoàn thành KH doanh thu ngoài Tập đoàn – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    note: `TH ${monthNum} tháng – KH cả năm; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedYearLabel})`,
     tag: `Năm ${selectedYear}`
   };
 
@@ -762,7 +739,6 @@ export function ExternalPlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart31Data.title}
           subtitle={chart31Data.subtitle}
-          note={chart31Data.note}
           tag={chart31Data.tag}
           data={chart31Data}
           hoveredPart={hoveredPart}
@@ -774,7 +750,6 @@ export function ExternalPlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart32Data.title}
           subtitle={chart32Data.subtitle}
-          note={chart32Data.note}
           tag={chart32Data.tag}
           data={chart32Data}
           hoveredPart={hoveredPart}
@@ -832,7 +807,6 @@ export function InternationalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedQuarterLabel || '66,7%',
     title: `Biểu đồ 33. Tỷ lệ hoàn thành KH doanh thu quốc tế – Lũy kế Quý ${quarterRoman}/${selectedYear} (${quarterCumText})`,
     subtitle: `so với KH Quý ${quarterRoman}`,
-    note: `TH ${quarterCumText} – KH Quý ${quarterRoman}; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedQuarterLabel})`,
     tag: `Quý ${quarterRoman}/${selectedYear}`
   };
 
@@ -848,7 +822,6 @@ export function InternationalPlanCompletionRateChart({
     timeElapsedLabel: timeElapsedYearLabel || '66,7%',
     title: `Biểu đồ 34. Tỷ lệ hoàn thành KH doanh thu quốc tế – Lũy kế ${monthNum} tháng ${selectedYear}`,
     subtitle: `so với KH cả năm ${selectedYear}`,
-    note: `TH ${monthNum} tháng – KH cả năm; vạch đỏ là mốc thời gian đã trôi qua (${timeElapsedYearLabel})`,
     tag: `Năm ${selectedYear}`
   };
 
@@ -891,7 +864,6 @@ export function InternationalPlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart33Data.title}
           subtitle={chart33Data.subtitle}
-          note={chart33Data.note}
           tag={chart33Data.tag}
           data={chart33Data}
           hoveredPart={hoveredPart}
@@ -903,7 +875,6 @@ export function InternationalPlanCompletionRateChart({
         <PlanGaugeSubcard
           title={chart34Data.title}
           subtitle={chart34Data.subtitle}
-          note={chart34Data.note}
           tag={chart34Data.tag}
           data={chart34Data}
           hoveredPart={hoveredPart}
