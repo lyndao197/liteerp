@@ -950,7 +950,7 @@ export default function SpdvDetailTable({
                 {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
                   <>
                     <th className="spdv-th-col spdv-th-th spdv-border-left">
-                      {isKhStructure ? `KH Q${quarterRoman}/${selectedYear}` : `Ước TH Q${quarterRoman}/${selectedYear}`}
+                      {isKhStructure ? `KH Q${quarterRoman}/${selectedYear}` : `TH Q${quarterRoman}/${selectedYear}`}
                     </th>
                     <th className="spdv-th-col spdv-th-share">
                       {isKhStructure ? 'Tỷ trọng KH' : 'Tỷ trọng TH'}
@@ -960,7 +960,7 @@ export default function SpdvDetailTable({
                 {(structurePeriod === 'year' || structurePeriod === 'all') && (
                   <>
                     <th className="spdv-th-col spdv-th-th spdv-border-left">
-                      {isKhStructure ? `KH Năm ${selectedYear}` : `Ước TH Năm ${selectedYear}`}
+                      {isKhStructure ? `KH Năm ${selectedYear}` : `TH Năm ${selectedYear}`}
                     </th>
                     <th className="spdv-th-col spdv-th-share">
                       {isKhStructure ? 'Tỷ trọng KH' : 'Tỷ trọng TH'}
