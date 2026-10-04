@@ -414,16 +414,16 @@ function TrendPlanCard({
 
             {/* Stacked Legend Top Right */}
             <g transform={`translate(${chartRight - 165}, 8)`}>
-              {/* TH selectedYear (Dark Navy Blue Line) */}
-              <line x1={0} y1={6} x2={16} y2={6} stroke="#1e3a8a" strokeWidth="2.5" />
-              <circle cx={8} cy={6} r="3.5" fill="#1e3a8a" />
-              <text x={22} y={10} style={{ fontSize: '11px', fontWeight: '700', fill: '#1e3a8a' }}>
+              {/* TH selectedYear (Red Line) */}
+              <line x1={0} y1={6} x2={16} y2={6} stroke="#c8102e" strokeWidth="2.5" />
+              <circle cx={8} cy={6} r="3.5" fill="#c8102e" />
+              <text x={22} y={10} style={{ fontSize: '11px', fontWeight: '700', fill: '#c8102e' }}>
                 {`TH ${selectedYear}`}
               </text>
 
-              {/* KH selectedYear (Light Steel Blue Bar) */}
-              <rect x={75} y={1} width={14} height={10} fill="#9fbcd7" rx={1.5} />
-              <text x={94} y={10} style={{ fontSize: '11px', fontWeight: '600', fill: '#475569' }}>
+              {/* KH selectedYear (Gray Bar) */}
+              <rect x={75} y={1} width={14} height={10} fill="#94a3b8" rx={1.5} />
+              <text x={94} y={10} style={{ fontSize: '11px', fontWeight: '600', fill: '#64748b' }}>
                 {`KH ${selectedYear}`}
               </text>
             </g>
@@ -485,7 +485,7 @@ function TrendPlanCard({
               strokeWidth={1.2}
             />
 
-            {/* BARS: KH (Light Steel Blue) */}
+            {/* BARS: KH (Gray) */}
             {data.map((item, idx) => {
               const x = getX(idx);
               const barHeight = item.kh ? (item.kh / yMax) * chartHeight : 0;
@@ -499,11 +499,11 @@ function TrendPlanCard({
                     y={barY}
                     width={barWidth}
                     height={barHeight}
-                    fill="#9fbcd7"
+                    fill="#94a3b8"
                     rx={1.5}
                     style={{
                       transition: 'all 0.15s ease',
-                      opacity: isHovered ? 0.9 : 0.8
+                      opacity: isHovered ? 0.95 : 0.85
                     }}
                   />
                 </g>
@@ -524,7 +524,7 @@ function TrendPlanCard({
                     style={{
                       fontSize: '11px',
                       fontWeight: isHovered ? '700' : '600',
-                      fill: isHovered ? '#1e3a8a' : '#475569'
+                      fill: isHovered ? '#c8102e' : '#475569'
                     }}
                   >
                     {item.month}
@@ -558,11 +558,11 @@ function TrendPlanCard({
               />
             )}
 
-            {/* LINE: TH (Dark Navy Blue) */}
+            {/* LINE: TH (Red) */}
             <path
               d={pathTh}
               fill="none"
-              stroke="#1e3a8a"
+              stroke="#c8102e"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -602,7 +602,7 @@ function TrendPlanCard({
                     cx={x}
                     cy={y}
                     r={isHovered ? 5.5 : 4}
-                    fill="#1e3a8a"
+                    fill="#c8102e"
                     stroke="#ffffff"
                     strokeWidth={1.5}
                   />
@@ -639,7 +639,7 @@ function TrendPlanCard({
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                <span style={{ color: '#1e3a8a', fontWeight: '600' }}>TH:</span>
+                <span style={{ color: '#c8102e', fontWeight: '600' }}>TH:</span>
                 <span style={{ fontWeight: '700', color: '#0f172a' }}>
                   {hoveredData.th !== null ? `${formatVal(hoveredData.th)} Tr.đ` : '-'}
                 </span>
