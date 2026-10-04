@@ -370,7 +370,7 @@ const RevenueReportDashboard = () => {
       ctx.fillText('Biểu đồ 14. Xu hướng doanh thu từng tháng so với năm trước', 30, 32);
 
       setFont(12.5, 'bold');
-      ctx.fillText(`Biểu đồ 14. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevY} (ngoặc: tăng trưởng cùng kỳ)`, 70, 85);
+      ctx.fillText(`Biểu đồ 14. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với năm ${prevY} (tăng trưởng cùng kỳ)`, 70, 85);
 
       // Legend top right
       const legX = 850;

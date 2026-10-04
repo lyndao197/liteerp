@@ -76,7 +76,7 @@ function TrendPrevYearCard({
           >
             {/* Subtitle in chart */}
             <text x={chartLeft} y={20} style={{ fontSize: '11.5px', fontWeight: '700', fill: '#0f172a' }}>
-              (ngoặc: tăng trưởng cùng kỳ)
+              (tăng trưởng cùng kỳ)
             </text>
 
             {/* Stacked Legend Top Right */}
