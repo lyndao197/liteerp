@@ -788,7 +788,7 @@ export default function SpdvComparisonChart({
         </div>
       </div>
 
-      {/* DÒNG 1: THÁNG (2 BIỂU ĐỒ: THỰC HIỆN & KẾ HOẠCH) */}
+      {/* DÒNG 1: THỰC HIỆN THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
       <div className="month-row-grid">
         <SpdvSubcard
           title={thMonthTitle}
@@ -810,31 +810,9 @@ export default function SpdvComparisonChart({
         />
 
         <SpdvSubcard
-          title={khMonthTitle}
-          subtitle={null}
-          tag="Hàng 1 - Khu 2"
-          tagType="kh"
-          chart={data.khMonth}
-          compareChart={data.thMonth}
-          centerLabel={centerKhMonth}
-          hoveredSlice={hoveredSlice}
-          setHoveredSlice={setHoveredSlice}
-          cardKey="kh-month"
-          isVisible={visibleCards.khMonth}
-          onToggle={() => toggleCard('khMonth')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'spdv_kh_month',
-            chartTitle: khMonthTitle
-          })}
-        />
-      </div>
-
-      {/* DÒNG 2: QUÝ (2 BIỂU ĐỒ: THỰC HIỆN & KẾ HOẠCH) */}
-      <div className="month-row-grid">
-        <SpdvSubcard
           title={thQuarterTitle}
           subtitle={null}
-          tag="Hàng 2 - Khu 1"
+          tag="Hàng 1 - Khu 2"
           tagType="th"
           chart={data.thQuarter}
           compareChart={data.khQuarter}
@@ -849,11 +827,55 @@ export default function SpdvComparisonChart({
             chartTitle: thQuarterTitle
           })}
         />
+      </div>
+
+      {/* DÒNG 2: THỰC HIỆN NĂM (1 DÒNG 2 BIỂU ĐỒ - CỘT 1) */}
+      <div className="month-row-grid">
+        <SpdvSubcard
+          title={thYearTitle}
+          subtitle={null}
+          tag="Hàng 2 - Khu 1"
+          tagType="th"
+          chart={data.thYear}
+          compareChart={data.khYear}
+          centerLabel={centerThYear}
+          hoveredSlice={hoveredSlice}
+          setHoveredSlice={setHoveredSlice}
+          cardKey="th-year"
+          isVisible={visibleCards.thYear}
+          onToggle={() => toggleCard('thYear')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_th_year',
+            chartTitle: thYearTitle
+          })}
+        />
+      </div>
+
+      {/* DÒNG 3: KẾ HOẠCH THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      <div className="month-row-grid">
+        <SpdvSubcard
+          title={khMonthTitle}
+          subtitle={null}
+          tag="Hàng 3 - Khu 1"
+          tagType="kh"
+          chart={data.khMonth}
+          compareChart={data.thMonth}
+          centerLabel={centerKhMonth}
+          hoveredSlice={hoveredSlice}
+          setHoveredSlice={setHoveredSlice}
+          cardKey="kh-month"
+          isVisible={visibleCards.khMonth}
+          onToggle={() => toggleCard('khMonth')}
+          onOpenDetail={() => onOpenDetail && onOpenDetail({
+            chartKey: 'spdv_kh_month',
+            chartTitle: khMonthTitle
+          })}
+        />
 
         <SpdvSubcard
           title={khQuarterTitle}
           subtitle={null}
-          tag="Hàng 2 - Khu 2"
+          tag="Hàng 3 - Khu 2"
           tagType="kh"
           chart={data.khQuarter}
           compareChart={data.thQuarter}
@@ -870,31 +892,12 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 3: NĂM (2 BIỂU ĐỒ: THỰC HIỆN & KẾ HOẠCH) */}
+      {/* DÒNG 4: KẾ HOẠCH NĂM (1 DÒNG 2 BIỂU ĐỒ - CỘT 1) */}
       <div className="month-row-grid">
-        <SpdvSubcard
-          title={thYearTitle}
-          subtitle={null}
-          tag="Hàng 3 - Khu 1"
-          tagType="th"
-          chart={data.thYear}
-          compareChart={data.khYear}
-          centerLabel={centerThYear}
-          hoveredSlice={hoveredSlice}
-          setHoveredSlice={setHoveredSlice}
-          cardKey="th-year"
-          isVisible={visibleCards.thYear}
-          onToggle={() => toggleCard('thYear')}
-          onOpenDetail={() => onOpenDetail && onOpenDetail({
-            chartKey: 'spdv_th_year',
-            chartTitle: thYearTitle
-          })}
-        />
-
         <SpdvSubcard
           title={khYearTitle}
           subtitle={null}
-          tag="Hàng 3 - Khu 2"
+          tag="Hàng 4 - Khu 1"
           tagType="kh"
           chart={data.khYear}
           compareChart={data.thYear}
@@ -911,11 +914,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 4: BIỂU ĐỒ 18 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      {/* DÒNG 5: BIỂU ĐỒ 18 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={`Biểu đồ 18. Thực hiện ${barData.monthTitle} so với kế hoạch ${barData.monthTitle} theo nhóm SPDV`}
-          tag="Hàng 4 - Khu 1"
+          tag="Hàng 5 - Khu 1"
           legendTh={`TH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
           legendKh={`KH ${barData.monthTitle?.replace('Tháng ', 'T')}`}
           maxVal={barData.monthMax}
@@ -930,7 +933,7 @@ export default function SpdvComparisonChart({
 
         <SpdvBarSubcard
           title={`Biểu đồ 18. Ước thực hiện ${barData.quarterTitle} so với kế hoạch ${barData.quarterTitle} theo nhóm SPDV`}
-          tag="Hàng 4 - Khu 2"
+          tag="Hàng 5 - Khu 2"
           legendTh={`Ước TH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
           legendKh={`KH ${barData.quarterTitle?.replace(/Quý\s*(III|3)/, 'Q3')?.replace(/Quý\s*(II|2)/, 'Q2')?.replace(/Quý\s*(IV|4)/, 'Q4')?.replace(/Quý\s*(I|1)/, 'Q1')}`}
           maxVal={barData.quarterMax}
@@ -944,11 +947,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 5: BIỂU ĐỒ 18 - NĂM */}
+      {/* DÒNG 6: BIỂU ĐỒ 18 - NĂM */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={`Biểu đồ 18. Ước thực hiện ${barData.yearTitle} so với kế hoạch ${barData.yearTitle} theo nhóm SPDV`}
-          tag="Hàng 5"
+          tag="Hàng 6"
           legendTh={`Ước TH ${barData.yearTitle?.replace('Năm ', '')}`}
           legendKh={`KH ${barData.yearTitle?.replace('Năm ', '')}`}
           maxVal={barData.yearMax}
@@ -962,11 +965,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 6: BIỂU ĐỒ 19 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      {/* DÒNG 7: BIỂU ĐỒ 19 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={yoyMonthTitle}
-          tag="Hàng 6 - Khu 1"
+          tag="Hàng 7 - Khu 1"
           legendTh={yoyData.monthLegendCurr || `T${monthNum}/${activeYear}`}
           legendKh={yoyData.monthLegendPrev || `T${monthNum}/${lastYear}`}
           maxVal={yoyData.monthMax}
@@ -983,7 +986,7 @@ export default function SpdvComparisonChart({
 
         <SpdvBarSubcard
           title={yoyQuarterTitle}
-          tag="Hàng 6 - Khu 2"
+          tag="Hàng 7 - Khu 2"
           legendTh={yoyData.quarterLegendCurr || `Ước Q${quarterNumber}/${activeYear}`}
           legendKh={yoyData.quarterLegendPrev || `Q${quarterNumber}/${lastYear}`}
           maxVal={yoyData.quarterMax}
@@ -999,11 +1002,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 7: BIỂU ĐỒ 19 - NĂM */}
+      {/* DÒNG 8: BIỂU ĐỒ 19 - NĂM */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={yoyYearTitle}
-          tag="Hàng 7"
+          tag="Hàng 8"
           legendTh={yoyData.yearLegendCurr || `${monthNum}T/${activeYear}`}
           legendKh={yoyData.yearLegendPrev || `${monthNum}T/${lastYear}`}
           maxVal={yoyData.yearMax}
@@ -1019,11 +1022,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 8: BIỂU ĐỒ 20 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
+      {/* DÒNG 9: BIỂU ĐỒ 20 - THÁNG & QUÝ (2 BIỂU ĐỒ 1 HÀNG) */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={prevMonthTitle}
-          tag="Hàng 8 - Khu 1"
+          tag="Hàng 9 - Khu 1"
           legendTh={prevPeriodData.monthLegendCurr || `TH T${monthNum}`}
           legendKh={prevPeriodData.monthLegendPrev || `TH T${prevMonthNum}`}
           maxVal={prevPeriodData.monthMax}
@@ -1040,7 +1043,7 @@ export default function SpdvComparisonChart({
 
         <SpdvBarSubcard
           title={prevQuarterTitle}
-          tag="Hàng 8 - Khu 2"
+          tag="Hàng 9 - Khu 2"
           legendTh={prevPeriodData.quarterLegendCurr || `Ước Q${quarterNumber}`}
           legendKh={prevPeriodData.quarterLegendPrev || `TH Q${prevQuarterNum}`}
           maxVal={prevPeriodData.quarterMax}
@@ -1056,11 +1059,11 @@ export default function SpdvComparisonChart({
         />
       </div>
 
-      {/* DÒNG 9: BIỂU ĐỒ 20 - NĂM */}
+      {/* DÒNG 10: BIỂU ĐỒ 20 - NĂM */}
       <div className="month-row-grid">
         <SpdvBarSubcard
           title={prevYearTitle}
-          tag="Hàng 9"
+          tag="Hàng 10"
           legendTh={prevPeriodData.yearLegendCurr || `Ước ${activeYear}`}
           legendKh={prevPeriodData.yearLegendPrev || `TH ${lastYear}`}
           maxVal={prevPeriodData.yearMax}
