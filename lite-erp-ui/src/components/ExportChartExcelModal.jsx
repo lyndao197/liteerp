@@ -121,7 +121,7 @@ export function getExportChartList({
       key: 'c10',
       branchId: 'year',
       chartNumber: 'Biểu đồ 10',
-      title: `Biểu đồ 10. Lũy kế TH so với KH lũy kế năm ${selectedYear}`,
+      title: `Biểu đồ 10. Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`,
       desc: `Đánh giá hoàn thành tiến độ lũy kế (${selectedCumulativeMonth}) so với kế hoạch lũy kế tương ứng`,
       period: `${selectedCumulativeMonth} năm ${selectedYear}`
     },
@@ -129,7 +129,7 @@ export function getExportChartList({
       key: 'c11',
       branchId: 'year',
       chartNumber: 'Biểu đồ 11',
-      title: `Biểu đồ 11. Lũy kế TH so với KH năm ${selectedYear}`,
+      title: `Biểu đồ 11. Lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`,
       desc: `Mức độ hoàn thành kế hoạch năm tính đến kỳ lũy kế hiện tại`,
       period: `Năm ${selectedYear}`
     },
@@ -137,7 +137,7 @@ export function getExportChartList({
       key: 'c12',
       branchId: 'year',
       chartNumber: 'Biểu đồ 12',
-      title: `Biểu đồ 12. Ước TH so với KH năm ${selectedYear}`,
+      title: `Biểu đồ 12. Ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`,
       desc: `Dự báo kết quả cả năm so với chỉ tiêu kế hoạch năm được giao`,
       period: `Ước cả năm ${selectedYear}`
     },
@@ -145,7 +145,7 @@ export function getExportChartList({
       key: 'c13',
       branchId: 'year',
       chartNumber: 'Biểu đồ 13',
-      title: `Biểu đồ 13. Ước TH so với TH năm ${lastYear}`,
+      title: `Biểu đồ 13. Ước kết quả ${selectedYear} so với kết quả ${lastYear}`,
       desc: `So sánh ước thực hiện cả năm với kết quả thực hiện năm trước (${lastYear})`,
       period: `Năm ${selectedYear} vs ${lastYear}`
     },

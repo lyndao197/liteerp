@@ -856,12 +856,10 @@ const RevenueReportDashboard = () => {
       legend1Label = `Ước ${qCode}`;
       legend2Label = `KH ${nextQCode}`;
     } else if (chartType === 10) {
-      const shortCode = data.shortCode || '8T';
-      const monthText = data.monthText || '8 tháng';
-      cardTitle = `Biểu đồ 10. Lũy kế TH so với KH lũy kế năm ${selectedYear}`;
-      subtitleLeft = `Giá trị (số in đậm: TH LK ${shortCode}/${selectedYear} % hoàn thành KH LK ${shortCode})`;
-      legend1Label = `TH LK ${shortCode}/${selectedYear}`;
-      legend2Label = `KH LK ${shortCode}`;
+      cardTitle = `Biểu đồ 10. Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`;
+      subtitleLeft = `Giá trị (số in đậm: TH LK ${selectedYear} % hoàn thành KH LK ${selectedYear})`;
+      legend1Label = `TH LK ${selectedYear}`;
+      legend2Label = `KH LK ${selectedYear}`;
     }
 
     setFont(15.5, 'bold');
@@ -2030,10 +2028,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 0,
             chartType: 10,
             sheetName: 'BieuDo_10_LK_vs_KH_LK',
-            chartTitle: `Biểu đồ 10. Lũy kế TH so với KH lũy kế năm ${selectedYear}`,
-            vHeader: ['STT', 'Chỉ tiêu doanh thu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
+            chartTitle: `Biểu đồ 10. Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu doanh thu', 'ĐVT', `TH LK ${selectedYear}`, `KH LK ${selectedYear}`, 'Chênh lệch (LK - KH)', '% HTKH'],
             vRows: currentYearData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.kh, Number((item.lk - item.kh).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Lũy kế TH (${shortCode})`, `Kế hoạch (${shortCode})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `TH LK ${selectedYear}`, `KH LK ${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: currentYearData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.lk}%`, `${item.kh}%`, item.diff]),
             data: currentYearData
           },
@@ -2043,10 +2041,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 1,
             chartType: 11,
             sheetName: 'BieuDo_11_LK_vs_KH_Nam',
-            chartTitle: `Biểu đồ 11. Lũy kế TH so với KH năm ${selectedYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế TH (${shortCode})`, 'Kế hoạch năm', 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
+            chartTitle: `Biểu đồ 11. Lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `TH LK ${selectedYear}`, `KH cả năm ${selectedYear}`, 'Chênh lệch (LK - KH)', '% HTKH'],
             vRows: currentPlanFullData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.khYear, Number((item.lk - item.khYear).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế TH (${shortCode})`, 'Kế hoạch năm', 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `TH LK ${selectedYear}`, `KH cả năm ${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: currentPlanFullData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.lk}%`, `${item.khYear}%`, item.diff]),
             data: currentPlanFullData
           },
@@ -2056,10 +2054,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 2,
             chartType: 12,
             sheetName: 'BieuDo_12_Uoc_vs_KH_Nam',
-            chartTitle: `Biểu đồ 12. Ước TH so với KH năm ${selectedYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (Ước - KH)', 'Tỷ lệ hoàn thành (%)'],
+            chartTitle: `Biểu đồ 12. Ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (Ước - KH)', '% HTKH'],
             vRows: currentEstimateData.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.kh, Number((item.uoc - item.kh).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: currentEstimateData.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.kh}%`, item.diff]),
             data: currentEstimateData
           },
@@ -2069,10 +2067,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 3,
             chartType: 13,
             sheetName: 'BieuDo_13_Uoc_vs_TH_NamTruoc',
-            chartTitle: `Biểu đồ 13. Ước TH so với TH năm ${prevYearNum}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch (Ước - TH trước)', 'Tỷ lệ tăng trưởng (%)'],
+            chartTitle: `Biểu đồ 13. Ước kết quả ${selectedYear} so với kết quả ${prevYearNum}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch (Ước - TH trước)', '% Delta'],
             vRows: (YEAR_ESTIMATE_DATA[selectedYear]?.values || currentEstimateData.values || []).map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.thPrev || item.thLastYear || item.kh, Number(((item.uoc || 0) - (item.thPrev || item.thLastYear || item.kh || 0)).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedYear}`, `TH ${prevYearNum}`, 'Chênh lệch điểm %'],
             rRows: (YEAR_ESTIMATE_DATA[selectedYear]?.ratios || currentEstimateData.ratios || []).map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.thPrev || item.thLastYear || item.kh}%`, item.diff]),
             data: YEAR_ESTIMATE_DATA[selectedYear] || currentEstimateData
           }

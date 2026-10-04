@@ -766,10 +766,10 @@ export default function YearComparisonChart({
       {/* DÒNG 1 (2 BIỂU ĐỒ): BIỂU ĐỒ 10 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH LŨY KẾ NĂM */}
       <div className="month-row-grid">
         <YearValueCard
-          title={`Lũy kế TH so với KH lũy kế năm ${selectedYear}`}
+          title={`Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`}
           tag="Hàng 1 - Khu 1"
-          primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
-          secondaryLegend={`KH LK ${shortCode}/${selectedYear}`}
+          primaryLegend={`TH LK ${selectedYear}`}
+          secondaryLegend={`KH LK ${selectedYear}`}
           data={chart10Values}
           maxVal={3500}
           yTicks={[0, 500, 1000, 1500, 2000, 2500, 3000, 3500]}
@@ -780,17 +780,17 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c10Val')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart10_val',
-            chartTitle: `Lũy kế TH so với KH lũy kế năm ${selectedYear}`
+            chartTitle: `Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`
           })}
         />
 
         <YearRatioCard
-          title={`Tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế năm ${selectedYear}`}
+          title={`Tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`}
           tag="Hàng 1 - Khu 2"
-          primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
-          secondaryLegend={`KH LK ${shortCode}/${selectedYear}`}
-          tooltipPrimaryLabel={`TH LK ${shortCode}/${selectedYear}`}
-          tooltipSecondaryLabel={`KH LK ${shortCode}/${selectedYear}`}
+          primaryLegend={`TH LK ${selectedYear}`}
+          secondaryLegend={`KH LK ${selectedYear}`}
+          tooltipPrimaryLabel={`TH LK ${selectedYear}`}
+          tooltipSecondaryLabel={`KH LK ${selectedYear}`}
           data={chart10Ratios}
           maxVal={100}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
@@ -800,7 +800,7 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c10Rat')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart10_rat',
-            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế năm ${selectedYear}`
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`
           })}
         />
       </div>
@@ -808,10 +808,10 @@ export default function YearComparisonChart({
       {/* DÒNG 2 (2 BIỂU ĐỒ): BIỂU ĐỒ 11 - LŨY KẾ NĂM SO VỚI KẾ HOẠCH CẢ NĂM */}
       <div className="month-row-grid" style={{ marginTop: '16px' }}>
         <YearValueCard
-          title={`Lũy kế TH so với KH năm ${selectedYear}`}
+          title={`Lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 1"
-          primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
-          secondaryLegend={`KH ${selectedYear}`}
+          primaryLegend={`TH LK ${selectedYear}`}
+          secondaryLegend={`KH cả năm ${selectedYear}`}
           data={chart11Values}
           maxVal={6000}
           yTicks={[0, 1000, 2000, 3000, 4000, 5000, 6000]}
@@ -822,17 +822,17 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c11Val')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart11_val',
-            chartTitle: `Lũy kế TH so với KH năm ${selectedYear}`
+            chartTitle: `Lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`
           })}
         />
 
         <YearRatioCard
-          title={`Tỷ suất / tỷ trọng lũy kế TH so với KH năm ${selectedYear}`}
+          title={`Tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`}
           tag="Hàng 2 - Khu 2"
-          primaryLegend={`TH LK ${shortCode}/${selectedYear}`}
-          secondaryLegend={`KH ${selectedYear}`}
-          tooltipPrimaryLabel={`TH LK ${shortCode}/${selectedYear}`}
-          tooltipSecondaryLabel={`KH ${selectedYear}`}
+          primaryLegend={`TH LK ${selectedYear}`}
+          secondaryLegend={`KH cả năm ${selectedYear}`}
+          tooltipPrimaryLabel={`TH LK ${selectedYear}`}
+          tooltipSecondaryLabel={`KH cả năm ${selectedYear}`}
           data={chart11Ratios}
           maxVal={80}
           yTicks={[0, 10, 20, 30, 40, 50, 60, 70, 80]}
@@ -842,7 +842,7 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c11Rat')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart11_rat',
-            chartTitle: `Tỷ suất / tỷ trọng lũy kế TH so với KH năm ${selectedYear}`
+            chartTitle: `Tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`
           })}
         />
       </div>
@@ -850,7 +850,7 @@ export default function YearComparisonChart({
       {/* DÒNG 3 (2 BIỂU ĐỒ): BIỂU ĐỒ 12 - ƯỚC KẾT QUẢ NĂM SO VỚI KẾ HOẠCH NĂM */}
       <div className="month-row-grid" style={{ marginTop: '16px' }}>
         <YearValueCard
-          title={`Ước TH so với KH năm ${selectedYear}`}
+          title={`Ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`}
           tag="Hàng 3 - Khu 1"
           primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`KH ${selectedYear}`}
@@ -865,12 +865,12 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c12Val')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart12_val',
-            chartTitle: `Ước TH so với KH năm ${selectedYear}`
+            chartTitle: `Ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`
           })}
         />
 
         <YearRatioCard
-          title={`Tỷ suất / tỷ trọng ước TH so với KH năm ${selectedYear}`}
+          title={`Tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`}
           tag="Hàng 3 - Khu 2"
           primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`KH ${selectedYear}`}
@@ -885,7 +885,7 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c12Rat')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart12_rat',
-            chartTitle: `Tỷ suất / tỷ trọng ước TH so với KH năm ${selectedYear}`
+            chartTitle: `Tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`
           })}
         />
       </div>
@@ -893,7 +893,7 @@ export default function YearComparisonChart({
       {/* DÒNG 4 (2 BIỂU ĐỒ): BIỂU ĐỒ 13 - ƯỚC KẾT QUẢ NĂM SO VỚI KẾT QUẢ NĂM TRƯỚC */}
       <div className="month-row-grid" style={{ marginTop: '16px' }}>
         <YearValueCard
-          title={`Ước TH so với TH năm ${prevYear}`}
+          title={`Ước kết quả ${selectedYear} so với kết quả ${prevYear}`}
           tag="Hàng 4 - Khu 1"
           primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`TH ${prevYear}`}
@@ -908,12 +908,12 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c13Val')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart13_val',
-            chartTitle: `Ước TH so với TH năm ${prevYear}`
+            chartTitle: `Ước kết quả ${selectedYear} so với kết quả ${prevYear}`
           })}
         />
 
         <YearRatioCard
-          title={`Tỷ suất / tỷ trọng ước TH so với TH năm ${prevYear}`}
+          title={`Tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kết quả ${prevYear}`}
           tag="Hàng 4 - Khu 2"
           primaryLegend={`Ước TH ${selectedYear}`}
           secondaryLegend={`TH ${prevYear}`}
@@ -928,7 +928,7 @@ export default function YearComparisonChart({
           onToggle={() => toggleCard('c13Rat')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'chart13_rat',
-            chartTitle: `Tỷ suất / tỷ trọng ước TH so với TH năm ${prevYear}`
+            chartTitle: `Tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kết quả ${prevYear}`
           })}
         />
       </div>

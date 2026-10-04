@@ -172,38 +172,38 @@ export default function MonthRatioDetailTable({
     if (resolvedBranchId === 'year') {
       if (activeChartKey === 'chart11_rat') {
         return {
-          thHeader: `TH LK ${yearShortCode}/${selectedYear}`,
-          compHeader: `KH ${selectedYear}`,
-          compRatHeader: `Tỷ suất/Tỷ trọng KH`,
+          thHeader: `TH LK ${selectedYear}`,
+          compHeader: `KH cả năm ${selectedYear}`,
+          compRatHeader: `Tỷ suất/Tỷ trọng KH cả năm`,
           cardTag: 'Biểu đồ 11b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế TH so với KH năm ${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch cả năm ${selectedYear}`
         };
       }
       if (activeChartKey === 'chart12_rat') {
         return {
-          thHeader: `Ước ${selectedYear}`,
+          thHeader: `Ước TH ${selectedYear}`,
           compHeader: `KH ${selectedYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 12b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH năm ${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kế hoạch ${selectedYear}`
         };
       }
       if (activeChartKey === 'chart13_rat') {
         return {
-          thHeader: `Ước ${selectedYear}`,
+          thHeader: `Ước TH ${selectedYear}`,
           compHeader: `TH ${lastYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng ${lastYear}`,
           cardTag: 'Biểu đồ 13b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với TH năm ${lastYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedYear} so với kết quả ${lastYear}`
         };
       }
       // Default: chart10_rat (Lũy kế so với KH lũy kế)
       return {
-        thHeader: `TH LK ${yearShortCode}/${selectedYear}`,
-        compHeader: `KH LK ${yearShortCode}/${selectedYear}`,
+        thHeader: `TH LK ${selectedYear}`,
+        compHeader: `KH LK ${selectedYear}`,
         compRatHeader: `Tỷ suất/Tỷ trọng KH LK`,
         cardTag: 'Biểu đồ 10b',
-        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế TH so với KH lũy kế năm ${selectedYear}`
+        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`
       };
     }
 
