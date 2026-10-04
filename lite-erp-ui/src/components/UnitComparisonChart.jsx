@@ -417,19 +417,6 @@ function UnitPlanSubcard({
                 <span style={{ color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c', fontWeight: '600' }}>% HTKH:</span>
                 <span style={{ fontWeight: '700', color: hoveredUnit.isPositive ? '#15803d' : '#b91c1c' }}>{hoveredUnit.rate}</span>
               </div>
-              {(() => {
-                const deltaNum = (hoveredUnit.th !== null && hoveredUnit.kh !== null && hoveredUnit.kh > 0)
-                  ? ((hoveredUnit.th - hoveredUnit.kh) / hoveredUnit.kh * 100)
-                  : null;
-                return (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px', paddingTop: '2px' }}>
-                    <span style={{ color: '#475569', fontWeight: '600' }}>% Delta:</span>
-                    <span style={{ fontWeight: '700', color: deltaNum !== null ? (deltaNum >= 0 ? '#15803d' : '#b91c1c') : '#64748b' }}>
-                      {deltaNum !== null ? `${deltaNum >= 0 ? '+' : ''}${deltaNum.toFixed(1).replace('.', ',')}%` : '-'}
-                    </span>
-                  </div>
-                );
-              })()}
             </div>
           )}
         </div>
@@ -790,9 +777,9 @@ export default function UnitComparisonChart({
   const quarterText = `Quý ${quarterRoman}/${activeYear}`;
   const lastYear = (parseInt(activeYear, 10) - 1).toString();
 
-  const prevMonthTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Tháng (T${monthNum} vs T${prevMonthNum})`;
-  const prevQuarterTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Quý (Q${quarterRoman} vs Q${prevQuarterNum})`;
-  const prevYearTitle = `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm (${activeYear} vs ${lastYear})`;
+  const prevMonthTitle = `Doanh thu thực hiện theo đơn vị so với tháng trước – Tháng ${monthNum}/${activeYear} (T${monthNum} vs T${prevMonthNum})`;
+  const prevQuarterTitle = `Doanh thu ước thực hiện theo đơn vị so với quý trước – Quý ${quarterRoman}/${activeYear} (Q${quarterRoman} vs Q${prevQuarterNum})`;
+  const prevYearTitle = `Doanh thu ước thực hiện theo đơn vị so với năm trước – Năm ${activeYear} (${activeYear} vs ${lastYear})`;
 
   return (
     <div className="month-charts-stack">
@@ -850,7 +837,7 @@ export default function UnitComparisonChart({
         />
 
         <UnitPlanSubcard
-          title={`Doanh thu theo đơn vị so với kế hoạch – ${activeMonth}/${activeYear}`}
+          title={`Doanh thu thực hiện theo đơn vị so với kế hoạch – ${activeMonth}/${activeYear}`}
           tag="Hàng 1 - Khu 2"
           data={data22.month}
           cardKey="u22-month"
@@ -858,7 +845,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c22Month')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_month',
-            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – ${activeMonth}/${activeYear}`
+            chartTitle: `Doanh thu thực hiện theo đơn vị so với kế hoạch – ${activeMonth}/${activeYear}`
           })}
         />
       </div>
@@ -882,7 +869,7 @@ export default function UnitComparisonChart({
         />
 
         <UnitPlanSubcard
-          title={`Doanh thu theo đơn vị so với kế hoạch – ${quarterText}`}
+          title={`Doanh thu ước thực hiện theo đơn vị so với kế hoạch – ${quarterText}`}
           tag="Hàng 2 - Khu 2"
           data={data22.quarter}
           cardKey="u22-quarter"
@@ -890,7 +877,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c22Quarter')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_quarter',
-            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – ${quarterText}`
+            chartTitle: `Doanh thu ước thực hiện theo đơn vị so với kế hoạch – ${quarterText}`
           })}
         />
       </div>
@@ -914,7 +901,7 @@ export default function UnitComparisonChart({
         />
 
         <UnitPlanSubcard
-          title={`Doanh thu theo đơn vị so với kế hoạch – Năm ${activeYear}`}
+          title={`Doanh thu ước thực hiện theo đơn vị so với kế hoạch – Năm ${activeYear}`}
           tag="Hàng 3 - Khu 2"
           data={data22.year}
           cardKey="u22-year"
@@ -922,7 +909,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c22Year')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_year',
-            chartTitle: `Doanh thu theo đơn vị so với kế hoạch – Năm ${activeYear}`
+            chartTitle: `Doanh thu ước thực hiện theo đơn vị so với kế hoạch – Năm ${activeYear}`
           })}
         />
       </div>

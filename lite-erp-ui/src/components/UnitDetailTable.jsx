@@ -44,7 +44,10 @@ export default function UnitDetailTable({
       key.includes('prev') ||
       key.includes('23') ||
       title.includes('23') ||
-      title.includes('kỳ trước')
+      title.includes('kỳ trước') ||
+      title.includes('tháng trước') ||
+      title.includes('quý trước') ||
+      title.includes('năm trước')
     );
   }, [activeChartKey, chartTitle]);
 
@@ -272,11 +275,13 @@ export default function UnitDetailTable({
       <div className="spdv-detail-header-wrap">
         <div className="spdv-header-title-box">
           <h3 className="spdv-detail-title">
-            {isStructure
-              ? `Cơ cấu doanh thu theo đơn vị thực hiện`
-              : isPrevPeriodComparison
-              ? `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước – Năm ${selectedYear}`
-              : `Biểu đồ 22. Doanh thu theo đơn vị so với KH – Năm ${selectedYear}`}
+            {chartTitle || (
+              isStructure
+                ? `Cơ cấu doanh thu TH theo từng đơn vị – Năm ${selectedYear}`
+                : isPrevPeriodComparison
+                ? `Doanh thu ước thực hiện theo đơn vị so với năm trước – Năm ${selectedYear}`
+                : `Doanh thu ước thực hiện theo đơn vị so với kế hoạch – Năm ${selectedYear}`
+            )}
           </h3>
           <span className="spdv-detail-unit">
             {isPrevPeriodComparison ? `(Đơn vị: Tỷ đồng)` : `(Đơn vị: Triệu đồng)`}

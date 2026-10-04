@@ -245,7 +245,7 @@ export function getExportChartList({
       key: 'c21',
       branchId: 'unit',
       chartNumber: 'Biểu đồ 21',
-      title: `Biểu đồ 21. Cơ cấu doanh thu theo đơn vị thực hiện (Tháng, Quý, Năm)`,
+      title: `Biểu đồ 21. Cơ cấu doanh thu TH theo từng đơn vị (Tháng, Quý, Năm)`,
       desc: `Cơ cấu tỷ trọng % và giá trị thực hiện theo từng đơn vị, chi nhánh, công ty con`,
       period: `Tháng, Quý, Năm ${selectedYear}`
     },
@@ -253,7 +253,7 @@ export function getExportChartList({
       key: 'c22',
       branchId: 'unit',
       chartNumber: 'Biểu đồ 22',
-      title: `Biểu đồ 22. Doanh thu theo đơn vị so với KH – Năm ${selectedYear}`,
+      title: `Biểu đồ 22. Doanh thu thực hiện / ước TH theo đơn vị so với KH – Năm ${selectedYear}`,
       desc: `Bảng tích hợp so sánh TH, KH, +/- so KH, % HTKH theo đơn vị cả 3 kỳ (Tháng, Quý, Năm)`,
       period: `Ma trận 3 kỳ năm ${selectedYear}`
     },
@@ -261,7 +261,7 @@ export function getExportChartList({
       key: 'c23_unit',
       branchId: 'unit',
       chartNumber: 'Biểu đồ 23',
-      title: `Biểu đồ 23. Doanh thu theo từng đơn vị so với kỳ trước`,
+      title: `Biểu đồ 23. Doanh thu thực hiện / ước TH theo đơn vị so với kỳ trước`,
       desc: `So sánh thực hiện theo đơn vị với kỳ trước cho cả 3 kỳ: Tháng, Quý, Năm (số %: % delta)`,
       period: `Tháng, Quý, Năm ${selectedYear}`
     },
