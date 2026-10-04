@@ -930,7 +930,7 @@ export default function UnitComparisonChart({
         />
 
         <UnitPlanSubcard
-          title={`Doanh thu ước thực hiện theo đơn vị so với kế hoạch – ${quarterText}`}
+          title={`Biểu đồ 18. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`}
           tag="Hàng 2 - Khu 2"
           data={data22.quarter}
           cardKey="u22-quarter"
@@ -938,7 +938,7 @@ export default function UnitComparisonChart({
           onToggle={() => toggleCard('c22Quarter')}
           onOpenDetail={() => onOpenDetail && onOpenDetail({
             chartKey: 'unit_plan_quarter',
-            chartTitle: `Doanh thu ước thực hiện theo đơn vị so với kế hoạch – ${quarterText}`
+            chartTitle: `Biểu đồ 18. Ước thực hiện ${quarterText} so với kế hoạch ${quarterText} theo đơn vị`
           })}
         />
       </div>
