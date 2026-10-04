@@ -162,8 +162,8 @@ export function getExportChartList({
     {
       key: 'c14_plan',
       branchId: 'trend',
-      chartNumber: 'Biểu đồ 14b',
-      title: `Biểu đồ 14b. Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm`,
+      chartNumber: 'Biểu đồ 15',
+      title: `Biểu đồ 15. Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`,
       desc: `So sánh doanh thu từng tháng với kế hoạch tháng trong năm ${selectedYear}`,
       period: `12 Tháng năm ${selectedYear}`
     },

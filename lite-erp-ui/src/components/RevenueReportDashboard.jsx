@@ -2442,10 +2442,10 @@ const RevenueReportDashboard = () => {
             const planTrendData = MONTH_PLAN_TREND_DATA[selectedYear] || MONTH_PLAN_TREND_DATA['2026'];
             const planSheetRows = [
               ['BÁO CÁO DOANH THU - XU HƯỚNG THEO THỜI GIAN'],
-              [`Biểu đồ 14b. Xu hướng tổng doanh thu từng tháng năm ${selectedYear} so với kế hoạch`],
+              [`Biểu đồ 15. Xu hướng doanh thu theo từng tháng năm ${selectedYear} so với kế hoạch năm ${selectedYear}`],
               [`Kỳ báo cáo: 12 Tháng năm ${selectedYear}`, `Thời gian xuất: ${new Date().toLocaleDateString('vi-VN')}`],
               [],
-              [`I. BẢNG XU HƯỚNG DOANH THU TỪNG THÁNG NĂM ${selectedYear} SO VỚI KẾ HOẠCH (Đơn vị: Triệu đồng)`],
+              [`I. BẢNG XU HƯỚNG DOANH THU TỪNG THÁNG NĂM ${selectedYear} SO VỚI KẾ HOẠCH NĂM ${selectedYear} (Đơn vị: Triệu đồng)`],
               ['STT', 'Tháng', 'Đơn vị tính', `TH ${selectedYear}`, `KH ${selectedYear}`, 'Chênh lệch (TH - KH)', 'Tỷ lệ HTKH (%)'],
               ...planTrendData.map((item, idx) => [
                 idx + 1,
@@ -2459,7 +2459,7 @@ const RevenueReportDashboard = () => {
             ];
             const wsPlan = XLSX.utils.aoa_to_sheet(planSheetRows);
             wsPlan['!cols'] = [{ wch: 6 }, { wch: 24 }, { wch: 14 }, { wch: 20 }, { wch: 20 }, { wch: 24 }, { wch: 22 }];
-            XLSX.utils.book_append_sheet(wb, wsPlan, 'BieuDo_14b_XuHuong_vs_KH');
+            XLSX.utils.book_append_sheet(wb, wsPlan, 'BieuDo_15_XuHuong_vs_KH');
           }
 
           XLSX.writeFile(wb, `Bao_Cao_Doanh_Thu_Xu_Huong_12_Thang_${selectedYear}.xlsx`);

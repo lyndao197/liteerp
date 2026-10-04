@@ -2904,30 +2904,30 @@ export default function RevenueChartDetailView({
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => (
                       isTrendPrevYear ? (
                         <React.Fragment key={`sub-m-${m}`}>
-                          <th className="th-sub-th">TH {selectedYear}</th>
-                          <th className="th-sub-prev">TH {lastYear}</th>
-                          <th className="th-sub-growth">% Delta</th>
+                          <th className="th-sub-th" style={{ whiteSpace: 'nowrap' }}>TH {selectedYear}</th>
+                          <th className="th-sub-prev" style={{ whiteSpace: 'nowrap' }}>TH {lastYear}</th>
+                          <th className="th-sub-growth" style={{ whiteSpace: 'nowrap' }}>% Delta</th>
                         </React.Fragment>
                       ) : (
                         <React.Fragment key={`sub-m-${m}`}>
-                          <th className="th-sub-th">TH {selectedYear}</th>
-                          <th className="th-sub-kh">KH {selectedYear}</th>
-                          <th className="th-sub-rate">% HTKH</th>
+                          <th className="th-sub-th" style={{ whiteSpace: 'nowrap' }}>TH {selectedYear}</th>
+                          <th className="th-sub-kh" style={{ whiteSpace: 'nowrap' }}>KH {selectedYear}</th>
+                          <th className="th-sub-rate" style={{ whiteSpace: 'nowrap' }}>% HTKH</th>
                         </React.Fragment>
                       )
                     ))}
                     {isTrendPrevYear ? (
                       <>
-                        <th className="th-sub-th">TH {selectedYear}</th>
-                        <th className="th-sub-prev">TH {lastYear}</th>
-                        <th className="th-sub-growth">% Delta</th>
+                        <th className="th-sub-th" style={{ whiteSpace: 'nowrap' }}>TH {selectedYear}</th>
+                        <th className="th-sub-prev" style={{ whiteSpace: 'nowrap' }}>TH {lastYear}</th>
+                        <th className="th-sub-growth" style={{ whiteSpace: 'nowrap' }}>% Delta</th>
                       </>
                     ) : (
                       <>
-                        <th className="th-sub-th">Tổng TH {selectedYear}</th>
-                        <th className="th-sub-kh">Tổng KH {selectedYear}</th>
-                        <th className="th-sub-diff">+/- so KH</th>
-                        <th className="th-sub-rate">% HTKH</th>
+                        <th className="th-sub-th" style={{ whiteSpace: 'nowrap' }}>Tổng TH {selectedYear}</th>
+                        <th className="th-sub-kh" style={{ whiteSpace: 'nowrap' }}>Tổng KH {selectedYear}</th>
+                        <th className="th-sub-diff" style={{ whiteSpace: 'nowrap' }}>+/- so KH</th>
+                        <th className="th-sub-rate" style={{ whiteSpace: 'nowrap' }}>% HTKH</th>
                       </>
                     )}
                   </tr>
