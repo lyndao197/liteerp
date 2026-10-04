@@ -819,42 +819,37 @@ const RevenueReportDashboard = () => {
       legend1Label = `TH ${shortMonth}`;
       legend2Label = `KH T${nextM}`;
     } else if (chartType === 5) {
-      const qCode = data.quarterCode || 'Q3';
-      cardTitle = `Biểu đồ 5. TH so với KH ${selectedQuarter}/${selectedYear}`;
-      subtitleLeft = `Giá trị (số in đậm: TH LK ${qCode}/${selectedYear} % hoàn thành KH ${qCode})`;
-      legend1Label = `TH LK ${qCode}/${selectedYear}`;
-      legend2Label = `KH ${qCode}`;
+      cardTitle = `Biểu đồ 5. Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`;
+      subtitleLeft = `Giá trị (số in đậm: TH LK ${selectedQuarter}/${selectedYear} % hoàn thành KH ${selectedQuarter}/${selectedYear})`;
+      legend1Label = `TH LK ${selectedQuarter}/${selectedYear}`;
+      legend2Label = `KH ${selectedQuarter}/${selectedYear}`;
     } else if (chartType === 6) {
-      const qCode = data.quarterCode || 'Q3';
-      cardTitle = `Biểu đồ 6. Ước TH so với KH ${selectedQuarter}/${selectedYear}`;
-      subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % hoàn thành KH ${qCode})`;
-      legend1Label = `Ước ${qCode}`;
-      legend2Label = `KH ${qCode}`;
+      cardTitle = `Biểu đồ 6. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`;
+      subtitleLeft = `Giá trị (số in đậm: Ước TH ${selectedQuarter}/${selectedYear} % hoàn thành KH ${selectedQuarter}/${selectedYear})`;
+      legend1Label = `Ước TH ${selectedQuarter}/${selectedYear}`;
+      legend2Label = `KH ${selectedQuarter}/${selectedYear}`;
     } else if (chartType === 7) {
-      const qCode = data.quarterCode || 'Q3';
       const prevQCode = data.prevQuarterCode || 'Q2';
       const prevQName = data.prevQuarterName || 'Quý 2';
       const prevY = (selectedQuarter === 'Quý I' || selectedQuarter === 'Quý 1') ? (parseInt(selectedYear, 10) - 1).toString() : selectedYear;
-      cardTitle = `Biểu đồ 7. Ước TH so với ${prevQName}/${prevY}`;
-      subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % so với TH ${prevQCode})`;
-      legend1Label = `Ước ${qCode}`;
-      legend2Label = `TH ${prevQCode}`;
+      cardTitle = `Biểu đồ 7. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQName}/${prevY}`;
+      subtitleLeft = `Giá trị (số in đậm: Ước TH % so với TH ${prevQCode})`;
+      legend1Label = `Ước TH ${selectedQuarter}/${selectedYear}`;
+      legend2Label = `TH ${prevQName}/${prevY}`;
     } else if (chartType === 8) {
-      const qCode = data.quarterCode || 'Q3';
       const prevYNum = (parseInt(selectedYear, 10) - 1).toString();
-      cardTitle = `Biểu đồ 8. Ước TH so với cùng kỳ ${selectedQuarter}/${prevYNum}`;
-      subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % so với cùng kỳ ${prevYNum})`;
-      legend1Label = `Ước ${qCode}/${selectedYear}`;
-      legend2Label = `TH ${qCode}/${prevYNum}`;
+      cardTitle = `Biểu đồ 8. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${selectedQuarter}/${prevYNum}`;
+      subtitleLeft = `Giá trị (số in đậm: Ước TH % so với cùng kỳ ${prevYNum})`;
+      legend1Label = `Ước TH ${selectedQuarter}/${selectedYear}`;
+      legend2Label = `TH ${selectedQuarter}/${prevYNum}`;
     } else if (chartType === 9) {
-      const qCode = data.quarterCode || 'Q3';
       const nextQCode = data.nextQuarterCode || 'Q4';
       const nextQName = data.nextQuarterName || 'Quý 4';
       const nextQYear = (selectedQuarter === 'Quý IV' || selectedQuarter === 'Quý 4') ? (parseInt(selectedYear, 10) + 1).toString() : selectedYear;
-      cardTitle = `Biểu đồ 9. Ước TH so với KH ${nextQName}/${nextQYear}`;
-      subtitleLeft = `Giá trị (số in đậm: Ước ${qCode} % so với KH ${nextQCode})`;
-      legend1Label = `Ước ${qCode}`;
-      legend2Label = `KH ${nextQCode}`;
+      cardTitle = `Biểu đồ 9. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQName}/${nextQYear}`;
+      subtitleLeft = `Giá trị (số in đậm: Ước TH % so với KH ${nextQCode})`;
+      legend1Label = `Ước TH ${selectedQuarter}/${selectedYear}`;
+      legend2Label = `KH ${nextQName}/${nextQYear}`;
     } else if (chartType === 10) {
       cardTitle = `Biểu đồ 10. Lũy kế ${selectedYear} so với kế hoạch lũy kế ${selectedYear}`;
       subtitleLeft = `Giá trị (số in đậm: TH LK ${selectedYear} % hoàn thành KH LK ${selectedYear})`;
@@ -1761,10 +1756,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 0,
             chartType: 5,
             sheetName: 'BieuDo_5_LK_vs_KH_Quy',
-            chartTitle: `Biểu đồ 5. TH so với KH ${selectedQuarter}/${selectedYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Lũy kế (${qCode})`, `Kế hoạch (${qCode})`, 'Chênh lệch (LK - KH)', 'Tỷ lệ hoàn thành (%)'],
+            chartTitle: `Biểu đồ 5. Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `TH LK ${selectedQuarter}/${selectedYear}`, `KH ${selectedQuarter}/${selectedYear}`, 'Chênh lệch (LK - KH)', '% HTKH'],
             vRows: quarterData5.values.map((item, idx) => [idx + 1, item.name, item.unit, item.lk, item.kh, Number((item.lk - item.kh).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Lũy kế (${qCode})`, `Kế hoạch (${qCode})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `TH LK ${selectedQuarter}/${selectedYear}`, `KH ${selectedQuarter}/${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: quarterData5.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.lk}%`, `${item.kh}%`, item.diff]),
             data: quarterData5
           },
@@ -1774,10 +1769,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 1,
             chartType: 6,
             sheetName: 'BieuDo_6_Uoc_vs_KH_Quy',
-            chartTitle: `Biểu đồ 6. Ước TH so với KH ${selectedQuarter}/${selectedYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước (${selectedQuarter})`, `Kế hoạch (${selectedQuarter})`, 'Chênh lệch (Ước - KH)', 'Tỷ lệ hoàn thành (%)'],
+            chartTitle: `Biểu đồ 6. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `KH ${selectedQuarter}/${selectedYear}`, 'Chênh lệch (Ước - KH)', '% HTKH'],
             vRows: quarterData6.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.kh, Number((item.uoc - item.kh).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước (${selectedQuarter})`, `Kế hoạch (${selectedQuarter})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `KH ${selectedQuarter}/${selectedYear}`, 'Chênh lệch điểm %'],
             rRows: quarterData6.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.kh}%`, item.diff]),
             data: quarterData6
           },
@@ -1787,10 +1782,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 2,
             chartType: 7,
             sheetName: 'BieuDo_7_Uoc_vs_TH_Q.Truoc',
-            chartTitle: `Biểu đồ 7. Ước TH so với ${prevQName}/${prevYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước (${selectedQuarter})`, `Thực hiện (${prevQName})`, 'Chênh lệch (Ước - TH trước)', 'Tỷ lệ so với TH trước (%)'],
+            chartTitle: `Biểu đồ 7. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQName}/${prevYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `TH ${prevQName}/${prevYear}`, 'Chênh lệch (Ước - TH trước)', '% Delta'],
             vRows: quarterData7.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.thPrev, Number((item.uoc - item.thPrev).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước (${selectedQuarter})`, `Thực hiện (${prevQName})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `TH ${prevQName}/${prevYear}`, 'Chênh lệch điểm %'],
             rRows: quarterData7.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.thPrev}%`, item.diff]),
             data: quarterData7
           },
@@ -1800,10 +1795,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 3,
             chartType: 8,
             sheetName: 'BieuDo_8_Uoc_vs_CungKy',
-            chartTitle: `Biểu đồ 8. Ước TH so với cùng kỳ ${selectedQuarter}/${prevYearNum}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước (${selectedQuarter})`, `Cùng kỳ (${prevYearNum})`, 'Chênh lệch (Ước - Cùng kỳ)', 'Tỷ lệ so với cùng kỳ (%)'],
+            chartTitle: `Biểu đồ 8. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${selectedQuarter}/${prevYearNum}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `TH ${selectedQuarter}/${prevYearNum}`, 'Chênh lệch (Ước - Cùng kỳ)', '% Delta'],
             vRows: quarterData8.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.thSamePeriod, Number((item.uoc - item.thSamePeriod).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước (${selectedQuarter})`, `Cùng kỳ (${prevYearNum})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `TH ${selectedQuarter}/${prevYearNum}`, 'Chênh lệch điểm %'],
             rRows: quarterData8.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.thSamePeriod}%`, item.diff]),
             data: quarterData8
           },
@@ -1813,10 +1808,10 @@ const RevenueReportDashboard = () => {
             cardIndex: 4,
             chartType: 9,
             sheetName: 'BieuDo_9_Uoc_vs_KH_TiepTheo',
-            chartTitle: `Biểu đồ 9. Ước TH so với KH ${nextQName}/${nextQYear}`,
-            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước (${selectedQuarter})`, `Kế hoạch (${nextQName})`, 'Chênh lệch (Ước - KH tiếp)', 'Tỷ lệ so với KH tiếp (%)'],
+            chartTitle: `Biểu đồ 9. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQName}/${nextQYear}`,
+            vHeader: ['STT', 'Chỉ tiêu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `KH ${nextQName}/${nextQYear}`, 'Chênh lệch (Ước - KH tiếp)', '% so KH kỳ sau'],
             vRows: quarterData9.values.map((item, idx) => [idx + 1, item.name, item.unit, item.uoc, item.khNext, Number((item.uoc - item.khNext).toFixed(1)), item.rate]),
-            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước (${selectedQuarter})`, `Kế hoạch (${nextQName})`, 'Chênh lệch điểm %'],
+            rHeader: ['STT', 'Chỉ tiêu cơ cấu', 'ĐVT', `Ước TH ${selectedQuarter}/${selectedYear}`, `KH ${nextQName}/${nextQYear}`, 'Chênh lệch điểm %'],
             rRows: quarterData9.ratios.map((item, idx) => [idx + 1, item.name, item.unit, `${item.uoc}%`, `${item.khNext}%`, item.diff]),
             data: quarterData9
           }

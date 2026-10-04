@@ -125,47 +125,47 @@ export default function MonthRatioDetailTable({
     if (resolvedBranchId === 'quarter') {
       if (activeChartKey === 'chart6_rat') {
         return {
-          thHeader: `Ước ${qCode}/${selectedYear}`,
-          compHeader: `KH ${qCode}/${selectedYear}`,
+          thHeader: `Ước TH ${selectedQuarter}/${selectedYear}`,
+          compHeader: `KH ${selectedQuarter}/${selectedYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 6b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH ${selectedQuarter}/${selectedYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`
         };
       }
       if (activeChartKey === 'chart7_rat') {
         return {
-          thHeader: `Ước ${qCode}/${selectedYear}`,
-          compHeader: `TH ${prevQCode}/${prevQYear}`,
+          thHeader: `Ước TH ${selectedQuarter}/${selectedYear}`,
+          compHeader: `TH ${prevQName}/${prevQYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng ${prevQCode}`,
           cardTag: 'Biểu đồ 7b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với ${prevQCode}/${prevQYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQName}/${prevQYear}`
         };
       }
       if (activeChartKey === 'chart8_rat') {
         return {
-          thHeader: `Ước ${qCode}/${selectedYear}`,
-          compHeader: `TH ${qCode}/${lastYear}`,
-          compRatHeader: `Tỷ suất/Tỷ trọng ${qCode}/${lastYear}`,
+          thHeader: `Ước TH ${selectedQuarter}/${selectedYear}`,
+          compHeader: `TH ${selectedQuarter}/${lastYear}`,
+          compRatHeader: `Tỷ suất/Tỷ trọng ${selectedQuarter}/${lastYear}`,
           cardTag: 'Biểu đồ 8b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với cùng kỳ ${selectedQuarter}/${lastYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${selectedQuarter}/${lastYear}`
         };
       }
       if (activeChartKey === 'chart9_rat') {
         return {
-          thHeader: `Ước ${qCode}/${selectedYear}`,
-          compHeader: `KH ${nextQCode}/${nextQYear}`,
+          thHeader: `Ước TH ${selectedQuarter}/${selectedYear}`,
+          compHeader: `KH ${nextQName}/${nextQYear}`,
           compRatHeader: `Tỷ suất/Tỷ trọng KH`,
           cardTag: 'Biểu đồ 9b',
-          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước TH so với KH ${nextQCode}/${nextQYear}`
+          defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQName}/${nextQYear}`
         };
       }
       // Default: chart5_rat (Lũy kế quý so với KH)
       return {
-        thHeader: `TH LK ${qCode}/${selectedYear}`,
-        compHeader: `KH ${qCode}/${selectedYear}`,
+        thHeader: `TH LK ${selectedQuarter}/${selectedYear}`,
+        compHeader: `KH ${selectedQuarter}/${selectedYear}`,
         compRatHeader: `Tỷ suất/Tỷ trọng KH`,
         cardTag: 'Biểu đồ 5b',
-        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng TH so với KH ${selectedQuarter}/${selectedYear}`
+        defaultTitle: `Bảng phân tích tỷ suất / tỷ trọng lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`
       };
     }
 

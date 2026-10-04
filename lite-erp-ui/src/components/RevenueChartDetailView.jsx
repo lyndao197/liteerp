@@ -76,16 +76,16 @@ const BRANCH_CHART_OPTIONS = {
     { id: 'chart4_rat', label: 'Biểu đồ 4b: Tỷ trọng kế hoạch tháng tới' }
   ],
   quarter: [
-    { id: 'chart5_cum_val', label: 'Biểu đồ 5: TH so với KH Quý (Giá trị)' },
-    { id: 'chart5_rat', label: 'Biểu đồ 5b: Tỷ suất / tỷ trọng TH so với KH Quý' },
-    { id: 'chart6_val', label: 'Biểu đồ 6: Ước TH so với KH Quý' },
-    { id: 'chart6_rat', label: 'Biểu đồ 6b: Tỷ suất / tỷ trọng ước TH so với KH Quý' },
-    { id: 'chart7_val', label: 'Biểu đồ 7: Ước TH so với Quý trước' },
-    { id: 'chart7_rat', label: 'Biểu đồ 7b: Tỷ suất / tỷ trọng ước TH so với Quý trước' },
-    { id: 'chart8_val', label: 'Biểu đồ 8: Ước TH so với cùng kỳ năm trước' },
-    { id: 'chart8_rat', label: 'Biểu đồ 8b: Tỷ suất / tỷ trọng ước TH so với cùng kỳ năm trước' },
-    { id: 'chart9_val', label: 'Biểu đồ 9: Ước TH so với KH Quý tiếp theo' },
-    { id: 'chart9_rat', label: 'Biểu đồ 9b: Tỷ suất / tỷ trọng ước TH so với KH Quý tiếp theo' }
+    { id: 'chart5_cum_val', label: 'Biểu đồ 5: Lũy kế so với KH Quý (Giá trị)' },
+    { id: 'chart5_rat', label: 'Biểu đồ 5b: Tỷ suất / tỷ trọng lũy kế so với KH Quý' },
+    { id: 'chart6_val', label: 'Biểu đồ 6: Ước kết quả so với KH Quý (Giá trị)' },
+    { id: 'chart6_rat', label: 'Biểu đồ 6b: Tỷ suất / tỷ trọng ước kết quả so với KH Quý' },
+    { id: 'chart7_val', label: 'Biểu đồ 7: Ước kết quả so với Quý trước (Giá trị)' },
+    { id: 'chart7_rat', label: 'Biểu đồ 7b: Tỷ suất / tỷ trọng ước kết quả so với Quý trước' },
+    { id: 'chart8_val', label: 'Biểu đồ 8: Ước kết quả so với Quý cùng kỳ năm trước (Giá trị)' },
+    { id: 'chart8_rat', label: 'Biểu đồ 8b: Tỷ suất / tỷ trọng ước kết quả so với Quý cùng kỳ năm trước' },
+    { id: 'chart9_val', label: 'Biểu đồ 9: Ước kết quả so với KH Quý tiếp theo (Giá trị)' },
+    { id: 'chart9_rat', label: 'Biểu đồ 9b: Tỷ suất / tỷ trọng ước kết quả so với KH Quý tiếp theo' }
   ],
   year: [
     { id: 'chart10_val', label: 'Biểu đồ 10: Lũy kế so với KH lũy kế (Giá trị)' },
@@ -578,7 +578,7 @@ export default function RevenueChartDetailView({
     if (comparisonType === 'current_plan') {
       if (activeBranchId === 'month') return `TH Tháng ${monthNum}/${selectedYear}`;
       if (activeBranchId === 'quarter') {
-        return hasEstimate ? `Ước TH Quý ${quarterRoman}/${selectedYear}` : `TH LK Quý ${quarterRoman}/${selectedYear}`;
+        return hasEstimate ? `Ước TH ${selectedQuarter}/${selectedYear}` : `TH LK ${selectedQuarter}/${selectedYear}`;
       }
       if (activeBranchId === 'year') {
         if (isEstVsFullPlan || activeChartKey === 'chart12' || activeChartKey === 'chart12_val' || activeChartKey === 'chart13' || activeChartKey === 'chart13_val') {
@@ -591,7 +591,7 @@ export default function RevenueChartDetailView({
 
     if (comparisonType === 'next_plan') {
       if (activeBranchId === 'month') return `TH Tháng ${monthNum}/${selectedYear}`;
-      if (activeBranchId === 'quarter') return `Ước TH Quý ${quarterRoman}/${selectedYear}`;
+      if (activeBranchId === 'quarter') return `Ước TH ${selectedQuarter}/${selectedYear}`;
       if (activeBranchId === 'year') return `Ước TH ${selectedYear}`;
       return hasEstimate ? 'Ước TH' : 'TH';
     }
@@ -599,7 +599,7 @@ export default function RevenueChartDetailView({
     // comparisonType === 'other_period' (so kỳ trước hoặc cùng kỳ)
     if (hasEstimate) {
       if (activeBranchId === 'quarter') {
-        return `Ước TH Quý ${quarterRoman}/${selectedYear}`;
+        return `Ước TH ${selectedQuarter}/${selectedYear}`;
       }
       if (activeBranchId === 'year') {
         return `Ước TH ${selectedYear}`;
@@ -612,7 +612,7 @@ export default function RevenueChartDetailView({
       return `TH Tháng ${monthNum}/${selectedYear}`;
     }
     if (activeBranchId === 'quarter') {
-      return `TH Quý ${quarterRoman}/${selectedYear}`;
+      return `TH LK ${selectedQuarter}/${selectedYear}`;
     }
     if (activeBranchId === 'year') {
       return `TH LK ${selectedYear}`;
@@ -623,7 +623,7 @@ export default function RevenueChartDetailView({
   const secondSubColLabel = useMemo(() => {
     if (comparisonType === 'current_plan') {
       if (activeBranchId === 'month') return `KH Tháng ${monthNum}/${selectedYear}`;
-      if (activeBranchId === 'quarter') return `KH Quý ${quarterRoman}/${selectedYear}`;
+      if (activeBranchId === 'quarter') return `KH ${selectedQuarter}/${selectedYear}`;
       if (activeBranchId === 'year') {
         if (isEstVsFullPlan || activeChartKey === 'chart12' || activeChartKey === 'chart12_val') {
           return `KH ${selectedYear}`;
@@ -638,7 +638,7 @@ export default function RevenueChartDetailView({
 
     if (comparisonType === 'next_plan') {
       if (activeBranchId === 'month') return `KH Tháng ${nextMonthNum}/${nextYear}`;
-      if (activeBranchId === 'quarter') return `KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
+      if (activeBranchId === 'quarter') return `KH ${nextQuarterName}/${nextQuarterYear}`;
       if (activeBranchId === 'year') return `KH Năm ${parseInt(selectedYear, 10) + 1}`;
       return 'KH';
     }
@@ -653,9 +653,9 @@ export default function RevenueChartDetailView({
 
     if (activeBranchId === 'quarter') {
       if (activeChartKey === 'chart8_val' || activeChartKey === 'chart8_rat' || chartTitle.includes('cùng kỳ')) {
-        return `TH Quý ${quarterRoman}/${lastYear}`;
+        return `TH ${selectedQuarter}/${lastYear}`;
       }
-      return `TH Quý ${prevQuarterRoman}/${prevQuarterYear}`;
+      return `TH ${prevQuarterName}/${prevYear}`;
     }
 
     if (activeBranchId === 'year') {
@@ -687,21 +687,21 @@ export default function RevenueChartDetailView({
         activeChartKey === 'chart6_rat' ||
         (chartTitle.toLowerCase().includes('ước') && chartTitle.toLowerCase().includes('kh') && !chartTitle.toLowerCase().includes('tiếp theo') && !chartTitle.toLowerCase().includes('kỳ sau'))
       ) {
-        return `Ước TH so với KH Quý ${quarterRoman}/${selectedYear}`;
+        return `Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`;
       }
       if (
         activeChartKey === 'chart7_val' ||
         activeChartKey === 'chart7_rat' ||
         chartTitle.toLowerCase().includes('trước')
       ) {
-        return `Ước TH so với Quý ${prevQuarterRoman}/${prevQuarterYear}`;
+        return `Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQuarterName}/${prevYear}`;
       }
       if (
         activeChartKey === 'chart8_val' ||
         activeChartKey === 'chart8_rat' ||
         chartTitle.toLowerCase().includes('cùng kỳ')
       ) {
-        return `Ước TH so với cùng kỳ Quý ${quarterRoman}/${lastYear}`;
+        return `Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${selectedQuarter}/${lastYear}`;
       }
       if (
         activeChartKey === 'chart9_val' ||
@@ -710,9 +710,9 @@ export default function RevenueChartDetailView({
         chartTitle.toLowerCase().includes('tiếp theo') ||
         chartTitle.toLowerCase().includes('kỳ sau')
       ) {
-        return `Ước TH so với KH Quý ${nextQuarterRoman}/${nextQuarterYear}`;
+        return `Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQuarterName}/${nextQuarterYear}`;
       }
-      return `TH so với KH Quý ${quarterRoman}/${selectedYear}`;
+      return `Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`;
     }
 
     if (activeBranchId === 'year') {

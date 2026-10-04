@@ -79,7 +79,7 @@ export function getExportChartList({
       key: 'c5',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 5',
-      title: `Biểu đồ 5. TH so với KH ${selectedQuarter}/${selectedYear}`,
+      title: `Biểu đồ 5. Lũy kế ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`,
       desc: `Đánh giá tiến độ lũy kế quý so với chỉ tiêu kế hoạch quý`,
       period: `${selectedQuarter}/${selectedYear}`
     },
@@ -87,7 +87,7 @@ export function getExportChartList({
       key: 'c6',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 6',
-      title: `Biểu đồ 6. Ước TH so với KH ${selectedQuarter}/${selectedYear}`,
+      title: `Biểu đồ 6. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${selectedQuarter}/${selectedYear}`,
       desc: `Ước tính cả quý so với kế hoạch được giao của quý`,
       period: `${selectedQuarter}/${selectedYear}`
     },
@@ -95,7 +95,7 @@ export function getExportChartList({
       key: 'c7',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 7',
-      title: `Biểu đồ 7. Ước TH so với ${prevQName}/${prevQYear}`,
+      title: `Biểu đồ 7. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${prevQName}/${prevQYear}`,
       desc: `Tăng trưởng ước thực hiện quý hiện tại so với kết quả quý liền trước (QoQ)`,
       period: `${selectedQuarter} vs ${prevQName}`
     },
@@ -103,7 +103,7 @@ export function getExportChartList({
       key: 'c8',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 8',
-      title: `Biểu đồ 8. Ước TH so với cùng kỳ ${selectedQuarter}/${lastYear}`,
+      title: `Biểu đồ 8. Ước kết quả ${selectedQuarter}/${selectedYear} so với kết quả ${selectedQuarter}/${lastYear}`,
       desc: `Tăng trưởng ước thực hiện quý hiện tại so với cùng kỳ năm ${lastYear}`,
       period: `${selectedQuarter}/${selectedYear} vs ${selectedQuarter}/${lastYear}`
     },
@@ -111,7 +111,7 @@ export function getExportChartList({
       key: 'c9',
       branchId: 'quarter',
       chartNumber: 'Biểu đồ 9',
-      title: `Biểu đồ 9. Ước TH so với KH ${nextQName}/${nextQYear}`,
+      title: `Biểu đồ 9. Ước kết quả ${selectedQuarter}/${selectedYear} so với kế hoạch ${nextQName}/${nextQYear}`,
       desc: `So sánh ước thực hiện quý hiện tại với kế hoạch quý kế tiếp`,
       period: `${selectedQuarter} vs ${nextQName}`
     },
