@@ -565,27 +565,7 @@ export default function InternalExternalRevenueChart({
           gap: '14px'
         }}
       >
-        {/* Section Header */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-        >
-          <h2
-            style={{
-              fontSize: '16px',
-              fontWeight: '700',
-              color: '#0f172a',
-              margin: 0
-            }}
-          >
-            Cơ cấu doanh thu TH nội bộ và doanh thu ngoài Tập đoàn
-          </h2>
 
-        </div>
 
         {/* Section Subcards Grid */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -726,29 +706,7 @@ export default function InternalExternalRevenueChart({
           gap: '14px'
         }}
       >
-        {/* Section Header */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-            <h2
-              style={{
-                fontSize: '16px',
-                fontWeight: '700',
-                color: '#0f172a',
-                margin: 0
-              }}
-            >
-              Cơ cấu doanh thu trong nước và doanh thu quốc tế
-            </h2>
-          </div>
 
-        </div>
 
         {/* Section Subcards Grid */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

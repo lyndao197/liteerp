@@ -587,27 +587,6 @@ export default function PlanCompletionRateChart({
         gap: '16px'
       }}
     >
-      {/* Tiêu đề nhóm biểu đồ */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: '1px solid #f1f5f9',
-          paddingBottom: '12px'
-        }}
-      >
-        <h2
-          style={{
-            fontSize: '16px',
-            fontWeight: '700',
-            color: '#1b3a6b',
-            margin: 0
-          }}
-        >
-          Tỷ lệ hoàn thành kế hoạch tổng doanh thu (lũy kế Quý / lũy kế năm)
-        </h2>
-      </div>
 
       {/* 2 Biểu đồ tách rời trong lưới 2 cột */}
       <div className="month-row-grid">
@@ -714,26 +693,6 @@ export function ExternalPlanCompletionRateChart({
         gap: '16px'
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: '1px solid #f1f5f9',
-          paddingBottom: '12px'
-        }}
-      >
-        <h2
-          style={{
-            fontSize: '16px',
-            fontWeight: '700',
-            color: '#1b3a6b',
-            margin: 0
-          }}
-        >
-          Tỷ lệ hoàn thành kế hoạch doanh thu ngoài Tập đoàn (lũy kế Quý / lũy kế năm)
-        </h2>
-      </div>
 
       <div className="month-row-grid">
         <PlanGaugeSubcard
@@ -839,26 +798,6 @@ export function InternationalPlanCompletionRateChart({
         gap: '16px'
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: '1px solid #f1f5f9',
-          paddingBottom: '12px'
-        }}
-      >
-        <h2
-          style={{
-            fontSize: '16px',
-            fontWeight: '700',
-            color: '#1b3a6b',
-            margin: 0
-          }}
-        >
-          Tỷ lệ hoàn thành kế hoạch doanh thu quốc tế (lũy kế Quý / lũy kế năm)
-        </h2>
-      </div>
 
       <div className="month-row-grid">
         <PlanGaugeSubcard
