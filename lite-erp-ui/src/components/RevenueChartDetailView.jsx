@@ -321,6 +321,41 @@ const CUSTOMER_SPDV_MASTER_DATA = [
   }
 ];
 
+class TableErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('TableErrorBoundary caught error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '36px 24px', textAlign: 'center', background: '#fff', borderRadius: '12px', border: '1px solid #fee2e2', margin: '16px 0' }}>
+          <div style={{ color: '#e11d48', fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>
+            Không thể hiển thị bảng dữ liệu chi tiết
+          </div>
+          <div style={{ color: '#64748b', fontSize: '13px', marginBottom: '16px' }}>
+            {this.state.error?.message || 'Đã có lỗi xảy ra trong quá trình xử lý dữ liệu.'}
+          </div>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false, error: null })}
+            style={{ padding: '8px 20px', background: '#e11d48', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}
+          >
+            Tải lại bảng
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function RevenueChartDetailView({
   initialBranchId = 'month',
   initialChartKey = 'chart1_val',
@@ -2723,6 +2758,7 @@ export default function RevenueChartDetailView({
         {/* 4. MAIN DATA TABLE                                                        */}
         {/* ========================================================================= */}
         <div className="chart-detail-table-wrapper">
+          <TableErrorBoundary>
           {isRatioChart ? (
             <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '16px 20px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)' }}>
               <MonthRatioDetailTable
@@ -3236,6 +3272,7 @@ export default function RevenueChartDetailView({
               </tfoot>
             </table>
           )}
+          </TableErrorBoundary>
         </div>
 
         {/* Pagination Bar - Styled identical to Báo cáo kết quả doanh thu */}

@@ -35,6 +35,21 @@ export default function SpdvDetailTable({
   const prevQuarterNum = quarterNum > 1 ? quarterNum - 1 : 4;
   const prevQuarterYear = quarterNum > 1 ? selectedYear : lastYear;
 
+  const formatSpdvNum = (val) => {
+    if (val === null || val === undefined || val === '') return '-';
+    if (typeof val === 'string') return val;
+    return Number(val).toLocaleString('vi-VN', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    });
+  };
+
+  // Base datasets - initialized early to avoid Temporal Dead Zone (TDZ) in useMemo hooks
+  const barData = useMemo(() => getSpdvBarComparisonData(selectedYear, selectedMonth), [selectedYear, selectedMonth]);
+  const yoyData = useMemo(() => getSpdvYoyComparisonData(selectedYear, selectedMonth), [selectedYear, selectedMonth]);
+  const prevPeriodData = useMemo(() => getSpdvPrevPeriodComparisonData(selectedYear, selectedMonth), [selectedYear, selectedMonth]);
+  const structureData = useMemo(() => SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'], [selectedYear]);
+
   // View modes for toggle when viewing individual charts
   const [structureViewMode, setStructureViewMode] = useState('single'); // 'single' | 'integrated'
   const [barViewMode, setBarViewMode] = useState('single'); // 'single' | 'integrated'
@@ -331,18 +346,6 @@ export default function SpdvDetailTable({
     return key === 'spdv_bar_integrated' || (singleBarConfig && barViewMode === 'integrated');
   }, [activeChartKey, isYoyComparison, isPrevPeriodComparison, singleStructureConfig, isStructureIntegrated, singleBarConfig, barViewMode]);
 
-  const formatSpdvNum = (val) => {
-    if (val === null || val === undefined || val === '') return '-';
-    if (typeof val === 'string') return val;
-    return Number(val).toLocaleString('vi-VN', {
-      minimumFractionDigits: 1,
-      maximumFractionDigits: 1
-    });
-  };
-
-  // Get bar comparison data for Biểu đồ 18 (Month, Quarter, Year)
-  const barData = getSpdvBarComparisonData(selectedYear, selectedMonth);
-
   // 3-Period Integrated Data for Biểu đồ 18
   const integratedBarRows = useMemo(() => {
     const monthItems = barData.monthItems || [];
@@ -444,8 +447,6 @@ export default function SpdvDetailTable({
   }, [barData]);
 
   // Biểu đồ 19 YoY Comparison Data (Tích hợp số liệu 3 hình: Tháng, Quý, Lũy kế)
-  const yoyData = getSpdvYoyComparisonData(selectedYear, selectedMonth);
-
   const integratedYoyRows = useMemo(() => {
     const mItems = yoyData.monthItems || [];
     const qItems = yoyData.quarterItems || [];
@@ -544,8 +545,6 @@ export default function SpdvDetailTable({
   }, [yoyData]);
 
   // Biểu đồ 20 Prev Period Comparison Data
-  const prevPeriodData = getSpdvPrevPeriodComparisonData(selectedYear, selectedMonth);
-
   const integratedPrevPeriodRows = useMemo(() => {
     const mItems = prevPeriodData.monthItems || [];
     const qItems = prevPeriodData.quarterItems || [];
@@ -644,7 +643,6 @@ export default function SpdvDetailTable({
   }, [prevPeriodData]);
 
   // Structure Table Data (Biểu đồ 16 & 17)
-  const structureData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
   const monthHeader = `Tháng ${monthNum}/${selectedYear}`;
   const quarterHeader = `Quý ${quarterRoman}/${selectedYear} (lũy kế ${quarterCumText})`;
   const yearHeader = `Năm ${selectedYear} (lũy kế ${monthNum}T)`;
