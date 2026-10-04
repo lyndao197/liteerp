@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import './SpdvComparisonChart.css';
 import './MonthComparisonChart.css';
-import { SPDV_STRUCTURE_DATA, getSpdvBarComparisonData, getSpdvYoyComparisonData, getSpdvPrevPeriodComparisonData } from '../data/revenueSpdvData';
+import {
+  SPDV_CATEGORIES,
+  SPDV_STRUCTURE_DATA,
+  getSpdvBarComparisonData,
+  getSpdvYoyComparisonData,
+  getSpdvPrevPeriodComparisonData
+} from '../data/revenueSpdvData';
 
 const MONTH_OPTIONS = [
   'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4',
@@ -269,6 +275,73 @@ function SpdvSubcard({
               </div>
             </div>
           )}
+
+          {/* Chú giải theo nhóm SPDV (Legend trực tiếp trong biểu đồ) */}
+          <div
+            className="spdv-subcard-legend"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '8px 16px',
+              padding: '12px 14px 4px',
+              marginTop: '10px',
+              borderTop: '1px solid #f1f5f9',
+              width: '100%'
+            }}
+          >
+            {SPDV_CATEGORIES.map((cat) => {
+              const isHovered =
+                hoveredSlice &&
+                hoveredSlice.cardKey === cardKey &&
+                hoveredSlice.sliceName === cat.name;
+              return (
+                <div
+                  key={cat.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '7px',
+                    fontSize: '12px',
+                    fontWeight: isHovered ? '700' : '600',
+                    color: isHovered ? '#0f172a' : '#334155',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    padding: '2px 4px',
+                    borderRadius: '4px',
+                    backgroundColor: isHovered ? '#f1f5f9' : 'transparent'
+                  }}
+                  onMouseEnter={() => {
+                    const slice = chart?.slices?.find((s) => s.name === cat.name);
+                    if (slice) {
+                      setHoveredSlice({
+                        cardKey,
+                        sliceName: slice.name,
+                        percent: slice.percent,
+                        value: slice.value,
+                        color: slice.color
+                      });
+                    }
+                  }}
+                  onMouseLeave={() => setHoveredSlice(null)}
+                >
+                  <span
+                    style={{
+                      width: '13px',
+                      height: '13px',
+                      borderRadius: '3px',
+                      backgroundColor: cat.color,
+                      flexShrink: 0,
+                      boxShadow: isHovered ? `0 0 0 2px ${cat.color}` : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  />
+                  <span>{cat.name}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
       {onOpenDetail && (
