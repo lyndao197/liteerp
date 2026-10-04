@@ -2387,39 +2387,30 @@ export default function RevenueChartDetailView({
         }
 
         const spdvTableData = SPDV_STRUCTURE_TABLE_DATA[selectedYear] || SPDV_STRUCTURE_TABLE_DATA['2026'];
+        const isKhStructureExport = (activeChartKey || '').includes('kh') || (chartTitle || '').toLowerCase().includes('kế hoạch');
+        const metricKey = isKhStructureExport ? 'kh' : 'th';
+        const metricName = isKhStructureExport ? 'KH' : 'TH';
 
         const exportRows = (spdvTableData.rows || []).map(r => ({
           'Nhóm SPDV': r.name,
-          [`${monthCol} - TH`]: r.month?.th ?? '',
-          [`${monthCol} - Tỷ trọng TH`]: r.month?.thShare ?? '',
-          [`${monthCol} - KH`]: r.month?.kh ?? '',
-          [`${monthCol} - Tỷ trọng KH`]: r.month?.khShare ?? '',
-          [`${quarterCol} - TH`]: r.quarter?.th ?? '',
-          [`${quarterCol} - Tỷ trọng TH`]: r.quarter?.thShare ?? '',
-          [`${quarterCol} - KH`]: r.quarter?.kh ?? '',
-          [`${quarterCol} - Tỷ trọng KH`]: r.quarter?.khShare ?? '',
-          [`${yearCol} - TH`]: r.year?.th ?? '',
-          [`${yearCol} - Tỷ trọng TH`]: r.year?.thShare ?? '',
-          [`${yearCol} - KH`]: r.year?.kh ?? '',
-          [`${yearCol} - Tỷ trọng KH`]: r.year?.khShare ?? '',
+          [`${monthCol} - ${metricName}`]: r.month?.[metricKey] ?? '',
+          [`${monthCol} - Tỷ trọng ${metricName}`]: r.month?.[`${metricKey}Share`] ?? '',
+          [`${quarterCol} - ${metricName}`]: r.quarter?.[metricKey] ?? '',
+          [`${quarterCol} - Tỷ trọng ${metricName}`]: r.quarter?.[`${metricKey}Share`] ?? '',
+          [`${yearCol} - ${metricName}`]: r.year?.[metricKey] ?? '',
+          [`${yearCol} - Tỷ trọng ${metricName}`]: r.year?.[`${metricKey}Share`] ?? '',
         }));
 
         if (spdvTableData.total) {
           const tot = spdvTableData.total;
           exportRows.push({
             'Nhóm SPDV': tot.name || 'Tổng doanh thu',
-            [`${monthCol} - TH`]: tot.month?.th ?? '',
-            [`${monthCol} - Tỷ trọng TH`]: tot.month?.thShare ?? '',
-            [`${monthCol} - KH`]: tot.month?.kh ?? '',
-            [`${monthCol} - Tỷ trọng KH`]: tot.month?.khShare ?? '',
-            [`${quarterCol} - TH`]: tot.quarter?.th ?? '',
-            [`${quarterCol} - Tỷ trọng TH`]: tot.quarter?.thShare ?? '',
-            [`${quarterCol} - KH`]: tot.quarter?.kh ?? '',
-            [`${quarterCol} - Tỷ trọng KH`]: tot.quarter?.khShare ?? '',
-            [`${yearCol} - TH`]: tot.year?.th ?? '',
-            [`${yearCol} - Tỷ trọng TH`]: tot.year?.thShare ?? '',
-            [`${yearCol} - KH`]: tot.year?.kh ?? '',
-            [`${yearCol} - Tỷ trọng KH`]: tot.year?.khShare ?? '',
+            [`${monthCol} - ${metricName}`]: tot.month?.[metricKey] ?? '',
+            [`${monthCol} - Tỷ trọng ${metricName}`]: tot.month?.[`${metricKey}Share`] ?? '100%',
+            [`${quarterCol} - ${metricName}`]: tot.quarter?.[metricKey] ?? '',
+            [`${quarterCol} - Tỷ trọng ${metricName}`]: tot.quarter?.[`${metricKey}Share`] ?? '100%',
+            [`${yearCol} - ${metricName}`]: tot.year?.[metricKey] ?? '',
+            [`${yearCol} - Tỷ trọng ${metricName}`]: tot.year?.[`${metricKey}Share`] ?? '100%',
           });
         }
 

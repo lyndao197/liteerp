@@ -85,13 +85,26 @@ export default function SpdvDetailTable({
       key === 'chart16' ||
       key === 'chart17' ||
       title.includes('cơ cấu') ||
-      title.includes('16') ||
-      title.includes('17')
+      /\b(biểu đồ\s*16|biểu đồ\s*17|bđ\s*16|bđ\s*17|chart\s*16|chart\s*17)\b/i.test(title)
     );
   }, [activeChartKey, chartTitle]);
 
+  // Check if structure chart is specifically KH (Biểu đồ 17)
+  const isKhStructure = useMemo(() => {
+    if (!isStructureTable) return false;
+    const key = (activeChartKey || '').toLowerCase();
+    const title = (chartTitle || '').toLowerCase();
+    return (
+      key.startsWith('spdv_kh') ||
+      key === 'chart17' ||
+      (title.includes('kế hoạch') && !title.includes('thực hiện')) ||
+      /\b(biểu đồ\s*17|bđ\s*17|chart\s*17)\b/i.test(title)
+    );
+  }, [isStructureTable, activeChartKey, chartTitle]);
+
   // Check if viewing YoY table (Biểu đồ 19) or Prev Period table (Biểu đồ 20)
   const isYoyComparison = useMemo(() => {
+    if (isStructureTable) return false;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
     return (
@@ -100,11 +113,12 @@ export default function SpdvDetailTable({
       key.includes('cung_ky') ||
       key.includes('cùng kỳ') ||
       title.includes('cùng kỳ') ||
-      title.includes('19')
+      /\b(biểu đồ\s*19|bđ\s*19|chart\s*19)\b/i.test(title)
     );
-  }, [activeChartKey, chartTitle]);
+  }, [isStructureTable, activeChartKey, chartTitle]);
 
   const isPrevPeriodComparison = useMemo(() => {
+    if (isStructureTable) return false;
     const key = (activeChartKey || '').toLowerCase();
     const title = (chartTitle || '').toLowerCase();
     return (
@@ -113,9 +127,9 @@ export default function SpdvDetailTable({
       key.includes('ky_truoc') ||
       key.includes('kỳ trước') ||
       title.includes('kỳ trước') ||
-      title.includes('20')
+      /\b(biểu đồ\s*20|bđ\s*20|chart\s*20)\b/i.test(title)
     );
-  }, [activeChartKey, chartTitle]);
+  }, [isStructureTable, activeChartKey, chartTitle]);
 
   // Detect single structure donut chart (Biểu đồ 16 & 17)
   const singleStructureConfig = useMemo(() => {
@@ -899,7 +913,7 @@ export default function SpdvDetailTable({
       {/* TABLE VIEWS ROUTING */}
       {isStructureTable ? (
         /* ===================================================================== */
-        /* STRUCTURE VIEW: MATCHING EXACT USER DESIGN MOCKUP                     */
+        /* STRUCTURE VIEW: MATCHING EXACT USER DESIGN MOCKUP (CHỈ CÓ TH VÀ TỶ TRỌNG) */
         /* ===================================================================== */
         <div className="spdv-detail-table-wrap">
           <table className="spdv-matrix-table spdv-structure-clean-table">
@@ -907,17 +921,17 @@ export default function SpdvDetailTable({
               <tr className="spdv-th-top-row">
                 <th rowSpan={2} className="spdv-th-name">Nhóm SPDV</th>
                 {(structurePeriod === 'month' || structurePeriod === 'all') && (
-                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-month">
+                  <th colSpan={2} className="spdv-th-period-group spdv-col-period-month">
                     Tháng {monthNum}/{selectedYear}
                   </th>
                 )}
                 {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
-                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-quarter">
+                  <th colSpan={2} className="spdv-th-period-group spdv-col-period-quarter">
                     Quý {quarterRoman}/{selectedYear}
                   </th>
                 )}
                 {(structurePeriod === 'year' || structurePeriod === 'all') && (
-                  <th colSpan={3} className="spdv-th-period-group spdv-col-period-year">
+                  <th colSpan={2} className="spdv-th-period-group spdv-col-period-year">
                     Năm {selectedYear}
                   </th>
                 )}
@@ -925,23 +939,32 @@ export default function SpdvDetailTable({
               <tr className="spdv-th-sub-row">
                 {(structurePeriod === 'month' || structurePeriod === 'all') && (
                   <>
-                    <th className="spdv-th-col spdv-th-th">TH T{monthNum}/{selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-kh">KH T{monthNum}/{selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                    <th className="spdv-th-col spdv-th-th">
+                      {isKhStructure ? `KH T${monthNum}/${selectedYear}` : `TH T${monthNum}/${selectedYear}`}
+                    </th>
+                    <th className="spdv-th-col spdv-th-share">
+                      {isKhStructure ? 'Tỷ trọng KH' : 'Tỷ trọng TH'}
+                    </th>
                   </>
                 )}
                 {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
                   <>
-                    <th className="spdv-th-col spdv-th-th spdv-border-left">TH Q{quarterRoman}/{selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-kh">KH Q{quarterRoman}/{selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                    <th className="spdv-th-col spdv-th-th spdv-border-left">
+                      {isKhStructure ? `KH Q${quarterRoman}/${selectedYear}` : `Ước TH Q${quarterRoman}/${selectedYear}`}
+                    </th>
+                    <th className="spdv-th-col spdv-th-share">
+                      {isKhStructure ? 'Tỷ trọng KH' : 'Tỷ trọng TH'}
+                    </th>
                   </>
                 )}
                 {(structurePeriod === 'year' || structurePeriod === 'all') && (
                   <>
-                    <th className="spdv-th-col spdv-th-th spdv-border-left">TH Năm {selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-kh">KH Năm {selectedYear}</th>
-                    <th className="spdv-th-col spdv-th-share">Tỷ trọng TH</th>
+                    <th className="spdv-th-col spdv-th-th spdv-border-left">
+                      {isKhStructure ? `KH Năm ${selectedYear}` : `Ước TH Năm ${selectedYear}`}
+                    </th>
+                    <th className="spdv-th-col spdv-th-share">
+                      {isKhStructure ? 'Tỷ trọng KH' : 'Tỷ trọng TH'}
+                    </th>
                   </>
                 )}
               </tr>
@@ -957,39 +980,30 @@ export default function SpdvDetailTable({
                     {(structurePeriod === 'month' || structurePeriod === 'all') && (
                       <>
                         <td className="spdv-td-num font-bold">
-                          {formatSpdvNum(row.month?.th)}
-                        </td>
-                        <td className="spdv-td-num font-medium">
-                          {formatSpdvNum(row.month?.kh)}
+                          {formatSpdvNum(isKhStructure ? row.month?.kh : row.month?.th)}
                         </td>
                         <td className="spdv-td-share font-medium">
-                          {row.month?.thShare}
+                          {isKhStructure ? row.month?.khShare : row.month?.thShare}
                         </td>
                       </>
                     )}
                     {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
                       <>
                         <td className="spdv-td-num font-bold spdv-border-left">
-                          {formatSpdvNum(row.quarter?.th)}
-                        </td>
-                        <td className="spdv-td-num font-medium">
-                          {formatSpdvNum(row.quarter?.kh)}
+                          {formatSpdvNum(isKhStructure ? row.quarter?.kh : row.quarter?.th)}
                         </td>
                         <td className="spdv-td-share font-medium">
-                          {row.quarter?.thShare}
+                          {isKhStructure ? row.quarter?.khShare : row.quarter?.thShare}
                         </td>
                       </>
                     )}
                     {(structurePeriod === 'year' || structurePeriod === 'all') && (
                       <>
                         <td className="spdv-td-num font-bold spdv-border-left">
-                          {formatSpdvNum(row.year?.th)}
-                        </td>
-                        <td className="spdv-td-num font-medium">
-                          {formatSpdvNum(row.year?.kh)}
+                          {formatSpdvNum(isKhStructure ? row.year?.kh : row.year?.th)}
                         </td>
                         <td className="spdv-td-share font-medium">
-                          {row.year?.thShare}
+                          {isKhStructure ? row.year?.khShare : row.year?.thShare}
                         </td>
                       </>
                     )}
@@ -997,7 +1011,7 @@ export default function SpdvDetailTable({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={structurePeriod === 'all' ? 10 : 4} className="spdv-no-data-cell">
+                  <td colSpan={structurePeriod === 'all' ? 7 : 3} className="spdv-no-data-cell">
                     Không tìm thấy dữ liệu nhóm SPDV phù hợp với điều kiện lọc
                   </td>
                 </tr>
@@ -1011,39 +1025,30 @@ export default function SpdvDetailTable({
                 {(structurePeriod === 'month' || structurePeriod === 'all') && (
                   <>
                     <td className="spdv-td-num font-bold">
-                      {formatSpdvNum(structureData.total?.month?.th)}
-                    </td>
-                    <td className="spdv-td-num font-bold">
-                      {formatSpdvNum(structureData.total?.month?.kh)}
+                      {formatSpdvNum(isKhStructure ? structureData.total?.month?.kh : structureData.total?.month?.th)}
                     </td>
                     <td className="spdv-td-share font-bold">
-                      {structureData.total?.month?.thShare || '100%'}
+                      {(isKhStructure ? structureData.total?.month?.khShare : structureData.total?.month?.thShare) || '100%'}
                     </td>
                   </>
                 )}
                 {(structurePeriod === 'quarter' || structurePeriod === 'all') && (
                   <>
                     <td className="spdv-td-num font-bold spdv-border-left">
-                      {formatSpdvNum(structureData.total?.quarter?.th)}
-                    </td>
-                    <td className="spdv-td-num font-bold">
-                      {formatSpdvNum(structureData.total?.quarter?.kh)}
+                      {formatSpdvNum(isKhStructure ? structureData.total?.quarter?.kh : structureData.total?.quarter?.th)}
                     </td>
                     <td className="spdv-td-share font-bold">
-                      {structureData.total?.quarter?.thShare || '100%'}
+                      {(isKhStructure ? structureData.total?.quarter?.khShare : structureData.total?.quarter?.thShare) || '100%'}
                     </td>
                   </>
                 )}
                 {(structurePeriod === 'year' || structurePeriod === 'all') && (
                   <>
                     <td className="spdv-td-num font-bold spdv-border-left">
-                      {formatSpdvNum(structureData.total?.year?.th)}
-                    </td>
-                    <td className="spdv-td-num font-bold">
-                      {formatSpdvNum(structureData.total?.year?.kh)}
+                      {formatSpdvNum(isKhStructure ? structureData.total?.year?.kh : structureData.total?.year?.th)}
                     </td>
                     <td className="spdv-td-share font-bold">
-                      {structureData.total?.year?.thShare || '100%'}
+                      {(isKhStructure ? structureData.total?.year?.khShare : structureData.total?.year?.thShare) || '100%'}
                     </td>
                   </>
                 )}
