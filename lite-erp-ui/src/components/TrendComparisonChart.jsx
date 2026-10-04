@@ -650,9 +650,6 @@ function TrendPlanCard({
                   {hoveredData.rate || (hoveredData.th !== null && hoveredData.kh ? `${Math.round((hoveredData.th / hoveredData.kh) * 100)}%` : '-')}
                 </span>
               </div>
-              <div style={{ fontSize: '9.5px', color: '#94a3b8', fontStyle: 'italic', marginTop: '3px', textAlign: 'right' }}>
-                (% HTKH = TH / KH × 100%)
-              </div>
             </div>
           )}
         </div>
